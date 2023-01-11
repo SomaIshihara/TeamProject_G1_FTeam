@@ -446,5 +446,11 @@ void UpdateShowCursor(void)
 	{
 		while (ShowCursor(TRUE) <= -SHOWCURSOR_COUNTER);
 		ShowCursor(FALSE);
-	}
+	}	
+}
+
+//‰æ–Êƒ‚[ƒh‚ÌŽæ“¾
+MODE GetMode(void)
+{
+	return g_mode;
 }
