@@ -21,7 +21,7 @@ char g_aStrPrint[DEBPRO_MAX_STR];		//表示文字バッファ
 void InitDebugProc(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
-
+	
 	//デバッグ表示用フォント生成
 	D3DXCreateFont(pDevice, 18, 0, 0, 0, FALSE,
 		SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
@@ -78,7 +78,7 @@ void PrintDebugProc(const char *fmt, ...)
 
 	//出力開始
 	va_start(args, fmt);
-
+	
 	for (nCount = 0; *fmt != '\0'; fmt++)
 	{
 		if (*fmt == '%')
