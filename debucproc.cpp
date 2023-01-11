@@ -6,7 +6,6 @@
 //==========================================
 #include "main.h"
 #include "debugproc.h"
-#include <stdio.h>
 #include <stdarg.h>
 
 //É}ÉNÉç

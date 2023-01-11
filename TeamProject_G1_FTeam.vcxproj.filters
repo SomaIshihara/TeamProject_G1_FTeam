@@ -21,7 +21,10 @@
     <ClCompile Include="debucproc.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-	<ClCompile Include="wall.cpp">
+    <ClCompile Include="wall.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,10 +35,11 @@
     <ClInclude Include="debugproc.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-	<ClInclude Include="wall.h">
+    <ClInclude Include="wall.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
-  
-    
 </Project>
