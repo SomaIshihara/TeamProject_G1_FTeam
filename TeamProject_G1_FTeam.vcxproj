@@ -164,6 +164,7 @@
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="color.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
