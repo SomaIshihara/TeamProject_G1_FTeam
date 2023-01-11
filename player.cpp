@@ -9,6 +9,7 @@
 #include "input.h"
 #include "wall.h"
 #include "debugproc.h"
+#include "camera.h"
 #include <assert.h>
 
 //É}ÉNÉç
