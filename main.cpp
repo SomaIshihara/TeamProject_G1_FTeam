@@ -27,7 +27,13 @@ void UpdateShowCursor(void);
 LPDIRECT3D9 g_pD3D = NULL;	//Direct3Dオブジェクトへのポインタ
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
-MODE g_mode = MODE_TITLE;
+
+#ifdef _DEBUG
+MODE			g_mode = MODE_TITLE;		// 現在のモード
+#else
+MODE			g_mode = MODE_TITLE;		// 現在のモード
+#endif
+
 bool g_bShowCursor = true;
 bool g_bDebug = true;
 
