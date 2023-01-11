@@ -42,10 +42,10 @@ void InitPlayer(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
 
 	//変数初期化
-	g_player.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_player.pos = ZERO_SET;
 	g_player.posOld = g_player.pos;
-	g_player.move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_player.move = ZERO_SET;
+	g_player.rot = ZERO_SET;
 	
 	g_player.nNumModel = 0;
 

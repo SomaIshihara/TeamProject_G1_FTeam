@@ -9,20 +9,6 @@ Author:大宮愛羅
 #include "input.h"
 #include "player.h"
 
-//左方向
-#define LEFT_DOWN (-0.25f)	//左下
-#define LEFT_UP (-0.75f)	//左上
-#define LEFT (-0.5f)		//左
-
-//右方向
-#define RIGHT_DOWN (0.25f)	//右下
-#define RIGHT_UP (0.75f)	//右上
-#define RIGHT (0.5f)		//右
-
-//上下方向
-#define DOWN (1.0f)			//下
-#define UP (-1.0f)			//上
-
 //注視点移動速度(上下)
 #define POSR_SPEED	(10.0f)
 

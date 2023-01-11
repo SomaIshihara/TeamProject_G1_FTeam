@@ -30,7 +30,7 @@ void InitWall(void)
 		&g_pTextureWall);
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_WALL,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * VTX_MAX * MAX_WALL,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -45,31 +45,31 @@ void InitWall(void)
 	//頂点バッファをロックし、頂点座標へのポインタを取得
 	g_pVtxBuffWall->Lock(0, 0, (void **)&pVtx, 0);
 
-	for (int nCntWall = 0; nCntWall < MAX_WALL; nCntWall++, pVtx += 4)
+	for (int nCntWall = 0; nCntWall < MAX_WALL; nCntWall++, pVtx += VTX_MAX)
 	{
 		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(-g_aWall[nCntWall].fWidth, +g_aWall[nCntWall].fHeight, +g_aWall[nCntWall].fDepth);	//左上端
-		pVtx[1].pos = D3DXVECTOR3(+g_aWall[nCntWall].fWidth, +g_aWall[nCntWall].fHeight, -g_aWall[nCntWall].fDepth);	//右上端
-		pVtx[2].pos = D3DXVECTOR3(-g_aWall[nCntWall].fWidth, 0.0f, +g_aWall[nCntWall].fDepth);							//左下端
-		pVtx[3].pos = D3DXVECTOR3(+g_aWall[nCntWall].fWidth, 0.0f, -g_aWall[nCntWall].fDepth);							//右下端
+		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_aWall[nCntWall].fWidth, +g_aWall[nCntWall].fHeight, +g_aWall[nCntWall].fDepth);	//左上端
+		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_aWall[nCntWall].fWidth, +g_aWall[nCntWall].fHeight, -g_aWall[nCntWall].fDepth);	//右上端
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_aWall[nCntWall].fWidth, 0.0f, +g_aWall[nCntWall].fDepth);							//左下端
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_aWall[nCntWall].fWidth, 0.0f, -g_aWall[nCntWall].fDepth);							//右下端
 
 																														//法線ベクトルの設定
-		pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//左上端
-		pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//右上端
-		pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//左下端
-		pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//右下端
+		pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//左上端
+		pVtx[VTX_RI_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//右上端
+		pVtx[VTX_LE_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//左下端
+		pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//右下端
 
 															//頂点カラー設定
-		pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//左上端
-		pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//右上端
-		pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//左下端
-		pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//右下端
+		pVtx[VTX_LE_UP].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//左上端
+		pVtx[VTX_RI_UP].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//右上端
+		pVtx[VTX_LE_DO].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//左下端
+		pVtx[VTX_RI_DO].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//右下端
 
 															//テクスチャ座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);				//左上端
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);				//右上端
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);				//左下端
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);				//右下端
+		pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);				//左上端
+		pVtx[VTX_RI_UP].tex = D3DXVECTOR2(1.0f, 0.0f);				//右上端
+		pVtx[VTX_LE_DO].tex = D3DXVECTOR2(0.0f, 1.0f);				//左下端
+		pVtx[VTX_RI_DO].tex = D3DXVECTOR2(1.0f, 1.0f);				//右下端
 	}
 	//頂点バッファをアンロックする
 	g_pVtxBuffWall->Unlock();
@@ -133,7 +133,7 @@ void DrawWall(void)
 			pDevice->SetTexture(0, g_pTextureWall);
 
 			//ポリゴンの描画
-			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntWall * 4, 2);
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntWall * VTX_MAX, 2);
 		}
 	}
 }

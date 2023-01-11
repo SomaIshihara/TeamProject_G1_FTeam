@@ -45,6 +45,20 @@ typedef enum
 #define FVF_VERTEX_3D		(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//3D
 #define FIX_ROT(x)			((float)fmod(x + (D3DX_PI * 3), D3DX_PI * 2) - D3DX_PI)	//角度を-PI~PIに修正
 
+#define NIL_F		(0.0f)		//0.0f座標
+
+#define ZERO_SET	(D3DXVECTOR3(NIL_F, NIL_F, NIL_F))	//位置や向きの初期化に使用
+
+//角度のマクロ
+#define UP			(1.0f)		//上
+#define DOWN		(0.0f)		//下
+#define RIGHT		(0.5f)		//右
+#define LEFT		(-0.5f)		//左
+#define UP_RIGHT	(0.75f)		//右上
+#define UP_LEFT		(-0.75f)	//左上
+#define DOWN_RIGHT	(0.25f)		//右下
+#define DOWN_LEFT	(-0.25f)	//左下
+
 //頂点情報[2D]
 typedef struct
 {
@@ -62,6 +76,16 @@ typedef struct
 	D3DCOLOR col;		//カラー
 	D3DXVECTOR2 tex;	//テクスチャ
 } VERTEX_3D;
+
+//4つの頂点座標の列挙型
+typedef enum
+{
+	VTX_LE_UP = 0,	//左上
+	VTX_RI_UP,		//右上
+	VTX_LE_DO,		//左下
+	VTX_RI_DO,		//右下
+	VTX_MAX
+}VTX;
 
 //プロトタイプ宣言
 LPDIRECT3DDEVICE9 GetDevice(void);
