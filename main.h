@@ -1,20 +1,19 @@
-/*==========================================================================================================================================================
-
-メインの処理[main.h]
-Author:大宮愛羅
-
-============================================================================================================================================================*/
-
-#ifndef _MAIN_H_						//このマクロ定義を一度もされていなかったら
+//==========================================
+//
+//ゲーム全般を管理するプログラムのヘッダ[main.h]
+//Author:石原颯馬
+//
+//==========================================
+#ifndef _MAIN_H_
 #define _MAIN_H_
 
 #include <Windows.h>
-#include "d3dx9.h"						//描画処理に必要
-#define DIRECTINPUT_VERSION (0x0800)	//ビルド時の警告対処用マクロ
-#include "dinput.h"						//入力処理に必要
+#include <XInput.h>
+#include <string.h>
+#include "d3dx9.h"
+#define DIRECTINPUT_VERSION	(0x0800)	//ビルド時の警告対処
+#include "dinput.h"
 #include "xaudio2.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 //ライブラリのリンク
 #pragma comment(lib,"d3d9.lib")
@@ -22,30 +21,7 @@ Author:大宮愛羅
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"winmm.lib")
 #pragma comment(lib,"dinput8.lib")
-
-//マクロ定義
-#define SCREEN_WIDTH	(1280)			   //ウインドウの幅
-#define SCREEN_HEIGHT	(720)	           //ウインドウの高さ
-#define FVF_VERTEX_2D (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)
-#define FVF_VERTEX_3D (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)
-
-//頂点情報(2D)構造体
-typedef struct
-{
-	D3DXVECTOR3 pos; //頂点座標
-	float rhw;		 //座標変換用係数(1.0fで固定)
-	D3DCOLOR col;	 //頂点カラー
-	D3DXVECTOR2 tex; //テクスチャ座標
-} VERTEX_2D;
-
-//頂点情報(3D)構造体
-typedef struct
-{
-	D3DXVECTOR3 pos; //頂点座標
-	D3DXVECTOR3 nor; //法線ベクトル
-	D3DCOLOR col;	 //頂点カラー
-	D3DXVECTOR2 tex; //テクスチャ座標
-} VERTEX_3D;
+#pragma comment(lib,"xinput.lib")
 
 //画面(モード)の種類
 typedef enum
@@ -58,10 +34,36 @@ typedef enum
 	MODE_MAX
 } MODE;
 
+//マクロ定義
+#define CLASS_NAME			"WindowClass"
+#define SCREEN_WIDTH		(1280)		//クライアント領域の幅
+#define SCREEN_HEIGHT		(720)		//クライアント領域の高さ
+#define MAX_FPS				(60)		//最大フレームレート
+#define FVF_VERTEX_2D		(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//2D
+#define FVF_VERTEX_3D		(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//3D
+
+//頂点情報[2D]
+typedef struct
+{
+	D3DXVECTOR3 pos;	//頂点座標
+	float rhw;			//座標変換係数（1.0fで固定）
+	D3DCOLOR col;		//頂点カラー
+	D3DXVECTOR2 tex;	//テクスチャ座標
+} VERTEX_2D;
+
+//頂点情報[3D]
+typedef struct
+{
+	D3DXVECTOR3 pos;	//位置
+	D3DXVECTOR3 nor;	//法線ベクトル
+	D3DCOLOR col;		//カラー
+	D3DXVECTOR2 tex;	//テクスチャ
+} VERTEX_3D;
+
 //プロトタイプ宣言
-LPDIRECT3DDEVICE9 GetDevice(void); //デバイス
+LPDIRECT3DDEVICE9 GetDevice(void);
+void SetShowCursor(bool bDisp);		//カーソル表示・非表示切り替え（trueで表示・falseで非表示）
 void SetMode(MODE mode); //画面のモード設定
 MODE GetMode(void); //画面モードの取得
 
-#endif
-#pragma once
+#endif // !_MAIN_H_
