@@ -21,7 +21,7 @@ Author:平澤詩苑
 
 //D3DXCOLOR のマクロ
 #define XCOL_NONE		D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f)	// 無色透明
-#define XCOL_WHITE		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)	// 白
+#define XCOL_WHITE		D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)	// 白色
 #define XCOL_BLACK		D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f)	// 黒
 #define XCOL_YELLOW		D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)	// 黄色
 #define XCOL_RED		D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)	// 赤色
