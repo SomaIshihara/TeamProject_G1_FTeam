@@ -6,6 +6,7 @@
 //==========================================
 #include "main.h"
 #include "input.h"
+#include "camera.h"
 #include "debugproc.h"
 
 //マクロ定義
@@ -313,7 +314,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	InitDebugProc();
 
 	//オブジェクト初期化
-	
+	InitCamera();			//カメラ初期化
 
 	return S_OK;
 }
@@ -324,13 +325,13 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 void Uninit(void)
 {
 	//終了処理（自分が作ったものを捨てる）
-	
+	UninitCamera();
 
 	//デバッグ表示の終了
 	UninitDebugProc();
 
 	//キーボードの終了
-	//UninitKeyboard();
+	UninitKeyboard();
 
 	//XInput終了
 	XInputEnable(false);
@@ -356,10 +357,10 @@ void Uninit(void)
 void Update(void)
 {
 	//キーボードの更新
-	//UpdateKeyboard();
+	UpdateKeyboard();
 
 	//カメラ
-	//UpdateCamera();
+	UpdateCamera();
 
 	//ライト
 	//UpdateLight();
@@ -388,7 +389,7 @@ void Draw(void)
 #endif // _DEBUG
 
 		//カメラ設定
-		//SetCamera();
+		SetCamera();
 
 		//オブジェクト描画
 		
