@@ -9,7 +9,9 @@
 
 #include <Windows.h>
 #include <XInput.h>
+#include <stdio.h>
 #include <string.h>
+#include <stdio.h>
 #include "d3dx9.h"
 #define DIRECTINPUT_VERSION	(0x0800)	//ƒrƒ‹ƒh‚ÌŒx‘Îˆ
 #include "dinput.h"

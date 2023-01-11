@@ -5,6 +5,7 @@
 //
 //==========================================
 #include "main.h"
+#include "input.h"
 #include "debugproc.h"
 
 //マクロ定義
@@ -107,7 +108,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 
 	//カーソルを消す
 	SetShowCursor(true);
-
+	
 	//メッセージループ
 	while (1)
 	{
@@ -303,10 +304,10 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
 	//キーボードの初期化
-	/*if (FAILED(InitKeyboard(hInstance, hWnd)))
+	if (FAILED(InitKeyboard(hInstance, hWnd)))
 	{
 		return E_FAIL;
-	}*/
+	}
 
 	//デバッグ表示の初期化
 	InitDebugProc();
