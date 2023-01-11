@@ -23,12 +23,14 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"xinput.lib")
 
-//画面モード
+//画面(モード)の種類
 typedef enum
 {
-	MODE_TITLE = 0,
+	MODE_NONE = 0,
+	MODE_TITLE,
+	MODE_TUTORIAL,
 	MODE_GAME,
-	MODE_RESULT,
+	MODE_GAMERESULT,
 	MODE_MAX
 } MODE;
 
@@ -61,5 +63,7 @@ typedef struct
 //プロトタイプ宣言
 LPDIRECT3DDEVICE9 GetDevice(void);
 void SetShowCursor(bool bDisp);		//カーソル表示・非表示切り替え（trueで表示・falseで非表示）
+void SetMode(MODE mode); //画面のモード設定
+MODE GetMode(void); //画面モードの取得
 
 #endif // !_MAIN_H_
