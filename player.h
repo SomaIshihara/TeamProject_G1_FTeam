@@ -8,7 +8,6 @@
 #define _PLAYER_H_
 
 #include "main.h"
-#include "model.h"
 
 //プレイヤー構造体
 typedef struct
@@ -19,12 +18,8 @@ typedef struct
 	float fAngle;
 	D3DXVECTOR3 move;		//移動量
 	D3DXVECTOR3 rot;		//向き
-	Model aModel[EXITHUMAN_MODEL_NUM];		//モデル
 	int nNumModel;			//パーツ総数
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
-	bool bIntoSafeArea;		//セーフエリアに入っているか
-	bool bInfection;		//感染しているか（提出分は敵に当たったかの判定のみ）
-	Motion mMotion;			//モーション
 } Player;
 
 //プロトタイプ宣言
