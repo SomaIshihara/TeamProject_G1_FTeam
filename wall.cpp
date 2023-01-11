@@ -146,7 +146,7 @@ void LoadWall(void)
 	int nLine = 0;		//行
 	char aData[100];	//文字列
 
-						//ファイルポインタ
+	//ファイルポインタ
 	FILE *pFile;
 
 	//ポインタを設定

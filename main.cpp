@@ -108,7 +108,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 
 	//カーソルを消す
 	SetShowCursor(true);
-
+	
 	//メッセージループ
 	while (1)
 	{
@@ -447,5 +447,11 @@ void UpdateShowCursor(void)
 	{
 		while (ShowCursor(TRUE) <= -SHOWCURSOR_COUNTER);
 		ShowCursor(FALSE);
-	}
+	}	
+}
+
+//画面モードの取得
+MODE GetMode(void)
+{
+	return g_mode;
 }
