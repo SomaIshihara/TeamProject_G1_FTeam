@@ -107,7 +107,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 
 	//カーソルを消す
 	SetShowCursor(true);
-
+	
 	//メッセージループ
 	while (1)
 	{
