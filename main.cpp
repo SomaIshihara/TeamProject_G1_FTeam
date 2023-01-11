@@ -413,6 +413,14 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 }
 
 //========================
+//画面のモード設定
+//========================
+void SetMode(MODE mode)
+{
+	//使うときになったら入れて
+}
+
+//========================
 //カーソル表示設定
 //========================
 void SetShowCursor(bool bDisp)
@@ -449,8 +457,9 @@ void UpdateShowCursor(void)
 		ShowCursor(FALSE);
 	}	
 }
-
+//========================
 //画面モードの取得
+//========================
 MODE GetMode(void)
 {
 	return g_mode;
