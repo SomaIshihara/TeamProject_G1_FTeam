@@ -59,6 +59,8 @@ typedef enum
 #define DOWN_RIGHT	(0.25f)		//右下
 #define DOWN_LEFT	(-0.25f)	//左下
 
+#define MAX_MOJI	(256)		//外部ファイル読み込みなどに使用する格納する文字の最大数
+
 //頂点情報[2D]
 typedef struct
 {
