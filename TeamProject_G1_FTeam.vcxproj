@@ -162,6 +162,7 @@
     <ClCompile Include="debucproc.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="meshfield.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="wall.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="meshfield.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="wall.h" />

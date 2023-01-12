@@ -19,9 +19,6 @@
     <Filter Include="ソース ファイル\Game">
       <UniqueIdentifier>{936e406d-5ed9-4e5d-a698-d2c39ad1ee44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Main">
-      <UniqueIdentifier>{7ed007b9-9381-480e-9b69-59ebd123101a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Game">
       <UniqueIdentifier>{86bcb8ac-7a73-48cc-bb1c-0b1503ff0039}</UniqueIdentifier>
     </Filter>
@@ -49,6 +46,9 @@
     <Filter Include="ヘッダー ファイル\Result">
       <UniqueIdentifier>{3a170dc1-0a01-48a9-8ef6-f6b896c2aa08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Main">
+      <UniqueIdentifier>{7ed007b9-9381-480e-9b69-59ebd123101a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -71,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="title.cpp">
       <Filter>ソース ファイル\Title</Filter>
+    </ClCompile>
+    <ClCompile Include="meshfield.cpp">
+      <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="title.h">
       <Filter>ヘッダー ファイル\Title</Filter>
+    </ClInclude>
+    <ClInclude Include="meshfield.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
