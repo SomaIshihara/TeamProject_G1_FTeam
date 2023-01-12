@@ -24,15 +24,27 @@ Author:大宮愛羅
 #define POSV_HEIGHT		(500.0f)	//視点の高さ
 #define POSV_DEPTH		(0.0f)		//視点の奥行き
 
-//視点の距離
-#define POSV_DISTANCE	(200)
-#define POSV_UP			(40)
+//上方向ベクトル情報
+#define VECU_WIDTH      (0.0f)		//上方向ベクトルの幅
+#define VECU_HEIGHT		(1.0f)		//上方向ベクトルの高さ
+#define VECV_DEPTH		(0.0f)		//上方向ベクトルの奥行き
+
+//カメラ情報
+#define CAMERA_ROT		(45.0f)		//カメラの向き
+#define CAMERA_POS		(10.0f)		//カメラの位置
+
+//描画範囲
+#define DRAWING_AREA	(50000.0f)	//最大描画範囲
+
+//位置の差分を2倍
+#define DIFF_TIMES		(2.0f)		//2乗
+
 
 //グローバル変数
 Camera g_Camera;						//カメラの情報
 float  g_MaxDrawCamera = DRAWING_AREA;	//最大描画範囲
 
-//カメラの初期化
+										//カメラの初期化
 void InitCamera(void)
 {
 	g_Camera.posV = D3DXVECTOR3(POSV_WIDTH, POSV_HEIGHT, POSV_DEPTH);	//視点
@@ -46,19 +58,19 @@ void InitCamera(void)
 	g_Camera.posV.y = pPlayer->pos.y + POSV_ADD;		//視点Y
 	g_Camera.posV.z = pPlayer->pos.z - POSV_DISTANCE;	//視点Z
 
-	//注視点
+														//注視点
 	g_Camera.posR.x = pPlayer->pos.x;		//注視点X
 	g_Camera.posR.y = pPlayer->pos.y;		//注視点Y
 	g_Camera.posR.z = pPlayer->pos.z;		//注視点Z
 
-	//それぞれの位置の差分を格納する変数
+											//それぞれの位置の差分を格納する変数
 	float PosDiffX, PosDiffY, PosDiffZ;
 
 	PosDiffX = pow(g_Camera.posR.x - g_Camera.posV.x, DIFF_TIMES);	//２乗
 	PosDiffY = pow(g_Camera.posR.y - g_Camera.posV.y, DIFF_TIMES);	//２乗
 	PosDiffZ = pow(g_Camera.posR.z - g_Camera.posV.z, DIFF_TIMES);	//２乗
 
-	//長さの算出
+																	//長さの算出
 	g_Camera.fLength = sqrtf(PosDiffX + PosDiffY + PosDiffZ);
 }
 
@@ -71,7 +83,7 @@ void UninitCamera(void)
 //カメラの更新処理
 void UpdateCamera(void)
 {
-	
+
 }
 
 
