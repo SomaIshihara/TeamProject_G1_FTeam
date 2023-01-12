@@ -8,7 +8,7 @@ Author:平澤詩苑
 #include "title.h"
 #include "color.h"
 #include "input.h"
-//#include "fade.h"
+#include "fade.h"
 //#include "sound.h"
 
 #define NUM_TITLE_TEX	(3)									// タイトルに使う画像の数
@@ -160,7 +160,7 @@ void UpdateTitle(void)
 	if (GetKeyboardTrigger(DIK_RETURN) == true)
 	{
 		//チュートリアル画面に遷移
-		//SetFade(MODE_TUTORIAL);
+		SetFade(MODE_GAME);
 	}
 }
 

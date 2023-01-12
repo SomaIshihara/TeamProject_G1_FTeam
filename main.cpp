@@ -8,6 +8,9 @@
 #include "input.h"
 #include "camera.h"
 #include "debugproc.h"
+#include "fade.h"
+#include "game.h"
+#include "title.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -320,7 +323,8 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	InitDebugProc();
 
 	//オブジェクト初期化
-	InitCamera();			//カメラ初期化
+	//フェードの設定
+	InitFade(g_mode);
 
 	return S_OK;
 }
@@ -331,7 +335,11 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 void Uninit(void)
 {
 	//終了処理（自分が作ったものを捨てる）
-	UninitCamera();
+	UninitTitle();
+	UninitGame();
+
+	//フェード終了
+	UninitFade();
 
 	//デバッグ表示の終了
 	UninitDebugProc();
@@ -362,17 +370,34 @@ void Uninit(void)
 //========================
 void Update(void)
 {
+	FADE fadeState = GetFade();		//フェード状態取得
+
 	//キーボードの更新
 	UpdateKeyboard();
 
-	//カメラ
-	UpdateCamera();
-
-	//ライト
-	//UpdateLight();
-
 	//デバッグ表示
 	UpdateDebugProc();
+
+	if (fadeState == FADE_NONE)
+	{
+		switch (g_mode)
+		{
+		case MODE_TITLE:		//タイトル画面の更新
+			UpdateTitle();
+			break;
+
+		case MODE_TUTORIAL:		//チュートリアル画面の更新
+			//UpdateTutorial();
+			break;
+
+		case MODE_GAME:			//ゲーム画面の更新
+			UpdateGame();
+			break;
+		}
+	}
+
+	//フェードの更新処理
+	UpdateFade();
 }
 
 //========================
@@ -381,24 +406,37 @@ void Update(void)
 void Draw(void)
 {
 	//画面クリア（バックバッファとZバッファのクリア
-	g_pD3DDevice->Clear(0, NULL,
-		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 
 	//描画開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{//成功した場合
 
 #ifdef _DEBUG
-			//FPSを文字にして送る
-			PrintDebugProc("FPS:%d\n\n", g_nCountFPS);
+	 //FPSを文字にして送る
+		PrintDebugProc("FPS:%d\n\n", g_nCountFPS);
 #endif // _DEBUG
 
-		//カメラ設定
-		SetCamera();
+		/*======================================================================
+		各種オブジェクトの描画処理
+		========================================================================*/
+		switch (g_mode)
+		{
+		case MODE_TITLE:		//タイトル画面描画
+			DrawTitle();
+			break;
 
-		//オブジェクト描画
-		
+		case MODE_TUTORIAL:		//チュートリアル画面描画
+								//DrawTutorial();
+			break;
+
+		case MODE_GAME:			//ゲーム画面描画
+			DrawGame();
+			break;
+		}
+
+		//フェードの描画処理
+		DrawFade();
 
 		//デバッグ表示
 		DrawDebugProc();
@@ -424,7 +462,39 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 //========================
 void SetMode(MODE mode)
 {
-	//使うときになったら入れて
+	//現在の画面（モード）の終了処理
+	switch (g_mode)
+	{
+	case MODE_TITLE:		//タイトル画面終了
+		UninitTitle();
+		break;
+
+	case MODE_TUTORIAL:		//チュートリアル画面終了
+		//UninitTutorial();
+		break;
+
+	case MODE_GAME:			//ゲーム画面終了
+		UninitGame();
+		break;
+	}
+
+	//新しい画面（モード）の初期化処理
+	switch (mode)
+	{
+	case MODE_TITLE:		//タイトル画面初期化
+		InitTitle();
+		break;
+
+	case MODE_TUTORIAL:		//チュートリアル画面初期化
+		//InitTutorial();
+		break;
+
+	case MODE_GAME:			//ゲーム画面初期化
+		InitGame();
+		break;
+	}
+
+	g_mode = mode;		//現在のモードを切り替える
 }
 
 //========================
