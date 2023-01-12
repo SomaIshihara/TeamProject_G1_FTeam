@@ -13,16 +13,16 @@ Model g_aModel[ANIMAL_MAX];	//モデル構造体
 //ファイルパス
 const char *c_pFileNameModel[] =
 {
-	"data/TEXTURE/ino/ino_body.x",
-	"data/TEXTURE/ino/ino_head.x",
-	"data/TEXTURE/ino/ino_left_forefoot.x",
-	"data/TEXTURE/ino/ino_left_foretoes.x",
-	"data/TEXTURE/ino/ino_left_hindleg.x",
-	"data/TEXTURE/ino/ino_left_hindtoes.x",
-	"data/TEXTURE/ino/ino_right_forefoot.x",
-	"data/TEXTURE/ino/ino_right_foretoes.x",
-	"data/TEXTURE/ino/ino_right_hindleg.x",
-	"data/TEXTURE/ino/ino_right_hindtoes.x"
+	"data/MODEL/ino/ino_body.x",
+	"data/MODEL/ino/ino_head.x",
+	"data/MODEL/ino/ino_left_forefoot.x",
+	"data/MODEL/ino/ino_left_foretoes.x",
+	"data/MODEL/ino/ino_left_hindleg.x",
+	"data/MODEL/ino/ino_left_hindtoes.x",
+	"data/MODEL/ino/ino_right_forefoot.x",
+	"data/MODEL/ino/ino_right_foretoes.x",
+	"data/MODEL/ino/ino_right_hindleg.x",
+	"data/MODEL/ino/ino_right_hindtoes.x"
 };
 
 //========================
@@ -31,13 +31,14 @@ const char *c_pFileNameModel[] =
 void InitModel(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
-
+	
 	//変数初期化
 	for (int nCntModel = 0; nCntModel < ANIMAL_MAX; nCntModel++)
 	{
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
-			g_aModel[nCntModel] = {};
+			g_aModel[nCntModel].aParts[nCntParts] = {};
+			g_aModel[nCntModel].aParts[nCntParts].bUse = false;
 		}
 	}
 
@@ -72,6 +73,9 @@ void InitModel(void)
 							&g_aModel[nCntModel].aParts[nCntParts].apTexture[nCntTex]);
 					}
 				}
+
+				//使用している状態にする
+				g_aModel[nCntModel].aParts[nCntParts].bUse = true;
 			}
 			else
 			{//失敗したら1モデル分終了
