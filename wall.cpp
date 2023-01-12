@@ -263,27 +263,27 @@ void LoadWall(void)
 
 				//ïù
 			case CASE_TWO:
-				g_aWall[nLine].fWidth = atof(aData);
+				g_aWall[nLine].fWidth = (float)atof(aData);
 				break;
 
 				//çÇÇ≥
 			case CASE_THREE:
-				g_aWall[nLine].fHeight = atof(aData);
+				g_aWall[nLine].fHeight = (float)atof(aData);
 				break;
 
 				//Xç¿ïW
 			case CASE_FOUR:
-				g_aWall[nLine].pos.x = atof(aData);
+				g_aWall[nLine].pos.x = (float)atof(aData);
 				break;
 
 				//Yç¿ïW
 			case CASE_FIVE:
-				g_aWall[nLine].pos.y = atof(aData);
+				g_aWall[nLine].pos.y = (float)atof(aData);
 				break;
 
 				//Zç¿ïW
 			case CASE_SIX:
-				g_aWall[nLine].pos.z = atof(aData);
+				g_aWall[nLine].pos.z = (float)atof(aData);
 				break;
 			}
 

@@ -9,6 +9,7 @@ Author:平澤詩苑
 #include "camera.h"
 #include "color.h"
 #include "player.h"
+#include "model.h"
 #include "wall.h"
 #include "game.h"
 #include "fade.h"
@@ -26,6 +27,7 @@ bool					g_bPause = false;				// ポーズ
 void InitGame(void)
 {
 	InitBg();			// 背景の初期化処理
+	InitModel();		// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();		// プレイヤーの初期化処理
 	InitCamera();		// カメラの初期化処理
 	InitWall();			// 壁の初期化処理
@@ -50,6 +52,7 @@ void UninitGame(void)
 	UninitWall();		// 壁の終了処理
 	UninitCamera();		// カメラの終了処理
 	UninitPlayer();		// プレイヤーの終了処理
+	UninitModel();		// モデルの終了処理（ここは順番は問わない）
 
 						//ゲームBGM停止
 	//StopSound(SOUND_LABEL_GAMEBGM);

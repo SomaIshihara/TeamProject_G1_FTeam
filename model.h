@@ -81,6 +81,7 @@ typedef struct
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
 	LPDIRECT3DTEXTURE9 apTexture[16];	//テクスチャポインタ
 	int mIdxModelParent;	//親モデルインデックス
+	bool bUse;				//使用の有無
 } Parts;
 
 //モデル構造体
