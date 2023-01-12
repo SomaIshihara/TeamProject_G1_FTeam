@@ -8,13 +8,7 @@
 #define _PLAYER_H_
 
 #include "main.h"
-
-//動物種類列挙（一旦いのししのみ）
-typedef enum
-{
-	ANIMAL_WILDBOAR = 0,	//いのしし
-	ANIMAL_MAX
-} ANIMAL;
+#include "model.h"
 
 //プレイヤー構造体
 typedef struct
@@ -35,6 +29,7 @@ typedef struct
 	int nNumHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
 
 	//描画類
+	Model model;			//使用モデル
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
 	int nIdxShadow;			//影番号
 	bool bUse;				//使用の有無
