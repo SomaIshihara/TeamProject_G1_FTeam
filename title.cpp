@@ -31,6 +31,7 @@ LPDIRECT3DVERTEXBUFFER9		g_pVtxBuffTitle = NULL;					//頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9			g_pTextureTitle[NUM_TITLE_TEX] = {};	//テクスチャのポインタ
 Title						g_Title[NUM_TITLE_TEX];					//タイトルの情報
 
+//タイトル画面に使用するアイコンたちのパス
 const char *c_apTitleTexName[NUM_TITLE_TEX] = {
 	"data/TEXTURE/title.png",
 	"data/TEXTURE/press.png",
@@ -72,10 +73,10 @@ void InitTitle(void)
 
 		//rhwの設定
 		{
-			pVtx[VTX_LE_UP].rhw = 1.0f;
-			pVtx[VTX_RI_UP].rhw = 1.0f;
-			pVtx[VTX_LE_DO].rhw = 1.0f;
-			pVtx[VTX_RI_DO].rhw = 1.0f;
+			pVtx[VTX_LE_UP].rhw = RHW;
+			pVtx[VTX_RI_UP].rhw = RHW;
+			pVtx[VTX_LE_DO].rhw = RHW;
+			pVtx[VTX_RI_DO].rhw = RHW;
 		}
 
 		//頂点カラーの設定
