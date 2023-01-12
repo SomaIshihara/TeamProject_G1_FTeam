@@ -10,6 +10,18 @@
 #include "main.h"
 #include "model.h"
 
+//プレイヤーモデルの構造体
+typedef struct
+{
+	int nIdxModel;			//インデックス番号
+	D3DXVECTOR3 pos;		//位置
+	D3DXVECTOR3 rot;		//向き
+	LPD3DXMESH pMesh;		//メッシュ
+	LPD3DXBUFFER pBuffMat;	//マテリアルポインタ
+	DWORD dwNumMat;			//マテリアルの数
+
+}PlayModel;
+
 //プレイヤー構造体
 typedef struct
 {
@@ -33,6 +45,9 @@ typedef struct
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
 	int nIdxShadow;			//影番号
 	bool bUse;				//使用の有無
+
+	PlayModel aPlaymodel[10];
+
 } Player;
 
 //プロトタイプ宣言
