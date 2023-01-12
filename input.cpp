@@ -15,7 +15,7 @@ Author:平澤詩苑
 LPDIRECTINPUT8		 g_pInput = NULL;			//DirectInputオブジェクトへのポインタ
 LPDIRECTINPUTDEVICE8 g_pDevKeyboard = NULL;		//入力デバイス(キーボード)へのポインタ
 
-												//キーボード
+//キーボード
 BYTE g_aKeyState[NUM_KEY_MAX];					//キーボードのプレス情報
 BYTE g_aKeyStateTrigger[NUM_KEY_MAX];			//キーボードのトリガー情報
 BYTE g_aKeyStateRelease[NUM_KEY_MAX];			//キーボードのリリース情報
@@ -24,9 +24,9 @@ BYTE g_aKeyStateRelease[NUM_KEY_MAX];			//キーボードのリリース情報
 /*コントローラーの入力情報を格納する変数を作りましょう*/
 
 
-												//--------------------------------------------------------
-												//				キーボードの初期化処理
-												//--------------------------------------------------------
+//--------------------------------------------------------
+//				キーボードの初期化処理
+//--------------------------------------------------------
 HRESULT InitKeyboard(HINSTANCE hInstance, HWND hWnd)
 {
 	//DirectInputオブジェクトの生成
@@ -86,7 +86,7 @@ void UninitKeyboard(void)
 void UpdateKeyboard(void)
 {
 	BYTE aKeyState[NUM_KEY_MAX];	//キーボードの入力情報
-	/*　こ↑こ↓にコントローラーの入力情報を一時格納する変数を作りましょう*/
+	/*　ここにコントローラーの入力情報を一時格納する変数を作りましょう*/
 
 									//入力デバイスからデータを取得
 	if (SUCCEEDED(g_pDevKeyboard->GetDeviceState(sizeof(aKeyState), &aKeyState[0])))
