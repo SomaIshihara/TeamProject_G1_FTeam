@@ -9,17 +9,35 @@
 
 #include "main.h"
 
+//動物種類列挙（一旦いのししのみ）
+typedef enum
+{
+	ANIMAL_WILDBOAR = 0,	//いのしし
+	ANIMAL_MAX
+} ANIMAL;
+
 //プレイヤー構造体
 typedef struct
 {
+	//位置類
 	D3DXVECTOR3 pos;		//位置
 	D3DXVECTOR3 posOld;		//前回の位置
-	float fLength;
-	float fAngle;
 	D3DXVECTOR3 move;		//移動量
 	D3DXVECTOR3 rot;		//向き
-	int nNumModel;			//パーツ総数
+
+	//長さ・角度
+	float fLength;
+	float fAngle;
+
+	//パラメータ類
+	ANIMAL animal;			//使用している動物
+	int nScore;				//得点
+	int nNumHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
+
+	//描画類
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
+	int nIdxShadow;			//影番号
+	bool bUse;				//使用の有無
 } Player;
 
 //プロトタイプ宣言
