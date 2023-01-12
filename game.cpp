@@ -12,6 +12,7 @@ Author:平澤詩苑
 #include "wall.h"
 #include "game.h"
 #include "fade.h"
+#include "bg.h"
 //#include "pause.h"
 //#include "sound.h"
 
@@ -24,6 +25,7 @@ bool					g_bPause = false;				// ポーズ
 //------------------------------------------------
 void InitGame(void)
 {
+	InitBg();			// 背景の初期化処理
 	InitPlayer();		// プレイヤーの初期化処理
 	InitCamera();		// カメラの初期化処理
 	InitWall();			// 壁の初期化処理
@@ -44,6 +46,7 @@ void UninitGame(void)
 	========================================================================*/
 
 	/*エフェクトなどの板ポリゴンの終了処理*/
+	UninitBg();			// 背景の終了処理
 	UninitWall();		// 壁の終了処理
 	UninitCamera();		// カメラの終了処理
 	UninitPlayer();		// プレイヤーの終了処理
@@ -63,9 +66,10 @@ void UpdateGame(void)
 	//ポーズがOFF
 	if (g_bPause == false)
 	{
-			UpdatePlayer();		//プレイヤーの更新処理
-			UpdateCamera();		//カメラの更新処理
-			UpdateWall();			//壁の更新処理
+			UpdateBg();			// 背景の更新処理
+			UpdatePlayer();		// プレイヤーの更新処理
+			UpdateCamera();		// カメラの更新処理
+			UpdateWall();		// 壁の更新処理
 	}
 
 	else
@@ -113,6 +117,7 @@ void DrawGame(void)
 	//ゲーム内オブジェクトの描画処理
 	SetCamera();		// カメラの設定処理
 
+	DrawBg();			// 背景の描画処理
 	DrawWall();			// 壁の描画処理
 	DrawPlayer();		// プレイヤーの描画処理
 }
