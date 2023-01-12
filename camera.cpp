@@ -17,8 +17,8 @@ Author:大宮愛羅
 #define POSV_SPEED	(10.0f)
 
 //視点の距離
-#define POSV_DISTANCE	(1000)
-#define POSV_UP			(400)
+#define POSV_DISTANCE	(200)
+#define POSV_UP			(40)
 
 //グローバル変数
 Camera g_Camera;					//カメラの情報
