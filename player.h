@@ -8,13 +8,19 @@
 #define _PLAYER_H_
 
 #include "main.h"
+#include "model.h"
 
-//動物種類列挙（一旦いのししのみ）
-typedef enum
+//プレイヤーモデルの構造体
+typedef struct
 {
-	ANIMAL_WILDBOAR = 0,	//いのしし
-	ANIMAL_MAX
-} ANIMAL;
+	int nIdxModel;			//インデックス番号
+	D3DXVECTOR3 pos;		//位置
+	D3DXVECTOR3 rot;		//向き
+	LPD3DXMESH pMesh;		//メッシュ
+	LPD3DXBUFFER pBuffMat;	//マテリアルポインタ
+	DWORD dwNumMat;			//マテリアルの数
+
+}PlayModel;
 
 //プレイヤー構造体
 typedef struct
@@ -35,9 +41,13 @@ typedef struct
 	int nNumHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
 
 	//描画類
+	Model model;			//使用モデル
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
 	int nIdxShadow;			//影番号
 	bool bUse;				//使用の有無
+
+	PlayModel aPlaymodel[10];
+
 } Player;
 
 //プロトタイプ宣言
