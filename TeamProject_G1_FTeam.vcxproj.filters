@@ -84,6 +84,9 @@
     <ClCompile Include="bg.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -109,18 +112,6 @@
     </ClInclude>
     <ClInclude Include="title.h">
       <Filter>ヘッダー ファイル\Title</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="fade.h">
-      <Filter>ヘッダー ファイル\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="tutorial.h">
-      <Filter>ヘッダー ファイル\Tutorial</Filter>
-    </ClInclude>
-    <ClInclude Include="bg.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

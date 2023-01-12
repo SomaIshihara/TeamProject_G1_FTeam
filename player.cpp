@@ -6,6 +6,7 @@
 //==========================================
 #include "main.h"
 #include "player.h"
+#include "model.h"
 #include "input.h"
 #include "wall.h"
 #include "debugproc.h"
@@ -13,9 +14,8 @@
 #include <assert.h>
 
 //マクロ
-#define PLAYER_MOVE_SPEED	(7.0f)	//プレイヤー移動速度
+#define PLAYER_MOVE_SPEED	(3.0f)	//プレイヤー移動速度
 #define DUMP_COEF			(0.4f)	//減衰係数
-#define BULLET_SPEED		(20.0f)	//弾の速さ
 
 //向き
 #define ROT_WA	(-0.75f * D3DX_PI)	//左上
@@ -53,6 +53,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].nScore = 0;
 		g_aPlayer[nCntPlayer].nNumHitPlayer = -1;
 
+		//g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].nIdxShadow = -1;
 		g_aPlayer[nCntPlayer].bUse = false;
 	}
