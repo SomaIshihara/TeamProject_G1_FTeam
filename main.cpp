@@ -11,6 +11,8 @@
 #include "fade.h"
 #include "game.h"
 #include "title.h"
+#include "color.h"
+#include "tutorial.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -335,8 +337,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 void Uninit(void)
 {
 	//終了処理（自分が作ったものを捨てる）
-	UninitTitle();
-	UninitGame();
+	UninitTitle();		// タイトルの終了処理
+	UninitTutorial();	// チュートリアルの終了処理
+	UninitGame();		// ゲームの終了処理
 
 	//フェード終了
 	UninitFade();
@@ -387,7 +390,7 @@ void Update(void)
 			break;
 
 		case MODE_TUTORIAL:		//チュートリアル画面の更新
-			//UpdateTutorial();
+			UpdateTutorial();
 			break;
 
 		case MODE_GAME:			//ゲーム画面の更新
@@ -406,7 +409,7 @@ void Update(void)
 void Draw(void)
 {
 	//画面クリア（バックバッファとZバッファのクリア
-	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), RGBA_BLACK, 1.0f, 0);
 
 	//描画開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
@@ -427,7 +430,7 @@ void Draw(void)
 			break;
 
 		case MODE_TUTORIAL:		//チュートリアル画面描画
-								//DrawTutorial();
+			DrawTutorial();
 			break;
 
 		case MODE_GAME:			//ゲーム画面描画
@@ -470,7 +473,7 @@ void SetMode(MODE mode)
 		break;
 
 	case MODE_TUTORIAL:		//チュートリアル画面終了
-		//UninitTutorial();
+		UninitTutorial();
 		break;
 
 	case MODE_GAME:			//ゲーム画面終了
@@ -486,7 +489,7 @@ void SetMode(MODE mode)
 		break;
 
 	case MODE_TUTORIAL:		//チュートリアル画面初期化
-		//InitTutorial();
+		InitTutorial();
 		break;
 
 	case MODE_GAME:			//ゲーム画面初期化

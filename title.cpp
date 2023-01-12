@@ -160,7 +160,7 @@ void UpdateTitle(void)
 	if (GetKeyboardTrigger(DIK_RETURN) == true)
 	{
 		//チュートリアル画面に遷移
-		SetFade(MODE_GAME);
+		SetFade(MODE_TUTORIAL);
 	}
 }
 
