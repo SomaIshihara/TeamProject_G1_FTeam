@@ -198,7 +198,7 @@ void DrawPlayer(void)
 				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
 				D3DXMATRIX mtxParent;					//親のマトリ
 
-														//"モデルの"ワールドマトリックス初期化
+				//"モデルの"ワールドマトリックス初期化
 				D3DXMatrixIdentity(&g_aPlayer[nCntPlayer].model.aParts[nCntParts].mtxWorld);
 
 				//向きを反映
