@@ -19,7 +19,6 @@ Author:平澤詩苑
 //#include "sound.h"
 
 //グローバル変数宣言
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffGame = NULL;			// 頂点バッファへのポインタ
 bool					g_bPause = false;				// ポーズ
 
 //------------------------------------------------
