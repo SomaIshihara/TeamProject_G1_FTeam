@@ -17,6 +17,13 @@
 #define PLAYER_MOVE_SPEED	(3.0f)	//プレイヤー移動速度
 #define DUMP_COEF			(0.4f)	//減衰係数
 
+//ダッシュ関連マクロ
+
+//#define ADD_GAUGE			(10.0f)	//ゲージ増加量
+//#define MAX_GAUGE			(25.0f)	//ゲージ最大値
+//#define GAUGE_BONUS			(15.0f)	//ボーナスゲージ
+
+
 //向き
 #define ROT_WA	(-0.75f * D3DX_PI)	//左上
 #define ROT_WD	(0.75f * D3DX_PI)	//右上
@@ -49,13 +56,14 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].move = ZERO_SET;
 		g_aPlayer[nCntPlayer].rot = ZERO_SET;
 
+
 		g_aPlayer[nCntPlayer].animal = ANIMAL_WILDBOAR;
 		g_aPlayer[nCntPlayer].nScore = 0;
 		g_aPlayer[nCntPlayer].nNumHitPlayer = -1;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].nIdxShadow = -1;
-		g_aPlayer[nCntPlayer].bUse = false;
+		g_aPlayer[nCntPlayer].bUse = true;
 	}
 }
 
@@ -79,6 +87,8 @@ void UninitPlayer(void)
 //========================
 void UpdatePlayer(void)
 {
+	float nGauge[MAX_USE_GAMEPAD];
+
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
@@ -143,6 +153,40 @@ void UpdatePlayer(void)
 				g_aPlayer[nCntPlayer].move.z = cosf(FIX_ROT((g_aPlayer[nCntPlayer].rot.y + D3DX_PI))) * PLAYER_MOVE_SPEED;
 			}
 
+			//移動方法（ダッシュ）押して離す
+			{
+				//nGauge[nCntPlayer] = g_aPlayer[nCntPlayer].movegauge / MAX_GAUGE;
+
+				//if (GetKeyboardPress(DIK_SPACE) == true)
+				//{//スペースキーは押された
+
+				//	g_aPlayer[nCntPlayer].movegauge += ADD_GAUGE;
+
+				//	if (g_aPlayer[nCntPlayer].movegauge >= MAX_GAUGE)
+				//	{
+				//		g_aPlayer[nCntPlayer].movegauge = 0;
+				//	}
+
+				//}
+
+				//if (GetKeyboardRelease(DIK_SPACE) == true)
+				//{//SPACEキーが離された
+				// //進行方向の設定
+
+				//	if (nGauge[nCntPlayer] >= 0.9f)
+				//	{
+				//		g_aPlayer[nCntPlayer].movegauge += GAUGE_BONUS;
+				//	}
+
+				//	g_aPlayer[nCntPlayer].move.x += sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].movegauge;
+				//	g_aPlayer[nCntPlayer].move.z += cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].movegauge;
+
+				//	g_aPlayer[nCntPlayer].movegauge = 0;
+
+				//}
+
+			}
+
 			//ボタン操作に応じてプレイヤー・カメラ視点・注視点移動
 			g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
 			g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
@@ -198,6 +242,10 @@ void DrawPlayer(void)
 				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
 				D3DXMATRIX mtxParent;					//親のマトリ
 
+				//仮でオフセットをそのまま使う
+				g_aPlayer[nCntPlayer].model.aParts[nCntParts].pos = g_aPlayer[nCntPlayer].model.aParts[nCntParts].posOffset;
+				g_aPlayer[nCntPlayer].model.aParts[nCntParts].rot = g_aPlayer[nCntPlayer].model.aParts[nCntParts].rotOffset;
+
 				//"モデルの"ワールドマトリックス初期化
 				D3DXMatrixIdentity(&g_aPlayer[nCntPlayer].model.aParts[nCntParts].mtxWorld);
 
@@ -230,14 +278,8 @@ void DrawPlayer(void)
 
 				for (int nCntMat = 0; nCntMat < (int)g_aPlayer[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
 				{
-					//プレイヤーは青
 					//マテリアル設定
-					D3DMATERIAL9 changeMat = pMat[nCntMat].MatD3D;
-					//ダメージ状態なら赤追加
-					changeMat.Diffuse = D3DXCOLOR(0.0f, 0.45f, 0.74f, 1.0f);
-
-					//マテリアル設定
-					pDevice->SetMaterial(&changeMat);
+					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 					//テクスチャ設定
 					pDevice->SetTexture(0, g_aPlayer[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
@@ -248,7 +290,6 @@ void DrawPlayer(void)
 			}
 		}
 	}
-
 
 	//マテリアルを戻す
 	pDevice->SetMaterial(&matDef);

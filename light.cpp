@@ -27,15 +27,16 @@ const D3DXVECTOR3 c_apLightVec[NUM_LIGHT] = {
 //--------------------------------------------------------------------------------------------------------
 void InitLight(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-
 	//デバイスの取得
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	D3DXVECTOR3 aVecDir[NUM_LIGHT];		//設定用方向ベクトル
 
 	for (int nCntLight = 0; nCntLight < NUM_LIGHT; nCntLight++)
 	{
+		//ライトの方向を設定
+		aVecDir[nCntLight] = c_apLightVec[nCntLight];
+
 		//ライトの情報をクリアする
 		ZeroMemory(&g_aLight[nCntLight], sizeof(D3DLIGHT9));
 
@@ -45,8 +46,6 @@ void InitLight(void)
 		//ライトの拡散光を設定
 		g_aLight[nCntLight].Diffuse = XCOL_WHITE;
 
-		//ライトの方向を設定
-		aVecDir[nCntLight] = c_apLightVec[nCntLight];
 		D3DXVec3Normalize(&aVecDir[nCntLight], &aVecDir[nCntLight]);		//ベクトルを正規化する
 		g_aLight[nCntLight].Direction = aVecDir[nCntLight];
 

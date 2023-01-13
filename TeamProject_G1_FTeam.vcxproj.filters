@@ -90,6 +90,9 @@
     <ClCompile Include="meshfield.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="pause.cpp">
+      <Filter>ソース ファイル\Pause</Filter>
+    </ClCompile>
     <ClCompile Include="light.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
@@ -138,7 +141,10 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="light.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="pause.h">
+      <Filter>ヘッダー ファイル\Pause</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

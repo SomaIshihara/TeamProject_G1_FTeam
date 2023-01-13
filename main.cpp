@@ -13,6 +13,7 @@
 #include "title.h"
 #include "color.h"
 #include "tutorial.h"
+#include "light.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -34,7 +35,7 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_TITLE;		// 現在のモード
+MODE			g_mode = MODE_GAME;		// 現在のモード
 #else
 MODE			g_mode = MODE_TITLE;		// 現在のモード
 #endif
@@ -319,7 +320,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	if (FAILED(InitKeyboard(hInstance, hWnd)))
 	{
 		return E_FAIL;
-	}
+	}	
 
 	//デバッグ表示の初期化
 	InitDebugProc();
@@ -342,7 +343,7 @@ void Uninit(void)
 	UninitGame();		// ゲームの終了処理
 
 	//フェード終了
-	UninitFade();
+	UninitFade();	
 
 	//デバッグ表示の終了
 	UninitDebugProc();
@@ -376,7 +377,7 @@ void Update(void)
 	FADE fadeState = GetFade();		//フェード状態取得
 
 	//キーボードの更新
-	UpdateKeyboard();
+	UpdateKeyboard();	
 
 	//デバッグ表示
 	UpdateDebugProc();

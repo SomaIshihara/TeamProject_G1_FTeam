@@ -38,7 +38,7 @@ void InitMeshfield(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\block000.jpg",
+		"data\\TEXTURE\\field001.jpg",
 		&g_pTextureMeshfield);
 
 	//構造体を初期化
@@ -77,7 +77,7 @@ void InitMeshfield(void)
 				= D3DXVECTOR3(
 					(nCntVtxX - g_MeshField[0].nBlock_X / 2) * g_MeshField[0].fLength_X,
 					0.0f,
-					(nCntVtxZ - g_MeshField[0].nBlock_Z / 2) * g_MeshField[0].fLength_Z);
+					-(nCntVtxZ - g_MeshField[0].nBlock_Z / 2) * g_MeshField[0].fLength_Z);
 
 			//法線の設定
 			pVtx[nCntVtxZ*(g_MeshField[0].nBlock_X + 1) + nCntVtxX].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
