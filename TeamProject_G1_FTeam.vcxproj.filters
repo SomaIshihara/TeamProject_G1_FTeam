@@ -96,6 +96,9 @@
     <ClCompile Include="light.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="meshcylinder.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="pause.h">
       <Filter>ヘッダー ファイル\Pause</Filter>
+    </ClInclude>
+    <ClInclude Include="meshcylinder.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
