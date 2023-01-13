@@ -320,10 +320,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	if (FAILED(InitKeyboard(hInstance, hWnd)))
 	{
 		return E_FAIL;
-	}
-
-	//ライト
-	InitLight();
+	}	
 
 	//デバッグ表示の初期化
 	InitDebugProc();
@@ -346,10 +343,7 @@ void Uninit(void)
 	UninitGame();		// ゲームの終了処理
 
 	//フェード終了
-	UninitFade();
-
-	//ライト
-	UninitLight();
+	UninitFade();	
 
 	//デバッグ表示の終了
 	UninitDebugProc();
@@ -383,10 +377,7 @@ void Update(void)
 	FADE fadeState = GetFade();		//フェード状態取得
 
 	//キーボードの更新
-	UpdateKeyboard();
-
-	//ライト
-	UpdateLight();
+	UpdateKeyboard();	
 
 	//デバッグ表示
 	UpdateDebugProc();
