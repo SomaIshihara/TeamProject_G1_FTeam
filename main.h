@@ -44,6 +44,9 @@ typedef enum
 #define FVF_VERTEX_2D		(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//2D
 #define FVF_VERTEX_3D		(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//3D
 #define FIX_ROT(x)			((float)fmod(x + (D3DX_PI * 3), D3DX_PI * 2) - D3DX_PI)	//角度を-PI~PIに修正
+#define fatof(x)			(float)atof(x)	//通常のatofだとdouble型で返してくるのでfloatキャストも行うようにしたもの
+
+#define RHW			(1.0f)
 
 #define NIL_F		(0.0f)		//0.0f座標
 
@@ -58,6 +61,8 @@ typedef enum
 #define UP_LEFT		(-0.75f)	//左上
 #define DOWN_RIGHT	(0.25f)		//右下
 #define DOWN_LEFT	(-0.25f)	//左下
+
+#define MAX_MOJI	(256)		//外部ファイル読み込みなどに使用する格納する文字の最大数
 
 //頂点情報[2D]
 typedef struct

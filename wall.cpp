@@ -7,10 +7,45 @@ Author:大宮愛羅
 
 #include "main.h"
 #include "wall.h"
-//#include "player.h"
-//#include "input.h"
+#include "player.h"
+#include "input.h"
 
-#define MAX_WALL	(4)
+//マクロ定義
+#define MAX_WALL		(4)		//壁の最大数
+#define MAX_COLOR		(255)	//色の最大値
+#define MAX_STRING		(100)	//文字列の最大数
+#define DISPLAY_ADD		(4)		//表示する分だけ加算
+
+//位置情報
+#define MIN_POS			(0.0f)
+
+//法線情報
+#define NOR_WIDTH		(0.0f)	//法線の幅
+#define NOR_HEGHT		(1.0f)	//法線の高さ
+#define	NOR_DEPTH		(0.0f)	//法線の奥行き
+
+//テクスチャ情報
+#define MAX_TEX			(1.0f)	//テクスチャの最大値
+#define MIN_TEX			(0.0f)	//テクスチャの最小値
+
+//CSV関連
+#define START_LE_NUM	(0)		//文字の開始番号
+#define START_CO_NUM	(0)		//列の開始番号
+#define START_LI_NUM	(0)		//行の開始番号
+
+//壁の向き
+#define ANGLE_R			(-0.5f)	//右向き
+#define ANGLE_L			(0.5f)	//左向き
+#define ANGLE_F			(0.0f)	//正面向き
+
+//ケース番号
+#define CASE_ZERO		(0)
+#define CASE_ONE		(1)
+#define CASE_TWO		(2)
+#define CASE_THREE		(3)
+#define CASE_FOUR		(4)
+#define CASE_FIVE		(5)
+#define	CASE_SIX		(6)
 
 //グローバル変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffWall = NULL;		//バッファへのポインタ
@@ -18,7 +53,7 @@ LPDIRECT3DTEXTURE9		g_pTextureWall = NULL;		//テクスチャへのポインタ
 D3DXMATRIX				g_mtxWorldWall;				//ワールドマトリックス
 Wall					g_aWall[MAX_WALL];			//壁の情報
 
-													//壁の初期化
+//壁の初期化
 void InitWall(void)
 {
 	//デバイス
@@ -50,26 +85,26 @@ void InitWall(void)
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_aWall[nCntWall].fWidth, +g_aWall[nCntWall].fHeight, +g_aWall[nCntWall].fDepth);	//左上端
 		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_aWall[nCntWall].fWidth, +g_aWall[nCntWall].fHeight, -g_aWall[nCntWall].fDepth);	//右上端
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_aWall[nCntWall].fWidth, 0.0f, +g_aWall[nCntWall].fDepth);							//左下端
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_aWall[nCntWall].fWidth, 0.0f, -g_aWall[nCntWall].fDepth);							//右下端
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_aWall[nCntWall].fWidth, MIN_POS, +g_aWall[nCntWall].fDepth);						//左下端
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_aWall[nCntWall].fWidth, MIN_POS, -g_aWall[nCntWall].fDepth);						//右下端
 
-																														//法線ベクトルの設定
-		pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//左上端
-		pVtx[VTX_RI_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//右上端
-		pVtx[VTX_LE_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//左下端
-		pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);		//右下端
+		//法線ベクトルの設定
+		pVtx[VTX_LE_UP].nor = D3DXVECTOR3(NOR_WIDTH, NOR_HEGHT, NOR_DEPTH);		//左上端
+		pVtx[VTX_RI_UP].nor = D3DXVECTOR3(NOR_WIDTH, NOR_HEGHT, NOR_DEPTH);		//右上端
+		pVtx[VTX_LE_DO].nor = D3DXVECTOR3(NOR_WIDTH, NOR_HEGHT, NOR_DEPTH);		//左下端
+		pVtx[VTX_RI_DO].nor = D3DXVECTOR3(NOR_WIDTH, NOR_HEGHT, NOR_DEPTH);		//右下端
 
-															//頂点カラー設定
-		pVtx[VTX_LE_UP].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//左上端
-		pVtx[VTX_RI_UP].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//右上端
-		pVtx[VTX_LE_DO].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//左下端
-		pVtx[VTX_RI_DO].col = D3DCOLOR_RGBA(255, 255, 255, 255);	//右下端
+		//頂点カラー設定
+		pVtx[VTX_LE_UP].col = D3DCOLOR_RGBA(MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR);	//左上端
+		pVtx[VTX_RI_UP].col = D3DCOLOR_RGBA(MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR);	//右上端
+		pVtx[VTX_LE_DO].col = D3DCOLOR_RGBA(MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR);	//左下端
+		pVtx[VTX_RI_DO].col = D3DCOLOR_RGBA(MAX_COLOR, MAX_COLOR, MAX_COLOR, MAX_COLOR);	//右下端
 
-															//テクスチャ座標の設定
-		pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);				//左上端
-		pVtx[VTX_RI_UP].tex = D3DXVECTOR2(1.0f, 0.0f);				//右上端
-		pVtx[VTX_LE_DO].tex = D3DXVECTOR2(0.0f, 1.0f);				//左下端
-		pVtx[VTX_RI_DO].tex = D3DXVECTOR2(1.0f, 1.0f);				//右下端
+		//テクスチャ座標の設定
+		pVtx[VTX_LE_UP].tex = D3DXVECTOR2(MIN_TEX, MIN_TEX);				//左上端
+		pVtx[VTX_RI_UP].tex = D3DXVECTOR2(MAX_TEX, MIN_TEX);				//右上端
+		pVtx[VTX_LE_DO].tex = D3DXVECTOR2(MIN_TEX, MAX_TEX);				//左下端
+		pVtx[VTX_RI_DO].tex = D3DXVECTOR2(MAX_TEX, MAX_TEX);				//右下端
 	}
 	//頂点バッファをアンロックする
 	g_pVtxBuffWall->Unlock();
@@ -105,7 +140,7 @@ void DrawWall(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	D3DXMATRIX mtxRot, mtxTrans; //計算用マトリックス
 
-								 //頂点バッファをデータストリームに設定
+	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffWall, 0, sizeof(VERTEX_3D));
 
 	//頂点フォーマットの設定
@@ -141,10 +176,10 @@ void DrawWall(void)
 //壁を読み込む
 void LoadWall(void)
 {
-	int nLetter = 0;	//文字sw
-	int nColumn = 0;	//列
-	int nLine = 0;		//行
-	char aData[100];	//文字列
+	int nLetter = START_LE_NUM;	//文字
+	int nColumn = START_CO_NUM;	//列
+	int nLine = START_LI_NUM;	//行
+	char aData[MAX_STRING];		//文字列
 
 	//ファイルポインタ
 	FILE *pFile;
@@ -192,24 +227,24 @@ void LoadWall(void)
 			switch (nColumn)
 			{
 				//種類
-			case 0:
+			case CASE_ZERO:
 				g_aWall[nLine].nType = atoi(aData);
 				break;
 
 				//壁の向き
-			case 1:
+			case CASE_ONE:
 				g_aWall[nLine].wallAngle = (WALLANGLE)atoi(aData);
 
 				switch (g_aWall[nLine].wallAngle)
 				{
 					//左向き
 				case WALLANGLE_LEFT:
-					g_aWall[nLine].rot.y = D3DX_PI * 0.5f;
+					g_aWall[nLine].rot.y = D3DX_PI * ANGLE_L;
 					break;
 
 					//右向き
 				case WALLANGLE_RIGHT:
-					g_aWall[nLine].rot.y = D3DX_PI * -0.5f;
+					g_aWall[nLine].rot.y = D3DX_PI * ANGLE_R;
 					break;
 
 					//後向き
@@ -219,7 +254,7 @@ void LoadWall(void)
 
 					//前向き
 				case WALLANGLE_FRONT:
-					g_aWall[nLine].rot.y = 0.0f;
+					g_aWall[nLine].rot.y = ANGLE_F;
 					break;
 				}
 
@@ -227,28 +262,28 @@ void LoadWall(void)
 				break;
 
 				//幅
-			case 2:
-				g_aWall[nLine].fWidth = atof(aData);
+			case CASE_TWO:
+				g_aWall[nLine].fWidth = (float)atof(aData);
 				break;
 
 				//高さ
-			case 3:
-				g_aWall[nLine].fHeight = atof(aData);
+			case CASE_THREE:
+				g_aWall[nLine].fHeight = (float)atof(aData);
 				break;
 
 				//X座標
-			case 4:
-				g_aWall[nLine].pos.x = atof(aData);
+			case CASE_FOUR:
+				g_aWall[nLine].pos.x = (float)atof(aData);
 				break;
 
 				//Y座標
-			case 5:
-				g_aWall[nLine].pos.y = atof(aData);
+			case CASE_FIVE:
+				g_aWall[nLine].pos.y = (float)atof(aData);
 				break;
 
 				//Z座標
-			case 6:
-				g_aWall[nLine].pos.z = atof(aData);
+			case CASE_SIX:
+				g_aWall[nLine].pos.z = (float)atof(aData);
 				break;
 			}
 
@@ -266,13 +301,13 @@ void LoadWall(void)
 				//頂点座標の設定
 				pVtx[0].pos = D3DXVECTOR3(-g_aWall[nLine].fWidth, +g_aWall[nLine].fHeight, +g_aWall[nLine].fDepth);	//左上端
 				pVtx[1].pos = D3DXVECTOR3(+g_aWall[nLine].fWidth, +g_aWall[nLine].fHeight, -g_aWall[nLine].fDepth);	//右上端
-				pVtx[2].pos = D3DXVECTOR3(-g_aWall[nLine].fWidth, 0.0f, +g_aWall[nLine].fDepth);						//左下端
-				pVtx[3].pos = D3DXVECTOR3(+g_aWall[nLine].fWidth, 0.0f, -g_aWall[nLine].fDepth);						//右下端
+				pVtx[2].pos = D3DXVECTOR3(-g_aWall[nLine].fWidth, MIN_POS, +g_aWall[nLine].fDepth);					//左下端
+				pVtx[3].pos = D3DXVECTOR3(+g_aWall[nLine].fWidth, MIN_POS, -g_aWall[nLine].fDepth);					//右下端
 
-				pVtx += 4;
+				pVtx += DISPLAY_ADD;
 
 				//列数を初期化して行数を増やす
-				nColumn = 0;
+				nColumn = START_CO_NUM;
 				nLine++;
 			}
 		}
@@ -341,9 +376,10 @@ bool CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, 
 		}
 	}
 
+#if 0
 	for (int nCntWall = 0; nCntWall < MAX_WALL; nCntWall++, pVtx += 4)
 	{
-#if 0
+
 		vecToPos = *pPos - pVtx[0].pos;										//対象の位置から壁の原点までのベクトル計算
 		vecLine = pVtx[1].pos - pVtx[0].pos;								//次の頂点から頂点0番目のベクトル計算
 
@@ -359,8 +395,9 @@ bool CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, 
 			pMove->z = 0.0f;		//移動量をゼロにする
 			break;					//for文を抜ける
 		}
-#endif
+
 	}
+#endif
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffWall->Unlock();
