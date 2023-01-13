@@ -274,14 +274,8 @@ void DrawPlayer(void)
 
 				for (int nCntMat = 0; nCntMat < (int)g_aPlayer[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
 				{
-					//プレイヤーは青
 					//マテリアル設定
-					D3DMATERIAL9 changeMat = pMat[nCntMat].MatD3D;
-					//ダメージ状態なら赤追加
-					changeMat.Diffuse = D3DXCOLOR(0.0f, 0.45f, 0.74f, 1.0f);
-
-					//マテリアル設定
-					pDevice->SetMaterial(&changeMat);
+					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 					//テクスチャ設定
 					pDevice->SetTexture(0, g_aPlayer[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
@@ -292,7 +286,6 @@ void DrawPlayer(void)
 			}
 		}
 	}
-
 
 	//マテリアルを戻す
 	pDevice->SetMaterial(&matDef);
