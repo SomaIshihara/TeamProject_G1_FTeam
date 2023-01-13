@@ -121,7 +121,6 @@ void InitMeshfield(void)
 //====================================================================
 //メッシュフィールドの終了処理
 //====================================================================
-
 void UninitMeshfield(void)
 {
 	//テクスチャの破棄
@@ -143,13 +142,11 @@ void UninitMeshfield(void)
 		g_pIdxBuffMeshField->Release();
 		g_pIdxBuffMeshField = NULL;
 	}
-
 }
 
 //====================================================================
 //メッシュフィールドの更新処理
 //====================================================================
-
 void UpdateMeshfield(void)
 {
 
@@ -160,16 +157,15 @@ void UpdateMeshfield(void)
 //====================================================================
 void DrawMeshfield(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
-	D3DXMATRIX mtxRot, mtxTrans;			//計算用マトリックス
-											//デバイスの取得
-	pDevice = GetDevice();
+	//デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	D3DXMATRIX mtxRot, mtxTrans;				//計算用マトリックス
 
 	for (int nCntfield = 0; nCntfield < MAX_FIELD; nCntfield++)
 	{
-
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_mtxWorldMeshfield);
+
 		//向きを反映
 		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_MeshField[nCntfield].rot.y, g_MeshField[nCntfield].rot.x, g_MeshField[nCntfield].rot.z);
 
@@ -184,9 +180,9 @@ void DrawMeshfield(void)
 		pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldMeshfield);
 
 		//頂点バッファをデータストリームに設定
-
 		pDevice->SetStreamSource(0, g_pVtxBuffMeshfield, 0, sizeof(VERTEX_3D));
 
+		//インデックスバッファをデータストリームに設定
 		pDevice->SetIndices(g_pIdxBuffMeshField);
 
 		//頂点フォーマットの設定
