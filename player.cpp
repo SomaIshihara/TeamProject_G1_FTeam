@@ -63,7 +63,7 @@ void InitPlayer(void)
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].nIdxShadow = -1;
-		g_aPlayer[nCntPlayer].bUse = false;
+		g_aPlayer[nCntPlayer].bUse = true;
 	}
 }
 
@@ -241,6 +241,10 @@ void DrawPlayer(void)
 			{
 				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
 				D3DXMATRIX mtxParent;					//親のマトリ
+
+				//仮でオフセットをそのまま使う
+				g_aPlayer[nCntPlayer].model.aParts[nCntParts].pos = g_aPlayer[nCntPlayer].model.aParts[nCntParts].posOffset;
+				g_aPlayer[nCntPlayer].model.aParts[nCntParts].rot = g_aPlayer[nCntPlayer].model.aParts[nCntParts].rotOffset;
 
 				//"モデルの"ワールドマトリックス初期化
 				D3DXMatrixIdentity(&g_aPlayer[nCntPlayer].model.aParts[nCntParts].mtxWorld);
