@@ -21,7 +21,7 @@ Author:大宮愛羅
 #define POSV_ADD		(100)		//視点の上下移動
 #define POSV_DISTANCE	(100)		//視点の距離
 #define POSV_WIDTH		(0.0f)		//視点の幅
-#define POSV_HEIGHT		(50.0f)		//視点の高さ
+#define POSV_HEIGHT		(500.0f)	//視点の高さ
 #define POSV_DEPTH		(0.0f)		//視点の奥行き
 
 //上方向ベクトル情報
