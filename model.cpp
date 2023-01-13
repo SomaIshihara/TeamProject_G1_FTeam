@@ -82,7 +82,7 @@ void InitModel(void)
 				break;
 			}
 		}
-#if 0
+#if 1
 		//äKëwç\ë¢ê›íË
 		//ëÃ
 		g_aModel[nCntModel].aParts[0].mIdxModelParent = -1;
