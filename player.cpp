@@ -17,6 +17,13 @@
 #define PLAYER_MOVE_SPEED	(3.0f)	//プレイヤー移動速度
 #define DUMP_COEF			(0.4f)	//減衰係数
 
+//ダッシュ関連マクロ
+
+//#define ADD_GAUGE			(10.0f)	//ゲージ増加量
+//#define MAX_GAUGE			(25.0f)	//ゲージ最大値
+//#define GAUGE_BONUS			(15.0f)	//ボーナスゲージ
+
+
 //向き
 #define ROT_WA	(-0.75f * D3DX_PI)	//左上
 #define ROT_WD	(0.75f * D3DX_PI)	//右上
@@ -49,6 +56,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].move = ZERO_SET;
 		g_aPlayer[nCntPlayer].rot = ZERO_SET;
 
+
 		g_aPlayer[nCntPlayer].animal = ANIMAL_WILDBOAR;
 		g_aPlayer[nCntPlayer].nScore = 0;
 		g_aPlayer[nCntPlayer].nNumHitPlayer = -1;
@@ -79,6 +87,8 @@ void UninitPlayer(void)
 //========================
 void UpdatePlayer(void)
 {
+	float nGauge[MAX_USE_GAMEPAD];
+
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
@@ -141,6 +151,40 @@ void UpdatePlayer(void)
 				g_aPlayer[nCntPlayer].rot.y = -(float)fmod(GetCamera()->rot.y + ROT_D + D3DX_PI + (D3DX_PI * 2), D3DX_PI * 2) - D3DX_PI;
 				g_aPlayer[nCntPlayer].move.x = sinf(FIX_ROT((g_aPlayer[nCntPlayer].rot.y + D3DX_PI))) * PLAYER_MOVE_SPEED;
 				g_aPlayer[nCntPlayer].move.z = cosf(FIX_ROT((g_aPlayer[nCntPlayer].rot.y + D3DX_PI))) * PLAYER_MOVE_SPEED;
+			}
+
+			//移動方法（ダッシュ）押して離す
+			{
+				//nGauge[nCntPlayer] = g_aPlayer[nCntPlayer].movegauge / MAX_GAUGE;
+
+				//if (GetKeyboardPress(DIK_SPACE) == true)
+				//{//スペースキーは押された
+
+				//	g_aPlayer[nCntPlayer].movegauge += ADD_GAUGE;
+
+				//	if (g_aPlayer[nCntPlayer].movegauge >= MAX_GAUGE)
+				//	{
+				//		g_aPlayer[nCntPlayer].movegauge = 0;
+				//	}
+
+				//}
+
+				//if (GetKeyboardRelease(DIK_SPACE) == true)
+				//{//SPACEキーが離された
+				// //進行方向の設定
+
+				//	if (nGauge[nCntPlayer] >= 0.9f)
+				//	{
+				//		g_aPlayer[nCntPlayer].movegauge += GAUGE_BONUS;
+				//	}
+
+				//	g_aPlayer[nCntPlayer].move.x += sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].movegauge;
+				//	g_aPlayer[nCntPlayer].move.z += cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].movegauge;
+
+				//	g_aPlayer[nCntPlayer].movegauge = 0;
+
+				//}
+
 			}
 
 			//ボタン操作に応じてプレイヤー・カメラ視点・注視点移動
