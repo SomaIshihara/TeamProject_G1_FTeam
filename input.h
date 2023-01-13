@@ -23,5 +23,5 @@ XINPUT_STATE *GetXInputState(void);
 bool GetGamePadPress(int nKey);
 bool GetGamePadTrigger(int nKey);
 bool GetGamePadRelease(int nKey);
-
+ 
 #endif
