@@ -17,7 +17,7 @@ Author:大宮愛羅
 #define DISPLAY_ADD		(4)		//表示する分だけ加算
 
 //位置情報
-#define MIN_POS			(0.0f)
+#define MIN_POS			(0.0f)	//位置の最小値
 
 //法線情報
 #define NOR_WIDTH		(0.0f)	//法線の幅
@@ -376,31 +376,10 @@ bool CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, 
 		}
 	}
 
-#if 0
-	for (int nCntWall = 0; nCntWall < MAX_WALL; nCntWall++, pVtx += 4)
-	{
-
-		vecToPos = *pPos - pVtx[0].pos;										//対象の位置から壁の原点までのベクトル計算
-		vecLine = pVtx[1].pos - pVtx[0].pos;								//次の頂点から頂点0番目のベクトル計算
-
-																			//外積計算
-		fVecAnswer = (vecLine.z * vecToPos.x) - (vecLine.x * vecToPos.z);	//対象の位置へのベクトル計算
-
-																			//現在の向きが[負](左) である
-		if (fVecAnswer <= 0.0f)
-		{
-			bCollision = true;		//当たった
-			pPos = pPosOld;
-			pMove->x = 0.0f;		//移動量をゼロにする
-			pMove->z = 0.0f;		//移動量をゼロにする
-			break;					//for文を抜ける
-		}
-
-	}
-#endif
-
 	//頂点バッファをアンロックする
 	g_pVtxBuffWall->Unlock();
 
 	return bCollision;	//判定を返す
 }
+
+	
