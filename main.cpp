@@ -13,6 +13,7 @@
 #include "title.h"
 #include "color.h"
 #include "tutorial.h"
+#include "light.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -321,6 +322,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		return E_FAIL;
 	}
 
+	//ライト
+	InitLight();
+
 	//デバッグ表示の初期化
 	InitDebugProc();
 
@@ -343,6 +347,9 @@ void Uninit(void)
 
 	//フェード終了
 	UninitFade();
+
+	//ライト
+	UninitLight();
 
 	//デバッグ表示の終了
 	UninitDebugProc();
@@ -377,6 +384,9 @@ void Update(void)
 
 	//キーボードの更新
 	UpdateKeyboard();
+
+	//ライト
+	UpdateLight();
 
 	//デバッグ表示
 	UpdateDebugProc();
