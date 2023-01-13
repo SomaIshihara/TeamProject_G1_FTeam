@@ -116,11 +116,11 @@ void LoadTitle(void)
 		{
 			fscanf(pFile, "%s", &aData[0]);	//一行読み込み
 
-			g_Title[nCntTitle].pos.x = atof(strtok(&aData[0], ","));		// 表示位置初期化
-			g_Title[nCntTitle].pos.y = atof(strtok(NULL, ","));				// 表示位置初期化
+			g_Title[nCntTitle].pos.x = fatof(strtok(&aData[0], ","));		// 表示位置初期化
+			g_Title[nCntTitle].pos.y = fatof(strtok(NULL, ","));			// 表示位置初期化
 
-			g_Title[nCntTitle].fWidth = atof(strtok(NULL, ","));			// 幅初期化
-			g_Title[nCntTitle].fHeight = atof(strtok(NULL, ","));			// 幅初期化
+			g_Title[nCntTitle].fWidth = fatof(strtok(NULL, ","));			// 幅初期化
+			g_Title[nCntTitle].fHeight = fatof(strtok(NULL, ","));			// 幅初期化
 		}
 
 		//ファイルを閉じる

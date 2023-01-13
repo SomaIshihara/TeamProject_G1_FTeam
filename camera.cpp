@@ -65,10 +65,10 @@ void InitCamera(void)
 
 	//ÇªÇÍÇºÇÍÇÃà íuÇÃç∑ï™Çäiî[Ç∑ÇÈïœêî
 	float PosDiffX, PosDiffY, PosDiffZ;
-
-	PosDiffX = pow(g_Camera.posR.x - g_Camera.posV.x, DIFF_TIMES);	//ÇQèÊ
-	PosDiffY = pow(g_Camera.posR.y - g_Camera.posV.y, DIFF_TIMES);	//ÇQèÊ
-	PosDiffZ = pow(g_Camera.posR.z - g_Camera.posV.z, DIFF_TIMES);	//ÇQèÊ
+	
+	PosDiffX = powf(g_Camera.posR.x - g_Camera.posV.x, DIFF_TIMES);	//ÇQèÊ
+	PosDiffY = powf(g_Camera.posR.y - g_Camera.posV.y, DIFF_TIMES);	//ÇQèÊ
+	PosDiffZ = powf(g_Camera.posR.z - g_Camera.posV.z, DIFF_TIMES);	//ÇQèÊ
 
 	//í∑Ç≥ÇÃéZèo
 	g_Camera.fLength = sqrtf(PosDiffX + PosDiffY + PosDiffZ);
