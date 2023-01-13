@@ -26,6 +26,7 @@ void UninitPause(void);
 void UpdatePause(void);
 void DrawPause(void);
 void SetPause(PAUSE Pause);
+void LoadPause(void);
 PAUSE *GetPause(void);
 
 #endif 
