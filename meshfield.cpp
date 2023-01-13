@@ -38,7 +38,7 @@ void InitMeshfield(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\field001.jpg",
+		"data\\TEXTURE\\grass001.jpg",
 		&g_pTextureMeshfield);
 
 	//構造体を初期化

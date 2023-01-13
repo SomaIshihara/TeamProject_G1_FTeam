@@ -10,9 +10,9 @@
 #include"main.h"
 
 //ƒ}ƒNƒ
-#define MESHSYLINDER_WIDTH		(25.0f)		//”wŒi‚ÌL‚³
-#define MESHSYLINDER_HEIGHT		(25.0f)		//”wŒi‚Ì‚‚³
-#define MESHSYLINDER_SPLIT		(16)		//”wŒi‚Ì‚‚³
+#define MESHSYLINDER_WIDTH		(500.0f)		//”wŒi‚ÌL‚³
+#define MESHSYLINDER_HEIGHT		(500.0f)		//”wŒi‚Ì‚‚³
+#define MESHSYLINDER_SPLIT		(32)		//”wŒi‚Ì’¸“_”
 
 //ƒvƒƒgƒ^ƒCƒvéŒ¾
 void InitMeshCylinder(void);

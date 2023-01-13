@@ -20,7 +20,7 @@ const char *c_pFileNamePause[] =
 	"data/TEXTURE/pause.png",
 	"data/TEXTURE/continue.png",
 	"data/TEXTURE/restart.png",
-	"data/TEXTURE/quit.got"
+	"data/TEXTURE/quit.png"
 };
 
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
