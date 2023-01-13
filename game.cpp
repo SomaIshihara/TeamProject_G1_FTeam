@@ -16,7 +16,7 @@ Author:平澤詩苑
 #include "bg.h"
 #include "meshfield.h"
 #include "light.h"
-//#include "pause.h"
+#include "pause.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -35,6 +35,7 @@ void InitGame(void)
 	InitPlayer();		// プレイヤーの初期化処理
 	InitCamera();		// カメラの初期化処理
 	InitWall();			// 壁の初期化処理
+	InitPause();		// ポーズ画面の初期化処理
 
 	g_bPause = false;	// ポーズの初期化
 
@@ -58,6 +59,7 @@ void UninitGame(void)
 	UninitWall();		// 壁の終了処理
 	UninitCamera();		// カメラの終了処理
 	UninitPlayer();		// プレイヤーの終了処理
+	UninitPause();		// ポーズ画面の終了処理
 	UninitModel();		// モデルの終了処理（ここは順番は問わない）
 
 	//ゲームBGM停止
@@ -86,21 +88,21 @@ void UpdateGame(void)
 	else
 	{
 		//ポーズ画面の更新処理
-		//UpdatePause();
+		UpdatePause();
 
 		//ポーズを解除するときにメニューをコンティニューに設定
 		if (GetKeyboardTrigger(DIK_P) == true)
 		{
-			//SetPause(PAUSE_MENU_CONTINUE);
+			SetPause(PAUSE_CONTINUE);
 		}
 
-		//if (*GetPause() == PAUSE_MENU_CONTINUE)
-		//{
-		//	if (GetKeyboardTrigger(DIK_RETURN) == true)
-		//	{
-		//		g_bPause = false;
-		//	}
-		//}
+		if (*GetPause() == PAUSE_CONTINUE)
+		{
+			if (GetKeyboardTrigger(DIK_RETURN) == true)
+			{
+				g_bPause = false;
+			}
+		}
 	}
 
 	//ポーズ状態切り替え
@@ -128,8 +130,18 @@ void DrawGame(void)
 	//ゲーム内オブジェクトの描画処理
 	SetCamera();		// カメラの設定処理
 
-	//DrawBg();			// 背景の描画処理
-	DrawWall();			// 壁の描画処理
-	DrawPlayer();		// プレイヤーの描画処理
-	DrawMeshfield();	// ステージの描画処理
+	//ポーズがOFF
+	if (g_bPause == false)
+	{
+		//DrawBg();			// 背景の描画処理
+		DrawMeshfield();	// ステージの描画処理
+		DrawWall();			// 壁の描画処理
+		DrawPlayer();		// プレイヤーの描画処理
+	}
+
+	else
+	{
+		DrawPause();		//ポーズ画面描画処理
+	}
+
 }

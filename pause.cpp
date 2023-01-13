@@ -7,15 +7,17 @@
 #include "main.h"
 #include "player.h"
 #include "pause.h"
+#include "fade.h"
 #include "input.h"
 #include "color.h"
 
 //マクロ定義
-#define PAUSE_TEX_NAME		"data/TEXTURE/tutorial.png"		//ポーズ画像のファイル名
+#define PAUSE_TEX_NAME		"data/TEXTURE/pause.png"		//ポーズ画像のファイル名
 
 //グローバル変数宣言
 LPDIRECT3DTEXTURE9		g_pTexturePause = NULL;	//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPause = NULL;	//頂点バッファへのポインタ
+PAUSE g_Pause;
 
 //=================================
 //ポーズの初期化処理
@@ -92,7 +94,26 @@ void UninitPause(void)
 //=================================
 void UpdatePause(void)
 {
+	//キーボードのENTER　か　ゲームパッドの　Aボタン　か　STARTボタンが押された
+	if (GetKeyboardTrigger(DIK_RETURN) == true)
+	{
+		switch (g_Pause)
+		{
+		case PAUSE_CONTINUE:
 
+			break;
+
+		case PAUSE_RETRY:
+			//モード設定（ゲーム画面に遷移)
+			SetFade(MODE_GAME);
+			break;
+
+		case PAUSE_QUIT:
+			//タイトル画面に遷移
+			SetFade(MODE_TITLE);
+			break;
+		}
+	}
 }
 
 //=================================
@@ -114,4 +135,20 @@ void DrawPause(void)
 
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+}
+
+//=================================
+//ポーズの設定処理
+//=================================
+void SetPause(PAUSE Pause)
+{
+	g_Pause = Pause;
+}
+
+//=================================
+//ポーズの取得
+//=================================
+PAUSE *GetPause(void)
+{
+	return &g_Pause;
 }
