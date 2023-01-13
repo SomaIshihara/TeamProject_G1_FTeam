@@ -328,7 +328,7 @@ bool CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, 
 	D3DXVECTOR3 vecToPos;			//オブジェクトの頂点 0番目から見た対象の位置への角度
 
 
-									//ポインタを設定
+	//ポインタを設定
 	VERTEX_3D*pVtx;
 
 	//頂点バッファをロックし、頂点座標へのポインタを取得

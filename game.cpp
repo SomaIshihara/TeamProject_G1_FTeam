@@ -124,7 +124,7 @@ void DrawGame(void)
 	//ゲーム内オブジェクトの描画処理
 	SetCamera();		// カメラの設定処理
 
-	DrawBg();			// 背景の描画処理
+	//DrawBg();			// 背景の描画処理
 	DrawMeshfield();	// ステージの描画処理
 	DrawWall();			// 壁の描画処理
 	DrawPlayer();		// プレイヤーの描画処理
