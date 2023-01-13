@@ -8,6 +8,17 @@
 #define _PAUSE_H_
 
 //****************************//
+//		ポーズの状態		  //
+//****************************//
+typedef enum
+{
+	PAUSE_CONTINUE = 0,
+	PAUSE_RETRY,
+	PAUSE_QUIT,
+	PAUSE_MAX
+}PAUSE;
+
+//****************************//
 //		プロトタイプ宣言	  //
 //****************************//
 void InitPause(void);

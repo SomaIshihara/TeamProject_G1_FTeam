@@ -185,6 +185,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="meshfield.h" />
+    <ClInclude Include="pause.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="tutorial.h" />
