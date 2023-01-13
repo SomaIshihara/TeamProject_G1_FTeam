@@ -18,7 +18,7 @@ Author:大宮愛羅
 //視点情報
 #define POSV_ROTSPEED	(0.05f)		//視点の回転速度
 #define POSV_SPEED		(10.0f)		//視点の移動速度
-#define POSV_ADD		(400)		//視点の上下移動
+#define POSV_ADD		(100)		//視点の上下移動
 #define POSV_DISTANCE	(100)		//視点の距離
 #define POSV_WIDTH		(0.0f)		//視点の幅
 #define POSV_HEIGHT		(50.0f)		//視点の高さ
