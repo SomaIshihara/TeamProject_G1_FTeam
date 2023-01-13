@@ -28,8 +28,8 @@ bool					g_bPause = false;				// ポーズ
 //------------------------------------------------
 void InitGame(void)
 {
-	InitBg();			// 背景の初期化処理					
-	InitLight();		//ライト初期化処理
+	InitBg();			// 背景の初期化処理
+	InitLight();		// ライト初期化処理
 	InitMeshfield();	// ステージ初期化処理
 	InitModel();		// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();		// プレイヤーの初期化処理
@@ -53,7 +53,7 @@ void UninitGame(void)
 
 	/*エフェクトなどの板ポリゴンの終了処理*/
 	UninitBg();			// 背景の終了処理
-	UninitLight();		//ライト終了処理
+	UninitLight();		// ライト終了処理
 	UninitMeshfield();	// ステージ終了処理
 	UninitWall();		// 壁の終了処理
 	UninitCamera();		// カメラの終了処理
@@ -76,7 +76,7 @@ void UpdateGame(void)
 	if (g_bPause == false)
 	{
 			UpdateBg();			// 背景の更新処理
-			UpdateLight();		//ライトの更新処理
+			UpdateLight();		// ライトの更新処理
 			UpdateMeshfield();	// ステージ更新処理
 			UpdatePlayer();		// プレイヤーの更新処理
 			UpdateCamera();		// カメラの更新処理
