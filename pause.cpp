@@ -12,7 +12,16 @@
 #include "color.h"
 
 //マクロ定義
-#define PAUSE_TEX_NAME		"data/TEXTURE/pause.png"		//ポーズ画像のファイル名
+#define NUM_TEXTURE		(4)		//ポーズ画像のファイル名
+
+//ファイルパス
+const char *c_pFileNamePause[] =
+{
+	"data/TEXTURE/pause.png",
+	"data/TEXTURE/continue.png",
+	"data/TEXTURE/restart.png",
+	"data/TEXTURE/quit.got"
+};
 
 //グローバル変数宣言
 LPDIRECT3DTEXTURE9		g_pTexturePause = NULL;	//テクスチャへのポインタ
@@ -38,8 +47,11 @@ void InitPause(void)
 
 	//チュートリアル情報の初期化
 
-	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, PAUSE_TEX_NAME, &g_pTexturePause);
+	for (int nCnt = 0; nCnt < NUM_TEXTURE; nCnt++)
+	{
+		//テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice, c_pFileNamePause[nCnt], &g_pTexturePause);
+	}
 
 	//頂点座標の設定
 	pVtx[VTX_LE_UP].pos = D3DXVECTOR3(NIL_F, NIL_F, NIL_F);
