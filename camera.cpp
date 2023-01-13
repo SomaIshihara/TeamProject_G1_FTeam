@@ -83,7 +83,8 @@ void UninitCamera(void)
 //カメラの更新処理
 void UpdateCamera(void)
 {
-
+	//カメラの移動処理を読み込む
+	MoveCamera();	
 }
 
 //カメラの設定処理
@@ -114,4 +115,43 @@ void SetCamera(void)
 Camera *GetCamera(void)
 {
 	return &g_Camera;
+}
+
+//カメラの移動処理
+void MoveCamera(void)
+{
+	//プレイヤーのポインタ
+	Player * pPlayer = GetPlayer();
+
+	//視点
+	g_Camera.posV += pPlayer->pos - pPlayer->posOld;
+
+	//注視点
+	g_Camera.posR.x = pPlayer->pos.x;
+	g_Camera.posR.y = pPlayer->pos.y;
+	g_Camera.posR.z = pPlayer->pos.z;
+
+	//視点の上下
+	if (GetKeyboardPress(DIK_T) == true)
+	{
+		g_Camera.posV.y += POSV_SPEED;
+	}
+	if (GetKeyboardPress(DIK_B) == true)
+	{
+		g_Camera.posV.y -= POSV_SPEED;
+	}
+
+	//視点の左右
+	if (GetKeyboardPress(DIK_Z) == true)
+	{
+		g_Camera.rot.y -= POSV_ROTSPEED;
+	}
+	if (GetKeyboardPress(DIK_C) == true)
+	{
+		g_Camera.rot.y += POSV_ROTSPEED;
+	}
+
+	//視点の位置更新
+	g_Camera.posV.x = g_Camera.posR.x + sinf(D3DX_PI - g_Camera.rot.y) * g_Camera.fLength;
+	g_Camera.posV.z = g_Camera.posR.z + cosf(D3DX_PI - g_Camera.rot.y) * g_Camera.fLength;	
 }
