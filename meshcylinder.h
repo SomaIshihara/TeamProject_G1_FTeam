@@ -12,7 +12,7 @@
 //マクロ
 #define MESHSYLINDER_WIDTH		(25.0f)		//背景の広さ
 #define MESHSYLINDER_HEIGHT		(25.0f)		//背景の高さ
-#define MESHSYLINDER_SPLIT		(8)		//背景の高さ
+#define MESHSYLINDER_SPLIT		(16)		//背景の高さ
 
 //プロトタイプ宣言
 void InitMeshCylinder(void);

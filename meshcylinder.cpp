@@ -34,7 +34,7 @@ void InitMeshCylinder(void)
 	g_rotMeshCylinder = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHSYLINDER_SPLIT * 2 + 2, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshCylinder, NULL);
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (MESHSYLINDER_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshCylinder, NULL);
 
 	VERTEX_3D *pVtx;
 
@@ -72,7 +72,7 @@ void InitMeshCylinder(void)
 	g_pVtxBuffMeshCylinder->Unlock();
 
 	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHSYLINDER_SPLIT * 2 + 2, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshCylinder, NULL);
+	pDevice->CreateIndexBuffer(sizeof(WORD) * (MESHSYLINDER_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshCylinder, NULL);
 
 	WORD*pIdx;
 
@@ -131,7 +131,7 @@ void DrawMeshCylinder(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureMeshCylinder);
 
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MESHSYLINDER_SPLIT * 2 + 2, 0, MESHSYLINDER_SPLIT * 2);
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (MESHSYLINDER_SPLIT * 2 + 2), 0, (MESHSYLINDER_SPLIT * 2));
 }
 
 
