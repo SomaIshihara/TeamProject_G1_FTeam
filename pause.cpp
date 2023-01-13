@@ -24,7 +24,7 @@ const char *c_pFileNamePause[] =
 };
 
 //グローバル変数宣言
-LPDIRECT3DTEXTURE9		g_pTexturePause = NULL;	//テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTexturePause[NUM_TEXTURE] = {};	//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPause = NULL;	//頂点バッファへのポインタ
 PAUSE g_Pause;
 Pause g_aPause[NUM_TEXTURE];
@@ -40,6 +40,12 @@ void InitPause(void)
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * VTX_MAX * NUM_TEXTURE, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffPause, NULL);
 
+	for (int nCnt = 0; nCnt < NUM_TEXTURE; nCnt++)
+	{
+		//テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice, c_pFileNamePause[nCnt], &g_pTexturePause[nCnt]);
+	}
+
 	//ポインタを設定
 	VERTEX_2D *pVtx;
 
@@ -52,8 +58,7 @@ void InitPause(void)
 	//各情報読み込み
 	for (int nCnt = 0; nCnt < NUM_TEXTURE; nCnt++,pVtx +=4)
 	{
-		//テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice, c_pFileNamePause[nCnt], &g_pTexturePause);
+		
 
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(g_aPause[nCnt].VtxZero.x, g_aPause[nCnt].VtxZero.y, NIL_F);
@@ -88,11 +93,14 @@ void InitPause(void)
 //=================================
 void UninitPause(void) 
 {
-	//テクスチャの破棄
-	if (g_pTexturePause != NULL)
+	for (int nCnt = 0; nCnt < NUM_TEXTURE; nCnt++)
 	{
-		g_pTexturePause->Release();
-		g_pTexturePause = NULL;
+		//テクスチャの破棄
+		if (g_pTexturePause[nCnt] != NULL)
+		{
+			g_pTexturePause[nCnt]->Release();
+			g_pTexturePause[nCnt] = NULL;
+		}
 	}
 
 	//頂点バッファの破棄
@@ -144,11 +152,13 @@ void DrawPause(void)
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	//テクスチャの設定
-	pDevice->SetTexture(0, g_pTexturePause);
+	
 
 	for (int nCnt = 0; nCnt < NUM_TEXTURE; nCnt++)
 	{
+		//テクスチャの設定
+		pDevice->SetTexture(0, g_pTexturePause[nCnt]);
+
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCnt * 4, 2);
 	}
