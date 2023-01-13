@@ -316,11 +316,21 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
+	//入力系
 	//キーボードの初期化
 	if (FAILED(InitKeyboard(hInstance, hWnd)))
 	{
 		return E_FAIL;
-	}	
+	}
+
+	//マウスの初期化
+	if (FAILED(InitMouse(hInstance, hWnd)))
+	{
+		return E_FAIL;
+	}
+
+	//ゲームパッドの初期化
+	InitGamePad();
 
 	//デバッグ表示の初期化
 	InitDebugProc();
@@ -348,11 +358,15 @@ void Uninit(void)
 	//デバッグ表示の終了
 	UninitDebugProc();
 
+	//入力系
+	//ゲームパッドの終了
+	UninitGamePad();
+
+	//マウスの終了
+	UninitMouse();
+
 	//キーボードの終了
 	UninitKeyboard();
-
-	//XInput終了
-	XInputEnable(false);
 
 	//デバイス破棄
 	if (g_pD3DDevice != NULL)
@@ -376,8 +390,15 @@ void Update(void)
 {
 	FADE fadeState = GetFade();		//フェード状態取得
 
+	//入力系
 	//キーボードの更新
-	UpdateKeyboard();	
+	UpdateKeyboard();
+
+	//マウスの更新
+	UpdateMouse();
+
+	//ゲームパッドの更新
+	UpdateGamePad();
 
 	//デバッグ表示
 	UpdateDebugProc();
