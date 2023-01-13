@@ -86,7 +86,6 @@ void UpdateCamera(void)
 
 }
 
-
 //ƒJƒƒ‰‚Ìİ’èˆ—
 void SetCamera(void)
 {
