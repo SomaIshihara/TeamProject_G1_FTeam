@@ -320,10 +320,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	if (FAILED(InitKeyboard(hInstance, hWnd)))
 	{
 		return E_FAIL;
-	}
-
-	//ライト
-	InitLight();
+	}	
 
 	//デバッグ表示の初期化
 	InitDebugProc();
