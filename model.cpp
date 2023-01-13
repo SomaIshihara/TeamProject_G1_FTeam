@@ -86,43 +86,43 @@ void InitModel(void)
 		//äKëwç\ë¢ê›íË
 		//ëÃ
 		g_aModel[nCntModel].aParts[0].mIdxModelParent = -1;
-		g_aModel[nCntModel].aParts[0].posOffset = D3DXVECTOR3(0.0f, 35.0f, 0.0f);
+		g_aModel[nCntModel].aParts[0].posOffset = D3DXVECTOR3(0.0f, 20.5f, 0.0f);
 		g_aModel[nCntModel].aParts[0].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//ì™
 		g_aModel[nCntModel].aParts[1].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[1].posOffset = D3DXVECTOR3(0.0f, 10.0f, 0.0f);
+		g_aModel[nCntModel].aParts[1].posOffset = D3DXVECTOR3(0.0f, 00.0f, -10.0f);
 		g_aModel[nCntModel].aParts[1].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//ç∂òr
 		g_aModel[nCntModel].aParts[2].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[2].posOffset = D3DXVECTOR3(-5.0f, 7.0f, 0.0f);
+		g_aModel[nCntModel].aParts[2].posOffset = D3DXVECTOR3(5.0f, -8.0f, -5.0f);
 		g_aModel[nCntModel].aParts[2].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//ç∂éË
 		g_aModel[nCntModel].aParts[3].mIdxModelParent = 2;
-		g_aModel[nCntModel].aParts[3].posOffset = D3DXVECTOR3(-10.0f, 0.0f, 0.0f);
+		g_aModel[nCntModel].aParts[3].posOffset = D3DXVECTOR3(-1.0f, -8.0f, 1.0f);
 		g_aModel[nCntModel].aParts[3].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//âEòr
 		g_aModel[nCntModel].aParts[4].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[4].posOffset = D3DXVECTOR3(5.0f, 7.0f, 0.0f);
+		g_aModel[nCntModel].aParts[4].posOffset = D3DXVECTOR3(4.0f, -8.0f, 10.0f);
 		g_aModel[nCntModel].aParts[4].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//âEéË
 		g_aModel[nCntModel].aParts[5].mIdxModelParent = 4;
-		g_aModel[nCntModel].aParts[5].posOffset = D3DXVECTOR3(10.0f, 0.0f, 0.0f);
+		g_aModel[nCntModel].aParts[5].posOffset = D3DXVECTOR3(0.8f, -6.0f, 1.0f);
 		g_aModel[nCntModel].aParts[5].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//ç∂ë⁄
 		g_aModel[nCntModel].aParts[6].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[6].posOffset = D3DXVECTOR3(-3.0f, -8.0f, 0.0f);
+		g_aModel[nCntModel].aParts[6].posOffset = D3DXVECTOR3(-5.0f, -8.0f, -5.0f);
 		g_aModel[nCntModel].aParts[6].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//ç∂ë´
 		g_aModel[nCntModel].aParts[7].mIdxModelParent = 6;
-		g_aModel[nCntModel].aParts[7].posOffset = D3DXVECTOR3(0.0f, -12.0f, 0.0f);
+		g_aModel[nCntModel].aParts[7].posOffset = D3DXVECTOR3(1.0f, -8.0f, 1.0f);
 		g_aModel[nCntModel].aParts[7].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//âEë⁄
 		g_aModel[nCntModel].aParts[8].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[8].posOffset = D3DXVECTOR3(3.0f, -8.0f, 0.0f);
+		g_aModel[nCntModel].aParts[8].posOffset = D3DXVECTOR3(-4.0f, -8.0f, 10.0f);
 		g_aModel[nCntModel].aParts[8].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		//âEë´
 		g_aModel[nCntModel].aParts[9].mIdxModelParent = 8;
-		g_aModel[nCntModel].aParts[9].posOffset = D3DXVECTOR3(0.0f, -12.0f, 0.0f);
+		g_aModel[nCntModel].aParts[9].posOffset = D3DXVECTOR3(0.8f, -6.0f, 1.0f);
 		g_aModel[nCntModel].aParts[9].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 #endif
 	}

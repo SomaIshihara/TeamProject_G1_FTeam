@@ -242,7 +242,7 @@ void DrawPlayer(void)
 				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
 				D3DXMATRIX mtxParent;					//親のマトリ
 
-				//仮でオフセットをそのまま使う
+				//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
 				g_aPlayer[nCntPlayer].model.aParts[nCntParts].pos = g_aPlayer[nCntPlayer].model.aParts[nCntParts].posOffset;
 				g_aPlayer[nCntPlayer].model.aParts[nCntParts].rot = g_aPlayer[nCntPlayer].model.aParts[nCntParts].rotOffset;
 
