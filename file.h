@@ -9,24 +9,18 @@
 
 #include "main.h"
 #include "model.h"
+#include "meshfield.h"
 
 //マクロ
-//なし
+#define MAX_NUM_TEXTURE	(32)	//最大テクスチャ数
+#define MAX_NUM_MODEL	(128)	//最大モデル数
+#define MAX_PATH_STR	(512)	//最大パス文字列
 
 //コード名
 //共通
 //読み込み開始・終了
 #define CODE_SCRIPT				"SCRIPT"			//スクリプト開始
 #define CODE_END_SCRIPT			"END_SCRIPT"		//スクリプト終了
-
-//オリジナル
-//敵配置
-#define CODE_SETENEMY			"SETENEMY"			//敵配置(使用パラメータ:pos,rot,nameIdx,life)
-#define CODE_END_SETENEMY		"END_SETENEMY"		//敵配置終了
-
-//パラメータ
-#define CODE_NAMEIDX			"NAMEIDX"			//名前の番号
-#define CODE_LIFE				"LIFE"				//体力
 
 //モデルビューワー・モーションビューワー用
 //モデルビューワ
@@ -87,7 +81,7 @@
 #define CODE_KEY				"KEY"				//キー設定開始
 #define CODE_END_KEY			"END_KEY"			//キー設定終了
 
-//パラメータ類（オリジナル・MV共通部分あり）
+//パラメータ類
 //モデル・モーション共通
 #define CODE_POS				"POS"				//位置
 #define CODE_ROT				"ROT"				//向き
@@ -117,11 +111,89 @@
 #define CODE_NUM_KEY			"NUM_KEY"			//キー数
 #define CODE_FRAME				"FRAME"				//フレーム数
 
+//構造体類
+//テクスチャ
+typedef struct
+{
+	int numTexture;	//テクスチャ数
+	char fileName[MAX_NUM_TEXTURE][MAX_PATH_STR];
+} ReadTextureData;
+
+//モデル
+typedef struct
+{
+	int numTexture;	//テクスチャ数
+	char fileName[MAX_NUM_TEXTURE][MAX_PATH_STR];
+} ReadModelData;
+
+//カメラはCamera.hのものを使う
+//ライトはD3DLIGHT9のものを使う
+
+//空（使いたければ移動してOK）
+typedef struct
+{
+	int texType;	//テクスチャ種類（読み込んだテクスチャの中から選ぶ）
+	float fMove;	//移動量
+} ReadSky;
+
+//山はテクスチャ種類設定するだけだからそっちで用意して
+
+//メッシュフィールド
+typedef struct
+{
+	int texType;	//テクスチャ種類（読み込んだテクスチャの中から選ぶ）
+	MESHFIELD mf;	//メッシュフィールド生成に必要なデータ類
+} ReadMeshField;
+
+//メッシュ壁（使いたければ移動してOK）
+typedef struct
+{
+	int texType;		//テクスチャ種類（読み込んだテクスチャの中から選ぶ）
+	D3DXVECTOR3 pos;	//位置
+	D3DXVECTOR3 rot;	//向き
+	int blockX;			//Xの分割数
+	int blockZ;			//Zの分割数
+	int sizeX;			//Xのサイズ
+	int sizeZ;			//Zのサイズ
+} MeshWall;
+
+//モデル読み込みに使う
+typedef struct
+{
+	int modelType;		//モデル種類
+	D3DXVECTOR3 pos;	//位置
+	D3DXVECTOR3 rot;	//向き
+	int state;			//状態（何に使うか忘れた）
+	int collision;		//当たり判定（何に使うか忘れた）
+	int shadow;			//影（シャドウマトリックスなるものを使うなら要らないかも）
+} ReadModel;
+
+//ビルボード
+typedef struct
+{
+	int texType;		//テクスチャ種類
+	D3DXVECTOR3 pos;	//位置
+	int sizeX;			//Xのサイズ
+	int sizeZ;			//Zのサイズ
+	int originX;		//Xのなにこれ
+	int originZ;		//Zのなにこれ
+	int blend;			//合成の設定とかじゃないかな
+	int shadow;			//影（何に使うか忘れた）
+} ReadBillBoard;
+
+//プレイヤーモデル
+typedef struct
+{
+	char motionFileName[MAX_PATH_STR];	//モーションファイルのパス
+	D3DXVECTOR3 pos;	//位置
+	D3DXVECTOR3 rot;	//向き
+} ReadPlayerModel;
+
 //プロト
 void InitFile(void);
 void UninitFile(void);
 void UpdateFile(void);
-void LoadMapFile(void);
+void LoadModelViewerFile(const char *path);	//モデルビューワーの設定ファイル読み込み（引数は設定ファイルのパス指定）
 void LoadMotionFile(void);
 void GetMotionInfo(MOTION_INFO *pMotionInfo);
 
