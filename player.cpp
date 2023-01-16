@@ -12,6 +12,7 @@
 #include "debugproc.h"
 #include "camera.h"
 #include <assert.h>
+#include "color.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED	(3.0f)	//プレイヤー移動速度
@@ -217,7 +218,6 @@ void DrawPlayer(void)
 	//現在のマテリアル取得
 	pDevice->GetMaterial(&matDef);
 
-
 	//プレイヤーの数だけ繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
@@ -286,6 +286,59 @@ void DrawPlayer(void)
 
 					//モデル描画
 					g_aPlayer[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+				}
+
+				/*------------------------------------------------------------------
+				影の描画		Author:平澤詩苑
+				--------------------------------------------------------------------*/
+				D3DXMATRIX	mtxShadow;		//シャドウマトリックス
+				D3DLIGHT9	light;			//ライト情報
+				D3DXVECTOR4	posLight;		//ライトの位置
+				D3DXVECTOR3	pos, normal;	//平面上の任意の点、法線ベクトル
+				D3DXPLANE	plane;			//平面情報
+				D3DXCOLOR	MatColStrage;	//マテリアルデータ保存用
+
+											//ライトの位置を設定
+				pDevice->GetLight(0, &light);
+				posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
+
+				//平面情報を生成
+				pos = ZERO_SET;
+				normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+				D3DXPlaneFromPointNormal(&plane, &pos, &normal);
+
+				//シャドウマトリックスの初期化
+				D3DXMatrixIdentity(&mtxShadow);
+
+				//シャドウマトリックスの作成
+				D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
+				D3DXMatrixMultiply(&mtxShadow, &g_aPlayer[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxShadow);
+
+				//シャドウマトリックスの設定
+				pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
+
+				//マテリアルデータへのポインタを取得
+				pMat = (D3DXMATERIAL *)g_aPlayer[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
+
+				for (int nCntMat = 0; nCntMat < (int)g_aPlayer[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
+				{
+					//保存用ストレージに代入
+					MatColStrage = pMat[nCntMat].MatD3D.Diffuse;
+
+					//黒色に設定
+					pMat[nCntMat].MatD3D.Diffuse = XCOL_BLACK;
+
+					//マテリアル設定
+					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+
+					//テクスチャ設定
+					pDevice->SetTexture(0, g_aPlayer[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
+
+					//モデル描画
+					g_aPlayer[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+
+					//色を戻す
+					pMat[nCntMat].MatD3D.Diffuse = MatColStrage;
 				}
 			}
 		}
