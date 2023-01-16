@@ -246,7 +246,6 @@ void DrawPlayer(void)
 				D3DXVECTOR4	posLight;		//ライトの位置
 				D3DXVECTOR3	pos, normal;	//平面上の任意の点、法線ベクトル
 				D3DXPLANE	plane;			//平面情報
-				D3DXCOLOR	MatColStrage;	//マテリアルデータ保存用
 
 											//ライトの位置を設定
 				pDevice->GetLight(0, &light);
@@ -272,23 +271,19 @@ void DrawPlayer(void)
 
 				for (int nCntMat = 0; nCntMat < (int)g_aPlayer[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
 				{
-					//保存用ストレージに代入
-					MatColStrage = pMat[nCntMat].MatD3D.Diffuse;
+					D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
 
-					//黒色に設定
-					pMat[nCntMat].MatD3D.Diffuse = XCOL_BLACK;
+					//黒色に設定					//自己発光を無くす
+					MatCopy.Diffuse = XCOL_BLACK;	MatCopy.Emissive = XCOL_BLACK;
 
 					//マテリアル設定
-					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+					pDevice->SetMaterial(&MatCopy);
 
 					//テクスチャ設定
-					pDevice->SetTexture(0, g_aPlayer[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
+					pDevice->SetTexture(0, NULL);
 
 					//モデル描画
 					g_aPlayer[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
-
-					//色を戻す
-					pMat[nCntMat].MatD3D.Diffuse = MatColStrage;
 				}
 			}
 		}
