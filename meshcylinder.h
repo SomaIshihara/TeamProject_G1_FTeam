@@ -12,7 +12,9 @@
 //マクロ
 #define MESHSYLINDER_WIDTH		(500.0f)		//背景の広さ
 #define MESHSYLINDER_HEIGHT		(500.0f)		//背景の高さ
-#define MESHSYLINDER_SPLIT		(32)		//背景の頂点数
+#define MESHSYLINDER_SPLIT		(32)			//背景の頂点数
+#define MESHSYLINDER_TEX_RESOLUTION		(3.0f)	//背景の解像度
+
 
 //プロトタイプ宣言
 void InitMeshCylinder(void);
