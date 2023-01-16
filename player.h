@@ -30,7 +30,7 @@ typedef struct
 	D3DXVECTOR3 posOld;		//前回の位置
 	D3DXVECTOR3 move;		//移動量
 	D3DXVECTOR3 rot;		//向き
-	float movegauge;		//移動量(ダッシュ)
+	float moveGauge;		//移動量(ダッシュ)
 
 	//長さ・角度
 	float fLength;
