@@ -1,9 +1,3 @@
-//--------------------------------------------------------------------------------------------------------
-//
-//メッシュシリンダーの背景[meshcylinder.cpp]
-//Author:菊地陽人
-//
-//--------------------------------------------------------------------------------------------------------
 #include "main.h"
 #include "meshcylinder.h"
 
@@ -15,9 +9,9 @@ D3DXVECTOR3 g_posMeshCylinder;
 D3DXVECTOR3 g_rotMeshCylinder;
 D3DXMATRIX g_mtxWorldMeshCylinder;	//ワールドマトリックス
 
-//--------------------------------------------------------------------------------------------------------
-//メッシュシリンダーの初期化処理
-//--------------------------------------------------------------------------------------------------------
+									//--------------------------------------------------------------------------------------------------------
+									//ポリゴンの初期化処理
+									//--------------------------------------------------------------------------------------------------------
 void InitMeshCylinder(void)
 {
 	//デバイスの取得
@@ -42,33 +36,46 @@ void InitMeshCylinder(void)
 	g_pVtxBuffMeshCylinder->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定
-	for (int nCntMeshCylinder = 0; nCntMeshCylinder <= MESHSYLINDER_SPLIT; nCntMeshCylinder++)
+	for (int nCntMeshCylinder = 0; nCntMeshCylinder < MESHSYLINDER_SPLIT + 1; nCntMeshCylinder++)
 	{
 		pVtx[nCntMeshCylinder].pos = D3DXVECTOR3(
 			sinf(D3DX_PI * (1.0f - (2.0f / MESHSYLINDER_SPLIT * nCntMeshCylinder))) *MESHSYLINDER_WIDTH,
 			MESHSYLINDER_HEIGHT,
 			cosf(D3DX_PI * (1.0f - (2.0f / MESHSYLINDER_SPLIT * nCntMeshCylinder))) * MESHSYLINDER_WIDTH);
 
-		pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].pos = D3DXVECTOR3(
+		pVtx[MESHSYLINDER_SPLIT + nCntMeshCylinder + 1].pos = D3DXVECTOR3(
 			sinf(D3DX_PI * (1.0f - (2.0f / MESHSYLINDER_SPLIT * nCntMeshCylinder))) *MESHSYLINDER_WIDTH,
 			0.0f,
 			cosf(D3DX_PI * (1.0f - (2.0f / MESHSYLINDER_SPLIT * nCntMeshCylinder))) * MESHSYLINDER_WIDTH);
 
+		if (nCntMeshCylinder == MESHSYLINDER_SPLIT)
+		{
+			pVtx[nCntMeshCylinder].pos = D3DXVECTOR3(
+				sinf(D3DX_PI * 1.0f) *MESHSYLINDER_WIDTH,
+				MESHSYLINDER_HEIGHT,
+				cosf(D3DX_PI * 1.0f) * MESHSYLINDER_WIDTH);
+
+			pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].pos = D3DXVECTOR3(
+				sinf(D3DX_PI * 1.0f) *MESHSYLINDER_WIDTH,
+				0.0f,
+				cosf(D3DX_PI * 1.0f) * MESHSYLINDER_WIDTH);
+		}
+
 		//法線ベクトルの設定
 		pVtx[nCntMeshCylinder].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[MESHSYLINDER_SPLIT + nCntMeshCylinder].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
 		pVtx[nCntMeshCylinder].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[MESHSYLINDER_SPLIT + nCntMeshCylinder].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 		//テクスチャ座標の設定
 		pVtx[nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (1.0f / MESHSYLINDER_SPLIT), 0.0f);
-		pVtx[MESHSYLINDER_SPLIT + nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (1.0f / MESHSYLINDER_SPLIT), 1.0f);
+		pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (1.0f / MESHSYLINDER_SPLIT), 1.0f);
 	}
 	D3DXVec3Normalize(&aVecDir, &aVecDir);		//ベクトルを正規化する
 
-	//頂点バッファのアンロック
+												//頂点バッファのアンロック
 	g_pVtxBuffMeshCylinder->Unlock();
 
 	//インデックスバッファの生成
@@ -80,7 +87,7 @@ void InitMeshCylinder(void)
 	g_pIdxBuffMeshCylinder->Lock(0, 0, (void**)&pIdx, 0);
 
 	//頂点番号データの設定
-	for (int nCntMeshCylinder = 0; nCntMeshCylinder <= MESHSYLINDER_SPLIT * 2 + 2; nCntMeshCylinder++)
+	for (int nCntMeshCylinder = 0; nCntMeshCylinder < MESHSYLINDER_SPLIT * 2 + 2; nCntMeshCylinder++)
 	{
 		if (nCntMeshCylinder % EVENPARITY == NOPARITY)
 		{
@@ -98,7 +105,7 @@ void InitMeshCylinder(void)
 
 
 //--------------------------------------------------------------------------------------------------------
-//メッシュシリンダーの描画処理
+//ポリゴンの描画処理
 //--------------------------------------------------------------------------------------------------------
 void DrawMeshCylinder(void)
 {
@@ -131,13 +138,13 @@ void DrawMeshCylinder(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureMeshCylinder);
 
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (MESHSYLINDER_SPLIT * 2 + 2), 0, (MESHSYLINDER_SPLIT * 2));
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (MESHSYLINDER_SPLIT * 2 + 2), 0, (MESHSYLINDER_SPLIT * 2 + 2));
 }
 
 
 
 //--------------------------------------------------------------------------------------------------------
-//メッシュシリンダーの終了処理
+//ポリゴンの終了処理
 //--------------------------------------------------------------------------------------------------------
 void UninitMeshCylinder(void)
 {
@@ -166,7 +173,7 @@ void UninitMeshCylinder(void)
 
 
 //--------------------------------------------------------------------------------------------------------
-//メッシュシリンダーの更新処理
+//ポリゴンの更新処理
 //--------------------------------------------------------------------------------------------------------
 void UpdateMeshCylinder(void)
 {
