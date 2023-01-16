@@ -21,7 +21,7 @@ void InitMeshCylinder(void)
 	D3DXVECTOR3 aVecDir;
 
 	//テクスチャーの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\mountain000.png", &g_pTextureMeshCylinder);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshCylinder);
 
 	//ポリゴンの初期化
 	g_posMeshCylinder = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -70,8 +70,8 @@ void InitMeshCylinder(void)
 		pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 		//テクスチャ座標の設定
-		pVtx[nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (1.0f / MESHSYLINDER_SPLIT), 0.0f);
-		pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (1.0f / MESHSYLINDER_SPLIT), 1.0f);
+		pVtx[nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (MESHSYLINDER_TEX_RESOLUTION / MESHSYLINDER_SPLIT), 0.0f);
+		pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (MESHSYLINDER_TEX_RESOLUTION / MESHSYLINDER_SPLIT), 1.0f);
 	}
 	D3DXVec3Normalize(&aVecDir, &aVecDir);		//ベクトルを正規化する
 
