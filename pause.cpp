@@ -12,7 +12,21 @@
 #include "color.h"
 
 //マクロ定義
-#define NUM_TEXTURE		(4)		//ポーズ画像のファイル名
+#define NUM_TEXTURE				(6)									//ポーズ画像のファイル名
+#define NUM_BUTTON				(2)									//ボタンの数
+#define COUNT_BUTTON			(15)								//ボタンのカウント
+#define HALF_WIDTH				(640.0f)							//半分の横幅
+#define HALF_HEIGHT				(360.0f)							//半分の高さ
+#define UI_WIDTH				(200.0f)							//UIの横幅
+#define UI_HEIGHT				(70.0f)								//UIの高さ
+#define DIRE_WIDTH_UP			(40.0f)								//上や印の幅
+#define DIRE_HEIGHT_UP			(40.0f)								//上や印の高さ
+#define DIRE_WIDTH_DOWN			(-40.0f)							//下や印の幅
+#define DIRE_HEIGHT_DOWN		(-40.0f)							//下や印の高さ
+#define CENTER_POS_MENU			(D3DXVECTOR3(640.0f,360.0f,0.0f))	//メニューの中心の位置
+#define CENTER_POS_UI			(D3DXVECTOR3(640.0f,440.0f,0.0f))	//UIの中心の位置
+#define CENTER_POS_DIRE_UP		(D3DXVECTOR3(640.0f,340.0f,0.0f))	//や印の中心の位置
+#define CENTER_POS_DIRE_DOWN	(D3DXVECTOR3(640.0f,540.0f,0.0f))	//や印の中心の位置
 
 //ファイルパス
 const char *c_pFileNamePause[] =
@@ -20,14 +34,48 @@ const char *c_pFileNamePause[] =
 	"data/TEXTURE/pause.png",
 	"data/TEXTURE/continue.png",
 	"data/TEXTURE/restart.png",
-	"data/TEXTURE/quit.png"
+	"data/TEXTURE/quit.png",
+	"data/TEXTURE/sankaku.png",
+	"data/TEXTURE/sankaku.png"
+};
+
+//ポーズ画面のUIの幅
+const D3DXVECTOR3 g_CenterPos[] = {
+	CENTER_POS_MENU,								//ポーズ画面の位置
+	CENTER_POS_UI,									//コンテニューの位置
+	CENTER_POS_UI,									//リトライの位置
+	CENTER_POS_UI,									//終了の位置
+	CENTER_POS_DIRE_UP,
+	CENTER_POS_DIRE_DOWN
+};
+
+//ポーズ画面のUIの幅
+const float g_Width[] = {
+	HALF_WIDTH,										//ポーズ画面の幅
+	UI_WIDTH,										//コンテニューの幅
+	UI_WIDTH,										//リトライの幅
+	UI_WIDTH,										//終了の幅
+	DIRE_WIDTH_UP,
+	DIRE_WIDTH_DOWN
+};
+
+//ポーズ画面のUIの高さ
+const float g_Height[] = {
+	HALF_HEIGHT,									//ポーズ画面の幅
+	UI_HEIGHT,										//コンテニューの幅
+	UI_HEIGHT,										//リトライの幅
+	UI_HEIGHT,										//終了の幅
+	DIRE_HEIGHT_UP,
+	DIRE_HEIGHT_DOWN
 };
 
 //グローバル変数宣言
 LPDIRECT3DTEXTURE9		g_pTexturePause[NUM_TEXTURE] = {};	//テクスチャへのポインタ
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPause = NULL;	//頂点バッファへのポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPause = NULL;				//頂点バッファへのポインタ
 PAUSE g_Pause;
 Pause g_aPause[NUM_TEXTURE];
+int g_nCnt[NUM_BUTTON];
+bool g_ButtonUse[NUM_BUTTON];
 
 //=================================
 //ポーズの初期化処理
@@ -52,19 +100,26 @@ void InitPause(void)
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffPause->Lock(0, 0, (void* *)&pVtx, 0);
 
-	//ポーズの読み込み処理
-	LoadPause();
+	//コンテニューに設定
+	g_Pause = PAUSE_CONTINUE;
+
+	//初期ボタンカウント設定
+	for (int nCnt = 0; nCnt < NUM_BUTTON; nCnt++)
+	{
+		g_nCnt[nCnt] = COUNT_BUTTON;
+	}
 
 	//各情報読み込み
 	for (int nCnt = 0; nCnt < NUM_TEXTURE; nCnt++,pVtx +=4)
 	{
-		
+		//位置の設定
+		g_aPause[nCnt].pos = g_CenterPos[nCnt];
 
 		//頂点座標の設定
-		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(g_aPause[nCnt].VtxZero.x, g_aPause[nCnt].VtxZero.y, NIL_F);
-		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(g_aPause[nCnt].VtxOne.x, g_aPause[nCnt].VtxOne.y, NIL_F);
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(g_aPause[nCnt].VtxTwo.x, g_aPause[nCnt].VtxTwo.y, NIL_F);
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(g_aPause[nCnt].VtxThree.x, g_aPause[nCnt].VtxThree.y, NIL_F);
+		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(g_aPause[nCnt].pos.x - g_Width[nCnt], g_aPause[nCnt].pos.y - g_Height[nCnt], NIL_F);
+		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(g_aPause[nCnt].pos.x + g_Width[nCnt], g_aPause[nCnt].pos.y - g_Height[nCnt], NIL_F);
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(g_aPause[nCnt].pos.x - g_Width[nCnt], g_aPause[nCnt].pos.y + g_Height[nCnt], NIL_F);
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(g_aPause[nCnt].pos.x + g_Width[nCnt], g_aPause[nCnt].pos.y + g_Height[nCnt], NIL_F);
 
 		//rhwの設定
 		pVtx[VTX_LE_UP].rhw = RHW;
@@ -110,12 +165,87 @@ void UninitPause(void)
 		g_pVtxBuffPause = NULL;
 	}
 }
-
 //=================================
 //ポーズの更新処理
 //=================================
 void UpdatePause(void)
 {
+	//ポーズの下方向選択処理
+	SelectDownPause();
+	
+	//ポーズの上方向選択処理
+	SelectUpPause();
+
+	//色の変更のカウントダウン
+	for (int nCnt = 0; nCnt < NUM_BUTTON; nCnt++)
+	{
+		if (g_ButtonUse[nCnt] == true)
+		{
+			g_nCnt[nCnt]--;
+		}
+	}
+
+	//ポインタを設定
+	VERTEX_2D *pVtx;
+
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffPause->Lock(0, 0, (void* *)&pVtx, 0);
+
+	//選択項目の表示と矢印の色変更
+	for (int nCnt = 0; nCnt < NUM_TEXTURE; nCnt++, pVtx += 4)
+	{
+		if (g_Pause == nCnt)
+		{
+			//頂点カラーの設定
+			pVtx[VTX_LE_UP].col = RGBA_WHITE;
+			pVtx[VTX_RI_UP].col = RGBA_WHITE;
+			pVtx[VTX_LE_DO].col = RGBA_WHITE;
+			pVtx[VTX_RI_DO].col = RGBA_WHITE;
+		}
+		else if(nCnt != 0 && nCnt <= 3)
+		{
+			//頂点カラーの設定
+			pVtx[VTX_LE_UP].col = XCOL_NONE;
+			pVtx[VTX_RI_UP].col = XCOL_NONE;
+			pVtx[VTX_LE_DO].col = XCOL_NONE;
+			pVtx[VTX_RI_DO].col = XCOL_NONE;
+		}
+		else if (nCnt >= 4)
+		{
+			if (g_nCnt[1] <= 0 && nCnt == 4)
+			{
+				//白に設定
+				pVtx[VTX_LE_UP].col = RGBA_WHITE;
+				pVtx[VTX_RI_UP].col = RGBA_WHITE;
+				pVtx[VTX_LE_DO].col = RGBA_WHITE;
+				pVtx[VTX_RI_DO].col = RGBA_WHITE;
+
+				//ボタンを使用していない状態にする
+				g_ButtonUse[1] = false;
+
+				//カウントの再設定
+				g_nCnt[1] = COUNT_BUTTON;
+			}
+			else if (g_nCnt[0] <= 0 && nCnt == 5)
+			{
+				//白に設定
+				pVtx[VTX_LE_UP].col = RGBA_WHITE;
+				pVtx[VTX_RI_UP].col = RGBA_WHITE;
+				pVtx[VTX_LE_DO].col = RGBA_WHITE;
+				pVtx[VTX_RI_DO].col = RGBA_WHITE;
+
+				//ボタンを使用していない状態にする
+				g_ButtonUse[0] = false;
+
+				//カウントの再設定
+				g_nCnt[0] = COUNT_BUTTON;
+			}
+		}
+	}
+	
+	//頂点バッファをロックする
+	g_pVtxBuffPause->Unlock();
+
 	//キーボードのENTER　か　ゲームパッドの　Aボタン　か　STARTボタンが押された
 	if (GetKeyboardTrigger(DIK_RETURN) == true)
 	{
@@ -137,7 +267,6 @@ void UpdatePause(void)
 		}
 	}
 }
-
 //=================================
 //ポーズの描画処理
 //=================================
@@ -152,8 +281,6 @@ void DrawPause(void)
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	
-
 	for (int nCnt = 0; nCnt < NUM_TEXTURE; nCnt++)
 	{
 		//テクスチャの設定
@@ -164,87 +291,117 @@ void DrawPause(void)
 	}
 }
 //=================================
-//ポーズの読み込み処理
+//ポーズの下方向選択処理
 //=================================
-void LoadPause()
+void SelectDownPause(void)
 {
-	int c = 0;			//一文字ずつ確認する変数
-	int column = 1;		//列数を数える変数
-	int line = 0;		//行数を数える処理
+	//キーボードの下方向キー　か　ゲームパッドの　十字下ボタン　が押された
+	if (GetKeyboardTrigger(DIK_DOWN) == true)
+	{
+		//ボタンを使用している状態にする
+		g_ButtonUse[0] = true;
 
-	char aData[1000];	//つなげる文字数
+		//カウントの再設定
+		g_nCnt[0] = COUNT_BUTTON;
 
-	FILE *pFile;		//ファイルポインタを宣言
+		//ポインタを設定
+		VERTEX_2D *pVtx;
 
-	memset(aData, 0, sizeof(aData));
+		//頂点バッファをロックし、頂点情報へのポインタを取得
+		g_pVtxBuffPause->Lock(0, 0, (void* *)&pVtx, 0);
 
-	// ファイルを開く
-	pFile = fopen("data/CSV/pause.csv", "r");
+		pVtx += 20;
 
-	if (pFile != NULL)
-	{//ファイルが開けた場合
+		//頂点カラーの設定
+		pVtx[VTX_LE_UP].col = XCOL_YELLOW;
+		pVtx[VTX_RI_UP].col = XCOL_YELLOW;
+		pVtx[VTX_LE_DO].col = XCOL_YELLOW;
+		pVtx[VTX_RI_DO].col = XCOL_YELLOW;
 
-	 //ファイルから一文ずつ読み込む
-		while (fgetc(pFile) != '\n');
+		//頂点バッファをロックする
+		g_pVtxBuffPause->Unlock();
 
-		while (c != EOF)
+		switch (g_Pause)
 		{
-			//1セル分の文字列を作る
-			while (1)
-			{
-				c = fgetc(pFile);
+		case PAUSE_CONTINUE:
 
-				//末尾ならループを抜ける
-				if (c == EOF)
-				{
-					break;
-				}
+			//リトライボタンに設定
+			g_Pause = PAUSE_RETRY;
 
-				//カンマか改行でなければ、文字としてつなげる
-				if (c != ',' && c != '\n')
-				{
-					strcat(aData, (const char*)&c);
-				}
-				//カンマか改行ならループを抜ける
-				else
-				{
-					break;
-				}
-			}
+			break;
 
-			switch (column)
-			{
-			//atoi関数で数値として代入
-			case 1: g_aPause[line].pos.x	  = (float)(atoi(aData));	break;		//X位置
-			case 2: g_aPause[line].pos.y	  = (float)(atoi(aData));	break;		//Y位置
-			case 3: g_aPause[line].VtxZero.x  = (float)(atoi(aData));	break;		//Vtx[0]X
-			case 4: g_aPause[line].VtxZero.y  = (float)(atoi(aData));	break;		//Vtx[0]Y
-			case 5: g_aPause[line].VtxOne.x   = (float)(atoi(aData));	break;		//Vtx[1]X
-			case 6: g_aPause[line].VtxOne.y   = (float)(atoi(aData));	break;		//Vtx[1]Y
-			case 7: g_aPause[line].VtxTwo.x   = (float)(atoi(aData));	break;		//Vtx[2]X
-			case 8: g_aPause[line].VtxTwo.y   = (float)(atoi(aData));	break;		//Vtx[2]Y
-			case 9: g_aPause[line].VtxThree.x = (float)(atoi(aData));	break;		//Vtx[3]X
-			case 10: g_aPause[line].VtxThree.y = (float)(atoi(aData));	break;		//Vtx[3]Y
-			}
-			//バッファを初期化
-			memset(aData, 0, sizeof(aData));
+		case PAUSE_RETRY:
+			
+			//終了ボタンに設定
+			g_Pause = PAUSE_QUIT;
 
-			//列数を足す
-			column++;
+			break;
 
-			//もし読み込んだ文字が改行だったら列数を初期化して行数を増やす
-			if (c == '\n')
-			{
-				column = 1;
-				line++;
-			}
+		case PAUSE_QUIT:
+			
+			//続けるボタンに設定
+			g_Pause = PAUSE_CONTINUE;
+
+			break;
 		}
-
-		//ファイルを閉じる
-		fclose(pFile);
 	}
 }
+//=================================
+//ポーズの上方向選択処理
+//=================================
+void SelectUpPause(void)
+{
+	//キーボードの上方向キー　か　ゲームパッドの　十字上ボタン　が押された
+	if (GetKeyboardTrigger(DIK_UP) == true)
+	{
+		//ボタンを使用している状態にする
+		g_ButtonUse[1] = true;
 
+		//カウントの再設定
+		g_nCnt[1] = COUNT_BUTTON;
+
+		//ポインタを設定
+		VERTEX_2D *pVtx;
+
+		//頂点バッファをロックし、頂点情報へのポインタを取得
+		g_pVtxBuffPause->Lock(0, 0, (void* *)&pVtx, 0);
+
+		pVtx += 16;
+
+		//頂点カラーの設定
+		pVtx[VTX_LE_UP].col = XCOL_YELLOW;
+		pVtx[VTX_RI_UP].col = XCOL_YELLOW;
+		pVtx[VTX_LE_DO].col = XCOL_YELLOW;
+		pVtx[VTX_RI_DO].col = XCOL_YELLOW;
+
+		//頂点バッファをロックする
+		g_pVtxBuffPause->Unlock();
+
+		switch (g_Pause)
+		{
+		case PAUSE_CONTINUE:
+
+			//終了ボタンに設定
+			g_Pause = PAUSE_QUIT;
+
+			break;
+
+		case PAUSE_RETRY:
+
+			//続けるボタンに設定
+			g_Pause = PAUSE_CONTINUE;
+
+			break;
+
+		case PAUSE_QUIT:
+
+			//リトライボタンに設定
+			g_Pause = PAUSE_RETRY;
+
+			break;
+		}
+	}
+}
 //=================================
 //ポーズの設定処理
 //=================================
@@ -252,7 +409,6 @@ void SetPause(PAUSE Pause)
 {
 	g_Pause = Pause;
 }
-
 //=================================
 //ポーズの取得
 //=================================

@@ -12,7 +12,7 @@
 //****************************//
 typedef enum
 {
-	PAUSE_CONTINUE = 0,
+	PAUSE_CONTINUE = 1,
 	PAUSE_RETRY,
 	PAUSE_QUIT,
 	PAUSE_MAX
@@ -24,10 +24,6 @@ typedef enum
 typedef struct
 {
 	D3DXVECTOR3 pos;			//位置
-	D3DXVECTOR3 VtxZero;		//Vtx[0]頂点座標
-	D3DXVECTOR3 VtxOne;			//Vtx[1]頂点座標
-	D3DXVECTOR3 VtxTwo;			//Vtx[2]頂点座標
-	D3DXVECTOR3 VtxThree;		//Vtx[3]頂点座標
 }Pause;
 
 //****************************//
@@ -38,7 +34,8 @@ void UninitPause(void);
 void UpdatePause(void);
 void DrawPause(void);
 void SetPause(PAUSE Pause);
-void LoadPause(void);
+void SelectDownPause(void);
+void SelectUpPause(void);
 PAUSE *GetPause(void);
 
 #endif 
