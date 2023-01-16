@@ -113,13 +113,6 @@ void UpdateGame(void)
 	{
 		g_bPause = g_bPause ? false : true;
 	}
-
-	//Enterが押された　もしくは　ゲームパッドのSTART or A ボタンが押された
-	if (GetKeyboardTrigger(DIK_RETURN) == true)
-	{
-		//タイトル画面に遷移
-		SetFade(MODE_TITLE);
-	}
 }
 
 //------------------------------------------------
