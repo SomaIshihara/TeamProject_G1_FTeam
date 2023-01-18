@@ -9,7 +9,7 @@
 
 //ƒ}ƒNƒ
 #define MESHSYLINDER_WIDTH				(2000.0f)	//”wŒi‚ÌL‚³
-#define MESHSYLINDER_HEIGHT				(500.0f)	//”wŒi‚Ì‚‚³
+#define MESHSYLINDER_HEIGHT				(1000.0f)	//”wŒi‚Ì‚‚³
 #define MESHSYLINDER_SPLIT				(32)		//”wŒi‚Ì’¸“_”
 #define MESHSYLINDER_TEX_RESOLUTION		(3.0f)		//”wŒi‚Ì‰ð‘œ“x
 
