@@ -36,6 +36,7 @@ void DrawPause(void);
 void SetPause(PAUSE Pause);
 void SelectDownPause(void);
 void SelectUpPause(void);
+void UIStatePause(void);
 PAUSE *GetPause(void);
 
 #endif 
