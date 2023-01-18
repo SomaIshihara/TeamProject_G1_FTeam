@@ -10,6 +10,17 @@
 #include "main.h"
 #include "model.h"
 
+//プレイヤー状態列挙
+typedef enum
+{
+	PLAYERSTAT_WAIT = 0,
+	PLAYERSTAT_CHARGE,
+	PLAYERSTAT_DASH,
+	PLAYERSTAT_PUSHED,
+	PLAYERSTAT_FALL,
+	PLAYERSTAT_MAX
+} PLAYERSTAT;
+
 //プレイヤーモデルの構造体
 typedef struct
 {
@@ -31,6 +42,7 @@ typedef struct
 	D3DXVECTOR3 move;		//移動量
 	D3DXVECTOR3 rot;		//向き
 	float moveGauge;		//移動量(ダッシュ)
+	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 
 	//長さ・角度
 	float fLength;
@@ -44,8 +56,8 @@ typedef struct
 	//描画類
 	Model model;			//使用モデル
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
-	int nIdxShadow;			//影番号
-	bool bUse;				//使用の有無
+	bool bUseShadow;		//影使用の有無
+	bool bUsePlayer;		//プレイヤー使用の有無
 
 	PlayModel aPlaymodel[10];
 

@@ -16,6 +16,8 @@
 
 //マクロ
 #define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度
+#define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度
+#define ACCELERATION_GRAVITY (9.8f)		//重力加速度
 #define PLAYER_POWER_MAX	(1.0f)		//移動の強さの最大値
 #define PLAYER_POWER_ADD	(0.01f)		//移動の強さの増加値
 #define DUMP_COEF			(0.04f)		//減衰係数
@@ -61,6 +63,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].move = ZERO_SET;
 		g_aPlayer[nCntPlayer].rot = ZERO_SET;
 		g_aPlayer[nCntPlayer].moveGauge = 0;
+		g_aPlayer[nCntPlayer].jumpTime = 0;
 
 
 		g_aPlayer[nCntPlayer].animal = ANIMAL_WILDBOAR;
@@ -68,12 +71,11 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].nNumHitPlayer = -1;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
-		g_aPlayer[nCntPlayer].nIdxShadow = -1;
-		g_aPlayer[nCntPlayer].bUse = false;
+		g_aPlayer[nCntPlayer].bUsePlayer = false;
 	}
 
 	//1Pのみ使用していることにする
-	g_aPlayer[0].bUse = true;
+	g_aPlayer[0].bUsePlayer = true;
 }
 
 //========================
@@ -102,13 +104,13 @@ void UpdatePlayer(void)
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
-		if (g_aPlayer[nCntPlayer].bUse == true)
+		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
 		{
 			//現在の位置を前回の位置にする
 			g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
 
-			pow(10, DECIMAL_PLACE);
-			
+			//ジャンプ時間を増やす
+			g_aPlayer[nCntPlayer].jumpTime++;
 
 			//移動方法（ダッシュ）押して離す
 			if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
@@ -132,9 +134,23 @@ void UpdatePlayer(void)
 				g_aPlayer[nCntPlayer].moveGauge = 0;
 			}
 
-			//ボタン操作に応じてプレイヤー・カメラ視点・注視点移動
+			//ジャンプ
+			if (GetKeyboardTrigger(DIK_RETURN) == true)
+			{
+				g_aPlayer[nCntPlayer].move.y = PLAYER_JUMP_SPEED;//移動量設定
+				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
+			}
+
+			//ボタン操作に応じてプレイヤー移動
 			g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
+			g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 			g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
+
+			//[仮]一旦Y=0.0fになったら着地
+			if (g_aPlayer[nCntPlayer].pos.y <= 0.0f)
+			{
+				g_aPlayer[nCntPlayer].pos.y = 0.0f;
+			}
 
 			//当たり判定類
 			//一旦なし
@@ -273,8 +289,8 @@ void DrawPlayer(void)
 				{
 					D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
 
-					//黒色に設定					//自己発光を無くす
-					MatCopy.Diffuse = XCOL_BLACK;	MatCopy.Emissive = XCOL_BLACK;
+					//黒色に設定						//自己発光を無くす
+					MatCopy.Diffuse = XCOL_BLACKSHADOW;	MatCopy.Emissive = XCOL_BLACK;
 
 					//マテリアル設定
 					pDevice->SetMaterial(&MatCopy);
@@ -363,9 +379,9 @@ void MovePlayer(Player *pPlayer)
 	pPlayer->pos.z += pPlayer->move.z;
 
 	//移動量消す
-	pPlayer->move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	pPlayer->move.x = 0.0f;
+	pPlayer->move.z = 0.0f;
 }
-
 //========================
 //取得処理
 //========================
