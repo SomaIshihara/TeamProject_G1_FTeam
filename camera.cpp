@@ -27,7 +27,7 @@ Author:大宮愛羅
 //上方向ベクトル情報
 #define VECU_WIDTH      (0.0f)		//上方向ベクトルの幅
 #define VECU_HEIGHT		(1.0f)		//上方向ベクトルの高さ
-#define VECV_DEPTH		(0.0f)		//上方向ベクトルの奥行き
+#define VECU_DEPTH		(0.0f)		//上方向ベクトルの奥行き
 
 //カメラ情報
 #define CAMERA_ROT		(45.0f)		//カメラの向き
@@ -47,21 +47,20 @@ float  g_MaxDrawCamera = DRAWING_AREA;	//最大描画範囲
 //カメラの初期化
 void InitCamera(void)
 {
+	//各初期化
 	g_Camera.posV = D3DXVECTOR3(POSV_WIDTH, POSV_HEIGHT, POSV_DEPTH);	//視点
 	g_Camera.posR = D3DXVECTOR3(POSR_WIDTH, POSR_HEIGHT, POSR_DEPTH);	//注視点
-	g_Camera.vecU = D3DXVECTOR3(VECU_WIDTH, VECU_HEIGHT, VECV_DEPTH);	//上方向ベクトル
-
-	Player * pPlayer = GetPlayer();
+	g_Camera.vecU = D3DXVECTOR3(VECU_WIDTH, VECU_HEIGHT, VECU_DEPTH);	//上方向ベクトル	
 
 	//視点
-	g_Camera.posV.x = pPlayer->pos.x;					//視点X
-	g_Camera.posV.y = pPlayer->pos.y + POSV_ADD;		//視点Y
-	g_Camera.posV.z = pPlayer->pos.z - POSV_DISTANCE;	//視点Z
+	g_Camera.posV.x;	//視点X
+	g_Camera.posV.y;	//視点Y
+	g_Camera.posV.z;	//視点Z
 
 	//注視点
-	g_Camera.posR.x = pPlayer->pos.x;		//注視点X
-	g_Camera.posR.y = pPlayer->pos.y;		//注視点Y
-	g_Camera.posR.z = pPlayer->pos.z;		//注視点Z
+	g_Camera.posR.x;	//注視点X
+	g_Camera.posR.y;	//注視点Y
+	g_Camera.posR.z;	//注視点Z
 
 	//それぞれの位置の差分を格納する変数
 	float PosDiffX, PosDiffY, PosDiffZ;
@@ -120,17 +119,6 @@ Camera *GetCamera(void)
 //カメラの移動処理
 void MoveCamera(void)
 {
-	//プレイヤーのポインタ
-	Player * pPlayer = GetPlayer();
-
-	//視点
-	g_Camera.posV += pPlayer->pos - pPlayer->posOld;
-
-	//注視点
-	g_Camera.posR.x = pPlayer->pos.x;
-	g_Camera.posR.y = pPlayer->pos.y;
-	g_Camera.posR.z = pPlayer->pos.z;
-
 	//視点の上下
 	if (GetKeyboardPress(DIK_T) == true)
 	{
