@@ -21,7 +21,7 @@ Author:大宮愛羅
 #define POSV_ADD		(100)		//視点の上下移動
 #define POSV_DISTANCE	(100)		//視点の距離
 #define POSV_WIDTH		(0.0f)		//視点の幅
-#define POSV_HEIGHT		(500.0f)	//視点の高さ
+#define POSV_HEIGHT		(600.0f)	//視点の高さ
 #define POSV_DEPTH		(0.0f)		//視点の奥行き
 
 //上方向ベクトル情報
@@ -50,17 +50,7 @@ void InitCamera(void)
 	//各初期化
 	g_Camera.posV = D3DXVECTOR3(POSV_WIDTH, POSV_HEIGHT, POSV_DEPTH);	//視点
 	g_Camera.posR = D3DXVECTOR3(POSR_WIDTH, POSR_HEIGHT, POSR_DEPTH);	//注視点
-	g_Camera.vecU = D3DXVECTOR3(VECU_WIDTH, VECU_HEIGHT, VECU_DEPTH);	//上方向ベクトル	
-
-	//視点
-	g_Camera.posV.x;	//視点X
-	g_Camera.posV.y;	//視点Y
-	g_Camera.posV.z;	//視点Z
-
-	//注視点
-	g_Camera.posR.x;	//注視点X
-	g_Camera.posR.y;	//注視点Y
-	g_Camera.posR.z;	//注視点Z
+	g_Camera.vecU = D3DXVECTOR3(VECU_WIDTH, VECU_HEIGHT, VECU_DEPTH);	//上方向ベクトル		
 
 	//それぞれの位置の差分を格納する変数
 	float PosDiffX, PosDiffY, PosDiffZ;
@@ -71,6 +61,9 @@ void InitCamera(void)
 
 	//長さの算出
 	g_Camera.fLength = sqrtf(PosDiffX + PosDiffY + PosDiffZ);
+
+	//視点の位置更新
+	UpdatePosVCamera();
 }
 
 //カメラの終了処理
@@ -110,12 +103,6 @@ void SetCamera(void)
 	pDevice->SetTransform(D3DTS_VIEW, &g_Camera.mtxView);
 }
 
-//カメラの取得
-Camera *GetCamera(void)
-{
-	return &g_Camera;
-}
-
 //カメラの移動処理
 void MoveCamera(void)
 {
@@ -140,6 +127,19 @@ void MoveCamera(void)
 	}
 
 	//視点の位置更新
+	UpdatePosVCamera();
+}
+
+//視点の位置更新
+void UpdatePosVCamera(void)
+{
+	//視点の位置更新
 	g_Camera.posV.x = g_Camera.posR.x + sinf(D3DX_PI - g_Camera.rot.y) * g_Camera.fLength;
-	g_Camera.posV.z = g_Camera.posR.z + cosf(D3DX_PI - g_Camera.rot.y) * g_Camera.fLength;	
+	g_Camera.posV.z = g_Camera.posR.z + cosf(D3DX_PI - g_Camera.rot.y) * g_Camera.fLength;
+}
+
+//カメラの取得
+Camera *GetCamera(void)
+{
+	return &g_Camera;
 }
