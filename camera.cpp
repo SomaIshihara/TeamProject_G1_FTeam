@@ -21,8 +21,8 @@ Author:大宮愛羅
 #define POSV_ADD		(100)		//視点の上下移動
 #define POSV_DISTANCE	(100)		//視点の距離
 #define POSV_WIDTH		(0.0f)		//視点の幅
-#define POSV_HEIGHT		(600.0f)	//視点の高さ
-#define POSV_DEPTH		(0.0f)		//視点の奥行き
+#define POSV_HEIGHT		(1650.0f)	//視点の高さ
+#define POSV_DEPTH		(2200.0f)	//視点の奥行き
 
 //上方向ベクトル情報
 #define VECU_WIDTH      (0.0f)		//上方向ベクトルの幅
@@ -31,7 +31,7 @@ Author:大宮愛羅
 
 //カメラ情報
 #define CAMERA_ROT		(45.0f)		//カメラの向き
-#define CAMERA_POS		(10.0f)		//カメラの位置
+#define CAMERA_POS		(10.0f)		//壁
 
 //描画範囲
 #define DRAWING_AREA	(5000.0f)	//最大描画範囲
@@ -55,12 +55,11 @@ void InitCamera(void)
 	//それぞれの位置の差分を格納する変数
 	float PosDiffX, PosDiffY, PosDiffZ;
 	
-	PosDiffX = powf(g_Camera.posR.x - g_Camera.posV.x, DIFF_TIMES);	//２乗
-	PosDiffY = powf(g_Camera.posR.y - g_Camera.posV.y, DIFF_TIMES);	//２乗
+	PosDiffX = powf(g_Camera.posR.x - g_Camera.posV.x, DIFF_TIMES);	//２乗	
 	PosDiffZ = powf(g_Camera.posR.z - g_Camera.posV.z, DIFF_TIMES);	//２乗
 
 	//長さの算出
-	g_Camera.fLength = sqrtf(PosDiffX + PosDiffY + PosDiffZ);
+	g_Camera.fLength = sqrtf(PosDiffX + PosDiffZ);
 
 	//視点の位置更新
 	UpdatePosVCamera();
@@ -114,6 +113,16 @@ void MoveCamera(void)
 	if (GetKeyboardPress(DIK_B) == true)
 	{
 		g_Camera.posV.y -= POSV_SPEED;
+	}
+
+	//視点の前後
+	if (GetKeyboardPress(DIK_Y) == true)
+	{
+		g_Camera.fLength += POSV_SPEED;
+	}
+	if (GetKeyboardPress(DIK_N) == true)
+	{
+		g_Camera.fLength -= POSV_SPEED;
 	}
 
 	//視点の左右

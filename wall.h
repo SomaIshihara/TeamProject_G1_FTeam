@@ -26,6 +26,19 @@ typedef enum
 	WALLANGLE_MAX
 } WALLANGLE;
 
+//ï«ÇÃì«Ç›çûÇ›
+typedef enum
+{
+	WALLCASE_TYPE = 0,
+	WALLCASE_WALLANGLE,
+	WALLCASE_WIDTH,
+	WALLCASE_HEIGHT,
+	WALLCASE_POSX,
+	WALLCASE_POSY,
+	WALLCASE_POSZ,
+	WALLCASE_MAX
+}	WALLCASE;
+
 //ï«ç\ë¢ëÃÇÃíËã`
 typedef struct
 {

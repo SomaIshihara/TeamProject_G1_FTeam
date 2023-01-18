@@ -38,15 +38,6 @@ Author:大宮愛羅
 #define ANGLE_L			(0.5f)	//左向き
 #define ANGLE_F			(0.0f)	//正面向き
 
-//ケース番号
-#define CASE_ZERO		(0)
-#define CASE_ONE		(1)
-#define CASE_TWO		(2)
-#define CASE_THREE		(3)
-#define CASE_FOUR		(4)
-#define CASE_FIVE		(5)
-#define	CASE_SIX		(6)
-
 //グローバル変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffWall = NULL;		//バッファへのポインタ
 LPDIRECT3DTEXTURE9		g_pTextureWall = NULL;		//テクスチャへのポインタ
@@ -227,12 +218,12 @@ void LoadWall(void)
 			switch (nColumn)
 			{
 				//種類
-			case CASE_ZERO:
+			case WALLCASE_TYPE:
 				g_aWall[nLine].nType = atoi(aData);
 				break;
 
 				//壁の向き
-			case CASE_ONE:
+			case WALLCASE_WALLANGLE:
 				g_aWall[nLine].wallAngle = (WALLANGLE)atoi(aData);
 
 				switch (g_aWall[nLine].wallAngle)
@@ -262,27 +253,27 @@ void LoadWall(void)
 				break;
 
 				//幅
-			case CASE_TWO:
+			case WALLCASE_WIDTH:
 				g_aWall[nLine].fWidth = (float)atof(aData);
 				break;
 
 				//高さ
-			case CASE_THREE:
+			case WALLCASE_HEIGHT:
 				g_aWall[nLine].fHeight = (float)atof(aData);
 				break;
 
 				//X座標
-			case CASE_FOUR:
+			case WALLCASE_POSX:
 				g_aWall[nLine].pos.x = (float)atof(aData);
 				break;
 
 				//Y座標
-			case CASE_FIVE:
+			case WALLCASE_POSY:
 				g_aWall[nLine].pos.y = (float)atof(aData);
 				break;
 
 				//Z座標
-			case CASE_SIX:
+			case WALLCASE_POSZ:
 				g_aWall[nLine].pos.z = (float)atof(aData);
 				break;
 			}
