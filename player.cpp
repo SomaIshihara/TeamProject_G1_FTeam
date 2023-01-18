@@ -42,7 +42,7 @@
 #define ROT_D	(0.5f * D3DX_PI)	//右
 
 //プロト
-void MovePlayer(Player *pPlayer);
+void MovePlayer(int nPadNum);
 
 //グローバル変数
 Player g_aPlayer[MAX_USE_GAMEPAD];
@@ -111,7 +111,8 @@ void UpdatePlayer(void)
 
 			//ジャンプ時間を増やす
 			g_aPlayer[nCntPlayer].jumpTime++;
-
+			//キーボード操作時の動作
+#if 1
 			//移動方法（ダッシュ）押して離す
 			if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
 				&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
@@ -138,6 +139,35 @@ void UpdatePlayer(void)
 			if (GetKeyboardTrigger(DIK_RETURN) == true)
 			{
 				g_aPlayer[nCntPlayer].move.y = PLAYER_JUMP_SPEED;//移動量設定
+			}
+#endif
+			//ゲームパッドの操作
+			//移動方法（ダッシュ）押して離す
+			if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
+				&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
+			{//もうこれ動いてるって言わないよね（ほぼ動いていない）
+				if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == true)
+				{//Aボタンが押された
+					g_aPlayer[nCntPlayer].moveGauge = fmodf(g_aPlayer[nCntPlayer].moveGauge + PLAYER_POWER_ADD, PLAYER_POWER_MAX + PLAYER_POWER_ADD);
+				}
+				else if (GetGamepadRelease(nCntPlayer, XINPUT_GAMEPAD_X) == true)
+				{//Aボタンが離された
+					//進行方向の設定
+					g_aPlayer[nCntPlayer].move.x = -sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
+					g_aPlayer[nCntPlayer].move.z = -cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
+
+					g_aPlayer[nCntPlayer].moveGauge = 0;
+				}
+			}
+			else
+			{
+				g_aPlayer[nCntPlayer].moveGauge = 0;
+			}
+
+			//ジャンプ
+			if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_A) == true)
+			{
+				g_aPlayer[nCntPlayer].move.y = PLAYER_JUMP_SPEED;//移動量設定
 				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
 			}
 
@@ -160,7 +190,7 @@ void UpdatePlayer(void)
 			g_aPlayer[nCntPlayer].move.z += (0 - g_aPlayer[nCntPlayer].move.z) * DUMP_COEF;
 
 			//[デバッグ用]普通に移動する処理
-			MovePlayer(&g_aPlayer[nCntPlayer]);
+			MovePlayer(nCntPlayer);
 
 			//影位置設定
 			//一旦なし
@@ -312,62 +342,82 @@ void DrawPlayer(void)
 //========================
 //[デバッグ用]プレイヤーの移動処理
 //========================
-void MovePlayer(Player *pPlayer)
+void MovePlayer(int nPadNum)
 {
 	//モデル移動
-	if (GetKeyboardPress(DIK_W) == true)
-	{
-		if (GetKeyboardPress(DIK_A) == true)
-		{
-			pPlayer->rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WA);
-			pPlayer->move.x = sinf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			pPlayer->move.z = cosf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		}
-		else if (GetKeyboardPress(DIK_D) == true)
-		{
-			pPlayer->rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WD);
-			pPlayer->move.x = sinf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			pPlayer->move.z = cosf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+	//ゲームパッド部
+	if (GetLStickX(nPadNum) > 0 || GetLStickX(nPadNum) < 0)
+	{//X方向のスティックが傾いている
+		if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
+		{//Y方向のスティックも傾いている
+			g_aPlayer[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
 		}
 		else
 		{
-			pPlayer->rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_W);
-			pPlayer->move.x = sinf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			pPlayer->move.z = cosf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
+		}
+		g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
+	}
+	else if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
+	{//Y方向のスティックだけ傾いている
+		g_aPlayer[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
+		g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
+	}
+	//キーボード部
+	else if (GetKeyboardPress(DIK_W) == true)
+	{
+		if (GetKeyboardPress(DIK_A) == true)
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WA);
+			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+		}
+		else if (GetKeyboardPress(DIK_D) == true)
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WD);
+			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+		}
+		else
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_W);
+			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 	}
 	else if (GetKeyboardPress(DIK_S) == true)
 	{
 		if (GetKeyboardPress(DIK_A) == true)
 		{
-			pPlayer->rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SA);
-			pPlayer->move.x = sinf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			pPlayer->move.z = cosf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SA);
+			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{
-			pPlayer->rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SD);
-			pPlayer->move.x = sinf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			pPlayer->move.z = cosf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SD);
+			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 		else
 		{
-			pPlayer->rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_S);
-			pPlayer->move.x = sinf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			pPlayer->move.z = cosf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_S);
+			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 	}
 	else if (GetKeyboardPress(DIK_A) == true)
 	{
-		pPlayer->rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_A);
-		pPlayer->move.x = sinf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		pPlayer->move.z = cosf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+		g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_A);
+		g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+		g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 	}
 	else if (GetKeyboardPress(DIK_D) == true)
 	{
-		pPlayer->rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_D);
-		pPlayer->move.x = sinf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		pPlayer->move.z = cosf(FIX_ROT((pPlayer->rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+		g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_D);
+		g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
+		g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 	}
 	else
 	{
@@ -375,12 +425,12 @@ void MovePlayer(Player *pPlayer)
 	}
 
 	//ボタン操作に応じてプレイヤー・カメラ視点・注視点移動
-	pPlayer->pos.x += pPlayer->move.x;
-	pPlayer->pos.z += pPlayer->move.z;
+	g_aPlayer[nPadNum].pos.x += g_aPlayer[nPadNum].move.x;
+	g_aPlayer[nPadNum].pos.z += g_aPlayer[nPadNum].move.z;
 
 	//移動量消す
-	pPlayer->move.x = 0.0f;
-	pPlayer->move.z = 0.0f;
+	g_aPlayer[nPadNum].move.x = 0.0f;
+	g_aPlayer[nPadNum].move.z = 0.0f;
 }
 //========================
 //取得処理
