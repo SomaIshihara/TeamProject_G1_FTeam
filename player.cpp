@@ -175,7 +175,7 @@ void UpdatePlayer(void)
 			}
 
 			//ジャンプ
-			if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_A) == true)
+			if (GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true)
 			{
 				g_aPlayer[nCntPlayer].move.y = PLAYER_JUMP_SPEED;//移動量設定
 				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
