@@ -118,7 +118,7 @@ void InitMeshDome(void)
 	//--------------------------------------
 	//		インデックスバッファの生成
 	//--------------------------------------
-	pDevice->CreateIndexBuffer(sizeof(WORD) * (MESHDOME_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshDome, NULL);
+	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshDome, NULL);
 
 	WORD *pIdx;
 
@@ -126,7 +126,7 @@ void InitMeshDome(void)
 	g_pIdxBuffMeshDome->Lock(0, 0, (void**)&pIdx, 0);
 
 	//頂点番号データの設定
-	for (int nCntIdx = 0; nCntIdx < MESHDOME_SPLIT * 2 + 2; nCntIdx++)
+	for (int nCntIdx = 0; nCntIdx < MESHDOME_ALL_VERTEX; nCntIdx++)
 	{
 		if (nCntIdx % EVENPARITY == NOPARITY)
 		{
@@ -143,7 +143,7 @@ void InitMeshDome(void)
 }
 
 //--------------------------------------------------------------------------------------------------------
-//ポリゴンの終了処理
+//メッシュドームの終了処理
 //--------------------------------------------------------------------------------------------------------
 void UninitMeshDome(void)
 {
@@ -170,7 +170,7 @@ void UninitMeshDome(void)
 }
 
 //--------------------------------------------------------------------------------------------------------
-//ポリゴンの更新処理
+//メッシュドームの更新処理
 //--------------------------------------------------------------------------------------------------------
 void UpdateMeshDome(void)
 {
@@ -178,7 +178,7 @@ void UpdateMeshDome(void)
 }
 
 //--------------------------------------------------------------------------------------------------------
-//ポリゴンの描画処理
+//メッシュドームの描画処理
 //--------------------------------------------------------------------------------------------------------
 void DrawMeshDome(void)
 {
