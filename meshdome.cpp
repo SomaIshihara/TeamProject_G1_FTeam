@@ -8,7 +8,7 @@
 #include "meshdome.h"
 
 //マクロ
-#define NUM_MESHDOME				(2)
+#define NUM_MESHDOME				(1)
 #define MESHDOME_WIDTH				(2000.0f)	//背景の広さ
 #define MESHDOME_HEIGHT				(1000.0f)	//背景の高さ
 #define MESHDOME_TEX_RESOLUTION		(3.0f)		//背景の解像度
@@ -66,27 +66,27 @@ void InitMeshDome(void)
 		for (int nCntVtx = 0; nCntVtx <= MESHDOME_SPLIT; nCntVtx++)
 		{
 			pVtx[nCntVtx].pos = D3DXVECTOR3(
-				sinf(D3DX_PI * (1.0f - (2.0f / MESHDOME_SPLIT * nCntVtx))) * MESHDOME_WIDTH,
+				sinf(fAngle) * MESHDOME_WIDTH,
 				MESHDOME_HEIGHT,
-				cosf(D3DX_PI * (1.0f - (2.0f / MESHDOME_SPLIT * nCntVtx))) * MESHDOME_WIDTH);
+				cosf(fAngle) * MESHDOME_WIDTH);
 
 			pVtx[MESHDOME_SPLIT + nCntVtx + 1].pos = D3DXVECTOR3(
-				sinf(D3DX_PI * (1.0f - (2.0f / MESHDOME_SPLIT * nCntVtx))) * MESHDOME_WIDTH,
+				sinf(fAngle) * MESHDOME_WIDTH,
 				0.0f,
-				cosf(D3DX_PI * (1.0f - (2.0f / MESHDOME_SPLIT * nCntVtx))) * MESHDOME_WIDTH);
+				cosf(fAngle) * MESHDOME_WIDTH);
 
 			//最後の頂点は、最初の頂点と同じにする
 			if (nCntVtx == MESHDOME_SPLIT)
 			{
 				pVtx[nCntVtx].pos = D3DXVECTOR3(
-					sinf(D3DX_PI * 1.0f) * MESHDOME_WIDTH,
+					sinf(D3DX_PI) * MESHDOME_WIDTH,
 					MESHDOME_HEIGHT,
-					cosf(D3DX_PI * 1.0f) * MESHDOME_WIDTH);
+					cosf(D3DX_PI) * MESHDOME_WIDTH);
 
 				pVtx[MESHDOME_SPLIT + 1 + nCntVtx].pos = D3DXVECTOR3(
-					sinf(D3DX_PI * 1.0f) * MESHDOME_WIDTH,
+					sinf(D3DX_PI) * MESHDOME_WIDTH,
 					0.0f,
-					cosf(D3DX_PI * 1.0f) * MESHDOME_WIDTH);
+					cosf(D3DX_PI) * MESHDOME_WIDTH);
 			}
 
 			//法線ベクトルの設定
@@ -100,6 +100,8 @@ void InitMeshDome(void)
 			//テクスチャ座標の設定
 			pVtx[nCntVtx].tex = D3DXVECTOR2(nCntVtx * (MESHDOME_TEX_RESOLUTION / MESHDOME_SPLIT), 0.0f);
 			pVtx[MESHDOME_SPLIT + 1 + nCntVtx].tex = D3DXVECTOR2(nCntVtx * (MESHDOME_TEX_RESOLUTION / MESHDOME_SPLIT), 1.0f);
+
+			fAngle -= (D3DX_PI * 2.0f) / MESHDOME_SPLIT;
 		}
 	}
 
