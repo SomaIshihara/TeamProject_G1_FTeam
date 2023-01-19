@@ -5,6 +5,7 @@
 //
 //==========================================
 #include "main.h"
+#include "game.h"
 #include "player.h"
 #include "model.h"
 #include "input.h"
@@ -71,11 +72,14 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].nNumHitPlayer = -1;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
-		g_aPlayer[nCntPlayer].bUsePlayer = false;
+		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
 	}
 
-	//1Pのみ使用していることにする
-	g_aPlayer[0].bUsePlayer = true;
+	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
+	if (GetUseControllerNum() == 0) 
+	{
+		g_aPlayer[0].bUsePlayer = true;
+	}
 }
 
 //========================

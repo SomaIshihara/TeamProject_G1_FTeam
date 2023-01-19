@@ -17,5 +17,7 @@ void InitGame(void);
 void UninitGame(void);
 void UpdateGame(void);
 void DrawGame(void);
+bool GetUseController(int nPadNum);
+int GetUseControllerNum(void);
 
 #endif
