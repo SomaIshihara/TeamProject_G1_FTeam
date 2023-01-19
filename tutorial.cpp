@@ -97,7 +97,7 @@ void UninitTutorial(void)
 void UpdateTutorial(void)
 {
 	//キーボードのENTER　か　ゲームパッドの　Aボタン　か　STARTボタンが押された
-	if (GetKeyboardTrigger(DIK_RETURN) == true)	
+	if ((GetKeyboardTrigger(DIK_RETURN) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
 	{
 		//モード設定（ゲーム画面に遷移)
 		SetFade(MODE_GAME);
