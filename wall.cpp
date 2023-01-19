@@ -290,10 +290,10 @@ void LoadWall(void)
 				g_aWall[nLine].bUse = true;
 
 				//頂点座標の設定
-				pVtx[0].pos = D3DXVECTOR3(-g_aWall[nLine].fWidth, +g_aWall[nLine].fHeight, +g_aWall[nLine].fDepth);	//左上端
-				pVtx[1].pos = D3DXVECTOR3(+g_aWall[nLine].fWidth, +g_aWall[nLine].fHeight, -g_aWall[nLine].fDepth);	//右上端
-				pVtx[2].pos = D3DXVECTOR3(-g_aWall[nLine].fWidth, MIN_POS, +g_aWall[nLine].fDepth);					//左下端
-				pVtx[3].pos = D3DXVECTOR3(+g_aWall[nLine].fWidth, MIN_POS, -g_aWall[nLine].fDepth);					//右下端
+				pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_aWall[nLine].fWidth, +g_aWall[nLine].fHeight, +g_aWall[nLine].fDepth);	//左上端
+				pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_aWall[nLine].fWidth, +g_aWall[nLine].fHeight, -g_aWall[nLine].fDepth);	//右上端
+				pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_aWall[nLine].fWidth, MIN_POS, +g_aWall[nLine].fDepth);					//左下端
+				pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_aWall[nLine].fWidth, MIN_POS, -g_aWall[nLine].fDepth);					//右下端
 
 				pVtx += DISPLAY_ADD;
 
