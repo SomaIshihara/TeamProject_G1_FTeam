@@ -88,6 +88,11 @@ typedef struct
 typedef struct
 {
 	Parts aParts[MAX_PARTS];	//パーツ構造体
+	char aModelFileName[MAX_PARTS][MAX_PATH_STR];
+	float fMove;	//移動量
+	float fJump;	//ジャンプ量
+	float fRadius;	//半径（未使用）
+	int nNumParts;	//パーツ数
 	//追加するものがあったら下に追加
 } Model;
 

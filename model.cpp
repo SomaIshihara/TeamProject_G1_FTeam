@@ -6,24 +6,10 @@
 //==========================================
 #include "main.h"
 #include "model.h"
+#include "file.h"
 
 //グローバル変数
 Model g_aModel[ANIMAL_MAX];	//モデル構造体
-
-//ファイルパス
-const char *c_pFileNameModel[] =
-{
-	"data/MODEL/ino/ino_body.x",
-	"data/MODEL/ino/ino_head.x",
-	"data/MODEL/ino/ino_left_forefoot.x",
-	"data/MODEL/ino/ino_left_foretoes.x",
-	"data/MODEL/ino/ino_left_hindleg.x",
-	"data/MODEL/ino/ino_left_hindtoes.x",
-	"data/MODEL/ino/ino_right_forefoot.x",
-	"data/MODEL/ino/ino_right_foretoes.x",
-	"data/MODEL/ino/ino_right_hindleg.x",
-	"data/MODEL/ino/ino_right_hindtoes.x"
-};
 
 //========================
 //初期化処理
@@ -42,13 +28,16 @@ void InitModel(void)
 		}
 	}
 
+	//使用するモーション類読み込み
+	LoadMotionViewerFile("data/motion_ino.txt",&g_aModel[0]);
+
 	//Xファイル読み込み
 	for (int nCntModel = 0; nCntModel < ANIMAL_MAX; nCntModel++)
 	{
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
 			if (SUCCEEDED(D3DXLoadMeshFromX(
-				c_pFileNameModel[nCntParts],
+				&g_aModel[nCntModel].aModelFileName[nCntParts][0],
 				D3DXMESH_SYSTEMMEM,
 				pDevice,
 				NULL,
@@ -82,7 +71,8 @@ void InitModel(void)
 				break;
 			}
 		}
-#if 1
+//かつて使っていた手打ち式階層構造設定
+#if 0
 		//階層構造設定
 		//体
 		g_aModel[nCntModel].aParts[0].mIdxModelParent = -1;
