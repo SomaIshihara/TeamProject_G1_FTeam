@@ -31,14 +31,8 @@
     <Filter Include="ソース ファイル\Result">
       <UniqueIdentifier>{3859e939-8c32-44db-8070-e9daf218ceff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Pause">
-      <UniqueIdentifier>{168799d7-bff0-485d-9b69-f008c49e11bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Title">
       <UniqueIdentifier>{c1e1ab29-56a2-4bd1-bd71-4393f2feaaca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Pause">
-      <UniqueIdentifier>{796dc22e-93b6-46fa-8484-4e0792b167a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Tutorial">
       <UniqueIdentifier>{65e54f81-46a7-4782-ae16-9fe1f2c57393}</UniqueIdentifier>
@@ -49,6 +43,24 @@
     <Filter Include="ヘッダー ファイル\Main">
       <UniqueIdentifier>{7ed007b9-9381-480e-9b69-59ebd123101a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Stage">
+      <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Player">
+      <UniqueIdentifier>{a83b5e00-39ce-4811-b994-a550c578b67a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Pause">
+      <UniqueIdentifier>{168799d7-bff0-485d-9b69-f008c49e11bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Stage">
+      <UniqueIdentifier>{bb7ecd1c-3945-4f33-979f-fce88bed5d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Player">
+      <UniqueIdentifier>{06a22181-9386-4d8b-8a89-8237b65499bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Pause">
+      <UniqueIdentifier>{796dc22e-93b6-46fa-8484-4e0792b167a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -58,12 +70,6 @@
       <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="wall.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
     <ClCompile Include="input.cpp">
@@ -84,23 +90,32 @@
     <ClCompile Include="bg.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="meshfield.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
     <ClCompile Include="pause.cpp">
-      <Filter>ソース ファイル\Pause</Filter>
-    </ClCompile>
-    <ClCompile Include="light.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="meshcylinder.cpp">
-      <Filter>ソース ファイル\Game</Filter>
+      <Filter>ソース ファイル\Game\Pause</Filter>
     </ClCompile>
     <ClCompile Include="file.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="meshcylinder.cpp">
+      <Filter>ソース ファイル\Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="meshfield.cpp">
+      <Filter>ソース ファイル\Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>ソース ファイル\Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>ソース ファイル\Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="wall.cpp">
+      <Filter>ソース ファイル\Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>ソース ファイル\Game\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="meshdome.cpp">
+      <Filter>ソース ファイル\Game\Stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,44 +134,47 @@
     <ClInclude Include="camera.h">
       <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="wall.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
     <ClInclude Include="title.h">
       <Filter>ヘッダー ファイル\Title</Filter>
     </ClInclude>
-    <ClInclude Include="meshfield.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="bg.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="fade.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="tutorial.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="light.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="pause.h">
-      <Filter>ヘッダー ファイル\Pause</Filter>
-    </ClInclude>
-    <ClInclude Include="meshcylinder.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
+      <Filter>ヘッダー ファイル\Game\Pause</Filter>
     </ClInclude>
     <ClInclude Include="file.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="meshcylinder.h">
+      <Filter>ヘッダー ファイル\Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="meshfield.h">
+      <Filter>ヘッダー ファイル\Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>ヘッダー ファイル\Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="wall.h">
+      <Filter>ヘッダー ファイル\Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="bg.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>ヘッダー ファイル\Game\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>ヘッダー ファイル\Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="tutorial.h">
+      <Filter>ヘッダー ファイル\Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="fade.h">
+      <Filter>ヘッダー ファイル\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="meshdome.h">
+      <Filter>ヘッダー ファイル\Game\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
