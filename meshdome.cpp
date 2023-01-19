@@ -6,13 +6,17 @@
 //--------------------------------------------------------------------------------------------------------
 #include "main.h"
 #include "meshdome.h"
+#include "color.h"
 
 //マクロ
-#define NUM_MESHDOME				(2)
+#define NUM_MESHDOME				(1)			//メッシュドームの数
 #define MESHDOME_WIDTH				(2000.0f)	//背景の広さ
 #define MESHDOME_HEIGHT				(1000.0f)	//背景の高さ
-#define MESHDOME_SPLIT				(32)		//背景の頂点数
 #define MESHDOME_TEX_RESOLUTION		(3.0f)		//背景の解像度
+#define MESHDOME_SPLIT				(32)		//背景の頂点数
+#define MESHDOME_SEPALATE			(2)			//背景の縦の分割数
+#define MESHDOME_NUM_OVERLAP		(2)			//最初と最後の頂点が重なる数
+#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * MESHDOME_SEPALATE + MESHDOME_NUM_OVERLAP)	//全体の頂点数
 
 //メッシュドームの構造体
 typedef struct
@@ -48,50 +52,61 @@ void InitMeshDome(void)
 	g_MeshDome.rot = ZERO_SET;
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (MESHDOME_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshDome, NULL);
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshDome, NULL);
 
 	VERTEX_3D *pVtx;
 
 	//頂点バッファのロック
 	g_pVtxBuffMeshDome->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点座標の設定
-	for (int nCntMeshDome = 0; nCntMeshDome < MESHDOME_SPLIT + 1; nCntMeshDome++)
+	for (int nCntMeshDome = 0; nCntMeshDome < NUM_MESHDOME; nCntMeshDome++, pVtx += MESHDOME_ALL_VERTEX)
 	{
-		pVtx[nCntMeshDome].pos = D3DXVECTOR3(
-			sinf(D3DX_PI * (1.0f - (2.0f / MESHDOME_SPLIT * nCntMeshDome))) * MESHDOME_WIDTH,
-			MESHDOME_HEIGHT,
-			cosf(D3DX_PI * (1.0f - (2.0f / MESHDOME_SPLIT * nCntMeshDome))) * MESHDOME_WIDTH);
+		float fAngle = D3DX_PI;	//角度
 
-		pVtx[MESHDOME_SPLIT + nCntMeshDome + 1].pos = D3DXVECTOR3(
-			sinf(D3DX_PI * (1.0f - (2.0f / MESHDOME_SPLIT * nCntMeshDome))) * MESHDOME_WIDTH,
-			0.0f,
-			cosf(D3DX_PI * (1.0f - (2.0f / MESHDOME_SPLIT * nCntMeshDome))) * MESHDOME_WIDTH);
-
-		if (nCntMeshDome == MESHDOME_SPLIT)
+		//頂点座標の設定
+		for (int nCntVtx = 0; nCntVtx <= MESHDOME_SPLIT; nCntVtx++)
 		{
-			pVtx[nCntMeshDome].pos = D3DXVECTOR3(
-				sinf(D3DX_PI * 1.0f) * MESHDOME_WIDTH,
+			//対象の頂点座標番号と、高さ以外が同じ情報を持つ頂点番号
+			int nDissimilar = MESHDOME_SPLIT + nCntVtx + 1;
+
+			pVtx[nCntVtx].pos = D3DXVECTOR3(
+				sinf(fAngle) * MESHDOME_WIDTH,
 				MESHDOME_HEIGHT,
-				cosf(D3DX_PI * 1.0f) * MESHDOME_WIDTH);
+				cosf(fAngle) * MESHDOME_WIDTH);
 
-			pVtx[MESHDOME_SPLIT + 1 + nCntMeshDome].pos = D3DXVECTOR3(
-				sinf(D3DX_PI * 1.0f) * MESHDOME_WIDTH,
+			pVtx[nDissimilar].pos = D3DXVECTOR3(
+				sinf(fAngle) * MESHDOME_WIDTH,
 				0.0f,
-				cosf(D3DX_PI * 1.0f) * MESHDOME_WIDTH);
+				cosf(fAngle) * MESHDOME_WIDTH);
+
+			//最後の頂点は、最初の頂点と同じにする
+			if (nCntVtx == MESHDOME_SPLIT)
+			{
+				pVtx[nCntVtx].pos = D3DXVECTOR3(
+					sinf(D3DX_PI) * MESHDOME_WIDTH,
+					MESHDOME_HEIGHT,
+					cosf(D3DX_PI) * MESHDOME_WIDTH);
+
+				pVtx[nDissimilar].pos = D3DXVECTOR3(
+					sinf(D3DX_PI) * MESHDOME_WIDTH,
+					0.0f,
+					cosf(D3DX_PI) * MESHDOME_WIDTH);
+			}
+
+			//法線ベクトルの設定
+			pVtx[nCntVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pVtx[nDissimilar].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+			//頂点カラーの設定
+			pVtx[nCntVtx].col = XCOL_WHITE;
+			pVtx[nDissimilar].col = XCOL_WHITE;
+
+			//テクスチャ座標の設定
+			pVtx[nCntVtx].tex = D3DXVECTOR2(nCntVtx * (MESHDOME_TEX_RESOLUTION / MESHDOME_SPLIT), 0.0f);
+			pVtx[nDissimilar].tex = D3DXVECTOR2(nCntVtx * (MESHDOME_TEX_RESOLUTION / MESHDOME_SPLIT), 1.0f);
+
+			fAngle -= (D3DX_PI * 2.0f) / MESHDOME_SPLIT;
 		}
-
-		//法線ベクトルの設定
-		pVtx[nCntMeshDome].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[MESHDOME_SPLIT + 1 + nCntMeshDome].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-
-		//頂点カラーの設定
-		pVtx[nCntMeshDome].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[MESHDOME_SPLIT + 1 + nCntMeshDome].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
-		//テクスチャ座標の設定
-		pVtx[nCntMeshDome].tex = D3DXVECTOR2(nCntMeshDome * (MESHDOME_TEX_RESOLUTION / MESHDOME_SPLIT), 0.0f);
-		pVtx[MESHDOME_SPLIT + 1 + nCntMeshDome].tex = D3DXVECTOR2(nCntMeshDome * (MESHDOME_TEX_RESOLUTION / MESHDOME_SPLIT), 1.0f);
 	}
 
 	//ベクトルを正規化する
@@ -196,5 +211,5 @@ void DrawMeshDome(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureMeshDome);
 
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (MESHDOME_SPLIT * 2 + 2), 0, (MESHDOME_SPLIT * 2 + 2));
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MESHDOME_ALL_VERTEX, 0, MESHDOME_ALL_VERTEX);
 }
