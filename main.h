@@ -45,6 +45,7 @@ typedef enum
 #define FVF_VERTEX_3D		(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//3D
 #define FIX_ROT(x)			(fmodf(x + (D3DX_PI * 3), D3DX_PI * 2) - D3DX_PI)	//角度を-PI~PIに修正
 #define fatof(x)			(float)atof(x)	//通常のatofだとdouble型で返してくるのでfloatキャストも行うようにしたもの
+#define MAX_PATH_STR	(512)	//最大パス文字列
 
 #define RHW			(1.0f)
 

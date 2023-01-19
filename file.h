@@ -14,7 +14,6 @@
 //マクロ
 #define MAX_NUM_TEXTURE	(32)	//最大テクスチャ数
 #define MAX_NUM_MODEL	(128)	//最大モデル数
-#define MAX_PATH_STR	(512)	//最大パス文字列
 
 //コード名
 //共通
@@ -194,7 +193,7 @@ void InitFile(void);
 void UninitFile(void);
 void UpdateFile(void);
 void LoadModelViewerFile(const char *path);	//モデルビューワーの設定ファイル読み込み（引数は設定ファイルのパス指定）
-void LoadMotionFile(void);
+void LoadMotionViewerFile(const char *path, Model *pModel);
 void GetMotionInfo(MOTION_INFO *pMotionInfo);
 
 #endif
