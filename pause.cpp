@@ -5,6 +5,7 @@
 //
 //==========================================
 #include "main.h"
+#include "game.h"
 #include "player.h"
 #include "pause.h"
 #include "fade.h"
@@ -209,7 +210,13 @@ void UpdatePause(void)
 		switch (g_Pause)
 		{
 		case PAUSE_CONTINUE:
-
+			//[仮]一旦ゲーム画面に戻ってコントローラーの使用有無再設定する
+			//[予]コントローラー抜かれてるけど続行するかい？的なメッセージ出して
+			if (/*知らねぇ続行するぜって言われた*/true)
+			{
+				CheckUseController(CHECKMODE_REMOVE);
+				SetEnablePause(false);
+			}
 			break;
 
 		case PAUSE_RETRY:

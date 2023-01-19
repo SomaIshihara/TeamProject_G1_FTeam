@@ -20,11 +20,6 @@ Author:平澤詩苑
 #include "pause.h"
 //#include "sound.h"
 
-//プロト
-
-int SetUseController(void);
-void CheckUseController(void);
-
 //グローバル変数宣言
 bool g_bPause = false;				// ポーズ
 int g_nUseContNum;					// 使用しているコントローラーの数
@@ -122,10 +117,28 @@ void UpdateGame(void)
 	if (GetKeyboardTrigger(DIK_P) == true)
 	{
 		g_bPause = g_bPause ? false : true;
+
+		//もう一回コントローラーの数確認してみるわ
+		CheckUseController(CHECKMODE_DISCONNOPAUSE);
+
+		//ポーズ解除したけどコントローラーの数合ってない
+		if (g_bPause == false && g_bDisconnectPlayer == true)
+		{
+			//警告メッセージ
+			
+			if (/*それでも実行するぜ*/true)
+			{
+				CheckUseController(CHECKMODE_REMOVE);
+			}
+			else	//いや、ちょっと待って
+			{
+				g_bPause = true;
+			}
+		}
 	}
 
 	//コントローラーの使用チェックはポーズ状態関係なく呼び出し
-	CheckUseController();
+	CheckUseController(CHECKMODE_DISCONPAUSE);
 }
 
 //------------------------------------------------
@@ -149,7 +162,6 @@ void DrawGame(void)
 	{
 		DrawPause();		//ポーズ画面描画処理
 	}
-
 }
 
 //------------------------------------------------
@@ -179,17 +191,35 @@ int SetUseController(void)
 //------------------------------------------------
 //		使用しているコントローラーの接続チェック
 //		Author:石原颯馬
+//		引数1:チェックモード指定
+//		CHECKMODE_DISCONNECT:切断されている場合強制ポーズ状態にするモード
+//		CHECKMODE_REMOVE	:切断されている場合そのコントローラーを使用していない状態にする
 //		Memo:UpdateGame内でポーズ中でも呼び出しすること
 //------------------------------------------------
-void CheckUseController(void)
+void CheckUseController(CHECKMODE mode)
 {
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{//対応コントローラー分繰り返す
 		if (g_abUsePlayer[nCntPlayer] == true && g_abUsePlayer[nCntPlayer] != GetUseGamepad(nCntPlayer))
 		{//切断を検知
-			g_bPause = true;				//強制的にポーズ状態にする
-			g_bDisconnectPlayer = true;		//切断されたことにする
-			return;	//関数終了
+			switch (mode)
+			{
+			case CHECKMODE_DISCONPAUSE:
+				g_bPause = true;				//強制的にポーズ状態にする
+				g_bDisconnectPlayer = true;		//切断されたことにする
+				return;	//関数終了
+				break;
+			case CHECKMODE_DISCONNOPAUSE:
+				g_bDisconnectPlayer = true;		//切断されたことにする
+				return;	//関数終了
+				break;
+			case CHECKMODE_REMOVE:
+				g_abUsePlayer[nCntPlayer] = false;
+				g_nUseContNum--;	//コントローラー使用数減らす
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	g_bDisconnectPlayer = false;	//for文が正常に終了したら問題ない
@@ -212,4 +242,13 @@ bool GetUseController(int nPadNum)
 int GetUseControllerNum(void)
 {
 	return g_nUseContNum;
+}
+
+//------------------------------------------------
+//		ポーズ状態の設定処理
+//		Author:石原颯馬
+//------------------------------------------------
+void SetEnablePause(bool pause)
+{
+	g_bPause = pause;
 }

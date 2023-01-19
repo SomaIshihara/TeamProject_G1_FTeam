@@ -110,6 +110,9 @@ void UpdatePlayer(void)
 	{
 		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
 		{
+			//接続されているか確認して切断されていたらプレイヤーを消す
+			g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
+
 			//現在の位置を前回の位置にする
 			g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
 

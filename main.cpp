@@ -331,6 +331,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	//ゲームパッドの初期化
 	InitGamePad();
+	UpdateGamePad();
 
 	//デバッグ表示の初期化
 	InitDebugProc();
