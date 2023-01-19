@@ -8,6 +8,7 @@
 //使用可能な入力:キーボード・マウス（カーソル位置・移動量）・ゲームパッド（1~4台）
 //==========================================================================================
 #include "input.h"
+#include "sound.h"
 
 //マクロ定義
 #define NUM_KEY_MAX			(256)	//キーの最大数
@@ -357,6 +358,7 @@ void UpdateGamePad(void)
 	//ゲームパッドから情報取得
 	for (int nCntGPad = 0; nCntGPad < MAX_USE_GAMEPAD; nCntGPad++)
 	{
+		bool bOldUseGPad = g_gamePad[nCntGPad].bUse;
 		if (XInputGetState(nCntGPad, &xInputState) == ERROR_SUCCESS)
 		{
 			//使ってるよ
@@ -386,6 +388,12 @@ void UpdateGamePad(void)
 		{
 			//使ってないよ
 			g_gamePad[nCntGPad].bUse = false;
+		}
+
+		//コントローラー接続が変化したら音鳴らす
+		if (g_gamePad[nCntGPad].bUse != bOldUseGPad)
+		{
+			PlaySound(SOUND_LABEL_SE_CONNECT);
 		}
 	}
 }

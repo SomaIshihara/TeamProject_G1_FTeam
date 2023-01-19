@@ -14,6 +14,7 @@
 #include "color.h"
 #include "tutorial.h"
 #include "light.h"
+#include "sound.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -316,6 +317,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
+	//サウンド
+	InitSound(hWnd);
+
 	//入力系
 	//キーボードの初期化
 	if (FAILED(InitKeyboard(hInstance, hWnd)))
@@ -358,6 +362,9 @@ void Uninit(void)
 
 	//デバッグ表示の終了
 	UninitDebugProc();
+
+	//サウンド
+	UninitSound();
 
 	//入力系
 	//ゲームパッドの終了
