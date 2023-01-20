@@ -195,5 +195,7 @@ void UpdateFile(void);
 void LoadModelViewerFile(const char *path);	//モデルビューワーの設定ファイル読み込み（引数は設定ファイルのパス指定）
 void LoadMotionViewerFile(const char *path, Model *pModel);
 void GetMotionInfo(MOTION_INFO *pMotionInfo);
+char *GetTextureFilePath(int nTexNum);
+char *GetModelFilePath(int nModNum);
 
 #endif

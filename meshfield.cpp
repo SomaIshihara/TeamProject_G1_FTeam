@@ -7,6 +7,7 @@
 #include "main.h"
 #include "player.h"
 #include "meshfield.h"
+#include "file.h"
 
 //マクロ定義       ファイル読み込みに変える可能性あり
 #define BESIDE					(2)						//横の分割数
@@ -37,8 +38,11 @@ void InitMeshfield(void)
 
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
+	/*D3DXCreateTextureFromFile(pDevice,
 		"data\\TEXTURE\\grass001.jpg",
+		&g_pTextureMeshfield);*/
+	D3DXCreateTextureFromFile(pDevice,
+		GetTextureFilePath(0),
 		&g_pTextureMeshfield);
 
 	//構造体を初期化
