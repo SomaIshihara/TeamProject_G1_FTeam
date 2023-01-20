@@ -6,7 +6,6 @@ Author:平澤詩苑
 ============================================================================================================================================================*/
 #include "main.h"
 #include "input.h"
-#include "file.h"
 #include "camera.h"
 #include "color.h"
 #include "player.h"
@@ -20,14 +19,14 @@ Author:平澤詩苑
 #include "meshcylinder.h"
 #include "pause.h"
 #include "meshdome.h"
-#include "Gauge.h"
 //#include "sound.h"
 
 //グローバル変数宣言
 bool g_bPause = false;				// ポーズ
-int g_nUseContNum;					// 使用しているコントローラーの数
+int  g_nUseContNum;					// 使用しているコントローラーの数
 bool g_abUsePlayer[MAX_USE_GAMEPAD];// 使用しているプレイヤー（接続チェックに使用）
 bool g_bDisconnectPlayer;			// 接続が切れたことを確認する
+int  g_numGamePad;
 
 //------------------------------------------------
 //				ゲームの初期化処理
@@ -35,24 +34,22 @@ bool g_bDisconnectPlayer;			// 接続が切れたことを確認する
 void InitGame(void)
 {
 	g_nUseContNum = SetUseController();	// コントローラーの使用設定
-	LoadModelViewerFile("data\\model.txt");	//モデルビューワーのファイル読み込み（各オブジェクト初期化前に行うこと！）
 	InitBg();			// 背景の初期化処理
 	InitLight();		// ライト初期化処理
 	InitMeshfield();	// ステージ初期化処理
-	//InitMeshCylinder();	// メッシュシリンダー初期化処理
+						//InitMeshCylinder();	// メッシュシリンダー初期化処理
 	InitMeshDome();		// メッシュドーム初期化処理
 	InitModel();		// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();		// プレイヤーの初期化処理
 	InitCamera();		// カメラの初期化処理
 	InitWall();			// 壁の初期化処理
-	InitGauge();		// ゲージの初期化処理
 	InitPause();		// ポーズ画面の初期化処理
 
 	g_bPause = false;	// ポーズの初期化
 	g_bDisconnectPlayer = false;	//正常にコントローラーが接続されている状態とする
 
-						//ゲームBGM開始
-	//PlaySound(SOUND_LABEL_GAMEBGM);
+									//ゲームBGM開始
+									//PlaySound(SOUND_LABEL_GAMEBGM);
 }
 
 //------------------------------------------------
@@ -68,17 +65,16 @@ void UninitGame(void)
 	UninitBg();			// 背景の終了処理
 	UninitLight();		// ライト終了処理
 	UninitMeshfield();	// ステージ終了処理
-	//UninitMeshCylinder();	// メッシュシリンダー終了処理
+						//UninitMeshCylinder();	// メッシュシリンダー終了処理
 	UninitMeshDome();	// メッシュドーム終了処理
 	UninitWall();		// 壁の終了処理
 	UninitCamera();		// カメラの終了処理
 	UninitPlayer();		// プレイヤーの終了処理
 	UninitPause();		// ポーズ画面の終了処理
-	UninitGauge();		//　ゲージの終了処理
 	UninitModel();		// モデルの終了処理（ここは順番は問わない）
 
-	//ゲームBGM停止
-	//StopSound(SOUND_LABEL_GAMEBGM);
+						//ゲームBGM停止
+						//StopSound(SOUND_LABEL_GAMEBGM);
 }
 
 //------------------------------------------------
@@ -92,57 +88,86 @@ void UpdateGame(void)
 	//ポーズがOFF
 	if (g_bPause == false)
 	{
-			UpdateBg();			// 背景の更新処理
-			UpdateLight();		// ライトの更新処理
-			UpdateMeshfield();	// ステージ更新処理
-			//UpdateMeshCylinder();	// メッシュシリンダー更新処理
-			UpdateMeshDome();	// メッシュドーム更新処理
-			UpdatePlayer();		// プレイヤーの更新処理
-			UpdateCamera();		// カメラの更新処理
-			UpdateWall();		// 壁の更新処理
-			UpdateGauge();		//　ゲージの更新処理
+		UpdateBg();			// 背景の更新処理
+		UpdateLight();		// ライトの更新処理
+		UpdateMeshfield();	// ステージ更新処理
+							//UpdateMeshCylinder();	// メッシュシリンダー更新処理
+		UpdateMeshDome();	// メッシュドーム更新処理
+		UpdatePlayer();		// プレイヤーの更新処理
+		UpdateCamera();		// カメラの更新処理
+		UpdateWall();		// 壁の更新処理
 	}
 
 	else
 	{
-		//ポーズ画面の更新処理
-		UpdatePause();
+		SetPadPause(g_numGamePad);
 
-		//ポーズを解除するときにメニューをコンティニューに設定
-		if (GetKeyboardTrigger(DIK_P) == true)
+		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
+		{
+			if (g_bDisconnectPlayer == true)
+			{
+				//ポーズ画面の更新処理
+				UpdatePause();
+			}
+			else if (nCntPause == g_numGamePad)
+			{
+				//ポーズ画面の更新処理
+				UpdatePause();
+			}
+		}
+
+		if (GetKeyboardTrigger(DIK_P) == true || GetGamepadTrigger(g_numGamePad, XINPUT_GAMEPAD_START) == true)
 		{
 			SetPause(PAUSE_CONTINUE);
 		}
 
 		if (*GetPause() == PAUSE_CONTINUE)
 		{
-			if (GetKeyboardTrigger(DIK_RETURN) == true)
+			if (g_bDisconnectPlayer == true)
+			{
+				g_bPause = false;
+			}
+			else if (GetKeyboardTrigger(DIK_RETURN) == true || GetGamepadTrigger(g_numGamePad, XINPUT_GAMEPAD_A) == true)
 			{
 				g_bPause = false;
 			}
 		}
 	}
 
-	//ポーズ状態切り替え
-	if (GetKeyboardTrigger(DIK_P) == true)
+	for (int nCntPause = 0; nCntPause < 4; nCntPause++)
 	{
-		g_bPause = g_bPause ? false : true;
-
-		//もう一回コントローラーの数確認してみるわ
-		CheckUseController(CHECKMODE_DISCONNOPAUSE);
-
-		//ポーズ解除したけどコントローラーの数合ってない
-		if (g_bPause == false && g_bDisconnectPlayer == true)
+		//ポーズ状態切り替え
+		if (GetKeyboardTrigger(DIK_P) == true || GetGamepadTrigger(nCntPause, XINPUT_GAMEPAD_START) == true)
 		{
-			//警告メッセージ
-			
-			if (/*それでも実行するぜ*/true)
+			//何番目のゲームパッドか保存する
+			g_numGamePad = nCntPause;
+
+			//もう一回コントローラーの数確認してみるわ
+			CheckUseController(CHECKMODE_DISCONNOPAUSE);
+
+			//ポーズ解除したけどコントローラーの数合ってない
+			if (g_bPause == false && g_bDisconnectPlayer == true)
 			{
-				CheckUseController(CHECKMODE_REMOVE);
+				//警告メッセージ
+
+				if (/*それでも実行するぜ*/true)
+				{
+					CheckUseController(CHECKMODE_REMOVE);
+				}
+				else	//いや、ちょっと待って
+				{
+					g_bPause = true;
+				}
 			}
-			else	//いや、ちょっと待って
+
+			if (GetKeyboardTrigger(DIK_P) == true)
 			{
-				g_bPause = true;
+				g_bPause = g_bPause ? false : true;
+				break;
+			}
+			else
+			{
+				g_bPause = g_bPause ? false : true;
 			}
 		}
 	}
@@ -163,14 +188,12 @@ void DrawGame(void)
 	SetCamera();		// カメラの設定処理
 
 	DrawMeshfield();	// ステージの描画処理
-	//DrawMeshCylinder();	// メッシュシリンダーの描画処理
+						//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 	DrawMeshDome();		// メッシュドームの描画処理
 	DrawWall();			// 壁の描画処理
-	DrawGauge();		// ゲージの描画処理
 	DrawPlayer();		// プレイヤーの描画処理
-	
 
-	//ポーズがOFF
+						//ポーズがOFF
 	if (g_bPause == true)
 	{
 		DrawPause();		//ポーズ画面描画処理
@@ -220,6 +243,7 @@ void CheckUseController(CHECKMODE mode)
 			case CHECKMODE_DISCONPAUSE:
 				g_bPause = true;				//強制的にポーズ状態にする
 				g_bDisconnectPlayer = true;		//切断されたことにする
+				g_numGamePad = nCntPlayer;
 				return;	//関数終了
 				break;
 			case CHECKMODE_DISCONNOPAUSE:

@@ -34,6 +34,7 @@ void UninitPause(void);
 void UpdatePause(void);
 void DrawPause(void);
 void SetPause(PAUSE Pause);
+void SetPadPause(int GamePad);
 void SelectDownPause(void);
 void SelectUpPause(void);
 void UIStatePause(void);
