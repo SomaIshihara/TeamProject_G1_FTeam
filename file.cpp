@@ -80,7 +80,8 @@ Parts g_readParts;
 int g_counterMotionInfo;
 int g_counterKeyInfo;
 int g_counterKey;
-int g_counterReadModel;
+int g_counterReadTexture;
+int g_counterReadModel;		//モデルビューワー・モーションビューワー共通で使用可
 int g_nIdxParts;
 
 //========================
@@ -107,6 +108,7 @@ void InitFile()
 	g_counterMotionInfo = 0;
 	g_counterKeyInfo = 0;
 	g_counterKey = 0;
+	g_counterReadTexture = 0;
 	g_counterReadModel = 0;
 	g_nIdxParts = -1;
 
@@ -228,11 +230,31 @@ void LoadModelViewerFile(const char *path)
 					//取得部分
 					else if (strncmp(&aCode[0], CODE_TEXTURE_FILENAME, sizeof CODE_TEXTURE_FILENAME / sizeof(char) - 1) == 0)
 					{
-						
+						if (g_counterReadTexture < MAX_NUM_TEXTURE)
+						{
+							pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
+
+							//パス取得
+							pSprit = strtok(NULL, " =\n");
+							strcpy(&g_aTexFilePath[g_counterReadTexture][0], pSprit);
+
+							//加算
+							g_counterReadTexture++;
+						}
 					}
 					else if (strncmp(&aCode[0], CODE_MODEL_FILENAME, sizeof CODE_MODEL_FILENAME / sizeof(char) - 1) == 0)
 					{
+						if (g_counterReadModel< MAX_NUM_MODEL)
+						{
+							pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
+							//パス取得
+							pSprit = strtok(NULL, " =\n");
+							strcpy(&g_aModelFilePath[g_counterReadModel][0], pSprit);
+
+							//加算
+							g_counterReadModel++;
+						}
 					}
 					break;
 				case READSTAT_CAMERASET:	//カメラ情報取得
@@ -332,12 +354,16 @@ void LoadModelViewerFile(const char *path)
 					{
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
+						//取得
+						pSprit = strtok(NULL, " =\n");
 						g_readsky.texType = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_MOVE, sizeof CODE_MOVE / sizeof(char) - 1) == 0)
 					{
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
+						//取得
+						pSprit = strtok(NULL, " =\n");
 						g_readsky.fMove = fatof(pSprit);
 					}
 					break;
@@ -348,6 +374,8 @@ void LoadModelViewerFile(const char *path)
 					}
 					else if (strncmp(&aCode[0], CODE_TEXTYPE, sizeof CODE_TEXTYPE / sizeof(char) - 1) == 0)
 					{
+						//取得
+						pSprit = strtok(NULL, " =\n");
 						g_nMountainTexNum = atoi(pSprit);
 					}
 					break;
@@ -360,6 +388,8 @@ void LoadModelViewerFile(const char *path)
 					{
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
+						//取得
+						pSprit = strtok(NULL, " =\n");
 						g_readmeshfield.texType = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
@@ -382,7 +412,7 @@ void LoadModelViewerFile(const char *path)
 					{
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
-															//X座標読み取り
+						//X座標読み取り
 						pSprit = strtok(NULL, " =\n");
 						g_readmeshfield.mf.rot.x = fatof(pSprit);
 
@@ -399,7 +429,10 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//分割数読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readmeshfield.mf.nBlock_X = atoi(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readmeshfield.mf.nBlock_Z = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_SIZE, sizeof CODE_SIZE / sizeof(char) - 1) == 0)
@@ -407,7 +440,10 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//サイズ読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readmeshfield.mf.fLength_X = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readmeshfield.mf.fLength_Z = fatof(pSprit);
 					}
 					break;
@@ -421,6 +457,8 @@ void LoadModelViewerFile(const char *path)
 					{
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
+						//取得
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.texType = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
@@ -428,8 +466,13 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//位置読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.pos.x = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.pos.y = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.pos.z = fatof(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_ROT, sizeof CODE_ROT / sizeof(char) - 1) == 0)
@@ -437,8 +480,13 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//向き読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.rot.x = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.rot.y = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.rot.z = fatof(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_BLOCK, sizeof CODE_BLOCK / sizeof(char) - 1) == 0)
@@ -446,7 +494,10 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//分割数読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.blockX = atoi(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.blockZ = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_SIZE, sizeof CODE_SIZE / sizeof(char) - 1) == 0)
@@ -454,7 +505,10 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//サイズ読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.sizeX = atoi(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readMeshWall.sizeZ = atoi(pSprit);
 					}
 					break;
@@ -509,6 +563,7 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//状態設定
+						pSprit = strtok(NULL, " =\n");
 						g_readmodel.state = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_COLLISION, sizeof CODE_COLLISION / sizeof(char) - 1) == 0)
@@ -516,12 +571,14 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//当たり判定設定
+						pSprit = strtok(NULL, " =\n");
 						g_readmodel.collision = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_SHADOW, sizeof CODE_SHADOW / sizeof(char) - 1) == 0)
 					{//0なら影を使用しない
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
+						pSprit = strtok(NULL, " =\n");
 						g_readmodel.shadow = atoi(pSprit);
 					}
 					break;
@@ -536,6 +593,7 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//種類読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.texType = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
@@ -543,8 +601,13 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//位置読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.pos.x = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.pos.y = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.pos.z = fatof(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_SIZE, sizeof CODE_SIZE / sizeof(char) - 1) == 0)
@@ -552,7 +615,10 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//サイズ読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.sizeX = atoi(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.sizeZ = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_ORIGIN, sizeof CODE_ORIGIN / sizeof(char) - 1) == 0)
@@ -560,7 +626,10 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//何に使うのかわからないもの読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.originX = atoi(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.originZ = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_BLEND, sizeof CODE_BLEND / sizeof(char) - 1) == 0)
@@ -568,6 +637,7 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//合成モード読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.blend = atoi(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_SHADOW, sizeof CODE_SHADOW / sizeof(char) - 1) == 0)
@@ -575,6 +645,7 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//影使用有無読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readbillboard.shadow = atoi(pSprit);
 					}
 					break;
@@ -586,6 +657,8 @@ void LoadModelViewerFile(const char *path)
 					}
 					else if (strncmp(&aCode[0], CODE_MOTION_FILENAME, sizeof CODE_MOTION_FILENAME / sizeof(char) - 1) == 0)
 					{
+						//取得
+						pSprit = strtok(NULL, " =\n");
 						strcpy(&g_readPlayermodel.motionFileName[0], pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
@@ -593,8 +666,13 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//位置読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readPlayermodel.pos.x = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readPlayermodel.pos.y = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readPlayermodel.pos.z = fatof(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_ROT, sizeof CODE_ROT / sizeof(char) - 1) == 0)
@@ -602,8 +680,13 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//向き読み取り
+						pSprit = strtok(NULL, " =\n");
 						g_readPlayermodel.rot.x = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readPlayermodel.rot.y = fatof(pSprit);
+
+						pSprit = strtok(NULL, " =\n");
 						g_readPlayermodel.rot.z = fatof(pSprit);
 					}
 					break;

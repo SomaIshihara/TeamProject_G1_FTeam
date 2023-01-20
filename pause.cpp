@@ -97,6 +97,7 @@ PAUSE g_Pause;												//ポーズの状態
 Pause g_aPause[NUM_TEXTURE];								//ポーズの情報
 int g_nCnt[NUM_BUTTON];										//カウント用変数
 bool g_ButtonPush[NUM_BUTTON];								//ボタンが押されたかどうか
+int g_GamePad;
 
 //=================================
 //ポーズの初期化処理
@@ -205,7 +206,7 @@ void UpdatePause(void)
 	UIStatePause();
 
 	//キーボードのENTER　か　ゲームパッドの　Aボタン　か　STARTボタンが押された
-	if (GetKeyboardTrigger(DIK_RETURN) == true)
+	if (GetKeyboardTrigger(DIK_RETURN) == true || GetGamepadTrigger(g_GamePad, XINPUT_GAMEPAD_A) == true)
 	{
 		switch (g_Pause)
 		{
@@ -260,7 +261,7 @@ void DrawPause(void)
 void SelectUpPause(void)
 {
 	//キーボードの上方向キー　か　ゲームパッドの　十字上ボタン　が押された
-	if (GetKeyboardTrigger(DIK_UP) == true)
+	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(g_GamePad,XINPUT_GAMEPAD_DPAD_UP) == true)
 	{
 		//ボタンを使用している状態にする
 		g_ButtonPush[0] = true;
@@ -316,7 +317,7 @@ void SelectUpPause(void)
 void SelectDownPause(void)
 {
 	//キーボードの下方向キー　か　ゲームパッドの　十字下ボタン　が押された
-	if (GetKeyboardTrigger(DIK_DOWN) == true)
+	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(g_GamePad, XINPUT_GAMEPAD_DPAD_DOWN) == true)
 	{
 		//ボタンを使用している状態にする
 		g_ButtonPush[1] = true;
@@ -448,6 +449,14 @@ void SetPause(PAUSE Pause)
 {
 	g_Pause = Pause;
 }
+//=================================
+//ポーズのゲームパッド設定処理
+//=================================
+void SetPadPause(int GamePad)
+{
+	g_GamePad = GamePad;
+}
+
 //=================================
 //ポーズの取得
 //=================================
