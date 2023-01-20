@@ -149,6 +149,7 @@ void UpdatePlayer(void)
 			if (GetKeyboardTrigger(DIK_RETURN) == true)
 			{
 				g_aPlayer[nCntPlayer].move.y = PLAYER_JUMP_SPEED;//移動量設定
+				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
 			}
 #endif
 			//ゲームパッドの操作
