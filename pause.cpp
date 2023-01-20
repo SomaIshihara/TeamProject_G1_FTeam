@@ -231,6 +231,11 @@ void UpdatePause(void)
 			break;
 		}
 	}
+
+	else if (GetKeyboardTrigger(DIK_RETURN) == true || GetGamepadTrigger(g_GamePad, XINPUT_GAMEPAD_A) == true)
+	{
+
+	}
 }
 //=================================
 //ポーズの描画処理
@@ -452,7 +457,7 @@ void SetPause(PAUSE Pause)
 //=================================
 //ポーズのゲームパッド設定処理
 //=================================
-void SetPadPause(int GamePad)
+void SetPadPause(bool bDisconect, int GamePad)
 {
 	g_GamePad = GamePad;
 }

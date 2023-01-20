@@ -27,6 +27,7 @@ int  g_nUseContNum;					// 使用しているコントローラーの数
 bool g_abUsePlayer[MAX_USE_GAMEPAD];// 使用しているプレイヤー（接続チェックに使用）
 bool g_bDisconnectPlayer;			// 接続が切れたことを確認する
 int  g_numGamePad;
+CHECKMODE g_CheckMode;
 
 //------------------------------------------------
 //				ゲームの初期化処理
@@ -85,6 +86,8 @@ void UpdateGame(void)
 	FADE fadeState = GetFade();
 	Player *pPlayer = GetPlayer();
 
+	
+
 	//ポーズがOFF
 	if (g_bPause == false)
 	{
@@ -100,10 +103,23 @@ void UpdateGame(void)
 
 	else
 	{
-		SetPadPause(g_numGamePad);
+
+		if (g_bDisconnectPlayer == true)
+		{
+			SetPadPause(true);
+		}
+
+		else
+		{
+			SetPadPause(false, nCntPause);
+		}
+		
+		
 
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
 		{
+
+
 			if (g_bDisconnectPlayer == true)
 			{
 				//ポーズ画面の更新処理
