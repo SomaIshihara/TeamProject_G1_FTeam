@@ -1,0 +1,998 @@
+#==============================================================================
+#
+# ÅwÉÇÉfÉãÉrÉÖÅ[ÉèÅxÉXÉNÉäÉvÉgÉtÉ@ÉCÉã [model.txt]
+# Author : AKIRA TANAKA
+#
+#==============================================================================
+SCRIPT			# Ç±ÇÃçsÇÕê‚ëŒè¡Ç≥Ç»Ç¢Ç±Ç∆ÅI
+
+#------------------------------------------------------------------------------
+# ÉeÉNÉXÉ`ÉÉêî
+#------------------------------------------------------------------------------
+NUM_TEXTURE = 6
+
+#------------------------------------------------------------------------------
+# ÉeÉNÉXÉ`ÉÉÉtÉ@ÉCÉãñº
+#------------------------------------------------------------------------------
+TEXTURE_FILENAME = data/TEXTURE/sky000.jpg			# [0]ãÛÉeÉNÉXÉ`ÉÉ
+TEXTURE_FILENAME = data/TEXTURE/mountain000.png		# [1]éRÉeÉNÉXÉ`ÉÉ
+TEXTURE_FILENAME = data/TEXTURE/field003.jpg		# [2]ínñ ÉeÉNÉXÉ`ÉÉ
+TEXTURE_FILENAME = data/TEXTURE/wall100.jpg			# [3]ï«ÉeÉNÉXÉ`ÉÉ
+TEXTURE_FILENAME = data/TEXTURE/tree000.png			# [4]ñÿÉeÉNÉXÉ`ÉÉ
+TEXTURE_FILENAME = data/TEXTURE/effect000.jpg		# [5]ÉGÉtÉFÉNÉgÉeÉNÉXÉ`ÉÉ
+
+#------------------------------------------------------------------------------
+# ÉÇÉfÉãêî
+#------------------------------------------------------------------------------
+NUM_MODEL = 15
+
+#------------------------------------------------------------------------------
+# ÉÇÉfÉãÉtÉ@ÉCÉãñº
+#------------------------------------------------------------------------------
+MODEL_FILENAME = data/MODEL/stone000.x				# [0]ä‚(è¨)
+MODEL_FILENAME = data/MODEL/stone001.x				# [1]ä‚(íÜ)
+MODEL_FILENAME = data/MODEL/stone002.x				# [2]ä‚(ëÂ)
+MODEL_FILENAME = data/MODEL/wall000.x				# [3]ä‚ï«(è¨)
+MODEL_FILENAME = data/MODEL/wall001.x				# [4]ä‚ï«(íÜ)
+MODEL_FILENAME = data/MODEL/wall002.x				# [5]ä‚ï«(ëÂ)
+MODEL_FILENAME = data/MODEL/debris000.x				# [6]ìSçúÉKÉåÉL(è¨)
+MODEL_FILENAME = data/MODEL/debris001.x				# [7]ìSçúÉKÉåÉL(íÜ)
+MODEL_FILENAME = data/MODEL/debris002.x				# [8]ìSçúÉKÉåÉL(ëÂ)
+MODEL_FILENAME = data/MODEL/debris100.x				# [9]î¬ÉKÉåÉL(è¨)
+MODEL_FILENAME = data/MODEL/debris101.x				# [10]î¬ÉKÉåÉL(íÜ)
+MODEL_FILENAME = data/MODEL/debris102.x				# [11]î¬ÉKÉåÉL(ëÂ)
+MODEL_FILENAME = data/MODEL/pillar000.x				# [12]íå(è¨)
+MODEL_FILENAME = data/MODEL/pillar001.x				# [13]íå(íÜ)
+MODEL_FILENAME = data/MODEL/pillar002.x				# [14]íå(ëÂ)
+
+#------------------------------------------------------------------------------
+# ÉJÉÅÉâèÓïÒ
+#------------------------------------------------------------------------------
+CAMERASET
+	POS = 0.0 180.0 -720.0			# éãì_
+	REF = 0.0 0.0 0.0				# íçéãì_
+END_CAMERASET
+
+#------------------------------------------------------------------------------
+# ÉâÉCÉgèÓïÒ
+#------------------------------------------------------------------------------
+LIGHTSET
+	DIRECTION = 0.22 -0.87 0.44		# ï˚å¸
+	DIFFUSE = 1.0 1.0 1.0			# ägéUåı
+END_LIGHTSET
+
+LIGHTSET
+	DIRECTION = -0.18 0.88 -0.44	# ï˚å¸
+	DIFFUSE = 0.65 0.65 0.65		# ägéUåı
+END_LIGHTSET
+
+LIGHTSET
+	DIRECTION = 0.89 -0.11 0.44		# ï˚å¸
+	DIFFUSE = 0.15 0.15 0.15		# ägéUåı
+END_LIGHTSET
+
+#------------------------------------------------------------------------------
+# ãÛèÓïÒ
+#------------------------------------------------------------------------------
+SKYSET
+	TEXTYPE = 0
+	MOVE = 0.00002
+END_SKYSET
+
+#------------------------------------------------------------------------------
+# éRèÓïÒ
+#------------------------------------------------------------------------------
+MOUNTAINSET
+	TEXTYPE = 1
+END_MOUNTAINSET
+
+#------------------------------------------------------------------------------
+# ínñ èÓïÒ
+#------------------------------------------------------------------------------
+FIELDSET
+	TEXTYPE = 2
+	POS = 0 0 0
+	ROT = 0 0 0
+	BLOCK = 16 16
+	SIZE = 80 80
+END_FIELDSET
+
+#------------------------------------------------------------------------------
+# ï«èÓïÒ
+#------------------------------------------------------------------------------
+WALLSET
+	TEXTYPE = 3
+	POS = 0 -80 640
+	ROT = 0 180 0
+	BLOCK = 16 1
+	SIZE = 80 80
+END_WALLSET
+
+WALLSET
+	TEXTYPE = 3
+	POS = 640 -80 0
+	ROT = 0 270 0
+	BLOCK = 16 1
+	SIZE = 80 80
+END_WALLSET
+
+WALLSET
+	TEXTYPE = 3
+	POS = 0 -80 -640
+	ROT = 0 0 0
+	BLOCK = 16 1
+	SIZE = 80 80
+END_WALLSET
+
+WALLSET
+	TEXTYPE = 3
+	POS = -640 -80 0
+	ROT = 0 90 0
+	BLOCK = 16 1
+	SIZE = 80 80
+END_WALLSET
+
+
+#------------------------------------------------------------------------------
+# ÉÇÉfÉãîzíuèÓïÒ
+#------------------------------------------------------------------------------
+#------------------
+# ä‚ÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 2
+	POS = -300 0 320
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 2
+	POS = -210 0 260
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 8
+	POS = 200 0 200
+	ROT = 0 0 0
+	STATE = 2
+END_MODELSET
+
+#------------------
+# ä‚ÇSå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 8
+	POS = -320 0 60
+	ROT = 0 0 0
+	STATE = 2
+END_MODELSET
+
+#------------------
+# ä‚ÇTå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 2
+	POS = 280 0 -80
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇUå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 2
+	POS = -120 0 -200
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇVå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 2
+	POS = 140 0 -300
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇWå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 8
+	POS = 230 0 -320
+	ROT = 0 45 0
+	STATE = 2
+END_MODELSET
+
+#------------------
+# ä‚ÇXå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 2
+	POS = 310 0 -360
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇOå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 6
+	POS = -70 0 380
+	ROT = 0 0 0
+	STATE = 2
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 1
+	POS = 310 0 300
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 1
+	POS = -50 0 80
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 7
+	POS = 440 0 40
+	ROT = 0 90 0
+	STATE = 2
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇSå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 7
+	POS = -400 0 -180
+	ROT = 0 0 0
+	STATE = 2
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇTå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 1
+	POS = -290 0 -180
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇUå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 1
+	POS = -210 0 -350
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇVå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 0
+	POS = 110 0 350
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇWå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 0
+	POS = -430 0 180
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇPÇXå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 0
+	POS = 190 0 -150
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇQÇOå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 0
+	POS = -400 0 -400
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# ä‚ÇQÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 6
+	POS = 0 0 -380
+	ROT = 0 180 0
+	STATE = 2
+END_MODELSET
+
+
+#------------------
+# óéÇøÉKÉåÉLÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 10
+	POS = -240 0 -100
+	ROT = 0 140 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 10
+	POS = -160 0 60
+	ROT = 0 45 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 11
+	POS = 120 0 -40
+	ROT = 0 120 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇSå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 10
+	POS = 0 0 240
+	ROT = 0 45 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇTå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 10
+	POS = -60 0 230
+	ROT = 0 130 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇUå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 10
+	POS = -300 0 -280
+	ROT = 0 120 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇVå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 11
+	POS = -60 0 -340
+	ROT = 0 180 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇWå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 10
+	POS = 340 0 180
+	ROT = 0 180 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇXå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 9
+	POS = 400 0 -200
+	ROT = 0 180 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇPÇOå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 9
+	POS = -180 0 -50
+	ROT = 0 180 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇPÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 10
+	POS = -140 0 0
+	ROT = 0 120 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇPÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 11
+	POS = -250 0 0
+	ROT = 0 100 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇPÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 11
+	POS = -350 0 -50
+	ROT = 0 200 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇPÇSå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 11
+	POS = -400 0 380
+	ROT = 0 120 0
+	COLLISION = 0
+END_MODELSET
+
+#------------------
+# óéÇøÉKÉåÉLÇPÇTå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 11
+	POS = 55 0 395
+	ROT = 0 180 0
+	COLLISION = 0
+END_MODELSET
+
+
+#------------------
+# íåÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 14
+	POS = -280 0 260
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# íåÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 14
+	POS = 240 0 160
+	ROT = 0 120 0
+END_MODELSET
+
+#------------------
+# íåÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 14
+	POS = 280 0 -300
+	ROT = 0 60 0
+END_MODELSET
+
+#------------------
+# íåÇSå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 14
+	POS = -170 0 -360
+	ROT = 0 20 0
+END_MODELSET
+
+#------------------
+# íåÇTå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 14
+	POS = -270 0 -140
+	ROT = 0 200 0
+END_MODELSET
+
+
+#------------------
+# âúï«ÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 4
+	POS = -370 0 485
+	ROT = 0 0 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# âúï«ÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 4
+	POS = -70 0 480
+	ROT = 0 0 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# âúï«ÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 5
+	POS = 310 0 500
+	ROT = 0 0 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# âEï«ÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 4
+	POS = 490 0 400
+	ROT = 0 90 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# âEï«ÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 5
+	POS = 495 0 10
+	ROT = 0 90 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# âEï«ÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 4
+	POS = 485 0 -350
+	ROT = 0 90 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# å„ï«ÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 5
+	POS = 300 0 -500
+	ROT = 0 180 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# å„ï«ÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 4
+	POS = -50 0 -500
+	ROT = 0 180 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# å„ï«ÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 5
+	POS = -390 0 -495
+	ROT = 0 180 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# ç∂ï«ÇPå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 4
+	POS = -495 0 -370
+	ROT = 0 -90 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# ç∂ï«ÇQå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 4
+	POS = -490 0 -50
+	ROT = 0 -90 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------
+# ç∂ï«ÇRå¬ñ⁄
+#------------------
+MODELSET
+	TYPE = 5
+	POS = -505 0 290
+	ROT = 0 -90 0
+	SHADOW = 0
+END_MODELSET
+
+#------------------------------------------------------------------------------
+# ÉrÉãÉ{Å[ÉhîzíuèÓïÒ
+#------------------------------------------------------------------------------
+#>>******************** [Ç±Ç±Ç©ÇÁÉRÉÅÉìÉgÉAÉEÉg] ********************
+#------------------
+# ó—âúë§
+#------------------
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -500 0 620
+	SIZE = 120 220
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -400 0 610
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -300 0 635
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -200 0 600
+	SIZE = 140 260
+	ORIGIN = 70 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -100 0 600
+	SIZE = 130 230
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 0 0 620
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 100 0 625
+	SIZE = 110 230
+	ORIGIN = 55 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 200 0 610
+	SIZE = 130 250
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 300 0 600
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 400 0 600
+	SIZE = 130 260
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 500 0 600
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+#------------------
+# ó—âEë§
+#------------------
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 620 0 500
+	SIZE = 120 220
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 610 0 400
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 635 0 300
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 600 0 200
+	SIZE = 140 260
+	ORIGIN = 70 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 600 0 100
+	SIZE = 130 230
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 620 0 0
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 625 0 -100
+	SIZE = 110 230
+	ORIGIN = 55 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 610 0 -200
+	SIZE = 130 250
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 600 0 -300
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 600 0 -400
+	SIZE = 130 260
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 600 0 -500
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+#------------------
+# ó—éËëOë§
+#------------------
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 500 0 -620
+	SIZE = 120 220
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 400 0 -610
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 300 0 -635
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 200 0 -600
+	SIZE = 140 260
+	ORIGIN = 70 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 100 0 -600
+	SIZE = 130 230
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = 0 0 -620
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -100 0 -625
+	SIZE = 110 230
+	ORIGIN = 55 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -200 0 -610
+	SIZE = 130 250
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -300 0 -600
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -400 0 -600
+	SIZE = 130 260
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -500 0 -600
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+#------------------
+# ó—ç∂ë§
+#------------------
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -620 0 -500
+	SIZE = 120 220
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -610 0 -400
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -635 0 -300
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -600 0 -200
+	SIZE = 140 260
+	ORIGIN = 70 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -600 0 -100
+	SIZE = 130 230
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -620 0 0
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -625 0 100
+	SIZE = 110 230
+	ORIGIN = 55 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -610 0 200
+	SIZE = 130 250
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -600 0 300
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -600 0 400
+	SIZE = 130 260
+	ORIGIN = 65 0
+END_BILLBOARDSET
+
+BILLBOARDSET
+	TEXTYPE = 4
+	POS = -600 0 500
+	SIZE = 120 240
+	ORIGIN = 60 0
+END_BILLBOARDSET
+
+#------------------
+# åı
+#------------------
+BILLBOARDSET
+	TEXTYPE = 5
+	POS = 0 200 0
+	SIZE = 120 120
+	BLEND = 1
+	SHADOW = 0
+END_BILLBOARDSET
+#<<******************** [Ç±Ç±Ç‹Ç≈ÉRÉÅÉìÉgÉAÉEÉg] ********************
+
+#------------------------------------------------------------------------------
+# ÉvÉåÉCÉÑÅ[èÓïÒ
+#------------------------------------------------------------------------------
+PLAYERSET
+	MOTION_FILENAME = data/motion.txt
+	POS = 0 0 0
+	ROT = 0 0 0
+END_PLAYERSET
+
+END_SCRIPT		# Ç±ÇÃçsÇÕê‚ëŒè¡Ç≥Ç»Ç¢Ç±Ç∆ÅI

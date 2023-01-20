@@ -57,6 +57,11 @@ typedef enum
 READSTAT g_readStat = READSTAT_NONE;
 
 //取得したもの
+//記憶する
+char g_aTexFilePath[MAX_NUM_TEXTURE][MAX_PATH_STR];
+char g_aModelFilePath[MAX_NUM_MODEL][MAX_PATH_STR];
+
+//使い捨て
 ReadTextureData g_readtexdata;
 ReadModelData g_readmodeldata;
 Camera g_readCamera;
@@ -183,41 +188,51 @@ void LoadModelViewerFile(const char *path)
 				switch (g_readStat)
 				{
 				case READSTAT_NONE:	//処理取得
+					//処理部分
 					if (strncmp(&aCode[0], CODE_CAMERASET, sizeof CODE_CAMERASET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_CAMERASET;
 					}
-					if (strncmp(&aCode[0], CODE_LIGHTSET, sizeof CODE_LIGHTSET / sizeof(char) - 1) == 0)
+					else if (strncmp(&aCode[0], CODE_LIGHTSET, sizeof CODE_LIGHTSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_LIGHTSET;
 					}
-					if (strncmp(&aCode[0], CODE_SKYSET, sizeof CODE_SKYSET / sizeof(char) - 1) == 0)
+					else if (strncmp(&aCode[0], CODE_SKYSET, sizeof CODE_SKYSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_SKYSET;
 					}
-					if (strncmp(&aCode[0], CODE_MOUNTAINSET, sizeof CODE_MOUNTAINSET / sizeof(char) - 1) == 0)
+					else if (strncmp(&aCode[0], CODE_MOUNTAINSET, sizeof CODE_MOUNTAINSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_MOUNTAINSET;
 					}
-					if (strncmp(&aCode[0], CODE_FIELDSET, sizeof CODE_FIELDSET / sizeof(char) - 1) == 0)
+					else if (strncmp(&aCode[0], CODE_FIELDSET, sizeof CODE_FIELDSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_FIELDSET;
 					}
-					if (strncmp(&aCode[0], CODE_WALLSET, sizeof CODE_WALLSET / sizeof(char) - 1) == 0)
+					else if (strncmp(&aCode[0], CODE_WALLSET, sizeof CODE_WALLSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_WALLSET;
 					}
-					if (strncmp(&aCode[0], CODE_MODELSET, sizeof CODE_MODELSET / sizeof(char) - 1) == 0)
+					else if (strncmp(&aCode[0], CODE_MODELSET, sizeof CODE_MODELSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_MODELSET;
 					}
-					if (strncmp(&aCode[0], CODE_BILLBOARDSET, sizeof CODE_BILLBOARDSET / sizeof(char) - 1) == 0)
+					else if (strncmp(&aCode[0], CODE_BILLBOARDSET, sizeof CODE_BILLBOARDSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_BILLBOARDSET;
 					}
-					if (strncmp(&aCode[0], CODE_PLAYERSET, sizeof CODE_PLAYERSET / sizeof(char) - 1) == 0)
+					else if (strncmp(&aCode[0], CODE_PLAYERSET, sizeof CODE_PLAYERSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_PLAYERSET;
+					}
+					//取得部分
+					else if (strncmp(&aCode[0], CODE_TEXTURE_FILENAME, sizeof CODE_TEXTURE_FILENAME / sizeof(char) - 1) == 0)
+					{
+						
+					}
+					else if (strncmp(&aCode[0], CODE_MODEL_FILENAME, sizeof CODE_MODEL_FILENAME / sizeof(char) - 1) == 0)
+					{
+
 					}
 					break;
 				case READSTAT_CAMERASET:	//カメラ情報取得
@@ -898,6 +913,22 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 	{
 		assert(pFile != NULL);
 	}
+}
+
+//========================
+//テクスチャパス取得処理
+//========================
+char *GetTextureFilePath(int nTexNum)
+{
+	return &g_aTexFilePath[nTexNum][0];
+}
+
+//========================
+//モデルパス取得処理
+//========================
+char *GetModelFilePath(int nModNum)
+{
+	return &g_aModelFilePath[nModNum][0];
 }
 
 //========================
