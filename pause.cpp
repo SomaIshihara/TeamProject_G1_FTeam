@@ -89,6 +89,11 @@ const float g_Height[] = {
 };
 
 //****************************//
+//	    プロトタイプ宣言      //
+//****************************//
+void SwitchPause(void);
+
+//****************************//
 //	   グローバル変数宣言     //
 //****************************//
 LPDIRECT3DTEXTURE9		g_pTexturePause[NUM_TEXTURE] = {};	//テクスチャへのポインタ
@@ -98,6 +103,7 @@ Pause g_aPause[NUM_TEXTURE];								//ポーズの情報
 int g_nCnt[NUM_BUTTON];										//カウント用変数
 bool g_ButtonPush[NUM_BUTTON];								//ボタンが押されたかどうか
 int g_GamePad;
+bool g_bDisconnectPause = false;
 
 //=================================
 //ポーズの初期化処理
@@ -124,6 +130,9 @@ void InitPause(void)
 
 	//コンテニューに設定
 	g_Pause = PAUSE_CONTINUE;
+
+	//変数初期化
+	g_bDisconnectPause = false;
 
 	//初期ボタン設定
 	for (int nCnt = 0; nCnt < NUM_BUTTON; nCnt++)
@@ -196,45 +205,62 @@ void UninitPause(void)
 //=================================
 void UpdatePause(void)
 {
-	//ポーズの上方向選択処理
-	SelectUpPause();
-
-	//ポーズの下方向選択処理
-	SelectDownPause();
-
-	//ポーズのUIの状態変化処理
-	UIStatePause();
-
-	//キーボードのENTER　か　ゲームパッドの　Aボタン　か　STARTボタンが押された
-	if (GetKeyboardTrigger(DIK_RETURN) == true || GetGamepadTrigger(g_GamePad, XINPUT_GAMEPAD_A) == true)
+	//ポーズの要因が切断されたものである（全員に操作権）
+	if (g_bDisconnectPause == true)
 	{
-		switch (g_Pause)
+		for (int nCntPad = 0; nCntPad < MAX_USE_GAMEPAD; nCntPad++)
 		{
-		case PAUSE_CONTINUE:
-			//[仮]一旦ゲーム画面に戻ってコントローラーの使用有無再設定する
-			//[予]コントローラー抜かれてるけど続行するかい？的なメッセージ出して
-			if (/*知らねぇ続行するぜって言われた*/true)
-			{
-				CheckUseController(CHECKMODE_REMOVE);
-				SetEnablePause(false);
+			//ポーズの上方向選択処理
+			SelectUpPause(nCntPad);
+
+			//ポーズの下方向選択処理
+			SelectDownPause(nCntPad);
+
+			//ポーズのUIの状態変化処理
+			UIStatePause();
+
+			if (GetGamepadTrigger(nCntPad, XINPUT_GAMEPAD_START) == true)
+			{//STARTボタン（ポーズ解除）
+				g_Pause = PAUSE_CONTINUE;
+				SwitchPause();
 			}
-			break;
+			if (GetGamepadTrigger(nCntPad, XINPUT_GAMEPAD_A) == true)
+			{//Aボタン（選択）
+				SwitchPause();
+			}
+		}
+	}
+	else
+	{//意図してポーズした（操作権は押した人）
+	 //ポーズの上方向選択処理
+		SelectUpPause(g_GamePad);
 
-		case PAUSE_RETRY:
-			//モード設定（ゲーム画面に遷移)
-			SetFade(MODE_GAME);
-			break;
+		//ポーズの下方向選択処理
+		SelectDownPause(g_GamePad);
 
-		case PAUSE_QUIT:
-			//タイトル画面に遷移
-			SetFade(MODE_TITLE);
-			break;
+		//ポーズのUIの状態変化処理
+		UIStatePause();
+
+		if (GetGamepadTrigger(g_GamePad, XINPUT_GAMEPAD_START) == true)
+		{//STARTボタン（ポーズ解除）
+			g_Pause = PAUSE_CONTINUE;
+			SwitchPause();
+		}
+		if (GetGamepadTrigger(g_GamePad, XINPUT_GAMEPAD_A) == true)
+		{//Aボタン（選択）
+			SwitchPause();
 		}
 	}
 
-	else if (GetKeyboardTrigger(DIK_RETURN) == true || GetGamepadTrigger(g_GamePad, XINPUT_GAMEPAD_A) == true)
-	{
-
+	//キーボードの操作は受け付ける
+	if (GetKeyboardTrigger(DIK_P) == true)
+	{//Pキー（ポーズ解除）
+		g_Pause = PAUSE_CONTINUE;
+		SwitchPause();
+	}
+	if (GetKeyboardTrigger(DIK_RETURN) == true)
+	{//ENTERキー（選択）
+		SwitchPause();
 	}
 }
 //=================================
@@ -263,10 +289,10 @@ void DrawPause(void)
 //=================================
 //ポーズの上方向選択処理
 //=================================
-void SelectUpPause(void)
+void SelectUpPause(int nPadNum)
 {
 	//キーボードの上方向キー　か　ゲームパッドの　十字上ボタン　が押された
-	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(g_GamePad,XINPUT_GAMEPAD_DPAD_UP) == true)
+	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(nPadNum,XINPUT_GAMEPAD_DPAD_UP) == true)
 	{
 		//ボタンを使用している状態にする
 		g_ButtonPush[0] = true;
@@ -319,10 +345,10 @@ void SelectUpPause(void)
 //=================================
 //ポーズの下方向選択処理
 //=================================
-void SelectDownPause(void)
+void SelectDownPause(int nPadNum)
 {
 	//キーボードの下方向キー　か　ゲームパッドの　十字下ボタン　が押された
-	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(g_GamePad, XINPUT_GAMEPAD_DPAD_DOWN) == true)
+	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(nPadNum, XINPUT_GAMEPAD_DPAD_DOWN) == true)
 	{
 		//ボタンを使用している状態にする
 		g_ButtonPush[1] = true;
@@ -460,6 +486,7 @@ void SetPause(PAUSE Pause)
 void SetPadPause(bool bDisconect, int GamePad)
 {
 	g_GamePad = GamePad;
+	g_bDisconnectPause = bDisconect;
 }
 
 //=================================
@@ -468,4 +495,39 @@ void SetPadPause(bool bDisconect, int GamePad)
 PAUSE *GetPause(void)
 {
 	return &g_Pause;
+}
+
+//=================================
+//ポーズ選択の分岐
+//Author:石原颯馬
+//=================================
+void SwitchPause(void)
+{
+	switch (g_Pause)
+	{
+	case PAUSE_CONTINUE:
+		//再確認したけどコントローラーの数合ってない
+		if (CheckUseController(CHECKMODE_DISCONNOPAUSE) == true)
+		{
+			//警告メッセージ
+
+			if (/*じゃいいですぅ*/false)
+			{
+				break;
+			}
+		}
+		CheckUseController(CHECKMODE_REMOVE);
+		SetEnablePause(false);
+		break;
+
+	case PAUSE_RETRY:
+		//モード設定（ゲーム画面に遷移)
+		SetFade(MODE_GAME);
+		break;
+
+	case PAUSE_QUIT:
+		//タイトル画面に遷移
+		SetFade(MODE_TITLE);
+		break;
+	}
 }

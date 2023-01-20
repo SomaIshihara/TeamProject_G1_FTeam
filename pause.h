@@ -35,8 +35,8 @@ void UpdatePause(void);
 void DrawPause(void);
 void SetPause(PAUSE Pause);
 void SetPadPause(bool bDisconect, int GamePad = -1);
-void SelectDownPause(void);
-void SelectUpPause(void);
+void SelectDownPause(int nPadNum);
+void SelectUpPause(int nPadNum);
 void UIStatePause(void);
 PAUSE *GetPause(void);
 

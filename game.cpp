@@ -99,93 +99,29 @@ void UpdateGame(void)
 		UpdatePlayer();		// プレイヤーの更新処理
 		UpdateCamera();		// カメラの更新処理
 		UpdateWall();		// 壁の更新処理
+
+		//ポーズ取得
+		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
+		{
+			//ポーズ状態切り替え
+			if (GetKeyboardTrigger(DIK_P) == true || GetGamepadTrigger(nCntPause, XINPUT_GAMEPAD_START) == true)
+			{
+				//何番目のゲームパッドか保存する
+				g_numGamePad = nCntPause;
+
+				//ポーズ状態にする
+				g_bPause = true;
+
+				//ポーズしたコントローラーをpause.cppに渡す
+				SetPadPause(false, nCntPause);
+			}
+		}
 	}
 
 	else
 	{
-
-		if (g_bDisconnectPlayer == true)
-		{
-			SetPadPause(true);
-		}
-
-		else
-		{
-			SetPadPause(false, nCntPause);
-		}
-		
-		
-
-		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
-		{
-
-
-			if (g_bDisconnectPlayer == true)
-			{
-				//ポーズ画面の更新処理
-				UpdatePause();
-			}
-			else if (nCntPause == g_numGamePad)
-			{
-				//ポーズ画面の更新処理
-				UpdatePause();
-			}
-		}
-
-		if (GetKeyboardTrigger(DIK_P) == true || GetGamepadTrigger(g_numGamePad, XINPUT_GAMEPAD_START) == true)
-		{
-			SetPause(PAUSE_CONTINUE);
-		}
-
-		if (*GetPause() == PAUSE_CONTINUE)
-		{
-			if (g_bDisconnectPlayer == true)
-			{
-				g_bPause = false;
-			}
-			else if (GetKeyboardTrigger(DIK_RETURN) == true || GetGamepadTrigger(g_numGamePad, XINPUT_GAMEPAD_A) == true)
-			{
-				g_bPause = false;
-			}
-		}
-	}
-
-	for (int nCntPause = 0; nCntPause < 4; nCntPause++)
-	{
-		//ポーズ状態切り替え
-		if (GetKeyboardTrigger(DIK_P) == true || GetGamepadTrigger(nCntPause, XINPUT_GAMEPAD_START) == true)
-		{
-			//何番目のゲームパッドか保存する
-			g_numGamePad = nCntPause;
-
-			//もう一回コントローラーの数確認してみるわ
-			CheckUseController(CHECKMODE_DISCONNOPAUSE);
-
-			//ポーズ解除したけどコントローラーの数合ってない
-			if (g_bPause == false && g_bDisconnectPlayer == true)
-			{
-				//警告メッセージ
-
-				if (/*それでも実行するぜ*/true)
-				{
-					CheckUseController(CHECKMODE_REMOVE);
-				}
-				else	//いや、ちょっと待って
-				{
-					g_bPause = true;
-				}
-			}
-
-			if (GetKeyboardTrigger(DIK_P) == true)
-			{
-				g_bPause = g_bPause ? false : true;
-				break;
-			}
-			else
-			{
-				g_bPause = g_bPause ? false : true;
-			}
-		}
+		//ポーズ画面の更新処理
+		UpdatePause();
 	}
 
 	//コントローラーの使用チェックはポーズ状態関係なく呼び出し
@@ -248,7 +184,7 @@ int SetUseController(void)
 //		CHECKMODE_REMOVE	:切断されている場合そのコントローラーを使用していない状態にする
 //		Memo:UpdateGame内でポーズ中でも呼び出しすること
 //------------------------------------------------
-void CheckUseController(CHECKMODE mode)
+bool CheckUseController(CHECKMODE mode)
 {
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{//対応コントローラー分繰り返す
@@ -259,12 +195,12 @@ void CheckUseController(CHECKMODE mode)
 			case CHECKMODE_DISCONPAUSE:
 				g_bPause = true;				//強制的にポーズ状態にする
 				g_bDisconnectPlayer = true;		//切断されたことにする
-				g_numGamePad = nCntPlayer;
-				return;	//関数終了
+				SetPadPause(true);
+				return true;	//関数終了
 				break;
 			case CHECKMODE_DISCONNOPAUSE:
 				g_bDisconnectPlayer = true;		//切断されたことにする
-				return;	//関数終了
+				return true;	//関数終了
 				break;
 			case CHECKMODE_REMOVE:
 				g_abUsePlayer[nCntPlayer] = false;
@@ -276,6 +212,7 @@ void CheckUseController(CHECKMODE mode)
 		}
 	}
 	g_bDisconnectPlayer = false;	//for文が正常に終了したら問題ない
+	return false;
 }
 
 //------------------------------------------------
