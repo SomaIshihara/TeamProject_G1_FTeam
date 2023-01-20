@@ -13,17 +13,18 @@
 #define MESHDOME_WIDTH				(2000.0f)	//背景の広さ
 #define MESHDOME_HEIGHT				(1000.0f)	//背景の高さ
 #define MESHDOME_TEX_RESOLUTION		(3.0f)		//背景の解像度
-#define MESHDOME_SPLIT				(32)		//背景の頂点数
+#define MESHDOME_SPLIT				(64)		//背景の頂点数
 #define MESHDOME_SEPALATE			(2)			//背景の縦の分割数
 #define MESHDOME_NUM_OVERLAP		(2)			//最初と最後の頂点が重なる数
-#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * MESHDOME_SEPALATE + MESHDOME_NUM_OVERLAP)	//全体の頂点数
+//#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * MESHDOME_SEPALATE + MESHDOME_NUM_OVERLAP)	//全体の頂点数  本来のマクロ
+#define MESHDOME_ALL_VERTEX			(65)	//全体の頂点数		試験用のマクロ
 
 //メッシュドームの構造体
 typedef struct
 {
-	D3DXVECTOR3		pos;	//位置
-	D3DXVECTOR3		rot;	//向き
-
+	D3DXVECTOR3		pos;		//位置
+	D3DXVECTOR3		rot;		//向き
+	float			fRadius;	//半径
 }MeshDome;
 
 //グローバル変数
@@ -47,9 +48,10 @@ void InitMeshDome(void)
 	//テクスチャーの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshDome);
 
-	//ポリゴンの初期化
+	//ドーム情報の初期化
 	g_MeshDome.pos = ZERO_SET;
 	g_MeshDome.rot = ZERO_SET;
+	g_MeshDome.fRadius = MESHDOME_WIDTH;
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshDome, NULL);
@@ -59,7 +61,7 @@ void InitMeshDome(void)
 	//頂点バッファのロック
 	g_pVtxBuffMeshDome->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCntMeshDome = 0; nCntMeshDome < NUM_MESHDOME; nCntMeshDome++, pVtx += MESHDOME_ALL_VERTEX)
+	/*for (int nCntMeshDome = 0; nCntMeshDome < NUM_MESHDOME; nCntMeshDome++, pVtx += MESHDOME_ALL_VERTEX)
 	{
 		float fAngle = D3DX_PI;	//角度
 
@@ -70,27 +72,27 @@ void InitMeshDome(void)
 			int nDissimilar = MESHDOME_SPLIT + nCntVtx + 1;
 
 			pVtx[nCntVtx].pos = D3DXVECTOR3(
-				sinf(fAngle) * MESHDOME_WIDTH,
+				sinf(fAngle) * g_MeshDome.fRadius,
 				MESHDOME_HEIGHT,
-				cosf(fAngle) * MESHDOME_WIDTH);
+				cosf(fAngle) * g_MeshDome.fRadius);
 
 			pVtx[nDissimilar].pos = D3DXVECTOR3(
-				sinf(fAngle) * MESHDOME_WIDTH,
+				sinf(fAngle) * g_MeshDome.fRadius,
 				0.0f,
-				cosf(fAngle) * MESHDOME_WIDTH);
+				cosf(fAngle) * g_MeshDome.fRadius);
 
 			//最後の頂点は、最初の頂点と同じにする
 			if (nCntVtx == MESHDOME_SPLIT)
 			{
 				pVtx[nCntVtx].pos = D3DXVECTOR3(
-					sinf(D3DX_PI) * MESHDOME_WIDTH,
+					sinf(D3DX_PI) * g_MeshDome.fRadius,
 					MESHDOME_HEIGHT,
-					cosf(D3DX_PI) * MESHDOME_WIDTH);
+					cosf(D3DX_PI) * g_MeshDome.fRadius);
 
 				pVtx[nDissimilar].pos = D3DXVECTOR3(
-					sinf(D3DX_PI) * MESHDOME_WIDTH,
+					sinf(D3DX_PI) * g_MeshDome.fRadius,
 					0.0f,
-					cosf(D3DX_PI) * MESHDOME_WIDTH);
+					cosf(D3DX_PI) * g_MeshDome.fRadius);
 			}
 
 			//法線ベクトルの設定
@@ -107,6 +109,18 @@ void InitMeshDome(void)
 
 			fAngle -= (D3DX_PI * 2.0f) / MESHDOME_SPLIT;
 		}
+	}*/
+
+	int nNumVtx = 0;		//頂点番号
+	//天面の出っ張り頂点の設定
+	pVtx[nNumVtx++].pos.x = g_MeshDome.pos.x;
+	pVtx[nNumVtx++].pos.y = g_MeshDome.pos.y + MESHDOME_HEIGHT;
+	pVtx[nNumVtx++].pos.z = g_MeshDome.pos.z;
+
+	//横の分割数　‐　天面の出っ張りの１頂点　回数分 for文を回す
+	for (int nCntDevideY = 0; nCntDevideY < MESHDOME_SPLIT - 1; nCntDevideY++)
+	{
+
 	}
 
 	//ベクトルを正規化する
@@ -126,7 +140,7 @@ void InitMeshDome(void)
 	g_pIdxBuffMeshDome->Lock(0, 0, (void**)&pIdx, 0);
 
 	//頂点番号データの設定
-	for (int nCntIdx = 0; nCntIdx < MESHDOME_ALL_VERTEX; nCntIdx++)
+	/*for (int nCntIdx = 0; nCntIdx < MESHDOME_ALL_VERTEX; nCntIdx++)
 	{
 		if (nCntIdx % EVENPARITY == NOPARITY)
 		{
@@ -136,7 +150,7 @@ void InitMeshDome(void)
 		{
 			pIdx[nCntIdx] = (nCntIdx / EVENPARITY) + ODDPARITY + MESHDOME_SPLIT;
 		}
-	}
+	}*/
 	
 	//インデックスバッファのアンロック
 	g_pIdxBuffMeshDome->Unlock();
