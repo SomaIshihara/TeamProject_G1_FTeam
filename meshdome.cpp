@@ -16,8 +16,7 @@
 #define MESHDOME_SPLIT				(64)		//背景の頂点数
 #define MESHDOME_SEPALATE			(2)			//背景の縦の分割数
 #define MESHDOME_NUM_OVERLAP		(2)			//最初と最後の頂点が重なる数
-//#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * MESHDOME_SEPALATE + MESHDOME_NUM_OVERLAP)	//全体の頂点数  本来のマクロ
-#define MESHDOME_ALL_VERTEX			(65)	//全体の頂点数		試験用のマクロ
+#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * MESHDOME_SEPALATE + MESHDOME_NUM_OVERLAP)	//全体の頂点数
 
 //メッシュドームの構造体
 typedef struct
@@ -111,11 +110,11 @@ void InitMeshDome(void)
 		}
 	}*/
 
-	int nNumVtx = 0;		//頂点番号
+	//頂点番号
+	int nNumVtx = 0;		
+
 	//天面の出っ張り頂点の設定
-	pVtx[nNumVtx++].pos.x = g_MeshDome.pos.x;
-	pVtx[nNumVtx++].pos.y = g_MeshDome.pos.y + MESHDOME_HEIGHT;
-	pVtx[nNumVtx++].pos.z = g_MeshDome.pos.z;
+	pVtx[nNumVtx++].pos = D3DXVECTOR3(g_MeshDome.pos.x, g_MeshDome.pos.y + MESHDOME_HEIGHT, g_MeshDome.pos.z);
 
 	//横の分割数　‐　天面の出っ張りの１頂点　回数分 for文を回す
 	for (int nCntDevideY = 0; nCntDevideY < MESHDOME_SPLIT - 1; nCntDevideY++)

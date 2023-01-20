@@ -10,10 +10,10 @@ Author:大宮愛羅
 #include "player.h"
 
 //注視点情報
-#define POSR_SPEED	(10.0f)			//注視点の移動速度
-#define POSR_WIDTH	(0.0f)			//注視点の幅
-#define POSR_HEIGHT	(0.0f)			//注視点の高さ
-#define POSR_DEPTH	(0.0f)			//注視点の奥行き
+#define POSR_SPEED		(10.0f)		//注視点の移動速度
+#define POSR_WIDTH		(0.0f)		//注視点の幅
+#define POSR_HEIGHT		(0.0f)		//注視点の高さ
+#define POSR_DEPTH		(0.0f)		//注視点の奥行き
 
 //視点情報
 #define POSV_ROTSPEED	(0.05f)		//視点の回転速度
@@ -38,7 +38,6 @@ Author:大宮愛羅
 
 //位置の差分を2乗
 #define DIFF_TIMES		(2.0f)		//2乗
-
 
 //グローバル変数
 Camera g_Camera;						//カメラの情報
