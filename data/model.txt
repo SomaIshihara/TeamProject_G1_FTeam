@@ -30,7 +30,7 @@ MODEL_FILENAME = data/MODEL/stone000.x				# [0]Šâ(¬)
 # ƒJƒƒ‰î•ñ
 #------------------------------------------------------------------------------
 CAMERASET
-	POS = 0.0 180.0 -720.0			# Ž‹“_
+	POS = 0.0 1650.0 2200.0			# Ž‹“_
 	REF = 0.0 0.0 0.0				# ’Ž‹“_
 END_CAMERASET
 
@@ -38,18 +38,18 @@ END_CAMERASET
 # ƒ‰ƒCƒgî•ñ
 #------------------------------------------------------------------------------
 LIGHTSET
-	DIRECTION = 0.22 -0.87 0.44		# •ûŒü
+	DIRECTION = 0.2 -0.8 0.4		# •ûŒü
 	DIFFUSE = 1.0 1.0 1.0			# ŠgŽUŒõ
 END_LIGHTSET
 
 LIGHTSET
-	DIRECTION = -0.18 0.88 -0.44	# •ûŒü
-	DIFFUSE = 0.65 0.65 0.65		# ŠgŽUŒõ
+	DIRECTION = -0.2 0.8 -0.4		# •ûŒü
+	DIFFUSE = 1.0 1.0 1.0			# ŠgŽUŒõ
 END_LIGHTSET
 
 LIGHTSET
-	DIRECTION = 0.89 -0.11 0.44		# •ûŒü
-	DIFFUSE = 0.15 0.15 0.15		# ŠgŽUŒõ
+	DIRECTION = 0.8 -0.1 0.4		# •ûŒü
+	DIFFUSE = 1.0 1.0 1.0			# ŠgŽUŒõ
 END_LIGHTSET
 
 #------------------------------------------------------------------------------

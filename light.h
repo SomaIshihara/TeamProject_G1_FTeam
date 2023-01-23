@@ -13,5 +13,6 @@
 void InitLight(void);
 void UninitLight(void);
 void UpdateLight(void);
+void SetLight(int nLightNum, D3DLIGHT9 light);
 
 #endif

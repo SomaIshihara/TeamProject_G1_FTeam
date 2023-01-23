@@ -7,6 +7,7 @@
 #include "main.h"
 #include "file.h"
 #include "camera.h"
+#include "light.h"
 #include "model.h"
 #include <stdio.h>
 #include <assert.h>
@@ -82,6 +83,7 @@ int g_counterKeyInfo;
 int g_counterKey;
 int g_counterReadTexture;
 int g_counterReadModel;		//モデルビューワー・モーションビューワー共通で使用可
+int g_counterReadLight;
 int g_nIdxParts;
 
 //========================
@@ -110,6 +112,7 @@ void InitFile()
 	g_counterKey = 0;
 	g_counterReadTexture = 0;
 	g_counterReadModel = 0;
+	g_counterReadLight = 0;
 	g_nIdxParts = -1;
 
 	g_readStat = READSTAT_NONE;
@@ -314,8 +317,11 @@ void LoadModelViewerFile(const char *path)
 				case READSTAT_LIGHTSET:		//ライト情報取得
 					if (strncmp(&aCode[0], CODE_END_LIGHTSET, sizeof CODE_END_LIGHTSET / sizeof(char) - 1) == 0)
 					{
-						//ライト設定して
+						//ライト設定
+						SetLight(g_counterReadLight, g_readLight);
 						g_readStat = READSTAT_NONE;
+
+						g_counterReadLight++;
 					}
 					else if (strncmp(&aCode[0], CODE_DIRECTION, sizeof CODE_DIRECTION / sizeof(char) - 1) == 0)
 					{
