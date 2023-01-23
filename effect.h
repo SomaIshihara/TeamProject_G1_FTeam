@@ -7,6 +7,14 @@
 #ifndef _EFFECT_H_
 #define _EFFECT_H_
 
+//動物種類列挙（一旦いのししのみ）
+typedef enum
+{
+	EFECTTYPE_CHARGE = 0,	//チャージエフェクト
+	EFECTTYPE_ATTACK,		//アタックエフェクト
+	EFECTTYPE_MAX
+} EFECTTYPE;
+
 //ビルボードの構造体を定義
 typedef struct
 {

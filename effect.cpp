@@ -8,6 +8,14 @@
 #include "game.h"
 #include "effect.h"
 
+//テクスチャの情報
+#define NUM_EFFECT				(1)									//テクスチャの最大数
+
+const char *c_pFileNameEffect[] =
+{
+	"data\\TEXTURE\\tree000.png"
+};
+
 //グローバル変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEffect = NULL;		//頂点バッファのポインタ
 LPDIRECT3DTEXTURE9 g_pTextureEffect = NULL;			//テクスチャのポインタ
@@ -24,12 +32,15 @@ void InitEffect(void)
 
 	VERTEX_3D *pVtx;			//頂点情報へのポインタ
 
-								//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\tree000.png",
-		&g_pTextureEffect);
-
-	g_Effect.pos = D3DXVECTOR3(0.0f, 0.0f, 190.0f);
+	//テクスチャの読み込み
+	for (int nCntEffect=0;nCntEffect<NUM_EFFECT; nCntEffect++)
+	{
+		D3DXCreateTextureFromFile(pDevice,
+			c_pFileNameEffect[nCntEffect],
+			&g_pTextureEffect);
+	}
+	
+	g_Effect.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(
@@ -40,29 +51,32 @@ void InitEffect(void)
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(g_Effect.pos.x - 40.0f, g_Effect.pos.y + 80.0f, 0.0f);
-	pVtx[1].pos = D3DXVECTOR3(g_Effect.pos.x + 40.0f, g_Effect.pos.y + 80.0f, 0.0f);
-	pVtx[2].pos = D3DXVECTOR3(g_Effect.pos.x - 40.0f, g_Effect.pos.y, 0.0f);
-	pVtx[3].pos = D3DXVECTOR3(g_Effect.pos.x + 40.0f, g_Effect.pos.y, 0.0f);
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx+=4)
+	{
+		//頂点座標の設定
+		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	//nor(法線)の設定
-	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		//nor(法線)の設定
+		pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
-	//頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.4f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.4f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.4f);
+		//頂点カラーの設定
+		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//テクスチャ頂点座標の設定
-	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		//テクスチャ頂点座標の設定
+		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+	}
 
 	g_pVtxBuffEffect->Unlock();
 }
