@@ -36,11 +36,7 @@ void InitMeshfield(void)
 
 	WORD *pIdx;					//インデックス情報へのポインタ
 
-
 	//テクスチャの読み込み
-	/*D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\grass001.jpg",
-		&g_pTextureMeshfield);*/
 	D3DXCreateTextureFromFile(pDevice,
 		GetTextureFilePath(0),
 		&g_pTextureMeshfield);

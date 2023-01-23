@@ -30,5 +30,6 @@ void SetCamera(void);			//設定処理
 void MoveCamera(void);			//カメラの移動処理
 void UpdatePosVCamera(void);	//視点の位置更新
 Camera *GetCamera(void);		//カメラの取得
+void SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR);		//カメラの位置設定
 
 #endif
