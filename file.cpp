@@ -13,11 +13,12 @@
 #include <assert.h>
 
 //マクロ
-//マップ
-#define MOTIONVIEWERDATA_PATH	"data\\motion_exithuman.txt"	//モーションビューワーのデータのパス
+//マクロなんてねぇよ
+//意訳：枠組みだけ用意してある
 
 //セーブデータ
-//ほげほげ
+//セーブデータなんてねぇよ
+//意訳：枠組みだけ用意してある
 
 //コード関係
 #define CODE_LENGTH	(128 + MAX_PATH_STR)
@@ -61,6 +62,7 @@ READSTAT g_readStat = READSTAT_NONE;
 //記憶する
 char g_aTexFilePath[MAX_NUM_TEXTURE][MAX_PATH_STR];
 char g_aModelFilePath[MAX_NUM_MODEL][MAX_PATH_STR];
+ReadPlayerModel g_readPlayermodel[ANIMAL_MAX];
 
 //使い捨て
 ReadTextureData g_readtexdata;
@@ -73,7 +75,6 @@ ReadMeshField g_readmeshfield;
 MeshWall g_readMeshWall;
 ReadModel g_readmodel;
 ReadBillBoard g_readbillboard;
-ReadPlayerModel g_readPlayermodel;
 MOTION_INFO g_motionInfo[MOTIONTYPE_MAX];
 Parts g_readParts;
 
@@ -84,6 +85,7 @@ int g_counterKey;
 int g_counterReadTexture;
 int g_counterReadModel;		//モデルビューワー・モーションビューワー共通で使用可
 int g_counterReadLight;
+int g_counterReadAnimal;
 int g_nIdxParts;
 
 //========================
@@ -103,7 +105,10 @@ void InitFile()
 	g_readMeshWall = {};
 	g_readmodel = {};
 	g_readbillboard = {};
-	g_readPlayermodel = {};
+	for (int nCntAnimal = 0; nCntAnimal < ANIMAL_MAX; nCntAnimal++)
+	{
+		g_readPlayermodel[nCntAnimal] = {};
+	}
 	g_readParts = {};
 
 	//↑に使うもの
@@ -113,6 +118,7 @@ void InitFile()
 	g_counterReadTexture = 0;
 	g_counterReadModel = 0;
 	g_counterReadLight = 0;
+	g_counterReadAnimal = 0;
 	g_nIdxParts = -1;
 
 	g_readStat = READSTAT_NONE;
@@ -144,6 +150,9 @@ void LoadModelViewerFile(const char *path)
 	char *pSprit;
 	bool bRead = false;
 	int nCntInit = 0;	//初期化カウンタ
+
+	//変数初期化
+	g_counterReadModel = 0;
 
 	//読み込みファイル設定
 	pFile = fopen(path, "r");
@@ -678,14 +687,26 @@ void LoadModelViewerFile(const char *path)
 				case READSTAT_PLAYERSET:	//プレイヤーモデル情報取得
 					if (strncmp(&aCode[0], CODE_END_PLAYERSET, sizeof CODE_END_PLAYERSET / sizeof(char) - 1) == 0)
 					{
-						//プレイヤーモデル設定して
+						//プレイヤーモデル取得完了
 						g_readStat = READSTAT_NONE;
+
+						//加算
+						g_counterReadAnimal++;
 					}
 					else if (strncmp(&aCode[0], CODE_MOTION_FILENAME, sizeof CODE_MOTION_FILENAME / sizeof(char) - 1) == 0)
 					{
+						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
+
 						//取得
 						pSprit = strtok(NULL, " =\n");
-						strcpy(&g_readPlayermodel.motionFileName[0], pSprit);
+						strcpy(&g_readPlayermodel[g_counterReadAnimal].motionFileName[0], pSprit);
+
+						//タブ文字が入っているところを消す
+						char *pCharPos = strchr(&g_readPlayermodel[g_counterReadAnimal].motionFileName[0], '\t');
+						if (pCharPos != nullptr)
+						{//strchrの返り値がぬるぽではない
+							*pCharPos = '\0';
+						}
 					}
 					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
 					{
@@ -693,13 +714,13 @@ void LoadModelViewerFile(const char *path)
 
 						//位置読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_readPlayermodel.pos.x = fatof(pSprit);
+						g_readPlayermodel[g_counterReadAnimal].pos.x = fatof(pSprit);
 
 						pSprit = strtok(NULL, " =\n");
-						g_readPlayermodel.pos.y = fatof(pSprit);
+						g_readPlayermodel[g_counterReadAnimal].pos.y = fatof(pSprit);
 
 						pSprit = strtok(NULL, " =\n");
-						g_readPlayermodel.pos.z = fatof(pSprit);
+						g_readPlayermodel[g_counterReadAnimal].pos.z = fatof(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_ROT, sizeof CODE_ROT / sizeof(char) - 1) == 0)
 					{
@@ -707,13 +728,13 @@ void LoadModelViewerFile(const char *path)
 
 						//向き読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_readPlayermodel.rot.x = fatof(pSprit);
+						g_readPlayermodel[g_counterReadAnimal].rot.x = fatof(pSprit);
 
 						pSprit = strtok(NULL, " =\n");
-						g_readPlayermodel.rot.y = fatof(pSprit);
+						g_readPlayermodel[g_counterReadAnimal].rot.y = fatof(pSprit);
 
 						pSprit = strtok(NULL, " =\n");
-						g_readPlayermodel.rot.z = fatof(pSprit);
+						g_readPlayermodel[g_counterReadAnimal].rot.z = fatof(pSprit);
 					}
 					break;
 				}
@@ -740,6 +761,9 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 	char aCode[CODE_LENGTH];
 	char *pSprit;
 	bool bRead = false;
+
+	//変数初期化
+	g_counterReadModel = 0;
 
 	//モーション情報
 	//読み込みファイル設定
@@ -1038,6 +1062,14 @@ char *GetTextureFilePath(int nTexNum)
 char *GetModelFilePath(int nModNum)
 {
 	return &g_aModelFilePath[nModNum][0];
+}
+
+//========================
+//モーションパス処理
+//========================
+char *GetMotionFilePath(int animal)
+{
+	return &g_readPlayermodel[animal].motionFileName[0];
 }
 
 //========================

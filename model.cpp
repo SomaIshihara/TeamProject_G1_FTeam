@@ -26,14 +26,10 @@ void InitModel(void)
 			g_aModel[nCntModel].aParts[nCntParts] = {};
 			g_aModel[nCntModel].aParts[nCntParts].bUse = false;
 		}
-	}
 
-	//使用するモーション類読み込み
-	LoadMotionViewerFile("data/motion_ino.txt",&g_aModel[0]);
+		//使用するモーション類読み込み
+		LoadMotionViewerFile(GetMotionFilePath(nCntModel), &g_aModel[nCntModel]);
 
-	//Xファイル読み込み
-	for (int nCntModel = 0; nCntModel < ANIMAL_MAX; nCntModel++)
-	{
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
 			if (SUCCEEDED(D3DXLoadMeshFromX(
@@ -46,10 +42,10 @@ void InitModel(void)
 				&g_aModel[nCntModel].aParts[nCntParts].dwNumMatModel,
 				&g_aModel[nCntModel].aParts[nCntParts].pMesh)))
 			{//読み込み成功したら
-				//テクスチャ読み込み
+			 //テクスチャ読み込み
 				D3DXMATERIAL *pMat;	//マテリアルポインタ
 
-				//マテリアル情報に対するポインタ取得
+									//マテリアル情報に対するポインタ取得
 				pMat = (D3DXMATERIAL *)g_aModel[nCntModel].aParts[nCntParts].pBuffMat->GetBufferPointer();
 
 				for (int nCntTex = 0; nCntTex < (int)g_aModel[nCntModel].aParts[nCntParts].dwNumMatModel; nCntTex++)
@@ -71,50 +67,6 @@ void InitModel(void)
 				break;
 			}
 		}
-//かつて使っていた手打ち式階層構造設定
-#if 0
-		//階層構造設定
-		//体
-		g_aModel[nCntModel].aParts[0].mIdxModelParent = -1;
-		g_aModel[nCntModel].aParts[0].posOffset = D3DXVECTOR3(0.0f, 20.5f, 0.0f);
-		g_aModel[nCntModel].aParts[0].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//頭
-		g_aModel[nCntModel].aParts[1].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[1].posOffset = D3DXVECTOR3(0.0f, 00.0f, -10.0f);
-		g_aModel[nCntModel].aParts[1].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//左腕
-		g_aModel[nCntModel].aParts[2].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[2].posOffset = D3DXVECTOR3(5.0f, -8.0f, -5.0f);
-		g_aModel[nCntModel].aParts[2].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//左手
-		g_aModel[nCntModel].aParts[3].mIdxModelParent = 2;
-		g_aModel[nCntModel].aParts[3].posOffset = D3DXVECTOR3(-1.0f, -8.0f, 1.0f);
-		g_aModel[nCntModel].aParts[3].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//右腕
-		g_aModel[nCntModel].aParts[4].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[4].posOffset = D3DXVECTOR3(4.0f, -8.0f, 10.0f);
-		g_aModel[nCntModel].aParts[4].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//右手
-		g_aModel[nCntModel].aParts[5].mIdxModelParent = 4;
-		g_aModel[nCntModel].aParts[5].posOffset = D3DXVECTOR3(0.8f, -6.0f, 1.0f);
-		g_aModel[nCntModel].aParts[5].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//左腿
-		g_aModel[nCntModel].aParts[6].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[6].posOffset = D3DXVECTOR3(-5.0f, -8.0f, -5.0f);
-		g_aModel[nCntModel].aParts[6].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//左足
-		g_aModel[nCntModel].aParts[7].mIdxModelParent = 6;
-		g_aModel[nCntModel].aParts[7].posOffset = D3DXVECTOR3(1.0f, -8.0f, 1.0f);
-		g_aModel[nCntModel].aParts[7].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//右腿
-		g_aModel[nCntModel].aParts[8].mIdxModelParent = 0;
-		g_aModel[nCntModel].aParts[8].posOffset = D3DXVECTOR3(-4.0f, -8.0f, 10.0f);
-		g_aModel[nCntModel].aParts[8].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//右足
-		g_aModel[nCntModel].aParts[9].mIdxModelParent = 8;
-		g_aModel[nCntModel].aParts[9].posOffset = D3DXVECTOR3(0.8f, -6.0f, 1.0f);
-		g_aModel[nCntModel].aParts[9].rotOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-#endif
 	}
 }
 

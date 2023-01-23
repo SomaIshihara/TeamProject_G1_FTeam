@@ -971,7 +971,7 @@ END_BILLBOARDSET
 # ÉvÉåÉCÉÑÅ[èÓïÒ
 #------------------------------------------------------------------------------
 PLAYERSET
-	MOTION_FILENAME = data/motion.txt
+	MOTION_FILENAME = data/motion_ino.txt
 	POS = 0 0 0
 	ROT = 0 0 0
 END_PLAYERSET

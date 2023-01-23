@@ -36,8 +36,8 @@ CHECKMODE g_CheckMode;
 //------------------------------------------------
 void InitGame(void)
 {
-	g_nUseContNum = SetUseController();	// コントローラーの使用設定
-	LoadModelViewerFile("data\\model.txt");	//モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
+	g_nUseContNum = SetUseController();		// コントローラーの使用設定
+	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
 
 	InitBg();			// 背景の初期化処理
 	InitLight();		// ライト初期化処理
