@@ -15,18 +15,19 @@
 //グローバル変数
 D3DLIGHT9 g_aLight[NUM_LIGHT];
 
-//ライトの向き格納
-const D3DXVECTOR3 c_apLightVec[NUM_LIGHT] = {
-	D3DXVECTOR3(0.2f, -0.8f, 0.4f),
-	D3DXVECTOR3(-0.2f, 0.8f, -0.4f),
-	D3DXVECTOR3(0.8f, -0.1f, 0.4f),
-};
+////ライトの向き格納
+//const D3DXVECTOR3 c_apLightVec[NUM_LIGHT] = {
+//	D3DXVECTOR3(0.2f, -0.8f, 0.4f),
+//	D3DXVECTOR3(-0.2f, 0.8f, -0.4f),
+//	D3DXVECTOR3(0.8f, -0.1f, 0.4f),
+//};
 
 //--------------------------------------------------------------------------------------------------------
 //ライトの初期化処理
 //--------------------------------------------------------------------------------------------------------
 void InitLight(void)
 {
+#if 0
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
@@ -55,6 +56,7 @@ void InitLight(void)
 		//ライトを有効にする
 		pDevice->LightEnable(nCntLight, TRUE);
 	}
+#endif
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -71,4 +73,29 @@ void UninitLight(void)
 void UpdateLight(void)
 {
 
+}
+
+//--------------------------------------------------------------------------------------------------------
+//ライトの設定処理
+//Author:石原颯馬
+//--------------------------------------------------------------------------------------------------------
+void SetLight(int nLightNum, D3DLIGHT9 light)
+{
+	//デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+	//ライトの情報をクリアする
+	ZeroMemory(&g_aLight[nLightNum], sizeof(D3DLIGHT9));
+
+	//引数のライト情報を代入
+	g_aLight[nLightNum] = light;
+
+	//ライトの種類を設定
+	g_aLight[nLightNum].Type = D3DLIGHT_DIRECTIONAL;
+
+	//ライトを設定する
+	pDevice->SetLight(nLightNum, &g_aLight[nLightNum]);
+
+	//ライトを有効にする
+	pDevice->LightEnable(nLightNum, TRUE);
 }
