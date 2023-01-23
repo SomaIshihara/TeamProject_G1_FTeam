@@ -31,6 +31,6 @@ int SetUseController(void);
 bool GetUseController(int nPadNum);
 int GetUseControllerNum(void);
 void SetEnablePause(bool pause);
-void CheckUseController(CHECKMODE mode);
+bool CheckUseController(CHECKMODE mode);
 
 #endif
