@@ -42,9 +42,6 @@ void InitMeshDome(void)
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//設定用方向ベクトル
-	D3DXVECTOR3 aVecDir;
-
 	//テクスチャーの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshDome);
 
@@ -61,64 +58,14 @@ void InitMeshDome(void)
 	//頂点バッファのロック
 	g_pVtxBuffMeshDome->Lock(0, 0, (void**)&pVtx, 0);
 
-	/*for (int nCntMeshDome = 0; nCntMeshDome < NUM_MESHDOME; nCntMeshDome++, pVtx += MESHDOME_ALL_VERTEX)
-	{
-		float fAngle = D3DX_PI;	//角度
-
-		//頂点座標の設定
-		for (int nCntVtx = 0; nCntVtx <= MESHDOME_SPLIT; nCntVtx++)
-		{
-			//対象の頂点座標番号と、高さ以外が同じ情報を持つ頂点番号
-			int nDissimilar = MESHDOME_SPLIT + nCntVtx + 1;
-
-			pVtx[nCntVtx].pos = D3DXVECTOR3(
-				sinf(fAngle) * g_MeshDome.fRadius,
-				MESHDOME_HEIGHT,
-				cosf(fAngle) * g_MeshDome.fRadius);
-
-			pVtx[nDissimilar].pos = D3DXVECTOR3(
-				sinf(fAngle) * g_MeshDome.fRadius,
-				0.0f,
-				cosf(fAngle) * g_MeshDome.fRadius);
-
-			//最後の頂点は、最初の頂点と同じにする
-			if (nCntVtx == MESHDOME_SPLIT)
-			{
-				pVtx[nCntVtx].pos = D3DXVECTOR3(
-					sinf(D3DX_PI) * g_MeshDome.fRadius,
-					MESHDOME_HEIGHT,
-					cosf(D3DX_PI) * g_MeshDome.fRadius);
-
-				pVtx[nDissimilar].pos = D3DXVECTOR3(
-					sinf(D3DX_PI) * g_MeshDome.fRadius,
-					0.0f,
-					cosf(D3DX_PI) * g_MeshDome.fRadius);
-			}
-
-			//法線ベクトルの設定
-			pVtx[nCntVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pVtx[nDissimilar].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-
-			//頂点カラーの設定
-			pVtx[nCntVtx].col = XCOL_WHITE;
-			pVtx[nDissimilar].col = XCOL_WHITE;
-
-			//テクスチャ座標の設定
-			pVtx[nCntVtx].tex = D3DXVECTOR2(nCntVtx * (MESHDOME_TEX_RESOLUTION / MESHDOME_SPLIT), 0.0f);
-			pVtx[nDissimilar].tex = D3DXVECTOR2(nCntVtx * (MESHDOME_TEX_RESOLUTION / MESHDOME_SPLIT), 1.0f);
-
-			fAngle -= (D3DX_PI * 2.0f) / MESHDOME_SPLIT;
-		}
-	}*/
-		
 	int nNumVtx = 0;			//頂点番号
 	float yRadian = 0.0f;		//縦で分割した時の横１周分のY座標が決まる角度
 
 	//天面の出っ張り頂点の設定
 	pVtx[nNumVtx++].pos = D3DXVECTOR3(g_MeshDome.pos.x, g_MeshDome.pos.y + MESHDOME_HEIGHT, g_MeshDome.pos.z);
 
-	//２番目の頂点から、横の分割数　‐　天面の出っ張りの１頂点　回数分 for文を回す
-	for (int nCntDevideY = nNumVtx; nCntDevideY < MESHDOME_SEPALATE; nCntDevideY++)
+	//２番目の頂点から、横の分割数　‐　底面の出っ張りの１頂点　回数分 for文を回す
+	for (int nCntDevideY = nNumVtx; nCntDevideY < MESHDOME_SEPALATE - 1; nCntDevideY++)
 	{
 		//---------------------------------------------------------------------------------------------------------
 		//	MEMO：縦に分割する数を使って原点から横１周分の高さまでの角度計算 (半周分で分割点が分かるので、3.14
@@ -139,12 +86,8 @@ void InitMeshDome(void)
 
 			//角度を　全体の角度÷分割数で割った答え分、引く
 			rot_Y -= ONE_LAP / MESHDOME_SPLIT;
-			nNumVtx++;
 		}
 	}
-
-	//ベクトルを正規化する
-	D3DXVec3Normalize(&aVecDir, &aVecDir);
 
 	//頂点バッファのアンロック
 	g_pVtxBuffMeshDome->Unlock();

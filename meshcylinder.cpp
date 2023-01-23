@@ -23,9 +23,6 @@ void InitMeshCylinder(void)
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//設定用方向ベクトル
-	D3DXVECTOR3 aVecDir;
-
 	//テクスチャーの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshCylinder);
 
@@ -79,9 +76,8 @@ void InitMeshCylinder(void)
 		pVtx[nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (MESHSYLINDER_TEX_RESOLUTION / MESHSYLINDER_SPLIT), 0.0f);
 		pVtx[MESHSYLINDER_SPLIT + 1 + nCntMeshCylinder].tex = D3DXVECTOR2(nCntMeshCylinder * (MESHSYLINDER_TEX_RESOLUTION / MESHSYLINDER_SPLIT), 1.0f);
 	}
-	D3DXVec3Normalize(&aVecDir, &aVecDir);		//ベクトルを正規化する
 
-												//頂点バッファのアンロック
+	//頂点バッファのアンロック
 	g_pVtxBuffMeshCylinder->Unlock();
 
 	//インデックスバッファの生成
