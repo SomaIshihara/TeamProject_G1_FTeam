@@ -6,6 +6,7 @@ Author:平澤詩苑
 ============================================================================================================================================================*/
 #include "main.h"
 #include "input.h"
+#include "file.h"
 #include "camera.h"
 #include "color.h"
 #include "player.h"
@@ -35,6 +36,8 @@ CHECKMODE g_CheckMode;
 void InitGame(void)
 {
 	g_nUseContNum = SetUseController();	// コントローラーの使用設定
+	LoadModelViewerFile("data\\model.txt");	//モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
+
 	InitBg();			// 背景の初期化処理
 	InitLight();		// ライト初期化処理
 	InitMeshfield();	// ステージ初期化処理

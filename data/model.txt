@@ -9,41 +9,22 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # テクスチャ数
 #------------------------------------------------------------------------------
-NUM_TEXTURE = 6
+NUM_TEXTURE = 1
 
 #------------------------------------------------------------------------------
 # テクスチャファイル名
 #------------------------------------------------------------------------------
-TEXTURE_FILENAME = data/TEXTURE/sky000.jpg			# [0]空テクスチャ
-TEXTURE_FILENAME = data/TEXTURE/mountain000.png		# [1]山テクスチャ
-TEXTURE_FILENAME = data/TEXTURE/field003.jpg		# [2]地面テクスチャ
-TEXTURE_FILENAME = data/TEXTURE/wall100.jpg			# [3]壁テクスチャ
-TEXTURE_FILENAME = data/TEXTURE/tree000.png			# [4]木テクスチャ
-TEXTURE_FILENAME = data/TEXTURE/effect000.jpg		# [5]エフェクトテクスチャ
+TEXTURE_FILENAME = data/TEXTURE/field001.jpg		# [0]地面テクスチャ
 
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 15
+NUM_MODEL = 1
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
 MODEL_FILENAME = data/MODEL/stone000.x				# [0]岩(小)
-MODEL_FILENAME = data/MODEL/stone001.x				# [1]岩(中)
-MODEL_FILENAME = data/MODEL/stone002.x				# [2]岩(大)
-MODEL_FILENAME = data/MODEL/wall000.x				# [3]岩壁(小)
-MODEL_FILENAME = data/MODEL/wall001.x				# [4]岩壁(中)
-MODEL_FILENAME = data/MODEL/wall002.x				# [5]岩壁(大)
-MODEL_FILENAME = data/MODEL/debris000.x				# [6]鉄骨ガレキ(小)
-MODEL_FILENAME = data/MODEL/debris001.x				# [7]鉄骨ガレキ(中)
-MODEL_FILENAME = data/MODEL/debris002.x				# [8]鉄骨ガレキ(大)
-MODEL_FILENAME = data/MODEL/debris100.x				# [9]板ガレキ(小)
-MODEL_FILENAME = data/MODEL/debris101.x				# [10]板ガレキ(中)
-MODEL_FILENAME = data/MODEL/debris102.x				# [11]板ガレキ(大)
-MODEL_FILENAME = data/MODEL/pillar000.x				# [12]柱(小)
-MODEL_FILENAME = data/MODEL/pillar001.x				# [13]柱(中)
-MODEL_FILENAME = data/MODEL/pillar002.x				# [14]柱(大)
 
 #------------------------------------------------------------------------------
 # カメラ情報

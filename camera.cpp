@@ -47,21 +47,7 @@ float  g_MaxDrawCamera = DRAWING_AREA;	//最大描画範囲
 void InitCamera(void)
 {
 	//各初期化
-	g_Camera.posV = D3DXVECTOR3(POSV_WIDTH, POSV_HEIGHT, POSV_DEPTH);	//視点
-	g_Camera.posR = D3DXVECTOR3(POSR_WIDTH, POSR_HEIGHT, POSR_DEPTH);	//注視点
-	g_Camera.vecU = D3DXVECTOR3(VECU_WIDTH, VECU_HEIGHT, VECU_DEPTH);	//上方向ベクトル		
-
-	//それぞれの位置の差分を格納する変数
-	float PosDiffX, PosDiffY, PosDiffZ;
-	
-	PosDiffX = powf(g_Camera.posR.x - g_Camera.posV.x, DIFF_TIMES);	//２乗	
-	PosDiffZ = powf(g_Camera.posR.z - g_Camera.posV.z, DIFF_TIMES);	//２乗
-
-	//長さの算出
-	g_Camera.fLength = sqrtf(PosDiffX + PosDiffZ);
-
-	//視点の位置更新
-	UpdatePosVCamera();
+	SetCameraPos(D3DXVECTOR3(POSV_WIDTH, POSV_HEIGHT, POSV_DEPTH), D3DXVECTOR3(POSR_WIDTH, POSR_HEIGHT, POSR_DEPTH));
 }
 
 //カメラの終了処理
@@ -150,4 +136,30 @@ void UpdatePosVCamera(void)
 Camera *GetCamera(void)
 {
 	return &g_Camera;
+}
+
+//=========================================
+//カメラの位置設定処理
+//Author:石原颯馬
+//=========================================
+void SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR)
+{
+	//設定
+	g_Camera.posV = posV;	//視点
+	g_Camera.posR = posR;	//注視点
+
+	//上方向ベクトルだけ固定
+	g_Camera.vecU = D3DXVECTOR3(VECU_WIDTH, VECU_HEIGHT, VECU_DEPTH);	//上方向ベクトル		
+
+	//それぞれの位置の差分を格納する変数
+	float PosDiffX, PosDiffY, PosDiffZ;
+
+	PosDiffX = powf(g_Camera.posR.x - g_Camera.posV.x, DIFF_TIMES);	//２乗	
+	PosDiffZ = powf(g_Camera.posR.z - g_Camera.posV.z, DIFF_TIMES);	//２乗
+
+	//長さの算出
+	g_Camera.fLength = sqrtf(PosDiffX + PosDiffZ);
+
+	//視点の位置更新
+	UpdatePosVCamera();
 }

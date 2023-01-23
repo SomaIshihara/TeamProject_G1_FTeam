@@ -238,6 +238,13 @@ void LoadModelViewerFile(const char *path)
 							pSprit = strtok(NULL, " =\n");
 							strcpy(&g_aTexFilePath[g_counterReadTexture][0], pSprit);
 
+							//タブ文字が入っているところを消す
+							char *pCharPos = strchr(&g_aTexFilePath[g_counterReadTexture][0], '\t');
+							if (pCharPos != nullptr)
+							{//strchrの返り値がぬるぽではない
+								*pCharPos = '\0';
+							}
+
 							//加算
 							g_counterReadTexture++;
 						}
@@ -252,6 +259,13 @@ void LoadModelViewerFile(const char *path)
 							pSprit = strtok(NULL, " =\n");
 							strcpy(&g_aModelFilePath[g_counterReadModel][0], pSprit);
 
+							//タブ文字が入っているところを消す
+							char *pCharPos = strchr(&g_aModelFilePath[g_counterReadModel][0], '\t');
+							if (pCharPos != nullptr)
+							{//strchrの返り値がぬるぽではない
+								*pCharPos = '\0';
+							}
+
 							//加算
 							g_counterReadModel++;
 						}
@@ -260,7 +274,8 @@ void LoadModelViewerFile(const char *path)
 				case READSTAT_CAMERASET:	//カメラ情報取得
 					if (strncmp(&aCode[0], CODE_END_CAMERASET, sizeof CODE_END_CAMERASET / sizeof(char) - 1) == 0)
 					{
-						//カメラ設定して
+						//カメラ設定
+						SetCameraPos(g_readCamera.posV, g_readCamera.posR);
 						g_readStat = READSTAT_NONE;
 					}
 					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
@@ -332,12 +347,15 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//赤
+						pSprit = strtok(NULL, " =\n");
 						g_readLight.Diffuse.r = fatof(pSprit);
 
 						//緑
+						pSprit = strtok(NULL, " =\n");
 						g_readLight.Diffuse.g = fatof(pSprit);
 
 						//青
+						pSprit = strtok(NULL, " =\n");
 						g_readLight.Diffuse.b = fatof(pSprit);
 
 						//アルファ値は1.0固定
