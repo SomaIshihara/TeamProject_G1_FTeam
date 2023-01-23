@@ -9,14 +9,15 @@
 #include "color.h"
 
 //マクロ
-#define NUM_MESHDOME				(1)			//メッシュドームの数
-#define MESHDOME_WIDTH				(2000.0f)	//背景の広さ
-#define MESHDOME_HEIGHT				(1000.0f)	//背景の高さ
-#define MESHDOME_TEX_RESOLUTION		(3.0f)		//背景の解像度
-#define MESHDOME_SPLIT				(64)		//背景の頂点数
-#define MESHDOME_SEPALATE			(2)			//背景の縦の分割数
-#define MESHDOME_NUM_OVERLAP		(2)			//最初と最後の頂点が重なる数
-#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * MESHDOME_SEPALATE + MESHDOME_NUM_OVERLAP)	//全体の頂点数
+#define NUM_MESHDOME				(1)					//メッシュドームの数
+#define MESHDOME_WIDTH				(2000.0f)			//背景の広さ
+#define MESHDOME_HEIGHT				(1000.0f)			//背景の高さ
+#define MESHDOME_TEX_RESOLUTION		(3.0f)				//背景の解像度
+#define MESHDOME_SPLIT				(16)				//背景の頂点数
+#define MESHDOME_SEPALATE			(16)				//背景の縦の分割数
+#define MESHDOME_NUM_OVERLAP		(2)					//最初と最後の頂点が重なる数
+#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * (MESHDOME_SEPALATE - MESHDOME_NUM_OVERLAP) + MESHDOME_NUM_OVERLAP)	//全体の頂点数
+#define ONE_LAP						(D3DX_PI * 2.0f)	//１周分の角度
 
 //メッシュドームの構造体
 typedef struct
@@ -116,8 +117,8 @@ void InitMeshDome(void)
 	//天面の出っ張り頂点の設定
 	pVtx[nNumVtx++].pos = D3DXVECTOR3(g_MeshDome.pos.x, g_MeshDome.pos.y + MESHDOME_HEIGHT, g_MeshDome.pos.z);
 
-	//横の分割数　‐　天面の出っ張りの１頂点　回数分 for文を回す
-	for (int nCntDevideY = 0; nCntDevideY < MESHDOME_SPLIT - 1; nCntDevideY++)
+	//２番目の頂点から、横の分割数　‐　天面の出っ張りの１頂点　回数分 for文を回す
+	for (int nCntDevideY = nNumVtx; nCntDevideY < MESHDOME_SEPALATE; nCntDevideY++)
 	{
 		//---------------------------------------------------------------------------------------------------------
 		//	MEMO：縦に分割する数を使って原点から横１周分の高さまでの角度計算 (半周分で分割点が分かるので、3.14
@@ -126,11 +127,19 @@ void InitMeshDome(void)
 
 		float TempLen = sinf(yRadian) * g_MeshDome.fRadius;	//X・Zの半径
 		float rot_Y = D3DX_PI;								//Y軸の角度
+		float Height_Y = cosf(yRadian) * g_MeshDome.fRadius;//Yの高さ
 
 		//横１周分の頂点座標を設定
 		for (int nCntDevideX = 0; nCntDevideX < MESHDOME_SPLIT; nCntDevideX++)
 		{
+			pVtx[nNumVtx++].pos = D3DXVECTOR3(
+				sinf(rot_Y) * TempLen,		//Xの位置
+				Height_Y,					//Yの位置
+				cosf(rot_Y) * TempLen);		//Zの位置
 
+			//角度を　全体の角度÷分割数で割った答え分、引く
+			rot_Y -= ONE_LAP / MESHDOME_SPLIT;
+			nNumVtx++;
 		}
 	}
 
