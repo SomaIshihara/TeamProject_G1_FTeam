@@ -30,12 +30,14 @@ MESHFIELD g_MeshField[MAX_FIELD];
 void InitMeshfield(void)
 {
 
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得	
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
 
 	VERTEX_3D *pVtx;			//頂点情報へのポインタ
 
 	WORD *pIdx;					//インデックス情報へのポインタ
 
+	//設定類は外部ファイルに移動
+#if 0
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		GetTextureFilePath(0),
@@ -51,7 +53,7 @@ void InitMeshfield(void)
 		g_MeshField[nCntfield].nBlock_X = BESIDE;
 		g_MeshField[nCntfield].nBlock_Z = VERTICAL;
 	}
-
+#endif
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (g_MeshField[0].nBlock_X + 1)*(g_MeshField[0].nBlock_Z + 1),
@@ -197,4 +199,21 @@ void DrawMeshfield(void)
 			0,
 			g_MeshField[0].nBlock_X*g_MeshField[0].nBlock_Z * 2 + (g_MeshField[0].nBlock_Z - 1) * 4);
 	}
+}
+
+//====================================================================
+//メッシュフィールドの設定処理
+//Author:石原颯馬
+//Memo:メッシュフィールド複数個使用するならfile.cppの構造変えなきゃならんので言って
+//====================================================================
+void SetMeshField(int nTexNum, MESHFIELD mf)
+{
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
+
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,
+		GetTextureFilePath(nTexNum),
+		&g_pTextureMeshfield);
+
+	g_MeshField[0] = mf;
 }

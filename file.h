@@ -197,5 +197,6 @@ void LoadMotionViewerFile(const char *path, Model *pModel);
 void GetMotionInfo(MOTION_INFO *pMotionInfo);
 char *GetTextureFilePath(int nTexNum);
 char *GetModelFilePath(int nModNum);
+char *GetMotionFilePath(int animal);
 
 #endif

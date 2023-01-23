@@ -18,6 +18,7 @@ typedef struct
 	float fGaugeWidth;		//ƒQ[ƒW‚Ì•
 	float fWidth;			//•(˜gA”wŒi)
 	float fHeight;			//‚‚³(˜gA”wŒi)
+	bool bUse;				//g—p‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 } Gauge;
 
 void InitGauge(void);		//‰Šú‰»ˆ—

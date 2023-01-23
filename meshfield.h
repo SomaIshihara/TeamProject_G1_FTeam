@@ -7,7 +7,6 @@
 #ifndef _MESHFIELD_H_
 #define _MESHFIELD_H_
 
-
 //メッシュフィールドの構造体を定義
 typedef struct
 {
@@ -24,5 +23,6 @@ void InitMeshfield(void);
 void UninitMeshfield(void);
 void UpdateMeshfield(void);
 void DrawMeshfield(void);
+void SetMeshField(int nTexNum, MESHFIELD mf);
 
 #endif 
