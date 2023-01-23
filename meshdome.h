@@ -9,6 +9,8 @@
 
 //プロトタイプ宣言
 void InitMeshDome(void);
+void SetMeshDomeVertexBuffer(void);		//頂点座標の設定
+ void SetMeshDomeIndexBuffer(void);		//インデックス番号の設定
 void UninitMeshDome(void);
 void UpdateMeshDome(void);
 void DrawMeshDome(void);

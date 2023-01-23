@@ -17,6 +17,7 @@
 #define MESHDOME_SEPALATE			(16)				//背景の縦の分割数
 #define MESHDOME_NUM_OVERLAP		(2)					//最初と最後の頂点が重なる数
 #define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * (MESHDOME_SEPALATE - MESHDOME_NUM_OVERLAP) + MESHDOME_NUM_OVERLAP)	//全体の頂点数
+#define TRIANGLE					(3)					//３角形に必要な頂点
 #define ONE_LAP						(D3DX_PI * 2.0f)	//１周分の角度
 
 //メッシュドームの構造体
@@ -42,7 +43,7 @@ void InitMeshDome(void)
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//テクスチャーの読み込み
+	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshDome);
 
 	//ドーム情報の初期化
@@ -53,6 +54,23 @@ void InitMeshDome(void)
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshDome, NULL);
 
+	//--------------------------------------
+	//			頂点情報の設定
+	//--------------------------------------
+	SetMeshDomeVertexBuffer();
+
+	//インデックスバッファの生成
+	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshDome, NULL);
+
+	//--------------------------------------
+	//		インデックスバッファの生成
+	//--------------------------------------
+	SetMeshDomeIndexBuffer();
+}
+
+//頂点座標の設定
+void SetMeshDomeVertexBuffer(void)
+{
 	VERTEX_3D *pVtx;
 
 	//頂点バッファのロック
@@ -60,7 +78,7 @@ void InitMeshDome(void)
 
 	int nNumVtx = 0;			//頂点番号
 	float yRadian = 0.0f;		//縦で分割した時の横１周分のY座標が決まる角度
-
+	
 	//天面の出っ張り頂点の設定
 	pVtx[nNumVtx++].pos = D3DXVECTOR3(g_MeshDome.pos.x, g_MeshDome.pos.y + MESHDOME_HEIGHT, g_MeshDome.pos.z);
 
@@ -76,9 +94,8 @@ void InitMeshDome(void)
 		float rot_Y = D3DX_PI;								//Y軸の角度
 		float Height_Y = cosf(yRadian) * g_MeshDome.fRadius;//Yの高さ
 
-		//横１周分の頂点座標を設定
 		for (int nCntDevideX = 0; nCntDevideX < MESHDOME_SPLIT; nCntDevideX++)
-		{
+		{//横１周分の頂点座標を設定
 			pVtx[nNumVtx++].pos = D3DXVECTOR3(
 				sinf(rot_Y) * TempLen,		//Xの位置
 				Height_Y,					//Yの位置
@@ -91,30 +108,55 @@ void InitMeshDome(void)
 
 	//頂点バッファのアンロック
 	g_pVtxBuffMeshDome->Unlock();
+}
 
-	//--------------------------------------
-	//		インデックスバッファの生成
-	//--------------------------------------
-	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshDome, NULL);
-
+//インデックス番号の設定
+void SetMeshDomeIndexBuffer(void)
+{
 	WORD *pIdx;
-
 	//インデックスバッファをロックし、頂点番号へのポインタを取得
 	g_pIdxBuffMeshDome->Lock(0, 0, (void**)&pIdx, 0);
 
-	//頂点番号データの設定
-	/*for (int nCntIdx = 0; nCntIdx < MESHDOME_ALL_VERTEX; nCntIdx++)
+	int nNumIdx = 0;		/*インデックス番号*/
+
+	int offsetIndex = 0;	/*天面の出っ張りの外に広がる頂点の基準番号（基本的に中心頂点の次に指定される頂点番号）*/
+
+	//		  ／＼
+	//		／天面＼
+	//	  ／番号設定＼				MESHDOME_SEPALATE * TRIANGLE	分割数分の三角形を作成するために、三角形に必要な頂点数3を乗算する
+	for (int nCntIdx = 0; nCntIdx < MESHDOME_SEPALATE * TRIANGLE; nCntIdx++)
 	{
-		if (nCntIdx % EVENPARITY == NOPARITY)
+		switch (nCntIdx % 3)
 		{
-			pIdx[nCntIdx] = nCntIdx / EVENPARITY;
+		case 0:		//天面のでっぱり番号
+			pIdx[nNumIdx++] = 0;
+			break;
+
+		case 1:		//２番目の頂点番号
+			pIdx[nNumIdx++] = 1 + offsetIndex;
+			break;
+
+		case 2:		//最後の頂点番号
+			int LapIndex = 2 + offsetIndex++;
+
+			// インデックス番号が１周したとき、下の3項演算子が　Trueとなり、１を返す
+			LapIndex = MESHDOME_SEPALATE < LapIndex ? pIdx[1] : LapIndex;
+			
+			//３角形最後のインデックス番号を代入
+			pIdx[nNumIdx++] = LapIndex;
+			break;
 		}
-		if (nCntIdx % EVENPARITY == ODDPARITY)
-		{
-			pIdx[nCntIdx] = (nCntIdx / EVENPARITY) + ODDPARITY + MESHDOME_SPLIT;
-		}
-	}*/
+	}
 	
+	//	／-------------＼
+	// <  側面番号設定	 >
+	//	＼-------------／
+
+
+	//	  ＼底面番号／
+	//		＼設定／
+	//		  ＼／
+
 	//インデックスバッファのアンロック
 	g_pIdxBuffMeshDome->Unlock();
 }
