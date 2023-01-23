@@ -20,6 +20,7 @@ Author:平澤詩苑
 #include "meshcylinder.h"
 #include "pause.h"
 #include "meshdome.h"
+#include "Gauge.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -47,6 +48,7 @@ void InitGame(void)
 	InitPlayer();		// プレイヤーの初期化処理
 	InitCamera();		// カメラの初期化処理
 	InitWall();			// 壁の初期化処理
+	InitGauge();		// ゲージの初期化処理
 	InitPause();		// ポーズ画面の初期化処理
 
 	g_bPause = false;	// ポーズの初期化
@@ -75,6 +77,7 @@ void UninitGame(void)
 	UninitCamera();		// カメラの終了処理
 	UninitPlayer();		// プレイヤーの終了処理
 	UninitPause();		// ポーズ画面の終了処理
+	UninitGauge();		// ゲージの終了処理
 	UninitModel();		// モデルの終了処理（ここは順番は問わない）
 
 						//ゲームBGM停止
@@ -102,6 +105,7 @@ void UpdateGame(void)
 		UpdatePlayer();		// プレイヤーの更新処理
 		UpdateCamera();		// カメラの更新処理
 		UpdateWall();		// 壁の更新処理
+		UpdateGauge();		// ゲージの更新処理
 
 		//ポーズ取得
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
@@ -144,9 +148,10 @@ void DrawGame(void)
 
 	DrawMeshfield();	// ステージの描画処理
 						//DrawMeshCylinder();	// メッシュシリンダーの描画処理
-	DrawMeshDome();		// メッシュドームの描画処理
+	DrawMeshDome();		// メッシュドームの描画処理	
 	DrawWall();			// 壁の描画処理
 	DrawPlayer();		// プレイヤーの描画処理
+	DrawGauge();		// ゲージの描画処理
 
 						//ポーズがOFF
 	if (g_bPause == true)
