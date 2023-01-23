@@ -109,9 +109,9 @@ void InitMeshDome(void)
 			fAngle -= (D3DX_PI * 2.0f) / MESHDOME_SPLIT;
 		}
 	}*/
-
-	//頂点番号
-	int nNumVtx = 0;		
+		
+	int nNumVtx = 0;			//頂点番号
+	float yRadian = 0.0f;		//縦で分割した時の横１周分のY座標が決まる角度
 
 	//天面の出っ張り頂点の設定
 	pVtx[nNumVtx++].pos = D3DXVECTOR3(g_MeshDome.pos.x, g_MeshDome.pos.y + MESHDOME_HEIGHT, g_MeshDome.pos.z);
@@ -119,7 +119,19 @@ void InitMeshDome(void)
 	//横の分割数　‐　天面の出っ張りの１頂点　回数分 for文を回す
 	for (int nCntDevideY = 0; nCntDevideY < MESHDOME_SPLIT - 1; nCntDevideY++)
 	{
+		//---------------------------------------------------------------------------------------------------------
+		//	MEMO：縦に分割する数を使って原点から横１周分の高さまでの角度計算 (半周分で分割点が分かるので、3.14
+		//---------------------------------------------------------------------------------------------------------
+		yRadian += D3DX_PI / MESHDOME_SEPALATE;
 
+		float TempLen = sinf(yRadian) * g_MeshDome.fRadius;	//X・Zの半径
+		float rot_Y = D3DX_PI;								//Y軸の角度
+
+		//横１周分の頂点座標を設定
+		for (int nCntDevideX = 0; nCntDevideX < MESHDOME_SPLIT; nCntDevideX++)
+		{
+
+		}
 	}
 
 	//ベクトルを正規化する
