@@ -406,6 +406,8 @@ void LoadModelViewerFile(const char *path)
 				case READSTAT_FIELDSET:		//è∞èÓïÒéÊìæ
 					if (strncmp(&aCode[0], CODE_END_FIELDSET, sizeof CODE_END_FIELDSET / sizeof(char) - 1) == 0)
 					{
+						//ínñ ê›íË
+						SetMeshField(g_readmeshfield.texType, g_readmeshfield.mf);
 						g_readStat = READSTAT_NONE;
 					}
 					else if (strncmp(&aCode[0], CODE_TEXTYPE, sizeof CODE_TEXTYPE / sizeof(char) - 1) == 0)
