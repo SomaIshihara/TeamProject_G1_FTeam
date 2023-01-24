@@ -121,9 +121,9 @@ void SetMeshDomeIndexBuffer(void)
 
 	int offsetIndex = 0;	/*天面の出っ張りの外に広がる頂点の基準番号（基本的に中心頂点の次に指定される頂点番号）*/
 
-	//		  ／＼
-	//		／天面＼
-	//	  ／番号設定＼				MESHDOME_SEPALATE * TRIANGLE	分割数分の三角形を作成するために、三角形に必要な頂点数3を乗算する
+	//			／＼
+	//		  ／天面＼
+	//		／番号設定＼				MESHDOME_SEPALATE * TRIANGLE	分割数分の三角形を作成するために、三角形に必要な頂点数3を乗算する
 	for (int nCntIdx = 0; nCntIdx < MESHDOME_SEPALATE * TRIANGLE; nCntIdx++)
 	{
 		switch (nCntIdx % 3)
@@ -148,14 +148,81 @@ void SetMeshDomeIndexBuffer(void)
 		}
 	}
 	
-	//	／-------------＼
-	// <  側面番号設定	 >
-	//	＼-------------／
+	//	／----------------＼
+	// <	側面番号設定	>
+	//	＼----------------／
+	int StartIndex = pIdx[1];	/*開始Index番号*/
+	int SideIndexLen = MESHDOME_SEPALATE * (MESHDOME_SPLIT - MESHDOME_NUM_OVERLAP) * 2 * TRIANGLE;	/*天面・底面を除いたIndex要素数*/
+	int LapDiv = MESHDOME_SEPALATE * 2 * TRIANGLE;	/*１周分必要なIndex数*/
+	int LapLastIndex = 0,							/*ループ時使用する最後のIndex*/
+		LapBoobyIndex = 0;							/*ループ時使用する最後から2番目のIndex*/
+	int CreateSquareCnt = 0;						/*作成した四角形の数*/
 
+	for (int nCntSideIdx = 0; nCntSideIdx < SideIndexLen; nCntSideIdx++)
+	{
+		// 一周の頂点数を超えたら更新(初回も含む)
+		if (nCntSideIdx % LapDiv == 0)
+		{
+			LapLastIndex = StartIndex;
+			LapBoobyIndex = StartIndex + MESHDOME_SEPALATE;
+			CreateSquareCnt++;
+		}
 
-	//	  ＼底面番号／
-	//		＼設定／
-	//		  ＼／
+		switch (nCntSideIdx % 6)
+		{
+		case 0:
+		case 3:
+		{
+			pIdx[nNumIdx++] = StartIndex;
+		}
+		break;
+
+		case 1:
+		{
+			pIdx[nNumIdx++] = StartIndex + MESHDOME_SEPALATE;
+		}
+		break;
+
+		case 2:
+		case 4:
+		{
+			if (nCntSideIdx > 0
+				&& (nCntSideIdx % (LapDiv * CreateSquareCnt - 2) == 0 || nCntSideIdx % (LapDiv * CreateSquareCnt - 4) == 0))
+			{
+				// 1周したときのループ処理
+				// 周回ポリゴンの最後から2番目のIndex
+				pIdx[nNumIdx++] = LapBoobyIndex;
+			}
+			else
+			{
+				pIdx[nNumIdx++] = StartIndex + MESHDOME_SEPALATE + 1;
+			}
+		}
+		break;
+
+		case 5:
+		{
+			if (0 < nCntSideIdx && nCntSideIdx % (LapDiv * CreateSquareCnt - 1) == 0)
+			{
+				// 1周したときのループ処理
+				// 周回ポリゴンの最後のIndex
+				pIdx[nNumIdx++] = LapLastIndex;
+			}
+			else
+			{
+				pIdx[nNumIdx++] = StartIndex + 1;
+			}
+
+			// 開始Indexの更新 
+			StartIndex++;
+		}
+		break;
+		}
+	}
+
+	//		＼底面番号／
+	//		  ＼設定／
+	//			＼／
 
 	//インデックスバッファのアンロック
 	g_pIdxBuffMeshDome->Unlock();
