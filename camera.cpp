@@ -34,7 +34,7 @@ Author:‘å‹{ˆ¤—…
 #define CAMERA_POS		(10.0f)		//•Ç
 
 //•`‰æ”ÍˆÍ
-#define DRAWING_AREA	(5000.0f)	//Å‘å•`‰æ”ÍˆÍ
+#define DRAWING_AREA	(40000.0f)	//Å‘å•`‰æ”ÍˆÍ
 
 //ˆÊ’u‚Ì·•ª‚ð2æ
 #define DIFF_TIMES		(2.0f)		//2æ

@@ -39,16 +39,16 @@ void InitGame(void)
 	g_nUseContNum = SetUseController();		// コントローラーの使用設定
 	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
 
-	InitBg();			// 背景の初期化処理
+	//InitBg();			// 背景の初期化処理
 	InitLight();		// ライト初期化処理
 	InitMeshfield();	// ステージ初期化処理
 	InitMeshCylinder();	// メッシュシリンダー初期化処理
-	InitMeshDome();		// メッシュドーム初期化処理
-	InitModel();		// モデルの初期化処理（プレイヤーの前に行うこと！）
+	//InitMeshDome();		// メッシュドーム初期化処理
+	//InitModel();		// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();		// プレイヤーの初期化処理
-	InitCamera();		// カメラの初期化処理
-	InitWall();			// 壁の初期化処理
-	InitGauge();		// ゲージの初期化処理
+	//InitCamera();		// カメラの初期化処理
+	//InitWall();			// 壁の初期化処理
+	//InitGauge();		// ゲージの初期化処理
 	InitPause();		// ポーズ画面の初期化処理
 
 	g_bPause = false;	// ポーズの初期化
@@ -95,15 +95,15 @@ void UpdateGame(void)
 	//ポーズがOFF
 	if (g_bPause == false)
 	{
-		UpdateBg();			// 背景の更新処理
-		UpdateLight();		// ライトの更新処理
-		UpdateMeshfield();	// ステージ更新処理
+		//UpdateBg();			// 背景の更新処理
+		//UpdateLight();		// ライトの更新処理
+		//UpdateMeshfield();	// ステージ更新処理
 		UpdateMeshCylinder();	// メッシュシリンダー更新処理
-		UpdateMeshDome();	// メッシュドーム更新処理
+		//UpdateMeshDome();	// メッシュドーム更新処理
 		UpdatePlayer();		// プレイヤーの更新処理
 		UpdateCamera();		// カメラの更新処理
-		UpdateWall();		// 壁の更新処理
-		UpdateGauge();		// ゲージの更新処理
+		//UpdateWall();		// 壁の更新処理
+		//UpdateGauge();		// ゲージの更新処理
 
 		//ポーズ取得
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
@@ -145,11 +145,11 @@ void DrawGame(void)
 	SetCamera();		// カメラの設定処理
 
 	DrawMeshfield();	// ステージの描画処理
-						//DrawMeshCylinder();	// メッシュシリンダーの描画処理
-	DrawMeshDome();		// メッシュドームの描画処理	
-	DrawWall();			// 壁の描画処理
+	DrawMeshCylinder();	// メッシュシリンダーの描画処理
+	//DrawMeshDome();		// メッシュドームの描画処理	
+	//DrawWall();			// 壁の描画処理
 	DrawPlayer();		// プレイヤーの描画処理
-	DrawGauge();		// ゲージの描画処理
+	//DrawGauge();		// ゲージの描画処理
 
 						//ポーズがOFF
 	if (g_bPause == true)
