@@ -21,8 +21,8 @@ Author:大宮愛羅
 #define POSV_ADD		(100)		//視点の上下移動
 #define POSV_DISTANCE	(100)		//視点の距離
 #define POSV_WIDTH		(0.0f)		//視点の幅
-#define POSV_HEIGHT		(1650.0f)	//視点の高さ
-#define POSV_DEPTH		(2200.0f)	//視点の奥行き
+#define POSV_HEIGHT		(1050.0f)	//視点の高さ
+#define POSV_DEPTH		(1000.0f)	//視点の奥行き
 
 //上方向ベクトル情報
 #define VECU_WIDTH      (0.0f)		//上方向ベクトルの幅
@@ -34,7 +34,7 @@ Author:大宮愛羅
 #define CAMERA_POS		(10.0f)		//壁
 
 //描画範囲
-#define DRAWING_AREA	(5000.0f)	//最大描画範囲
+#define DRAWING_AREA	(40000.0f)	//最大描画範囲
 
 //位置の差分を2乗
 #define DIFF_TIMES		(2.0f)		//2乗
@@ -47,7 +47,7 @@ float  g_MaxDrawCamera = DRAWING_AREA;	//最大描画範囲
 void InitCamera(void)
 {
 	//各初期化
-	//SetCameraPos(D3DXVECTOR3(POSV_WIDTH, POSV_HEIGHT, POSV_DEPTH), D3DXVECTOR3(POSR_WIDTH, POSR_HEIGHT, POSR_DEPTH));
+	SetCameraPos(D3DXVECTOR3(POSV_WIDTH, POSV_HEIGHT, POSV_DEPTH), D3DXVECTOR3(POSR_WIDTH, POSR_HEIGHT, POSR_DEPTH));
 }
 
 //カメラの終了処理

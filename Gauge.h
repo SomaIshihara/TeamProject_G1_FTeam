@@ -18,8 +18,18 @@ typedef struct
 	float fGaugeWidth;		//ゲージの幅
 	float fWidth;			//幅(枠、背景)
 	float fHeight;			//高さ(枠、背景)
+	int nType;				//種類
 	bool bUse;				//使用しているかどうか
 } Gauge;
+
+//ゲージの列挙
+typedef enum
+{
+	GAUGETYPE_BG = 0,
+	GAUGETYPE_NORMAL,
+	GAUGETYPE_FRAME,
+	GAUGETYPE_MAX
+}	GAUGETYPE;
 
 void InitGauge(void);		//初期化処理
 void UninitGauge(void);		//終了処理

@@ -14,6 +14,7 @@
 #include "camera.h"
 #include <assert.h>
 #include "color.h"
+#include "Gauge.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度20.0f
@@ -204,7 +205,7 @@ void UpdatePlayer(void)
 					//進行方向の設定
 					g_aPlayer[nCntPlayer].move.x = -sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
 					g_aPlayer[nCntPlayer].move.z = -cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
-
+										
 					g_aPlayer[nCntPlayer].moveGauge = 0;
 				}
 			}
