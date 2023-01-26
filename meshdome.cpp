@@ -12,7 +12,7 @@
 #define NUM_MESHDOME				(1)					//メッシュドームの数
 #define MESHDOME_RADIS				(200.0f)			//背景の半径
 #define MESHDOME_TEX_RESOLUTION		(3.0f)				//背景の解像度
-#define MESHDOME_SPLIT				(8)				//背景の頂点数
+#define MESHDOME_SPLIT				(8)					//背景の頂点数
 #define MESHDOME_SEPALATE			(8)					//背景の縦の分割数
 #define MESHDOME_NUM_OVERLAP		(2)					//最初と最後の頂点が重なる数
 #define MESHDOME_ALL_VERTEX			((MESHDOME_SPLIT * (MESHDOME_SEPALATE - 1)) + MESHDOME_NUM_OVERLAP)	//全体の頂点数
