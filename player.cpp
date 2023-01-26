@@ -27,22 +27,14 @@
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)	//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE		(1)			//小数点第何位まで移動していることにするか
 
-#define TEST_SIZE_WIDTH		(5.0f)
-#define TEST_SIZE_HEIGHT	(5.0f)
+#define TEST_SIZE_WIDTH		(15.0f)
+#define TEST_SIZE_HEIGHT	(15.0f)
 
 //ダッシュ関連マクロ
 
 //#define ADD_GAUGE			(10.0f)	//ゲージ増加量
 //#define MAX_GAUGE			(25.0f)	//ゲージ最大値
 //#define GAUGE_BONUS			(15.0f)	//ボーナスゲージ
-
-//当たり判定構造体
-typedef struct
-{//2は当たり判定の点の数、4は上下左右
-	D3DXVECTOR3 vecMove[2];
-	D3DXVECTOR3 vecLine[2];
-	D3DXVECTOR3 vecToPos[4][2];
-} Collision;
 
 //向き
 #define ROT_WA	(-0.75f * D3DX_PI)	//左上
@@ -416,7 +408,6 @@ void CollisionPP(int nPlayerNum)
 	D3DXVECTOR3 vecLineDown, vecToPosDown, vecToPosOldDown;
 	D3DXVECTOR3 vecMoveLeft, vecMoveRight;
 
-	Collision coll;
 	float fAreaARight, fAreaALeft, fAreaBRight, fAreaBLeft;
 	float fAreaAUp, fAreaADown, fAreaBUp, fAreaBDown;
 
@@ -534,7 +525,10 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaARight / fAreaBRight >= 0.0f && fAreaARight / fAreaBRight <= 1.0f)
 				{
-					assert(false);
+					//1.0f = pushback
+					float fRate = fAreaARight / fAreaBRight;
+					g_aPlayer[nPlayerNum].pos.x = pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.z = pos0.z + (vecLineRight.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					break;
 				}
 			}
@@ -542,7 +536,9 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaALeft / fAreaBLeft >= 0.0f && fAreaALeft / fAreaBLeft <= 1.0f)
 				{
-					assert(false);
+					float fRate = fAreaALeft / fAreaBLeft;
+					g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.z = pos2.z + (vecLineLeft.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					break;
 				}
 			}
@@ -559,7 +555,9 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaAUp / fAreaBUp >= 0.0f && fAreaAUp / fAreaBUp <= 1.0f)
 				{
-					assert(false);
+					float fRate = fAreaAUp / fAreaBUp;
+					g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.z = pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					break;
 				}
 			}
@@ -567,7 +565,9 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaADown / fAreaBDown >= 0.0f && fAreaADown / fAreaBDown <= 1.0f)
 				{
-					assert(false);
+					float fRate = fAreaADown / fAreaBDown;
+					g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					break;
 				}
 			}
