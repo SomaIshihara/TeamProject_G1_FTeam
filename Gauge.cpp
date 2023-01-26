@@ -16,7 +16,7 @@ Author:大宮愛羅
 //初期化関連
 #define MIN_POS			(0.0f)		//位置の初期値
 #define MIN_COL			(0.0f)		//色の初期値
-#define GAUGE_WIDTH		(0.0f)		//ゲージ幅の初期値
+#define GAUGE_WIDTH		(50.0f)		//ゲージ幅の初期値
 #define SMALL_WIDTH		(200.0f)	//幅の初期値
 #define SMALL_HEIGHT	(200.0f)	//高さの初期値
 
@@ -104,7 +104,7 @@ void InitGauge(void)
 		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(MIN_WIDTH, MAX_HEIGHT, MIN_DEPTH);	//左下
 		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(MAX_WIDTH, MAX_HEIGHT, MIN_DEPTH);	//右下
 
-		if (g_Gauge[nCntGauge].nType == GAUGETYPE_NORMAL)
+		if (nCntGauge % GAUGETYPE_MAX == GAUGETYPE_NORMAL)
 		{//ゲージ本体が読み込まれた時
 			//頂点座標の設定
 			pVtx[VTX_LE_UP].pos = D3DXVECTOR3(GAUGE_WIDTH, MIN_HEIGHT, MIN_DEPTH);
@@ -167,7 +167,7 @@ void UpdateGauge(void)
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffGauge->Lock(0, 0, (void **)&pVtx, 0);
 
-	//頂点数を増やす
+	//
 	pVtx += VTX_MAX;
 
 	for (int nCntGauge = 0; nCntGauge < MAX_USE_GAMEPAD; nCntGauge++, pPlayer++, pVtx += (VTX_MAX * GAUGETYPE_MAX))
@@ -223,8 +223,8 @@ void UpdateGauge(void)
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(GAUGE_WIDTH, MIN_HEIGHT, MIN_DEPTH);				//左上
 		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(MAX_WIDTH * Parcent, MIN_HEIGHT, MIN_DEPTH);		//右上
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(GAUGE_WIDTH * Parcent, MAX_HEIGHT, MIN_DEPTH);	//左下
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(MAX_WIDTH, MAX_HEIGHT, MIN_DEPTH);				//右下		
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(GAUGE_WIDTH, MAX_HEIGHT, MIN_DEPTH);				//左下
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(MAX_WIDTH * Parcent, MAX_HEIGHT, MIN_DEPTH);		//右下		
 	}
 
 	//頂点バッファをロックする
