@@ -9,7 +9,7 @@ Author:平澤詩苑
 #include "color.h"
 #include "input.h"
 #include "fade.h"
-//#include "sound.h"
+#include "sound.h"
 
 #define NUM_TITLE_TEX	(3)									// タイトルに使う画像の数
 #define TITLE_INFOFILE	"data/CSV/title.csv"				// タイトルの情報が入ったファイル名
@@ -161,6 +161,9 @@ void UpdateTitle(void)
 	{
 		//チュートリアル画面に遷移
 		SetFade(MODE_TUTORIAL);
+
+		//タイトル決定音再生
+		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE);
 	}
 }
 

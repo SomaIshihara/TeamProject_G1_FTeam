@@ -40,7 +40,8 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 // サウンドの情報
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 {
-	{"data/SE/Uribou.wav", SOUND_ONCE, 1.0f},		// コントローラー接続SE
+	{ "data/SE/Uribou.wav",			SOUND_ONCE, 1.0f },		// コントローラー接続SE
+	{ "data/SE/Title_Decide.wav",	SOUND_ONCE, 0.6f },		// タイトルの決定SE
 };
 
 //=============================================================================
