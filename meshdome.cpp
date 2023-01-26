@@ -16,7 +16,7 @@
 #define MESHDOME_SPLIT				(16)				//”wŒi‚Ì’¸“_”
 #define MESHDOME_SEPALATE			(16)				//”wŒi‚Ìc‚Ì•ªŠ„”
 #define MESHDOME_NUM_OVERLAP		(2)					//Å‰‚ÆÅŒã‚Ì’¸“_‚ªd‚È‚é”
-#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * (MESHDOME_SEPALATE - MESHDOME_NUM_OVERLAP) + MESHDOME_NUM_OVERLAP)	//‘S‘Ì‚Ì’¸“_”
+#define MESHDOME_ALL_VERTEX			((MESHDOME_SPLIT * (MESHDOME_SEPALATE - 1)) + MESHDOME_NUM_OVERLAP)	//‘S‘Ì‚Ì’¸“_”
 #define TRIANGLE					(3)					//‚RŠpŒ`‚É•K—v‚È’¸“_
 #define ONE_LAP						(D3DX_PI * 2.0f)	//‚PŽü•ª‚ÌŠp“x
 
@@ -50,7 +50,7 @@ void InitMeshDome(void)
 	g_MeshDome.pos = ZERO_SET;
 	g_MeshDome.rot = ZERO_SET;
 	g_MeshDome.fRadius = MESHDOME_WIDTH;
-
+	int hoge = MESHDOME_ALL_VERTEX;
 	//’¸“_ƒoƒbƒtƒ@‚Ì¶¬
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshDome, NULL);
 

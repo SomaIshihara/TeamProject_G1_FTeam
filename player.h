@@ -10,6 +10,9 @@
 #include "main.h"
 #include "model.h"
 
+//マクロ
+#define PLAYER_POWER_MAX	(0.75f * PLAYER_POWER_LEVEL)		//移動の強さの最大値
+
 //プレイヤー状態列挙
 typedef enum
 {
@@ -34,7 +37,7 @@ typedef struct
 }PlayModel;
 
 //プレイヤー構造体
-typedef struct
+struct Player
 {
 	//位置類
 	D3DXVECTOR3 pos;		//位置
@@ -44,9 +47,10 @@ typedef struct
 	float moveGauge;		//移動量(ダッシュ)
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 
-	//長さ・角度
-	float fLength;
-	float fAngle;
+	//衝突関係
+	D3DXVECTOR3 faceColliderLeft;	//当たり判定左端
+	D3DXVECTOR3 faceColliderRight;	//当たり判定右端
+	Player* pPlayer;				//最後に触れたプレイヤー
 
 	//パラメータ類
 	ANIMAL animal;			//使用している動物
@@ -61,7 +65,7 @@ typedef struct
 
 	PlayModel aPlaymodel[10];
 
-} Player;
+};
 
 //プロトタイプ宣言
 void InitPlayer(void);

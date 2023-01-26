@@ -26,7 +26,7 @@ void InitModel(void)
 			g_aModel[nCntModel].aParts[nCntParts] = {};
 			g_aModel[nCntModel].aParts[nCntParts].bUse = false;
 		}
-
+		
 		//使用するモーション類読み込み
 		LoadMotionViewerFile(GetMotionFilePath(nCntModel), &g_aModel[nCntModel]);
 

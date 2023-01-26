@@ -60,6 +60,7 @@ void UninitWall(void); //I—¹ˆ—
 void UpdateWall(void); //XVˆ—
 void DrawWall(void); //•`‰æˆ—
 void LoadWall(void);
+//void SetWall()
 bool CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, float fWidth, float fHeight);
 
 #endif
