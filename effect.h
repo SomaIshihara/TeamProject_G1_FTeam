@@ -7,7 +7,7 @@
 #ifndef _EFFECT_H_
 #define _EFFECT_H_
 
-//動物種類列挙（一旦いのししのみ）
+//エフェクト種類列挙
 typedef enum
 {
 	EFECTTYPE_CHARGE = 0,	//チャージエフェクト
