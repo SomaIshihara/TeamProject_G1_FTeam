@@ -9,20 +9,23 @@ Author:大宮愛羅
 #include "Gauge.h"
 #include "player.h"
 #include "input.h"
+#include "color.h"
 
-//マクロ定義
-#define NUM_GAUGE		(3)		//ゲージの数
-#define DISPLAY_ADD		(4)		//表示する分だけ加算 
-#define TOP_NUM			(12)	//頂点数
+//マクロ定義 
 
 //初期化関連
-#define MIN_POS		(0.0f)
-#define MIN_COL		(0.0f)
-#define MIN_GA_WID	(200)
-#define MIN_WIDTH	(200)
-#define MIN_HEIGHT	(200)
+#define MIN_POS			(0.0f)		//位置の初期値
+#define MIN_COL			(0.0f)		//色の初期値
+#define GAUGE_WIDTH		(0.0f)		//ゲージ幅の初期値
+#define SMALL_WIDTH		(200.0f)	//幅の初期値
+#define SMALL_HEIGHT	(200.0f)	//高さの初期値
 
 //位置関連
+#define MAX_WIDTH	(400.0f)	//幅の最大値
+#define MIN_WIDTH	(50.0f)		//幅の最小値
+#define MAX_HEIGHT	(680.0f)	//高さの最大値
+#define MIN_HEIGHT	(650.0f)	//高さの最小値
+#define MIN_DEPTH	(0.0f)		//奥行きの最小値
 
 //rhw関連
 #define MAX_RHW		(1.0f)	//rhwの最大値
@@ -34,26 +37,23 @@ Author:大宮愛羅
 #define NUSE_GREEN	(0.0f)	//緑色を使用しない
 #define USE_BLUE	(1.0f)	//青色を使用する
 #define	NUSE_BLUE	(0.0f)	//青色を使用しない
-#define	USE_ALPHA	(1.0f)	//アルファー
+#define	USE_ALPHA	(1.0f)	//アルファー値
 
 //テクスチャ関連
 #define	MAX_TEX		(1.0f)	//テクスチャの最大値
 #define MIN_TEX		(0.0f)	//テクスチャの最小値
-#define TEX_ZERO	(0)		//テクスチャの読み込み(0)
-#define TEX_ONE		(1)		//テクスチャの読み込み(1)
-#define TEX_TWO		(2)		//テクスチャの読み込み(2)
 
 //更新関連
-#define COUNT_ONE	(1)		//カウントが1
-#define MAX_NUM		(100)	//割られる数(最大値)
-#define UNHALF_NUM  (75)	//割る数(最大値-25)
-#define HALF_NUM	(50)	//割る数(最大値の半分)
-#define QUAR_NUM	(25)	//割る数(最大値の4分の1)
+#define MAX_NUM		(1.0f)	//割られる数(最大値)
+#define	UNQUAR_NUM	(0.9f)	//割る数(最大値-10)
+#define UNHALF_NUM  (0.75f)	//割る数(最大値-25)
+#define HALF_NUM	(0.5f)	//割る数(最大値-50)
+#define QUAR_NUM	(0.25f)	//割る数(最大値-75)
 
-//グローバル変数
-LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffGauge = NULL;					//バッファへのポインタ
-LPDIRECT3DTEXTURE9      g_pTextureGauge[NUM_GAUGE] = {};		//テクスチャへのポインタ
-Gauge g_Gauge[NUM_GAUGE];										//ゲージ情報
+//グローバル変数	
+LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffGauge = NULL;						//バッファへのポインタ
+LPDIRECT3DTEXTURE9      g_pTextureGauge[GAUGETYPE_MAX] = {};		//テクスチャへのポインタ(ゲージ分)
+Gauge					g_Gauge[GAUGETYPE_MAX];						//ゲージ情報		
 
 //初期化処理
 void InitGauge(void)
@@ -64,31 +64,31 @@ void InitGauge(void)
 	pDevice = GetDevice();
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,		//==============
-		"data\\TEXTURE\\GaugeBg.png",		//ゲージ背景
-		&g_pTextureGauge[TEX_ZERO]);		//===========
+	D3DXCreateTextureFromFile(pDevice,			//==============
+		"data\\TEXTURE\\GaugeBg.png",			//ゲージ背景
+		&g_pTextureGauge[GAUGETYPE_BG]);		//===========
 
-	D3DXCreateTextureFromFile(pDevice,		//==============
-		"data\\TEXTURE\\Gauge.png",			//ゲージ本体
-		&g_pTextureGauge[TEX_ONE]);			//===========
+	D3DXCreateTextureFromFile(pDevice,			//==============
+		"data\\TEXTURE\\Gauge.png",				//ゲージ本体
+		&g_pTextureGauge[GAUGETYPE_NORMAL]);	//===========
 
-	D3DXCreateTextureFromFile(pDevice,		//==============
-		"data\\TEXTURE\\GaugeFrame.png",	//ゲージの枠
-		&g_pTextureGauge[TEX_TWO]);			//===========
+	D3DXCreateTextureFromFile(pDevice,			//==============
+		"data\\TEXTURE\\GaugeFrame.png",		//ゲージの枠
+		&g_pTextureGauge[GAUGETYPE_FRAME]);		//===========
 	
 	//ゲージ情報の初期化処理
-	for (int nCntGauge = 0; nCntGauge < NUM_GAUGE; nCntGauge++)
+	for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++)
 	{
 		g_Gauge[nCntGauge].pos = D3DXVECTOR3(MIN_POS, MIN_POS, MIN_POS);
 		g_Gauge[nCntGauge].col = D3DXCOLOR(MIN_COL, MIN_COL, MIN_COL, MIN_COL);
-		g_Gauge[nCntGauge].fGaugeWidth = MIN_GA_WID;
-		g_Gauge[nCntGauge].fWidth = MIN_WIDTH;
-		g_Gauge[nCntGauge].fHeight = MIN_HEIGHT;
+		g_Gauge[nCntGauge].fGaugeWidth = GAUGE_WIDTH;
+		g_Gauge[nCntGauge].fWidth = SMALL_WIDTH;
+		g_Gauge[nCntGauge].fHeight = SMALL_HEIGHT;
 		g_Gauge[nCntGauge].bUse = false;
 	}
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * TOP_NUM * NUM_GAUGE, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_USE_GAMEPAD * VTX_MAX * GAUGETYPE_MAX, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 
 	//ポインタを設定
 	VERTEX_2D *pVtx;
@@ -96,14 +96,23 @@ void InitGauge(void)
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffGauge->Lock(0, 0, (void **)&pVtx, 0);
 
-	for (int nCntGauge = 0; nCntGauge < NUM_GAUGE; nCntGauge++, pVtx + DISPLAY_ADD)
-	{
+	for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++, pVtx += VTX_MAX)
+	{//ゲージ分
 		//頂点座標の設定
-		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(50.0f, 650.0f, 0.0f);
-		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(500.0f, 650.0f, 0.0f);
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(50.0f, 710.0f, 0.0f);
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(500.0f, 710.0f, 0.0f);
-						
+		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(MIN_WIDTH, MIN_HEIGHT, MIN_DEPTH);	//左上
+		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(MAX_WIDTH, MIN_HEIGHT, MIN_DEPTH);	//右上
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(MIN_WIDTH, MAX_HEIGHT, MIN_DEPTH);	//左下
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(MAX_WIDTH, MAX_HEIGHT, MIN_DEPTH);	//右下
+
+		if (g_Gauge[nCntGauge].nType == GAUGETYPE_NORMAL)
+		{//ゲージ本体が読み込まれた時
+			//頂点座標の設定
+			pVtx[VTX_LE_UP].pos = D3DXVECTOR3(GAUGE_WIDTH, MIN_HEIGHT, MIN_DEPTH);
+			pVtx[VTX_RI_UP].pos = D3DXVECTOR3(GAUGE_WIDTH, MIN_HEIGHT, MIN_DEPTH);
+			pVtx[VTX_LE_DO].pos = D3DXVECTOR3(GAUGE_WIDTH, MAX_HEIGHT, MIN_DEPTH);
+			pVtx[VTX_RI_DO].pos = D3DXVECTOR3(GAUGE_WIDTH, MAX_HEIGHT, MIN_DEPTH);
+		}
+								
 		//rhwの設定
 		pVtx[VTX_LE_UP].rhw = MAX_RHW;
 		pVtx[VTX_RI_UP].rhw = MAX_RHW;
@@ -129,7 +138,7 @@ void InitGauge(void)
 //終了処理
 void UninitGauge(void)
 {
-	for (int nCntGauge = 0; nCntGauge < NUM_GAUGE; nCntGauge++)
+	for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++)
 	{//ゲージ分
 		//テクスチャの破棄
 		if (g_pTextureGauge[nCntGauge] != NULL)
@@ -150,44 +159,76 @@ void UninitGauge(void)
 //更新処理
 void UpdateGauge(void)
 {
-	Player *pPlayer = GetPlayer();		//プレイヤー情報の取得
+	Player *pPlayer = GetPlayer();		//プレイヤー情報の取得	
 
-	int Parcent;						//ゲージ量を格納する変数
-	int MaxGauge = 100;					//最大ゲージ量		
+	//ポインタを設定
+	VERTEX_2D *pVtx;
 
-	for (int nCntGauge = 0; nCntGauge < MAX_USE_GAMEPAD; nCntGauge++,pPlayer++)
-	{
+	//頂点バッファをロックし頂点情報へのポインタを取得
+	g_pVtxBuffGauge->Lock(0, 0, (void **)&pVtx, 0);
+
+	//頂点数を増やす
+	pVtx += VTX_MAX;
+
+	for (int nCntGauge = 0; nCntGauge < MAX_USE_GAMEPAD; nCntGauge++, pPlayer++, pVtx += (VTX_MAX * GAUGETYPE_MAX))
+	{//ゲージ分
 		//計算(今のゲージ量　/　最大ゲージ量)
-		Parcent = pPlayer->moveGauge / MaxGauge;
-
-		if (nCntGauge == COUNT_ONE)
-		{
-			if (Parcent > 90)
-			{//赤色
-				
-			}
-
-			else if (Parcent > 75)
-			{//オレンジ色
-
-			}
-
-			else if (Parcent > 50)
-			{//青
-
-			}
-
-			else if(Parcent > 25)
-			{//水色
-
-			}
-
-			else
-			{//白色
-
-			}
+		float Parcent = pPlayer->moveGauge / 2.25f;
+		
+		if (Parcent > UNQUAR_NUM)
+		{//赤色
+		 //頂点カラー設定
+			pVtx[VTX_LE_UP].col = RGBA_RED;
+			pVtx[VTX_RI_UP].col = RGBA_RED;
+			pVtx[VTX_LE_DO].col = RGBA_RED;
+			pVtx[VTX_RI_DO].col = RGBA_RED;
 		}
+
+		else if (Parcent > UNHALF_NUM)
+		{//オレンジ色
+		 //頂点カラー設定
+			pVtx[VTX_LE_UP].col = RGBA_ORANGE;
+			pVtx[VTX_RI_UP].col = RGBA_ORANGE;
+			pVtx[VTX_LE_DO].col = RGBA_ORANGE;
+			pVtx[VTX_RI_DO].col = RGBA_ORANGE;
+		}
+
+		else if (Parcent > HALF_NUM)
+		{//青
+		 //頂点カラー設定
+			pVtx[VTX_LE_UP].col = RGBA_BLUE;
+			pVtx[VTX_RI_UP].col = RGBA_BLUE;
+			pVtx[VTX_LE_DO].col = RGBA_BLUE;
+			pVtx[VTX_RI_DO].col = RGBA_BLUE;
+		}
+
+		else if (Parcent > QUAR_NUM)
+		{//水色
+		 //頂点カラー設定
+			pVtx[VTX_LE_UP].col = RGBA_RIGHTBLUE;
+			pVtx[VTX_RI_UP].col = RGBA_RIGHTBLUE;
+			pVtx[VTX_LE_DO].col = RGBA_RIGHTBLUE;
+			pVtx[VTX_RI_DO].col = RGBA_RIGHTBLUE;
+		}
+
+		else
+		{//白色
+		 //頂点カラー設定
+			pVtx[VTX_LE_UP].col = RGBA_WHITE;
+			pVtx[VTX_RI_UP].col = RGBA_WHITE;
+			pVtx[VTX_LE_DO].col = RGBA_WHITE;
+			pVtx[VTX_RI_DO].col = RGBA_WHITE;
+		}
+		
+		//頂点座標の設定
+		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(GAUGE_WIDTH, MIN_HEIGHT, MIN_DEPTH);				//左上
+		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(MAX_WIDTH * Parcent, MIN_HEIGHT, MIN_DEPTH);		//右上
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(GAUGE_WIDTH * Parcent, MAX_HEIGHT, MIN_DEPTH);	//左下
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(MAX_WIDTH, MAX_HEIGHT, MIN_DEPTH);				//右下		
 	}
+
+	//頂点バッファをロックする
+	g_pVtxBuffGauge->Unlock();
 }
 
 //描画処理
@@ -204,8 +245,8 @@ void DrawGauge(void)
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	for (int nCntGauge = 0; nCntGauge < NUM_GAUGE; nCntGauge++)
-	{
+	for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++)
+	{//ゲージ分
 		//テクスチャの設定
 		pDevice->SetTexture(0, g_pTextureGauge[nCntGauge]);
 

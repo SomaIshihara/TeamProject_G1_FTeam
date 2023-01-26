@@ -14,6 +14,7 @@
 #include "camera.h"
 #include <assert.h>
 #include "color.h"
+#include "Gauge.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度
@@ -159,14 +160,14 @@ void UpdatePlayer(void)
 			{//もうこれ動いてるって言わないよね（ほぼ動いていない）
 				if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == true)
 				{//Aボタンが押された
-					g_aPlayer[nCntPlayer].moveGauge = fmodf(g_aPlayer[nCntPlayer].moveGauge + PLAYER_POWER_ADD, PLAYER_POWER_MAX + PLAYER_POWER_ADD);
+					g_aPlayer[nCntPlayer].moveGauge = fmodf(g_aPlayer[nCntPlayer].moveGauge + PLAYER_POWER_ADD, PLAYER_POWER_MAX + PLAYER_POWER_ADD);					
 				}
 				else if (GetGamepadRelease(nCntPlayer, XINPUT_GAMEPAD_X) == true)
 				{//Aボタンが離された
 					//進行方向の設定
 					g_aPlayer[nCntPlayer].move.x = -sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
 					g_aPlayer[nCntPlayer].move.z = -cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
-
+										
 					g_aPlayer[nCntPlayer].moveGauge = 0;
 				}
 			}
