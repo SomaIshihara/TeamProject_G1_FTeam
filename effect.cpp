@@ -59,10 +59,10 @@ void InitEffect(void)
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx+=4)
 	{
 		//’¸“_À•W‚ÌÝ’è
-		pVtx[0].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x - 40.0f, g_Effect[nCntEffect].pos.y + 40.0f, 20.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x + 40.0f, g_Effect[nCntEffect].pos.y + 40.0f, -20.0f);
-		pVtx[2].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x - 40.0f, g_Effect[nCntEffect].pos.y - 40.0f, 20.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x + 40.0f, g_Effect[nCntEffect].pos.y - 40.0f, -20.0f);
+		pVtx[0].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x - 40.0f, g_Effect[nCntEffect].pos.y + 40.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x + 40.0f, g_Effect[nCntEffect].pos.y + 40.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x - 40.0f, g_Effect[nCntEffect].pos.y - 40.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x + 40.0f, g_Effect[nCntEffect].pos.y - 40.0f, 0.0f);
 
 		//nor(–@ü)‚ÌÝ’è
 		pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);

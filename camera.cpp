@@ -46,8 +46,7 @@ float  g_MaxDrawCamera = DRAWING_AREA;	//最大描画範囲
 //カメラの初期化
 void InitCamera(void)
 {
-	//各初期化
-	SetCameraPos(D3DXVECTOR3(POSV_WIDTH, POSV_HEIGHT, POSV_DEPTH), D3DXVECTOR3(POSR_WIDTH, POSR_HEIGHT, POSR_DEPTH));
+
 }
 
 //カメラの終了処理
