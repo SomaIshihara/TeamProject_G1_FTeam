@@ -7,12 +7,19 @@
 #include "sound.h"
 
 //*****************************************************************************
+// マクロ定義
+//*****************************************************************************
+#define SOUND_LOOP		(-1)		//ループする
+#define SOUND_ONCE		(0)			//１回かぎり
+
+//*****************************************************************************
 // サウンド情報の構造体定義
 //*****************************************************************************
 typedef struct
 {
 	char *pFilename;	// ファイル名
 	int nCntLoop;		// ループカウント
+	float Volume;		// ボリューム
 } SOUNDINFO;
 
 //*****************************************************************************
@@ -33,7 +40,7 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 // サウンドの情報
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 {
-	{"data/SE/Uribou.wav", 0},		// コントローラー接続SE
+	{"data/SE/Uribou.wav", SOUND_ONCE, 1.0f},		// コントローラー接続SE
 };
 
 //=============================================================================
@@ -227,14 +234,18 @@ HRESULT PlaySound(SOUND_LABEL label)
 	memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
 	buffer.AudioBytes = g_aSizeAudio[label];
 	buffer.pAudioData = g_apDataAudio[label];
-	buffer.Flags      = XAUDIO2_END_OF_STREAM;
-	buffer.LoopCount  = g_aSoundInfo[label].nCntLoop;
+	buffer.Flags = XAUDIO2_END_OF_STREAM;
+	buffer.LoopCount = g_aSoundInfo[label].nCntLoop;
 
 	// 状態取得
 	g_apSourceVoice[label]->GetState(&xa2state);
-	if(xa2state.BuffersQueued != 0)
+
+	//音量調整
+	g_apSourceVoice[label]->SetVolume(g_aSoundInfo[label].Volume);
+
+	if (xa2state.BuffersQueued != 0)
 	{// 再生中
-		// 一時停止
+	 // 一時停止
 		g_apSourceVoice[label]->Stop(0);
 
 		// オーディオバッファの削除
@@ -259,9 +270,11 @@ void StopSound(SOUND_LABEL label)
 
 	// 状態取得
 	g_apSourceVoice[label]->GetState(&xa2state);
-	if(xa2state.BuffersQueued != 0)
+	g_apSourceVoice[label]->SetVolume(g_aSoundInfo[label].Volume);
+
+	if (xa2state.BuffersQueued != 0)
 	{// 再生中
-		// 一時停止
+	 // 一時停止
 		g_apSourceVoice[label]->Stop(0);
 
 		// オーディオバッファの削除
@@ -404,4 +417,3 @@ HRESULT ReadChunkData(HANDLE hFile, void *pBuffer, DWORD dwBuffersize, DWORD dwB
 	
 	return S_OK;
 }
-
