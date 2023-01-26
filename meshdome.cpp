@@ -52,7 +52,7 @@ void InitMeshDome(void)
 	//ドーム情報の初期化
 	g_MeshDome.pos = ZERO_SET;
 	g_MeshDome.rot = ZERO_SET;
-	g_MeshDome.fRadius = MESHDOME_WIDTH;
+	g_MeshDome.fRadius = MESHDOME_RADIS;
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshDome, NULL);
