@@ -528,7 +528,7 @@ void CollisionPP(int nPlayerNum)
 					//1.0f = pushback
 					float fRate = fAreaARight / fAreaBRight;
 					g_aPlayer[nPlayerNum].pos.x = pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					g_aPlayer[nPlayerNum].pos.z = pos0.z + (vecLineRight.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.z = pos0.z + (vecLineRight.z * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					break;
 				}
 			}
@@ -537,8 +537,8 @@ void CollisionPP(int nPlayerNum)
 				if (fAreaALeft / fAreaBLeft >= 0.0f && fAreaALeft / fAreaBLeft <= 1.0f)
 				{
 					float fRate = fAreaALeft / fAreaBLeft;
-					g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					g_aPlayer[nPlayerNum].pos.z = pos2.z + (vecLineLeft.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.z = pos2.z + (vecLineLeft.z * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					break;
 				}
 			}
@@ -556,7 +556,7 @@ void CollisionPP(int nPlayerNum)
 				if (fAreaAUp / fAreaBUp >= 0.0f && fAreaAUp / fAreaBUp <= 1.0f)
 				{
 					float fRate = fAreaAUp / fAreaBUp;
-					g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					g_aPlayer[nPlayerNum].pos.z = pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					break;
 				}
@@ -566,8 +566,8 @@ void CollisionPP(int nPlayerNum)
 				if (fAreaADown / fAreaBDown >= 0.0f && fAreaADown / fAreaBDown <= 1.0f)
 				{
 					float fRate = fAreaADown / fAreaBDown;
-					g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					g_aPlayer[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+					g_aPlayer[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 					break;
 				}
 			}
