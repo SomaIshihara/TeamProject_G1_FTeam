@@ -53,7 +53,7 @@ void InitGame(void)
 	InitWall();			// 壁の初期化処理
 	InitGauge();		// ゲージの初期化処理
 	InitPause();		// ポーズ画面の初期化処理
-	//InitEffect();		// エフェクトの初期化処理
+	InitEffect();		// エフェクトの初期化処理
 	InitScore();		// スコアの初期化
 
 	SetScore(0,4);		// スコアの設定処理
@@ -86,7 +86,7 @@ void UninitGame(void)
 	UninitPause();		// ポーズ画面の終了処理
 	UninitGauge();		// ゲージの終了処理
 	UninitModel();		// モデルの終了処理
-	//UninitEffect();	// エフェクトの終了処理（ここは順番は問わない）
+	UninitEffect();	// エフェクトの終了処理（ここは順番は問わない）
 	UninitScore();		// スコアの終了処理
 
 						//ゲームBGM停止
@@ -113,7 +113,7 @@ void UpdateGame(void)
 		UpdateCamera();		// カメラの更新処理
 		UpdateWall();		// 壁の更新処理
 		UpdateGauge();		// ゲージの更新処理
-		//UpdateEffect();		// エフェクトの更新処理
+		UpdateEffect();		// エフェクトの更新処理
 		UpdateScore();		//スコアの更新処理
 
 		//ポーズ取得
@@ -159,7 +159,7 @@ void DrawGame(void)
 						//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 	//DrawMeshDome();		// メッシュドームの描画処理	
 	DrawWall();			// 壁の描画処理
-	//DrawEffect();		// エフェクトの描画処理
+	DrawEffect();		// エフェクトの描画処理
 	DrawPlayer();		// プレイヤーの描画処理
 	DrawGauge();		// ゲージの描画処理
 	DrawScore();		// スコアの描画処理

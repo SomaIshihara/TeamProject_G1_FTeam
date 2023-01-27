@@ -9,14 +9,20 @@
 #include "effect.h"
 #include "color.h"
 #include "player.h"
+#include "input.h"
 
 //テクスチャの情報
-#define NUM_EFFECT_TEX			(1)						//テクスチャの数
-#define NUM_EFFECT				(4)						//テクスチャの最大数
+#define NUM_EFFECT_TEX			(2)			//テクスチャの数
+#define NUM_EFFECT				(4)			//テクスチャの最大数
 
-const char *c_pFileNameEffect[] =
+#define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
+#define EFFECT_SIZE_MOVE		(3.0f)		//エフェクトの半径の変化量
+
+//テクスチャのパス名
+const char *c_pFileNameEffect[NUM_EFFECT_TEX] =
 {
-	"data\\TEXTURE\\charge_effect001.png"
+	"data\\TEXTURE\\charge_effect001.png",
+	"data\\TEXTURE\\AttackEffect.png",
 };
 
 //グローバル変数
@@ -24,15 +30,16 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEffect = NULL;				//頂点バッファのポインタ
 LPDIRECT3DTEXTURE9		g_pTextureEffect[NUM_EFFECT_TEX] = {};	//テクスチャのポインタ
 D3DXMATRIX				mtxWorldEffect;							//ワールドマトリックス
 Effect					g_Effect[NUM_EFFECT];					//エフェクトの情報
+int g_TexType = 0;
 
 //=================================
 //エフェクトの初期化処理
 //=================================
 void InitEffect(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得	
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得	
 
-	VERTEX_3D *pVtx;			//頂点情報へのポインタ
+	VERTEX_3D *pVtx;							//頂点情報へのポインタ
 
 	//テクスチャの読み込み
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT_TEX; nCntEffect++)
@@ -56,11 +63,13 @@ void InitEffect(void)
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
+		g_Effect[nCntEffect].fSize = EFFECT_SIZE;
+
 		//頂点座標の設定
-		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-40.0f, +40.0f, 0.0f);
-		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+40.0f, +40.0f, 0.0f);
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-40.0f, -40.0f, 0.0f);
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+40.0f, -40.0f, 0.0f);
+		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, +g_Effect[nCntEffect].fSize, 0.0f);
+		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_Effect[nCntEffect].fSize, +g_Effect[nCntEffect].fSize, 0.0f);
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, -g_Effect[nCntEffect].fSize, 0.0f);
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_Effect[nCntEffect].fSize, -g_Effect[nCntEffect].fSize, 0.0f);
 
 		//nor(法線)の設定
 		pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -114,6 +123,88 @@ void UpdateEffect(void)
 {
 	//エフェクトの位置を設定
 	SetEffectPos();
+
+	//エフェクト番号更新
+	if (GetKeyboardTrigger(DIK_F2) == true)
+	{
+		g_TexType = (g_TexType + 1) % NUM_EFFECT_TEX;
+	}
+
+	//エフェクトのサイズ更新  (頂点座標の更新もするので、このUpdate関数の最後が望ましい)
+	for(int nCntEffect = 0; nCntEffect < NUM_EFFECT;nCntEffect++)
+	{
+		UpdateEffectSize(nCntEffect);
+	}
+}
+
+//エフェクトのサイズ更新
+void UpdateEffectSize(int nEffect)
+{
+	//エフェクトの種類によるサイズの更新
+	switch (g_TexType)
+	{
+	case EFFECTTYPE_CHARGE:
+	{
+		//エフェクトの大きさを縮小
+		g_Effect[nEffect].fSize -= EFFECT_SIZE_MOVE;
+
+		//エフェクトの大きさがゼロになった
+		if (g_Effect[nEffect].fSize <= 0.0f)
+		{
+			//エフェクト本来の大きさに直す
+			g_Effect[nEffect].fSize = EFFECT_SIZE;
+		}
+	}
+	break;
+
+	case EFFECTTYPE_ATTACK:
+	{
+		//エフェクトの大きさを縮小
+		g_Effect[nEffect].fSize += EFFECT_SIZE_MOVE;
+
+		//エフェクトの大きさが本来の大きさを超えた
+		if (EFFECT_SIZE <= g_Effect[nEffect].fSize)
+		{
+			//大きさをゼロにする
+			g_Effect[nEffect].fSize = 0.0f;
+		}
+	}
+	}
+
+	VERTEX_3D *pVtx;							//頂点情報へのポインタ
+
+												//頂点バッファをロックし頂点情報へのポインタを取得
+	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
+
+	//ポインターを合わせる
+	pVtx += VTX_MAX * nEffect;
+
+	//頂点座標の設定
+	pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nEffect].fSize, +g_Effect[nEffect].fSize, 0.0f);
+	pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, +g_Effect[nEffect].fSize, 0.0f);
+	pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_Effect[nEffect].fSize, -g_Effect[nEffect].fSize, 0.0f);
+	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, -g_Effect[nEffect].fSize, 0.0f);
+
+	//nor(法線)の設定
+	pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	pVtx[VTX_RI_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	pVtx[VTX_LE_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+	//頂点カラーの設定
+	pVtx[VTX_LE_UP].col = RGBA_RED;
+	pVtx[VTX_RI_UP].col = RGBA_RED;
+	pVtx[VTX_LE_DO].col = RGBA_RED;
+	pVtx[VTX_RI_DO].col = RGBA_RED;
+
+	//テクスチャ頂点座標の設定
+	pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[VTX_RI_UP].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[VTX_LE_DO].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[VTX_RI_DO].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//頂点バッファをアンロックする
+	g_pVtxBuffEffect->Unlock();
 }
 
 //=================================
@@ -164,7 +255,7 @@ void DrawEffect(void)
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
 		//テクスチャの設定
-		pDevice->SetTexture(0, g_pTextureEffect[0]);
+		pDevice->SetTexture(0, g_pTextureEffect[g_TexType]);
 
 		//描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, VTX_MAX * nCntEffect, 2);
