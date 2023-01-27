@@ -238,6 +238,7 @@ void UpdatePlayer(void)
 				}
 				else
 				{
+					g_aPlayer[nCntPlayer].bJump = false;
 					g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
 					g_aPlayer[nCntPlayer].move.y = 0.0f;
 					g_aPlayer[nCntPlayer].jumpTime = 0;

@@ -8,7 +8,7 @@
 #define _MODEL_H_
 
 //マクロ
-#define MAX_PARTS	(32)	//パーツ使用最大数
+#define MAX_PARTS	(10)	//パーツ使用最大数
 
 //動物種類列挙（一旦いのししのみ）
 typedef enum
