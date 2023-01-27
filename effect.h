@@ -23,6 +23,7 @@ typedef struct
 
 //プロトタイプ宣言
 void InitEffect(void);		//初期化処理
+void SetEffectPos(void);	//プレイヤーの
 void UninitEffect(void);	//終了処理
 void UpdateEffect(void);	//更新処理
 void DrawEffect(void);		//描画処理

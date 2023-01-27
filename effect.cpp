@@ -11,7 +11,8 @@
 #include "player.h"
 
 //テクスチャの情報
-#define NUM_EFFECT				(2)									//テクスチャの最大数
+#define NUM_EFFECT_TEX			(1)						//テクスチャの数
+#define NUM_EFFECT				(4)						//テクスチャの最大数
 
 const char *c_pFileNameEffect[] =
 {
@@ -19,11 +20,10 @@ const char *c_pFileNameEffect[] =
 };
 
 //グローバル変数
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEffect = NULL;		//頂点バッファのポインタ
-LPDIRECT3DTEXTURE9 g_pTextureEffect[NUM_EFFECT] = {};			//テクスチャのポインタ
-Effect g_Effect[NUM_EFFECT];
-
-D3DXMATRIX mtxWorldEffect;
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEffect = NULL;				//頂点バッファのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureEffect[NUM_EFFECT_TEX] = {};	//テクスチャのポインタ
+D3DXMATRIX				mtxWorldEffect;							//ワールドマトリックス
+Effect					g_Effect[NUM_EFFECT];					//エフェクトの情報
 
 //=================================
 //エフェクトの初期化処理
@@ -35,17 +35,15 @@ void InitEffect(void)
 	VERTEX_3D *pVtx;			//頂点情報へのポインタ
 
 	//テクスチャの読み込み
-	for (int nCntEffect=0;nCntEffect<NUM_EFFECT; nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT_TEX; nCntEffect++)
 	{
 		D3DXCreateTextureFromFile(pDevice,
 			c_pFileNameEffect[nCntEffect],
 			&g_pTextureEffect[nCntEffect]);
 	}
 	
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
-	{
-		g_Effect[nCntEffect].pos = D3DXVECTOR3(0.0f, 10.0f, 0.0f);
-	}
+	//エフェクトの位置を設定
+	SetEffectPos();
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(
@@ -91,7 +89,7 @@ void InitEffect(void)
 //=================================
 void UninitEffect(void)
 {
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT_TEX; nCntEffect++)
 	{
 		//テクスチャの破棄
 		if (g_pTextureEffect[nCntEffect] != NULL)
@@ -114,13 +112,8 @@ void UninitEffect(void)
 //=================================
 void UpdateEffect(void)
 {
-	Player *pPlayer = GetPlayer();
-
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pPlayer++)
-	{	
-		//エフェクトの位置をプレイヤーの位置にする
-		g_Effect[nCntEffect].pos = pPlayer->pos;
-	}
+	//エフェクトの位置を設定
+	SetEffectPos();
 }
 
 //=================================
@@ -184,5 +177,17 @@ void DrawEffect(void)
 		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
 		pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+	}
+}
+
+//エフェクトの位置設定
+void SetEffectPos(void)
+{
+	Player *pPlayer = GetPlayer();
+
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pPlayer++)
+	{
+		//エフェクトの位置をプレイヤーの位置にする
+		g_Effect[nCntEffect].pos = pPlayer->pos;
 	}
 }
