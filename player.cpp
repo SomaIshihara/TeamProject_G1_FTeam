@@ -86,6 +86,7 @@ void InitPlayer(void)
 
 		g_aPlayer[nCntPlayer].animal = ANIMAL_WILDBOAR;
 		g_aPlayer[nCntPlayer].nScore = 0;
+		g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
 		g_aPlayer[nCntPlayer].nNumHitPlayer = -1;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
@@ -213,6 +214,12 @@ void UpdatePlayer(void)
 
 			//ジャンプ量設定
 			g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
+
+			//移動後がy<0なら移動量消す
+			if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f)
+			{
+				g_aPlayer[nCntPlayer].move.y = 0.0f;
+			}
 
 			////ボタン操作に応じてプレイヤー移動
 			//g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
@@ -439,6 +446,8 @@ void CollisionPP(int nPlayerNum)
 	float fAreaARight, fAreaALeft, fAreaBRight, fAreaBLeft;
 	float fAreaAUp, fAreaADown, fAreaBUp, fAreaBDown;
 
+	//未反映の位置考慮
+	D3DXVECTOR3 posTemp = g_aPlayer[nPlayerNum].pos + g_aPlayer[nPlayerNum].move;
 
 	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++)
 	{
@@ -516,28 +525,28 @@ void CollisionPP(int nPlayerNum)
 
 			//ベクトル求める
 			//move
-			vecMoveLeft = g_aPlayer[nPlayerNum].pos - g_aPlayer[nPlayerNum].posOld;
-			vecMoveRight = g_aPlayer[nPlayerNum].pos - g_aPlayer[nPlayerNum].posOld;
+			vecMoveLeft = posTemp - g_aPlayer[nPlayerNum].posOld;
+			vecMoveRight = posTemp - g_aPlayer[nPlayerNum].posOld;
 
 			//X
 			//右方向の計算
 			vecLineRight = pos1 - pos0;
-			vecToPosRight = g_aPlayer[nPlayerNum].pos - pos0;
+			vecToPosRight = posTemp - pos0;
 			vecToPosOldRight = g_aPlayer[nPlayerNum].posOld - pos0;
 
 			//左方向の計算
 			vecLineLeft = pos3 - pos2;
-			vecToPosLeft = g_aPlayer[nPlayerNum].pos - pos2;
+			vecToPosLeft = posTemp - pos2;
 			vecToPosOldLeft = g_aPlayer[nPlayerNum].posOld - pos2;
 
 			//Z
 			//上方向の計算
 			vecLineUp = pos2 - pos1;
-			vecToPosUp = g_aPlayer[nPlayerNum].pos - pos1;
+			vecToPosUp = posTemp - pos1;
 			vecToPosOldUp = g_aPlayer[nPlayerNum].posOld - pos1;
 			//下方向の計算
 			vecLineDown = pos0 - pos3;
-			vecToPosDown = g_aPlayer[nPlayerNum].pos - pos3;
+			vecToPosDown = posTemp - pos3;
 			vecToPosOldDown = g_aPlayer[nPlayerNum].posOld - pos3;
 
 			//当たり判定本番
@@ -553,9 +562,9 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaARight / fAreaBRight >= 0.0f && fAreaARight / fAreaBRight <= 1.0f)
 				{
-					if (g_aPlayer[nPlayerNum].pos.y >= g_aPlayer[nCntOtherPlayer].pos.y && g_aPlayer[nPlayerNum].pos.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
 					{
-						if (g_aPlayer[nPlayerNum].move.x > 0.0f && g_aPlayer[nPlayerNum].move.z > 0.0f)
+						if (g_aPlayer[nPlayerNum].move.x > 0.0f || g_aPlayer[nPlayerNum].move.z > 0.0f)
 						{//動いてる
 							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 						}
@@ -571,9 +580,9 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaALeft / fAreaBLeft >= 0.0f && fAreaALeft / fAreaBLeft <= 1.0f)
 				{
-					if (g_aPlayer[nPlayerNum].pos.y >= g_aPlayer[nCntOtherPlayer].pos.y && g_aPlayer[nPlayerNum].pos.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
 					{
-						if (g_aPlayer[nPlayerNum].move.x > 0.0f && g_aPlayer[nPlayerNum].move.z > 0.0f)
+						if (g_aPlayer[nPlayerNum].move.x > 0.0f || g_aPlayer[nPlayerNum].move.z > 0.0f)
 						{//動いてる
 							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 						}
@@ -597,9 +606,9 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaAUp / fAreaBUp >= 0.0f && fAreaAUp / fAreaBUp <= 1.0f)
 				{
-					if (g_aPlayer[nPlayerNum].pos.y >= g_aPlayer[nCntOtherPlayer].pos.y && g_aPlayer[nPlayerNum].pos.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
 					{
-						if (g_aPlayer[nPlayerNum].move.x > 0.0f && g_aPlayer[nPlayerNum].move.z > 0.0f)
+						if (g_aPlayer[nPlayerNum].move.x > 0.0f || g_aPlayer[nPlayerNum].move.z > 0.0f)
 						{//動いてる
 							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 						}
@@ -614,9 +623,9 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaADown / fAreaBDown >= 0.0f && fAreaADown / fAreaBDown <= 1.0f)
 				{
-					if (g_aPlayer[nPlayerNum].pos.y >= g_aPlayer[nCntOtherPlayer].pos.y && g_aPlayer[nPlayerNum].pos.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
 					{
-						if (g_aPlayer[nPlayerNum].move.x > 0.0f && g_aPlayer[nPlayerNum].move.z > 0.0f)
+						if (g_aPlayer[nPlayerNum].move.x > 0.0f || g_aPlayer[nPlayerNum].move.z > 0.0f)
 						{//動いてる
 							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 						}
