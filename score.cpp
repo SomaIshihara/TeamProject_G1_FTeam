@@ -148,10 +148,10 @@ void SetScore(int nScore, int nPlayer)
 
 		for (nCntScore = 0; nCntScore < NUM_PLASE; nCntScore++)
 		{
-			pVtx[0].pos = D3DXVECTOR3(30.0f + (nCntScore * 30), 50.0f + (nCntPlayer * 15), 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(70.0f + (nCntScore * 30), 50.0f + (nCntPlayer * 15), 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(30.0f + (nCntScore * 30), 100.0f + (nCntPlayer * 15), 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(70.0f + (nCntScore * 30), 100.0f + (nCntPlayer * 15), 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(100.0f + (nCntScore * 40) + (nCntPlayer * 300), 600.0f, 0.0f);
+			pVtx[1].pos = D3DXVECTOR3(140.0f + (nCntScore * 40) + (nCntPlayer * 300), 600.0f, 0.0f);
+			pVtx[2].pos = D3DXVECTOR3(100.0f + (nCntScore * 40) + (nCntPlayer * 300), 650.0f, 0.0f);
+			pVtx[3].pos = D3DXVECTOR3(140.0f + (nCntScore * 40) + (nCntPlayer * 300), 650.0f, 0.0f);
 
 			pVtx[0].tex = D3DXVECTOR2(0.0f + (aTexU[nCntPlayer][nCntScore] * 0.1f), 0.0f);
 			pVtx[1].tex = D3DXVECTOR2(0.1f + (aTexU[nCntPlayer][nCntScore] * 0.1f), 0.0f);

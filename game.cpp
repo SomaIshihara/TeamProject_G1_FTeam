@@ -22,6 +22,7 @@ Author:平澤詩苑
 #include "meshdome.h"
 #include "Gauge.h"
 #include "effect.h"
+#include "score.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -53,6 +54,9 @@ void InitGame(void)
 	InitGauge();		// ゲージの初期化処理
 	InitPause();		// ポーズ画面の初期化処理
 	//InitEffect();		// エフェクトの初期化処理
+	InitScore();		// スコアの初期化
+
+	SetScore(0,4);		// スコアの設定処理
 
 	g_bPause = false;	// ポーズの初期化
 	g_bDisconnectPlayer = false;	//正常にコントローラーが接続されている状態とする
@@ -82,7 +86,8 @@ void UninitGame(void)
 	UninitPause();		// ポーズ画面の終了処理
 	UninitGauge();		// ゲージの終了処理
 	UninitModel();		// モデルの終了処理
-	//UninitEffect();		// エフェクトの終了処理（ここは順番は問わない）
+	//UninitEffect();	// エフェクトの終了処理（ここは順番は問わない）
+	UninitScore();		// スコアの終了処理
 
 						//ゲームBGM停止
 						//StopSound(SOUND_LABEL_GAMEBGM);
@@ -109,6 +114,7 @@ void UpdateGame(void)
 		UpdateWall();		// 壁の更新処理
 		UpdateGauge();		// ゲージの更新処理
 		//UpdateEffect();		// エフェクトの更新処理
+		UpdateScore();		//スコアの更新処理
 
 		//ポーズ取得
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
@@ -156,6 +162,7 @@ void DrawGame(void)
 	//DrawEffect();		// エフェクトの描画処理
 	DrawPlayer();		// プレイヤーの描画処理
 	DrawGauge();		// ゲージの描画処理
+	DrawScore();		// スコアの描画処理
 
 						//ポーズがOFF
 	if (g_bPause == true)
