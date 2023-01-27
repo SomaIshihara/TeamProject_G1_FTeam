@@ -187,11 +187,13 @@ void AddScore(int nValue, int nPlayer)
 
 	g_aScore[nPlayer] += nValue;
 
-	aTexU[nPlayer][0] = g_aScore[0] % 100 / 10;
-	aTexU[nPlayer][1] = g_aScore[0] % 10;
+	aTexU[nPlayer][0] = g_aScore[nPlayer] % 100 / 10;
+	aTexU[nPlayer][1] = g_aScore[nPlayer] % 10;
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffScore->Lock(0, 0, (void**)&pVtx, 0);
+
+	pVtx += nPlayer * (VTX_MAX * 2);
 
 	for (nCntScore = 0; nCntScore < NUM_PLASE; nCntScore++, pVtx += VTX_MAX)
 	{
