@@ -66,10 +66,10 @@ void InitEffect(void)
 		g_Effect[nCntEffect].fSize = EFFECT_SIZE;
 
 		//頂点座標の設定
-		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, +g_Effect[nCntEffect].fSize, 0.0f);
-		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_Effect[nCntEffect].fSize, +g_Effect[nCntEffect].fSize, 0.0f);
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, -g_Effect[nCntEffect].fSize, 0.0f);
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_Effect[nCntEffect].fSize, -g_Effect[nCntEffect].fSize, 0.0f);
+		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, 0.0f, +g_Effect[nCntEffect].fSize);
+		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_Effect[nCntEffect].fSize, 0.0f, +g_Effect[nCntEffect].fSize);
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, 0.0f, -g_Effect[nCntEffect].fSize);
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_Effect[nCntEffect].fSize, 0.0f, -g_Effect[nCntEffect].fSize);
 
 		//nor(法線)の設定
 		pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -78,10 +78,10 @@ void InitEffect(void)
 		pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[VTX_LE_UP].col = RGBA_RED;
-		pVtx[VTX_RI_UP].col = RGBA_RED;
-		pVtx[VTX_LE_DO].col = RGBA_RED;
-		pVtx[VTX_RI_DO].col = RGBA_RED;
+		pVtx[VTX_LE_UP].col = RGBA_WHITE;
+		pVtx[VTX_RI_UP].col = RGBA_WHITE;
+		pVtx[VTX_LE_DO].col = RGBA_WHITE;
+		pVtx[VTX_RI_DO].col = RGBA_WHITE;
 
 		//テクスチャ頂点座標の設定
 		pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -131,7 +131,7 @@ void UpdateEffect(void)
 	}
 
 	//エフェクトのサイズ更新  (頂点座標の更新もするので、このUpdate関数の最後が望ましい)
-	for(int nCntEffect = 0; nCntEffect < NUM_EFFECT;nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 	{
 		UpdateEffectSize(nCntEffect);
 	}
@@ -180,28 +180,10 @@ void UpdateEffectSize(int nEffect)
 	pVtx += VTX_MAX * nEffect;
 
 	//頂点座標の設定
-	pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nEffect].fSize, +g_Effect[nEffect].fSize, 0.0f);
-	pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, +g_Effect[nEffect].fSize, 0.0f);
-	pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_Effect[nEffect].fSize, -g_Effect[nEffect].fSize, 0.0f);
-	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, -g_Effect[nEffect].fSize, 0.0f);
-
-	//nor(法線)の設定
-	pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[VTX_RI_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[VTX_LE_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-
-	//頂点カラーの設定
-	pVtx[VTX_LE_UP].col = RGBA_RED;
-	pVtx[VTX_RI_UP].col = RGBA_RED;
-	pVtx[VTX_LE_DO].col = RGBA_RED;
-	pVtx[VTX_RI_DO].col = RGBA_RED;
-
-	//テクスチャ頂点座標の設定
-	pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);
-	pVtx[VTX_RI_UP].tex = D3DXVECTOR2(1.0f, 0.0f);
-	pVtx[VTX_LE_DO].tex = D3DXVECTOR2(0.0f, 1.0f);
-	pVtx[VTX_RI_DO].tex = D3DXVECTOR2(1.0f, 1.0f);
+	pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nEffect].fSize, 0.0f, +g_Effect[nEffect].fSize);
+	pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, 0.0f, +g_Effect[nEffect].fSize);
+	pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_Effect[nEffect].fSize, 0.0f, -g_Effect[nEffect].fSize);
+	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, 0.0f, -g_Effect[nEffect].fSize);
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffEffect->Unlock();
@@ -231,14 +213,6 @@ void DrawEffect(void)
 
 		//ビューマトリックスの取得
 		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
-
-		//ポリゴンをカメラに対して正面に向ける
-		D3DXMatrixInverse(&mtxWorldEffect, NULL, &mtxView);//逆行列を求める
-															  /*g_Billboard.mtxWorld._12 = 0.0f;
-															  g_Billboard.mtxWorld._21 = 0.0f;*/
-		mtxWorldEffect._41 = 0.0f;
-		mtxWorldEffect._42 = 0.0f;
-		mtxWorldEffect._43 = 0.0f;
 
 		//位置を反映
 		D3DXMatrixTranslation(&mtxTrans, g_Effect[nCntEffect].pos.x, g_Effect[nCntEffect].pos.y, g_Effect[nCntEffect].pos.z);
