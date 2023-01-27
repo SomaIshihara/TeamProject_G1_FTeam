@@ -26,9 +26,9 @@
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)	//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE		(1)			//小数点第何位まで移動していることにするか
 
-#define TEST_SIZE_WIDTH		(15.0f)
+#define TEST_SIZE_WIDTH		(30.0f)
 #define TEST_SIZE_HEIGHT	(15.0f)
-#define TEST_SIZE_DEPTH		(15.0f)
+#define TEST_SIZE_DEPTH		(30.0f)
 
 //ダッシュ関連マクロ
 
@@ -564,7 +564,7 @@ void CollisionPP(int nPlayerNum)
 				{
 					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
 					{
-						if (g_aPlayer[nPlayerNum].move.x > 0.0f || g_aPlayer[nPlayerNum].move.z > 0.0f)
+						if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 						{//動いてる
 							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 						}
@@ -582,7 +582,7 @@ void CollisionPP(int nPlayerNum)
 				{
 					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
 					{
-						if (g_aPlayer[nPlayerNum].move.x > 0.0f || g_aPlayer[nPlayerNum].move.z > 0.0f)
+						if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 						{//動いてる
 							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 						}
@@ -608,7 +608,7 @@ void CollisionPP(int nPlayerNum)
 				{
 					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
 					{
-						if (g_aPlayer[nPlayerNum].move.x > 0.0f || g_aPlayer[nPlayerNum].move.z > 0.0f)
+						if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 						{//動いてる
 							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 						}
@@ -625,7 +625,7 @@ void CollisionPP(int nPlayerNum)
 				{
 					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
 					{
-						if (g_aPlayer[nPlayerNum].move.x > 0.0f || g_aPlayer[nPlayerNum].move.z > 0.0f)
+						if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 						{//動いてる
 							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 						}
