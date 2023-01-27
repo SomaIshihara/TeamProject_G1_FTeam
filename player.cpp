@@ -81,8 +81,8 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].moveGauge = 0;
 		g_aPlayer[nCntPlayer].jumpTime = 0;
 
-		g_aPlayer[nCntPlayer].faceColliderLeft = D3DXVECTOR3(15.0f, 0.0f, 15.0f);
-		g_aPlayer[nCntPlayer].faceColliderRight = D3DXVECTOR3(-15.0f, 0.0f, 15.0f);
+		g_aPlayer[nCntPlayer].faceCollider[0] = D3DXVECTOR3(15.0f, 0.0f, 15.0f);
+		g_aPlayer[nCntPlayer].faceCollider[1] = D3DXVECTOR3(-15.0f, 0.0f, 15.0f);
 
 		g_aPlayer[nCntPlayer].animal = ANIMAL_WILDBOAR;
 		g_aPlayer[nCntPlayer].nScore = 0;
@@ -441,10 +441,11 @@ void CollisionPP(int nPlayerNum)
 	D3DXVECTOR3 vecLineLeft, vecToPosLeft, vecToPosOldLeft;
 	D3DXVECTOR3 vecLineUp, vecToPosUp, vecToPosOldUp;
 	D3DXVECTOR3 vecLineDown, vecToPosDown, vecToPosOldDown;
-	D3DXVECTOR3 vecMoveLeft, vecMoveRight;
+	D3DXVECTOR3 vecMove[2];
 
-	float fAreaARight, fAreaALeft, fAreaBRight, fAreaBLeft;
-	float fAreaAUp, fAreaADown, fAreaBUp, fAreaBDown;
+	//2は2頂点の2
+	float fAreaARight[2], fAreaALeft[2], fAreaBRight[2], fAreaBLeft[2];
+	float fAreaAUp[2], fAreaADown[2], fAreaBUp[2], fAreaBDown[2];
 
 	//未反映の位置考慮
 	D3DXVECTOR3 posTemp = g_aPlayer[nPlayerNum].pos + g_aPlayer[nPlayerNum].move;
@@ -525,8 +526,10 @@ void CollisionPP(int nPlayerNum)
 
 			//ベクトル求める
 			//move
-			vecMoveLeft = posTemp - g_aPlayer[nPlayerNum].posOld;
-			vecMoveRight = posTemp - g_aPlayer[nPlayerNum].posOld;
+			for (int nCntCollision = 0; nCntCollision < 2; nCntCollision++)
+			{
+				vecMove[nCntCollision] = (posTemp + g_aPlayer[nPlayerNum].faceCollider[nCntCollision]) - (g_aPlayer[nPlayerNum].posOld + g_aPlayer[nPlayerNum].faceCollider[nCntCollision]);
+			}
 
 			//X
 			//右方向の計算
@@ -550,89 +553,92 @@ void CollisionPP(int nPlayerNum)
 			vecToPosOldDown = g_aPlayer[nPlayerNum].posOld - pos3;
 
 			//当たり判定本番
-			//X
-			//面積求める
-			fAreaARight = TASUKIGAKE(vecToPosRight.x, vecToPosRight.z, vecMoveLeft.x, vecMoveLeft.z);
-			fAreaALeft = TASUKIGAKE(vecToPosLeft.x, vecToPosLeft.z, vecMoveLeft.x, vecMoveLeft.z);
-			fAreaBRight = TASUKIGAKE(vecLineRight.x, vecLineRight.z, vecMoveLeft.x, vecMoveLeft.z);
-			fAreaBLeft = TASUKIGAKE(vecLineLeft.x, vecLineLeft.z, vecMoveLeft.x, vecMoveLeft.z);
+			for (int nCntCollision = 0; nCntCollision < 2; nCntCollision++)
+			{
+				//X
+				//面積求める
+				fAreaARight[nCntCollision] = TASUKIGAKE(vecToPosRight.x, vecToPosRight.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
+				fAreaALeft[nCntCollision] = TASUKIGAKE(vecToPosLeft.x, vecToPosLeft.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
+				fAreaBRight[nCntCollision] = TASUKIGAKE(vecLineRight.x, vecLineRight.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
+				fAreaBLeft[nCntCollision] = TASUKIGAKE(vecLineLeft.x, vecLineLeft.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
 
-			//左側AND範囲内
-			if ((vecLineRight.z * vecToPosRight.x) - (vecLineRight.x * vecToPosRight.z) <= 0.0f && (vecLineRight.z * vecToPosOldRight.x) - (vecLineRight.x * vecToPosOldRight.z) >= 0.0f)
-			{
-				if (fAreaARight / fAreaBRight >= 0.0f && fAreaARight / fAreaBRight <= 1.0f)
+				//左側AND範囲内
+				if ((vecLineRight.z * vecToPosRight.x) - (vecLineRight.x * vecToPosRight.z) <= 0.0f && (vecLineRight.z * vecToPosOldRight.x) - (vecLineRight.x * vecToPosOldRight.z) >= 0.0f)
 				{
-					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					if (fAreaARight[nCntCollision] / fAreaBRight[nCntCollision] >= 0.0f && fAreaARight[nCntCollision] / fAreaBRight[nCntCollision] <= 1.0f)
 					{
-						if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
-						{//動いてる
-							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+						{
+							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
+							{//動いてる
+								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+							}
+							//1.0f = pushback
+							float fRate = fAreaARight[nCntCollision] / fAreaBRight[nCntCollision];
+							g_aPlayer[nPlayerNum].pos.x = pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayer[nPlayerNum].pos.z = pos0.z + (vecLineRight.z * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							break;
 						}
-						//1.0f = pushback
-						float fRate = fAreaARight / fAreaBRight;
-						g_aPlayer[nPlayerNum].pos.x = pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-						g_aPlayer[nPlayerNum].pos.z = pos0.z + (vecLineRight.z * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-						break;
 					}
 				}
-			}
-			else if ((vecLineLeft.z * vecToPosLeft.x) - (vecLineLeft.x * vecToPosLeft.z) <= 0.0f && (vecLineLeft.z * vecToPosOldLeft.x) - (vecLineLeft.x * vecToPosOldLeft.z) >= 0.0f)
-			{
-				if (fAreaALeft / fAreaBLeft >= 0.0f && fAreaALeft / fAreaBLeft <= 1.0f)
+				else if ((vecLineLeft.z * vecToPosLeft.x) - (vecLineLeft.x * vecToPosLeft.z) <= 0.0f && (vecLineLeft.z * vecToPosOldLeft.x) - (vecLineLeft.x * vecToPosOldLeft.z) >= 0.0f)
 				{
-					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					if (fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision] >= 0.0f && fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision] <= 1.0f)
 					{
-						if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
-						{//動いてる
-							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+						{
+							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
+							{//動いてる
+								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+							}
+							float fRate = fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision];
+							g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayer[nPlayerNum].pos.z = pos2.z + (vecLineLeft.z * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							break;
 						}
-						float fRate = fAreaALeft / fAreaBLeft;
-						g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-						g_aPlayer[nPlayerNum].pos.z = pos2.z + (vecLineLeft.z * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-						break;
 					}
 				}
-			}
 			
-			//Z
-			//面積求める
-			fAreaAUp = TASUKIGAKE(vecToPosUp.x, vecToPosUp.z, vecMoveLeft.x, vecMoveLeft.z);
-			fAreaADown = TASUKIGAKE(vecToPosDown.x, vecToPosDown.z, vecMoveLeft.x, vecMoveLeft.z);
-			fAreaBUp = TASUKIGAKE(vecLineUp.x, vecLineUp.z, vecMoveLeft.x, vecMoveLeft.z);
-			fAreaBDown = TASUKIGAKE(vecLineDown.x, vecLineDown.z, vecMoveLeft.x, vecMoveLeft.z);
+				//Z
+				//面積求める
+				fAreaAUp[nCntCollision] = TASUKIGAKE(vecToPosUp.x, vecToPosUp.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
+				fAreaADown[nCntCollision] = TASUKIGAKE(vecToPosDown.x, vecToPosDown.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
+				fAreaBUp[nCntCollision] = TASUKIGAKE(vecLineUp.x, vecLineUp.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
+				fAreaBDown[nCntCollision] = TASUKIGAKE(vecLineDown.x, vecLineDown.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
 
-			//左側AND範囲内
-			if ((vecLineUp.z * vecToPosUp.x) - (vecLineUp.x * vecToPosUp.z) <= 0.0f && (vecLineUp.z * vecToPosOldUp.x) - (vecLineUp.x * vecToPosOldUp.z) >= 0.0f)
-			{
-				if (fAreaAUp / fAreaBUp >= 0.0f && fAreaAUp / fAreaBUp <= 1.0f)
+				//左側AND範囲内
+				if ((vecLineUp.z * vecToPosUp.x) - (vecLineUp.x * vecToPosUp.z) <= 0.0f && (vecLineUp.z * vecToPosOldUp.x) - (vecLineUp.x * vecToPosOldUp.z) >= 0.0f)
 				{
-					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					if (fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision] >= 0.0f && fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision] <= 1.0f)
 					{
-						if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
-						{//動いてる
-							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+						{
+							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
+							{//動いてる
+								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+							}
+							float fRate = fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision];
+							g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayer[nPlayerNum].pos.z = pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							break;
 						}
-						float fRate = fAreaAUp / fAreaBUp;
-						g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-						g_aPlayer[nPlayerNum].pos.z = pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-						break;
 					}
 				}
-			}
-			else if ((vecLineDown.z * vecToPosDown.x) - (vecLineDown.x * vecToPosDown.z) <= 0.0f && (vecLineDown.z * vecToPosOldDown.x) - (vecLineDown.x * vecToPosOldDown.z) >= 0.0f)
-			{
-				if (fAreaADown / fAreaBDown >= 0.0f && fAreaADown / fAreaBDown <= 1.0f)
+				else if ((vecLineDown.z * vecToPosDown.x) - (vecLineDown.x * vecToPosDown.z) <= 0.0f && (vecLineDown.z * vecToPosOldDown.x) - (vecLineDown.x * vecToPosOldDown.z) >= 0.0f)
 				{
-					if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					if (fAreaADown[nCntCollision] / fAreaBDown[nCntCollision] >= 0.0f && fAreaADown[nCntCollision] / fAreaBDown[nCntCollision] <= 1.0f)
 					{
-						if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
-						{//動いてる
-							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+						{
+							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
+							{//動いてる
+								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+							}
+							float fRate = fAreaADown[nCntCollision] / fAreaBDown[nCntCollision];
+							g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayer[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							break;
 						}
-						float fRate = fAreaADown / fAreaBDown;
-						g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-						g_aPlayer[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-						break;
 					}
 				}
 			}

@@ -50,8 +50,7 @@ struct Player
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 
 	//衝突関係
-	D3DXVECTOR3 faceColliderLeft;	//当たり判定左端
-	D3DXVECTOR3 faceColliderRight;	//当たり判定右端
+	D3DXVECTOR3 faceCollider[2];	//当たり判定
 	int lastAtkPlayer;				//最後に触れたプレイヤー
 
 	//パラメータ類
