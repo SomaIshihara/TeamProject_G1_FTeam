@@ -15,7 +15,8 @@
 #define NUM_EFFECT				(4)			//テクスチャの最大数
 
 #define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
-#define EFFECT_SIZE_MOVE		(3.0f)		//エフェクトの半径の変化量
+#define EFFECT_CHARGE_MOVE		(3.0f)		//エフェクトのチャージタイプの変化量
+#define EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
 
 //テクスチャのパス名
 const char *c_pFileNameEffect[EFFECTTYPE_MAX] =
@@ -157,7 +158,7 @@ void UpdateEffectSize(int nEffect)
 	case EFFECTTYPE_CHARGE:
 	{
 		//エフェクトの大きさを縮小
-		g_Effect[nEffect].fSize -= EFFECT_SIZE_MOVE;
+		g_Effect[nEffect].fSize -= EFFECT_CHARGE_MOVE;
 
 		//エフェクトの大きさがゼロになった
 		if (g_Effect[nEffect].fSize <= 0.0f)
@@ -178,7 +179,7 @@ void UpdateEffectSize(int nEffect)
 	case EFFECTTYPE_ATTACK:
 	{
 		//エフェクトの大きさを縮小
-		g_Effect[nEffect].fSize += EFFECT_SIZE_MOVE;
+		g_Effect[nEffect].fSize += EFFECT_ATTACK_MOVE;
 
 		//エフェクトの大きさが本来の大きさを超えた
 		if (EFFECT_SIZE <= g_Effect[nEffect].fSize)
