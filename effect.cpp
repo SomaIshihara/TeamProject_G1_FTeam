@@ -62,10 +62,10 @@ void InitEffect(void)
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
-		g_Effect[nCntEffect].nType = EFFECTTYPE_ATTACK;	//種類初期化
+		g_Effect[nCntEffect].nType = EFFECTTYPE_CHARGE;	//種類初期化
 		g_Effect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
 		g_Effect[nCntEffect].fSize = EFFECT_SIZE;		//サイズ初期化
-		g_Effect[nCntEffect].bUse = true;				//使われていない状態に
+		g_Effect[nCntEffect].bUse = false;				//使われていない状態に
 
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, 0.0f, +g_Effect[nCntEffect].fSize);

@@ -52,6 +52,7 @@
 
 //プロト
 void MovePlayer(int nPadNum);
+void RotPlayer(int nPadNum);		//MovePlayer のrot.y の計算式だけを残しています
 
 void CollisionPP(int nPlayerNum);	//プレイヤー同士の衝突判定
 void DownPlayer(int nDownPlayerNum);	//ダウンしたプレイヤーの処理
@@ -259,7 +260,11 @@ void UpdatePlayer(void)
 			}
 
 			//[デバッグ用]普通に移動する処理
+#ifdef _DEBUG
 			MovePlayer(nCntPlayer);
+#endif
+			//向きを変える処理
+			RotPlayer(nCntPlayer);
 
 			//当たり判定類
 			CollisionPP(nCntPlayer);
@@ -717,31 +722,26 @@ void MovePlayer(int nPadNum)
 		{
 			g_aPlayer[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
 		}
-		g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
 	}
 	else if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
 	{//Y方向のスティックだけ傾いている
 		g_aPlayer[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
-		g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
 	}
 	//キーボード部
 	else if (GetKeyboardPress(DIK_W) == true)
 	{
 		if (GetKeyboardPress(DIK_A) == true)
 		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WA);
 			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WD);
 			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 		else
 		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_W);
 			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
@@ -750,32 +750,27 @@ void MovePlayer(int nPadNum)
 	{
 		if (GetKeyboardPress(DIK_A) == true)
 		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SA);
 			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SD);
 			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 		else
 		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_S);
 			g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 			g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		}
 	}
 	else if (GetKeyboardPress(DIK_A) == true)
 	{
-		g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_A);
 		g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 	}
 	else if (GetKeyboardPress(DIK_D) == true)
 	{
-		g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_D);
 		g_aPlayer[nPadNum].move.x = sinf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 		g_aPlayer[nPadNum].move.z = cosf(FIX_ROT((g_aPlayer[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
 	}
@@ -791,6 +786,66 @@ void MovePlayer(int nPadNum)
 	//移動量消す
 	g_aPlayer[nPadNum].move.x = 0.0f;
 	g_aPlayer[nPadNum].move.z = 0.0f;
+}
+
+//========================
+//プレイヤーの向き変更処理
+//========================
+void RotPlayer(int nPadNum)
+{
+	//モデル移動
+	//ゲームパッド部
+	if (GetLStickX(nPadNum) > 0 || GetLStickX(nPadNum) < 0)
+	{//X方向のスティックが傾いている
+		g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
+	}
+	else if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
+	{//Y方向のスティックだけ傾いている
+		g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
+	}
+	//キーボード部
+	else if (GetKeyboardPress(DIK_W) == true)
+	{
+		if (GetKeyboardPress(DIK_A) == true)
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WA);
+		}
+		else if (GetKeyboardPress(DIK_D) == true)
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WD);
+		}
+		else
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_W);
+		}
+	}
+	else if (GetKeyboardPress(DIK_S) == true)
+	{
+		if (GetKeyboardPress(DIK_A) == true)
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SA);
+		}
+		else if (GetKeyboardPress(DIK_D) == true)
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SD);
+		}
+		else
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_S);
+		}
+	}
+	else if (GetKeyboardPress(DIK_A) == true)
+	{
+		g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_A);
+	}
+	else if (GetKeyboardPress(DIK_D) == true)
+	{
+		g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_D);
+	}
+	else
+	{
+		return;
+	}
 }
 
 //========================
