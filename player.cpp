@@ -414,49 +414,52 @@ void DrawPlayer(void)
 				/*------------------------------------------------------------------
 				影の描画		Author:平澤詩苑
 				--------------------------------------------------------------------*/
-				D3DXMATRIX	mtxShadow;		//シャドウマトリックス
-				D3DLIGHT9	light;			//ライト情報
-				D3DXVECTOR4	posLight;		//ライトの位置
-				D3DXVECTOR3	pos, normal;	//平面上の任意の点、法線ベクトル
-				D3DXPLANE	plane;			//平面情報
-
-											//ライトの位置を設定
-				pDevice->GetLight(0, &light);
-				posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
-
-				//平面情報を生成
-				pos = ZERO_SET;
-				normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-				D3DXPlaneFromPointNormal(&plane, &pos, &normal);
-
-				//シャドウマトリックスの初期化
-				D3DXMatrixIdentity(&mtxShadow);
-
-				//シャドウマトリックスの作成
-				D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
-				D3DXMatrixMultiply(&mtxShadow, &g_aPlayer[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxShadow);
-
-				//シャドウマトリックスの設定
-				pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
-
-				//マテリアルデータへのポインタを取得
-				pMat = (D3DXMATERIAL *)g_aPlayer[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
-
-				for (int nCntMat = 0; nCntMat < (int)g_aPlayer[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
+				if (g_aPlayer[nCntPlayer].stat != PLAYERSTAT_FALL)
 				{
-					D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
+					D3DXMATRIX	mtxShadow;		//シャドウマトリックス
+					D3DLIGHT9	light;			//ライト情報
+					D3DXVECTOR4	posLight;		//ライトの位置
+					D3DXVECTOR3	pos, normal;	//平面上の任意の点、法線ベクトル
+					D3DXPLANE	plane;			//平面情報
 
-					//黒色に設定						//自己発光を無くす
-					MatCopy.Diffuse = XCOL_BLACKSHADOW;	MatCopy.Emissive = XCOL_BLACK;
+												//ライトの位置を設定
+					pDevice->GetLight(0, &light);
+					posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
 
-					//マテリアル設定
-					pDevice->SetMaterial(&MatCopy);
+					//平面情報を生成
+					pos = ZERO_SET;
+					normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+					D3DXPlaneFromPointNormal(&plane, &pos, &normal);
 
-					//テクスチャ設定
-					pDevice->SetTexture(0, NULL);
+					//シャドウマトリックスの初期化
+					D3DXMatrixIdentity(&mtxShadow);
 
-					//モデル描画
-					g_aPlayer[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+					//シャドウマトリックスの作成
+					D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
+					D3DXMatrixMultiply(&mtxShadow, &g_aPlayer[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxShadow);
+
+					//シャドウマトリックスの設定
+					pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
+
+					//マテリアルデータへのポインタを取得
+					pMat = (D3DXMATERIAL *)g_aPlayer[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
+
+					for (int nCntMat = 0; nCntMat < (int)g_aPlayer[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
+					{
+						D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
+
+						//黒色に設定						//自己発光を無くす
+						MatCopy.Diffuse = XCOL_BLACKSHADOW;	MatCopy.Emissive = XCOL_BLACK;
+
+						//マテリアル設定
+						pDevice->SetMaterial(&MatCopy);
+
+						//テクスチャ設定
+						pDevice->SetTexture(0, NULL);
+
+						//モデル描画
+						g_aPlayer[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+					}
 				}
 			}
 		}

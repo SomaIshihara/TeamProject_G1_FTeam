@@ -126,7 +126,7 @@ void UpdateEffect(void)
 	{
 		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 		{
-			SetEffect(nCntEffect, EFFECTTYPE_ATTACK);
+			SetEffect(g_Effect[nCntEffect].pos ,nCntEffect, EFFECTTYPE_ATTACK);
 		}
 	}
 
@@ -134,7 +134,7 @@ void UpdateEffect(void)
 	{
 		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 		{
-			SetEffect(nCntEffect, EFFECTTYPE_CHARGE);
+			SetEffect(g_Effect[nCntEffect].pos, nCntEffect, EFFECTTYPE_CHARGE);
 		}
 	}
 	
@@ -284,7 +284,7 @@ void SetEffectPos(void)
 }
 
 //エフェクトの設定処理
-void SetEffect(int nCntEffect, EFFECTTYPE type)
+void SetEffect(D3DXVECTOR3 pos, int nCntEffect, EFFECTTYPE type)
 {
 	//対象のエフェクトが使われていない
 	if (g_Effect[nCntEffect].bUse == false)

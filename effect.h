@@ -35,6 +35,6 @@ void DrawEffect(void);								//描画処理
 
 void SetEffectPos(void);							//プレイヤーの位置に設定する
 
-void SetEffect(int nCntEffect, EFFECTTYPE type);	//エフェクトを設定
+void SetEffect(D3DXVECTOR3 pos, int nCntEffect, EFFECTTYPE type);	//エフェクトを設定
 
 #endif
