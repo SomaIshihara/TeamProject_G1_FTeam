@@ -16,15 +16,13 @@
 #define NUM_SCORE		(4)		//スコアの数
 #define NUM_PLASE		(2)		//スコア桁数
 
-#define PLUS_X			(140.0f)	//スコアのプラスX座標
-#define MINUS_X			(100.0f)	//スコアのマイナスX座標
+#define MINUS_X			(230.0f)	//スコアのマイナスX座標
+#define PLUS_X			(270.0f)	//スコアのプラスX座標
 #define WIDTH_X			(30.0f)	    //スコアの幅
-#define WIDTH_X			(30.0f)	    //スコアの幅
-#define INTERVAL_X		(300.0f)	    //スコア同士の間隔
+#define INTERVAL_X		(300.0f)	//スコア同士の間隔
 
-
-#define PLUS_Y			(650.0f)	//スコアのプラスX座標
 #define MINUS_Y			(600.0f)	//スコアのマイナスY座標
+#define PLUS_Y			(650.0f)	//スコアのプラスX座標
 
 //****************************//
 //	   グローバル変数宣言     //
