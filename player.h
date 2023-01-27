@@ -12,7 +12,7 @@
 
 //マクロ
 #define PLAYER_POWER_LEVEL	(3)			//パワーレベル
-#define PLAYER_POWER_MAX	(0.75f * PLAYER_POWER_LEVEL)		//移動の強さの最大値
+#define PLAYER_POWER_MAX	(0.5f * PLAYER_POWER_LEVEL)		//移動の強さの最大値
 
 //プレイヤー状態列挙
 typedef enum
@@ -57,6 +57,7 @@ struct Player
 	ANIMAL animal;			//使用している動物
 	int nScore;				//得点
 	int nNumHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
+	PLAYERSTAT stat;		//状態
 
 	//描画類
 	Model model;			//使用モデル

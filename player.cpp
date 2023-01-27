@@ -10,6 +10,7 @@
 #include "model.h"
 #include "input.h"
 #include "wall.h"
+#include "score.h"
 #include "debugproc.h"
 #include "camera.h"
 #include <assert.h>
@@ -21,20 +22,16 @@
 #define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度7.7f
 #define ACCELERATION_GRAVITY (9.8f)		//重力加速度
 #define PLAYER_WEIGHT		(50)		//質量
-#define PLAYER_POWER_ADD	(0.03f)		//移動の強さの増加値
+#define PLAYER_POWER_ADD	(0.025f)		//移動の強さの増加値
 #define DUMP_COEF			(0.04f)		//減衰係数
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)	//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE		(1)			//小数点第何位まで移動していることにするか
+#define BF_RADIUS			(353.5f)	//バトルフィールドの半径
+#define DOWN_TIME			(200)		//ダウン判定とする時間
 
 #define TEST_SIZE_WIDTH		(30.0f)
 #define TEST_SIZE_HEIGHT	(15.0f)
 #define TEST_SIZE_DEPTH		(30.0f)
-
-//ダッシュ関連マクロ
-
-//#define ADD_GAUGE			(10.0f)	//ゲージ増加量
-//#define MAX_GAUGE			(25.0f)	//ゲージ最大値
-//#define GAUGE_BONUS			(15.0f)	//ボーナスゲージ
 
 //向き
 #define ROT_WA	(-0.75f * D3DX_PI)	//左上
@@ -50,6 +47,8 @@
 void MovePlayer(int nPadNum);
 
 void CollisionPP(int nPlayerNum);	//プレイヤー同士の衝突判定
+void DownPlayer(int nDownPlayerNum);	//ダウンしたプレイヤーの処理
+void RespawnPlayer(int nRespawnPlayer);	//リスポーン処理
 
 //グローバル変数
 Player g_aPlayer[MAX_USE_GAMEPAD];
@@ -88,10 +87,10 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].nScore = 0;
 		g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
 		g_aPlayer[nCntPlayer].nNumHitPlayer = -1;
+		g_aPlayer[nCntPlayer].stat = PLAYERSTAT_WAIT;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
-		g_aPlayer[nCntPlayer].bUsePlayer = true;
 	}
 
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
@@ -215,10 +214,21 @@ void UpdatePlayer(void)
 			//ジャンプ量設定
 			g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 
-			//移動後がy<0なら移動量消す
-			if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f)
+			//移動後がy<0なら落ちるか移動量消す
+			if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f && g_aPlayer[nCntPlayer].stat != PLAYERSTAT_FALL)
 			{
-				g_aPlayer[nCntPlayer].move.y = 0.0f;
+				float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) +
+					powf((g_aPlayer[nCntPlayer].pos.z + g_aPlayer[nCntPlayer].move.z), 2));
+
+				if (fLength >= BF_RADIUS)
+				{
+					g_aPlayer[nCntPlayer].stat = PLAYERSTAT_FALL;
+				}
+				else
+				{
+					g_aPlayer[nCntPlayer].move.y = 0.0f;
+					g_aPlayer[nCntPlayer].jumpTime = 0;
+				}
 			}
 
 			////ボタン操作に応じてプレイヤー移動
@@ -234,6 +244,11 @@ void UpdatePlayer(void)
 
 			//影位置設定
 			//一旦なし
+
+			if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_FALL && g_aPlayer[nCntPlayer].jumpTime >= DOWN_TIME)
+			{
+				DownPlayer(nCntPlayer);
+			}
 
 			//デバッグ表示（強さ表示）
 			PrintDebugProc("[%d]:Power = %f\n", nCntPlayer, g_aPlayer[nCntPlayer].moveGauge);
@@ -273,11 +288,11 @@ void UpdatePlayer(void)
 			g_aPlayer[nCntPlayer].move.x += (0 - g_aPlayer[nCntPlayer].move.x) * DUMP_COEF;
 			g_aPlayer[nCntPlayer].move.z += (0 - g_aPlayer[nCntPlayer].move.z) * DUMP_COEF;
 
-			//[仮]一旦Y=0.0fになったら着地
-			if (g_aPlayer[nCntPlayer].pos.y <= 0.0f)
-			{
-				g_aPlayer[nCntPlayer].pos.y = 0.0f;
-			}
+			////[仮]一旦Y=0.0fになったら着地
+			//if (g_aPlayer[nCntPlayer].pos.y <= 0.0f)
+			//{
+			//	g_aPlayer[nCntPlayer].pos.y = 0.0f;
+			//}
 		}
 	}
 }
@@ -572,6 +587,7 @@ void CollisionPP(int nPlayerNum)
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//動いてる
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+								g_aPlayer[nPlayerNum].nNumHitPlayer = nCntOtherPlayer;
 							}
 							//1.0f = pushback
 							float fRate = fAreaARight[nCntCollision] / fAreaBRight[nCntCollision];
@@ -590,6 +606,7 @@ void CollisionPP(int nPlayerNum)
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//動いてる
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+								g_aPlayer[nPlayerNum].nNumHitPlayer = nCntOtherPlayer;
 							}
 							float fRate = fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
@@ -616,6 +633,7 @@ void CollisionPP(int nPlayerNum)
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//動いてる
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+								g_aPlayer[nPlayerNum].nNumHitPlayer = nCntOtherPlayer;
 							}
 							float fRate = fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
@@ -633,6 +651,7 @@ void CollisionPP(int nPlayerNum)
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//動いてる
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+								g_aPlayer[nPlayerNum].nNumHitPlayer = nCntOtherPlayer;
 							}
 							float fRate = fAreaADown[nCntCollision] / fAreaBDown[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
@@ -739,6 +758,50 @@ void MovePlayer(int nPadNum)
 	g_aPlayer[nPadNum].move.x = 0.0f;
 	g_aPlayer[nPadNum].move.z = 0.0f;
 }
+
+//========================
+//ダウンしたプレイヤーの処理
+//========================
+void DownPlayer(int nDownPlayerNum)
+{
+	if (g_aPlayer[nDownPlayerNum].nNumHitPlayer != -1)
+	{//当てられて落ちた場合
+		g_aPlayer[g_aPlayer[nDownPlayerNum].nNumHitPlayer].nScore++;
+		SetScore(g_aPlayer[g_aPlayer[nDownPlayerNum].nNumHitPlayer].nScore, g_aPlayer[nDownPlayerNum].nNumHitPlayer);
+	}
+	else
+	{//ただ単に自滅した場合
+		for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++)
+		{
+			if (nCntOtherPlayer != nDownPlayerNum)
+			{
+				g_aPlayer[nCntOtherPlayer].nScore++;
+				SetScore(g_aPlayer[nCntOtherPlayer].nScore, nCntOtherPlayer);
+			}
+		}
+	}
+
+	RespawnPlayer(nDownPlayerNum);
+}
+
+//========================
+//プレイヤーのリスポーン処理
+//========================
+void RespawnPlayer(int nRespawnPlayer)
+{
+	//各ステータス再設定
+	g_aPlayer[nRespawnPlayer].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
+	g_aPlayer[nRespawnPlayer].posOld = g_aPlayer[nRespawnPlayer].pos;
+	g_aPlayer[nRespawnPlayer].move = ZERO_SET;
+	g_aPlayer[nRespawnPlayer].rot = ZERO_SET;
+	g_aPlayer[nRespawnPlayer].moveGauge = 0;
+	g_aPlayer[nRespawnPlayer].jumpTime = 0;
+
+	g_aPlayer[nRespawnPlayer].lastAtkPlayer = -1;
+	g_aPlayer[nRespawnPlayer].nNumHitPlayer = -1;
+	g_aPlayer[nRespawnPlayer].stat = PLAYERSTAT_WAIT;
+}
+
 //========================
 //取得処理
 //========================
