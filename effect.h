@@ -19,15 +19,22 @@ typedef enum
 typedef struct
 {
 	D3DXVECTOR3 pos;		//位置
-	float		fSize;	//半径
+	int			nType;		//エフェクトのタイプ
+	int			nCntLoop;	//ループした回数（今だけ）
+	float		fSize;		//半径
+	bool		bUse;		//使われているかどうか
 }Effect;
 
 //プロトタイプ宣言
-void InitEffect(void);					//初期化処理
-void SetEffectPos(void);				//プレイヤーの位置に設定する
-void UninitEffect(void);				//終了処理
-void UpdateEffect(void);				//更新処理
-void UpdateEffectSize(int nEffect);		//エフェクトのサイズ更新
-void DrawEffect(void);					//描画処理
+void InitEffect(void);								//初期化処理
+void UninitEffect(void);							//終了処理
+void UpdateEffect(void);							//更新処理
+void UpdateEffectSize(int nEffect);					//エフェクトのサイズ更新
+
+void DrawEffect(void);								//描画処理
+
+void SetEffectPos(void);							//プレイヤーの位置に設定する
+
+void SetEffect(int nCntEffect, EFFECTTYPE type);	//エフェクトを設定
 
 #endif

@@ -12,14 +12,13 @@
 #include "input.h"
 
 //テクスチャの情報
-#define NUM_EFFECT_TEX			(2)			//テクスチャの数
 #define NUM_EFFECT				(4)			//テクスチャの最大数
 
 #define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
 #define EFFECT_SIZE_MOVE		(3.0f)		//エフェクトの半径の変化量
 
 //テクスチャのパス名
-const char *c_pFileNameEffect[NUM_EFFECT_TEX] =
+const char *c_pFileNameEffect[EFFECTTYPE_MAX] =
 {
 	"data\\TEXTURE\\charge_effect001.png",
 	"data\\TEXTURE\\AttackEffect.png",
@@ -27,10 +26,9 @@ const char *c_pFileNameEffect[NUM_EFFECT_TEX] =
 
 //グローバル変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEffect = NULL;				//頂点バッファのポインタ
-LPDIRECT3DTEXTURE9		g_pTextureEffect[NUM_EFFECT_TEX] = {};	//テクスチャのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureEffect[EFFECTTYPE_MAX] = {};	//テクスチャのポインタ
 D3DXMATRIX				mtxWorldEffect;							//ワールドマトリックス
 Effect					g_Effect[NUM_EFFECT];					//エフェクトの情報
-int g_TexType = 0;
 
 //=================================
 //エフェクトの初期化処理
@@ -42,7 +40,7 @@ void InitEffect(void)
 	VERTEX_3D *pVtx;							//頂点情報へのポインタ
 
 	//テクスチャの読み込み
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT_TEX; nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < EFFECTTYPE_MAX; nCntEffect++)
 	{
 		D3DXCreateTextureFromFile(pDevice,
 			c_pFileNameEffect[nCntEffect],
@@ -63,7 +61,10 @@ void InitEffect(void)
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
-		g_Effect[nCntEffect].fSize = EFFECT_SIZE;
+		g_Effect[nCntEffect].nType = EFFECTTYPE_ATTACK;	//種類初期化
+		g_Effect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
+		g_Effect[nCntEffect].fSize = EFFECT_SIZE;		//サイズ初期化
+		g_Effect[nCntEffect].bUse = true;				//使われていない状態に
 
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, 0.0f, +g_Effect[nCntEffect].fSize);
@@ -98,7 +99,7 @@ void InitEffect(void)
 //=================================
 void UninitEffect(void)
 {
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT_TEX; nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < EFFECTTYPE_MAX; nCntEffect++)
 	{
 		//テクスチャの破棄
 		if (g_pTextureEffect[nCntEffect] != NULL)
@@ -121,14 +122,24 @@ void UninitEffect(void)
 //=================================
 void UpdateEffect(void)
 {
+	if (GetKeyboardTrigger(DIK_X) == true)
+	{
+		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
+		{
+			SetEffect(nCntEffect, EFFECTTYPE_ATTACK);
+		}
+	}
+
+	if (GetKeyboardTrigger(DIK_M) == true)
+	{
+		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
+		{
+			SetEffect(nCntEffect, EFFECTTYPE_CHARGE);
+		}
+	}
+	
 	//エフェクトの位置を設定
 	SetEffectPos();
-
-	//エフェクト番号更新
-	if (GetKeyboardTrigger(DIK_F2) == true)
-	{
-		g_TexType = (g_TexType + 1) % NUM_EFFECT_TEX;
-	}
 
 	//エフェクトのサイズ更新  (頂点座標の更新もするので、このUpdate関数の最後が望ましい)
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
@@ -141,7 +152,7 @@ void UpdateEffect(void)
 void UpdateEffectSize(int nEffect)
 {
 	//エフェクトの種類によるサイズの更新
-	switch (g_TexType)
+	switch (g_Effect[nEffect].nType)
 	{
 	case EFFECTTYPE_CHARGE:
 	{
@@ -153,6 +164,13 @@ void UpdateEffectSize(int nEffect)
 		{
 			//エフェクト本来の大きさに直す
 			g_Effect[nEffect].fSize = EFFECT_SIZE;
+			g_Effect[nEffect].nCntLoop++;		//ループ回数加算
+
+			if (g_Effect[nEffect].nCntLoop >= 5)
+			{
+				g_Effect[nEffect].bUse = false;
+				g_Effect[nEffect].nCntLoop = 0;
+			}
 		}
 	}
 	break;
@@ -165,8 +183,9 @@ void UpdateEffectSize(int nEffect)
 		//エフェクトの大きさが本来の大きさを超えた
 		if (EFFECT_SIZE <= g_Effect[nEffect].fSize)
 		{
-			//大きさをゼロにする
-			g_Effect[nEffect].fSize = 0.0f;
+			//使われていない状態に
+			g_Effect[nEffect].bUse = false;
+			g_Effect[nEffect].nCntLoop = 0;				//ループ回数初期化
 		}
 	}
 	}
@@ -199,49 +218,52 @@ void DrawEffect(void)
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 	{
-		//ワールドマトリックスの初期化
-		D3DXMatrixIdentity(&mtxWorldEffect);
+		if (g_Effect[nCntEffect].bUse == true)
+		{
+			//ワールドマトリックスの初期化
+			D3DXMatrixIdentity(&mtxWorldEffect);
 
-		//Zテストを無効にする
-		pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-		pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+			//Zテストを無効にする
+			pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+			pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-		//アルファテストを有効にする
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-		pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+			//アルファテストを有効にする
+			pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+			pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+			pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
 
-		//ビューマトリックスの取得
-		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
+			//ビューマトリックスの取得
+			pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 
-		//位置を反映
-		D3DXMatrixTranslation(&mtxTrans, g_Effect[nCntEffect].pos.x, g_Effect[nCntEffect].pos.y, g_Effect[nCntEffect].pos.z);
+			//位置を反映
+			D3DXMatrixTranslation(&mtxTrans, g_Effect[nCntEffect].pos.x, g_Effect[nCntEffect].pos.y, g_Effect[nCntEffect].pos.z);
 
-		D3DXMatrixMultiply(&mtxWorldEffect, &mtxWorldEffect, &mtxTrans);
+			D3DXMatrixMultiply(&mtxWorldEffect, &mtxWorldEffect, &mtxTrans);
 
-		//ワールドマトリックスの設定
-		pDevice->SetTransform(D3DTS_WORLD, &mtxWorldEffect);
+			//ワールドマトリックスの設定
+			pDevice->SetTransform(D3DTS_WORLD, &mtxWorldEffect);
 
-		//頂点バッファをデータストリームに設定
-		pDevice->SetStreamSource(0, g_pVtxBuffEffect, 0, sizeof(VERTEX_3D));
+			//頂点バッファをデータストリームに設定
+			pDevice->SetStreamSource(0, g_pVtxBuffEffect, 0, sizeof(VERTEX_3D));
 
-		//頂点フォーマットの設定
-		pDevice->SetFVF(FVF_VERTEX_3D);
+			//頂点フォーマットの設定
+			pDevice->SetFVF(FVF_VERTEX_3D);
 
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_pTextureEffect[g_TexType]);
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureEffect[g_Effect[nCntEffect].nType]);
 
-		//描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, VTX_MAX * nCntEffect, 2);
+			//描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, VTX_MAX * nCntEffect, 2);
 
-		//Zテストを有効にする
-		pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-		pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			//Zテストを有効にする
+			pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+			pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 
-		//アルファテストを無効にする
-		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
-		pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+			//アルファテストを無効にする
+			pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+			pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
+			pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+		}
 	}
 }
 
@@ -252,7 +274,35 @@ void SetEffectPos(void)
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pPlayer++)
 	{
-		//エフェクトの位置をプレイヤーの位置にする
-		g_Effect[nCntEffect].pos = pPlayer->pos;
+		//エフェクトのタイプがチャージなら、追従する
+		if (g_Effect[nCntEffect].nType == EFFECTTYPE_CHARGE)
+		{
+			//エフェクトの位置をプレイヤーの位置にする
+			g_Effect[nCntEffect].pos = pPlayer->pos;
+		}
+	}
+}
+
+//エフェクトの設定処理
+void SetEffect(int nCntEffect, EFFECTTYPE type)
+{
+	//対象のエフェクトが使われていない
+	if (g_Effect[nCntEffect].bUse == false)
+	{
+		//種類がチャージ
+		if (type == EFFECTTYPE_CHARGE)
+		{
+			g_Effect[nCntEffect].fSize = EFFECT_SIZE;		//サイズを初期化
+		}
+
+		//種類が当たった時のもの
+		else if(type == EFFECTTYPE_ATTACK)
+		{
+			g_Effect[nCntEffect].fSize = 0.0f;		//サイズを初期化
+		}
+
+		g_Effect[nCntEffect].nType = type;		//種類設定
+		g_Effect[nCntEffect].nCntLoop = 0;		//ループ回数初期化
+		g_Effect[nCntEffect].bUse = true;		//使われている状態に
 	}
 }
