@@ -52,10 +52,10 @@ Gauge					g_Gauge[GAUGETYPE_MAX];						//ゲージ情報
 
 const D3DXVECTOR3       g_Pos[MAX_USE_GAMEPAD] =					//ゲージの位置
 {
-	D3DXVECTOR3(40.0f,650.0f,0.0f),
-	D3DXVECTOR3(280.0f,650.0f,0.0f),
-	D3DXVECTOR3(520.0f,650.0f,0.0f),
-	D3DXVECTOR3(760.0f,650.0f,0.0f),
+	D3DXVECTOR3(100.0f,650.0f,0.0f),
+	D3DXVECTOR3(400.0f,650.0f,0.0f),
+	D3DXVECTOR3(700.0f,650.0f,0.0f),
+	D3DXVECTOR3(1000.0f,650.0f,0.0f),
 };
 
 //初期化処理
