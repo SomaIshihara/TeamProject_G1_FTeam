@@ -30,6 +30,12 @@
 #define BF_RADIUS			(353.5f)	//バトルフィールドの半径
 #define DOWN_TIME			(200)		//ダウン判定とする時間
 
+//移動量関係
+#define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
+#define ACCELERATION_ITEMMAG	(1.5f)		//アイテム所持中の強化倍率
+#define DEFANCE_CONS			(0.0f)		//防御定数（1.0で完全防御）
+#define DEFANCE_ITEMADD			(0.3f)		//アイテム所持中の強化量
+
 #define TEST_SIZE_WIDTH		(30.0f)
 #define TEST_SIZE_HEIGHT	(15.0f)
 #define TEST_SIZE_DEPTH		(30.0f)
@@ -80,6 +86,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].rot = ZERO_SET;
 		g_aPlayer[nCntPlayer].moveGauge = 0;
 		g_aPlayer[nCntPlayer].jumpTime = 0;
+		g_aPlayer[nCntPlayer].bJump = false;
 
 		g_aPlayer[nCntPlayer].faceCollider[0] = D3DXVECTOR3(15.0f, 0.0f, 15.0f);
 		g_aPlayer[nCntPlayer].faceCollider[1] = D3DXVECTOR3(-15.0f, 0.0f, 15.0f);
@@ -89,6 +96,9 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
 		g_aPlayer[nCntPlayer].nNumHitPlayer = -1;
 		g_aPlayer[nCntPlayer].stat = PLAYERSTAT_WAIT;
+
+		g_aPlayer[nCntPlayer].nATKItemTime = 0;
+		g_aPlayer[nCntPlayer].nDEFItemTime = 0;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
@@ -177,10 +187,11 @@ void UpdatePlayer(void)
 			}
 
 			//ジャンプ
-			if (GetKeyboardTrigger(DIK_RETURN) == true)
+			if (g_aPlayer[nCntPlayer].bJump == false && GetKeyboardTrigger(DIK_RETURN) == true)
 			{
 				g_aPlayer[nCntPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
+				g_aPlayer[nCntPlayer].bJump = true;
 			}
 #endif
 			//ゲームパッドの操作
@@ -217,10 +228,11 @@ void UpdatePlayer(void)
 			}
 
 			//ジャンプ
-			if (GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true)
+			if (g_aPlayer[nCntPlayer].bJump == false && GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true)
 			{
 				g_aPlayer[nCntPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
+				g_aPlayer[nCntPlayer].bJump = true;
 			}
 
 			//ジャンプ量設定
@@ -238,15 +250,13 @@ void UpdatePlayer(void)
 				}
 				else
 				{
+					g_aPlayer[nCntPlayer].bJump = false;
+					g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
 					g_aPlayer[nCntPlayer].move.y = 0.0f;
 					g_aPlayer[nCntPlayer].jumpTime = 0;
+					g_aPlayer[nCntPlayer].pos.y = 0.0f;
 				}
 			}
-
-			////ボタン操作に応じてプレイヤー移動
-			//g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
-			//g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
-			//g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
 
 			//[デバッグ用]普通に移動する処理
 			MovePlayer(nCntPlayer);
@@ -282,9 +292,18 @@ void UpdatePlayer(void)
 			else
 			{//ぶつかった
 				//移動量交換
-				D3DXVECTOR3 moveTmp = g_aPlayer[nCntPlayer].move;
-				g_aPlayer[nCntPlayer].move = g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move;
-				g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move = moveTmp;
+				D3DXVECTOR3 moveTmp1 = g_aPlayer[nCntPlayer].move;
+				D3DXVECTOR3 moveTmp2 = g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move;
+
+				//割合設定
+				float fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayer[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+					DEFANCE_CONS + (g_aPlayer[nCntPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
+
+				float fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+					DEFANCE_CONS + (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
+
+				g_aPlayer[nCntPlayer].move = moveTmp2 * fPowerConvertion1;
+				g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move = moveTmp1 * fPowerConvertion2;
 
 				//移動量交換済み扱いにする
 				g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
