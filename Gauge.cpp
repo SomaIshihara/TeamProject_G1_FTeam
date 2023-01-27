@@ -168,7 +168,7 @@ void UpdateGauge(void)
 	for (int nCntGauge = 0; nCntGauge < MAX_USE_GAMEPAD; nCntGauge++, pPlayer++, pVtx += NUM_GAUGE)
 	{//ゲージ分
 		//計算(今のゲージ量　/　最大ゲージ量)
-		float Parcent = pPlayer->moveGauge / 2.25f;
+		float Parcent = pPlayer->moveGauge / PLAYER_POWER_MAX;
 		
 		if (Parcent > UNQUAR_NUM)
 		{//赤色

@@ -52,7 +52,7 @@ void InitGame(void)
 	InitWall();			// 壁の初期化処理
 	InitGauge();		// ゲージの初期化処理
 	InitPause();		// ポーズ画面の初期化処理
-	InitEffect();		// エフェクトの初期化処理
+	//InitEffect();		// エフェクトの初期化処理
 
 	g_bPause = false;	// ポーズの初期化
 	g_bDisconnectPlayer = false;	//正常にコントローラーが接続されている状態とする
@@ -82,7 +82,7 @@ void UninitGame(void)
 	UninitPause();		// ポーズ画面の終了処理
 	UninitGauge();		// ゲージの終了処理
 	UninitModel();		// モデルの終了処理
-	UninitEffect();		// エフェクトの終了処理（ここは順番は問わない）
+	//UninitEffect();		// エフェクトの終了処理（ここは順番は問わない）
 
 						//ゲームBGM停止
 						//StopSound(SOUND_LABEL_GAMEBGM);
@@ -108,7 +108,7 @@ void UpdateGame(void)
 		UpdateCamera();		// カメラの更新処理
 		UpdateWall();		// 壁の更新処理
 		UpdateGauge();		// ゲージの更新処理
-		UpdateEffect();		// エフェクトの更新処理
+		//UpdateEffect();		// エフェクトの更新処理
 
 		//ポーズ取得
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
@@ -153,7 +153,7 @@ void DrawGame(void)
 						//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 	//DrawMeshDome();		// メッシュドームの描画処理	
 	DrawWall();			// 壁の描画処理
-	DrawEffect();		// エフェクトの描画処理
+	//DrawEffect();		// エフェクトの描画処理
 	DrawPlayer();		// プレイヤーの描画処理
 	DrawGauge();		// ゲージの描画処理
 
