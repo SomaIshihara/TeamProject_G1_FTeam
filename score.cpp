@@ -6,14 +6,25 @@
 //============================================================================================
 
 #include"main.h"
+#include"color.h"
 #include"input.h"
 #include"score.h"
 
 //****************************//
 //		　 マクロ定義		  //
 //****************************//
-#define NUM_SCORE		(4)	//スコアの数
-#define NUM_PLASE		(5)	//スコア桁数
+#define NUM_SCORE		(4)		//スコアの数
+#define NUM_PLASE		(2)		//スコア桁数
+
+#define PLUS_X			(140.0f)	//スコアのプラスX座標
+#define MINUS_X			(100.0f)	//スコアのマイナスX座標
+#define WIDTH_X			(30.0f)	    //スコアの幅
+#define WIDTH_X			(30.0f)	    //スコアの幅
+#define INTERVAL_X		(300.0f)	    //スコア同士の間隔
+
+
+#define PLUS_Y			(650.0f)	//スコアのプラスX座標
+#define MINUS_Y			(600.0f)	//スコアのマイナスY座標
 
 //****************************//
 //	   グローバル変数宣言     //
@@ -39,7 +50,7 @@ void InitScore(void)
 		&g_pTextureScore);
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * NUM_PLASE * NUM_SCORE,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * VTX_MAX * NUM_PLASE * NUM_SCORE,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -49,27 +60,27 @@ void InitScore(void)
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffScore->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (nCntScore = 0; nCntScore < NUM_PLASE * NUM_SCORE; nCntScore++, pVtx += 4)
+	for (nCntScore = 0; nCntScore < NUM_PLASE * NUM_SCORE; nCntScore++, pVtx += VTX_MAX)
 	{
-		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[0].pos = ZERO_SET;
+		pVtx[1].pos = ZERO_SET;
+		pVtx[2].pos = ZERO_SET;
+		pVtx[3].pos = ZERO_SET;
 
 		pVtx[0].rhw = 1.0f;
 		pVtx[1].rhw = 1.0f;
 		pVtx[2].rhw = 1.0f;
 		pVtx[3].rhw = 1.0f;
 
-		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[0].col = RGBA_WHITE;
+		pVtx[1].col = RGBA_WHITE;
+		pVtx[2].col = RGBA_WHITE;
+		pVtx[3].col = RGBA_WHITE;
 
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(0.1f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(0.1f, 1.0f);
+		pVtx[0].tex = D3DXVECTOR2(NIL_F, NIL_F);
+		pVtx[1].tex = D3DXVECTOR2(0.1f , NIL_F);
+		pVtx[2].tex = D3DXVECTOR2(NIL_F, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(0.1f , 1.0f);
 	}
 
 	//頂点バッファをアンロック
@@ -96,7 +107,13 @@ void UninitScore(void)
 //スコア更新処理
 //=========================================================
 void UpdateScore(void)
-{}
+{
+	//ジャンプ
+	if (GetKeyboardTrigger(DIK_RETURN) == true)
+	{
+		AddScore(1, 0);
+	}
+}
 //======================================================
 //スコア描画処理
 //======================================================
@@ -119,7 +136,7 @@ void DrawScore(void)
 	for (nCntScore = 0; nCntScore < NUM_PLASE * NUM_SCORE; nCntScore++)
 	{
 		//ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntScore * 4, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntScore * VTX_MAX, 2);
 	}
 }
 //==================================================
@@ -140,25 +157,20 @@ void SetScore(int nScore, int nPlayer)
 	{
 		g_aScore[nCntPlayer] = nScore;
 
-		aTexU[nCntPlayer][0] = g_aScore[nCntPlayer] % 100000 / 10000;
-		aTexU[nCntPlayer][1] = g_aScore[nCntPlayer] % 10000 / 1000;
-		aTexU[nCntPlayer][2] = g_aScore[nCntPlayer] % 1000 / 100;
-		aTexU[nCntPlayer][3] = g_aScore[nCntPlayer] % 100 / 10;
-		aTexU[nCntPlayer][4] = g_aScore[nCntPlayer] % 10;
+		aTexU[nCntPlayer][0] = g_aScore[nCntPlayer] % 100 / 10;
+		aTexU[nCntPlayer][1] = g_aScore[nCntPlayer] % 10;
 
-		for (nCntScore = 0; nCntScore < NUM_PLASE; nCntScore++)
+		for (nCntScore = 0; nCntScore < NUM_PLASE; nCntScore++, pVtx += VTX_MAX)
 		{
-			pVtx[0].pos = D3DXVECTOR3(100.0f + (nCntScore * 40) + (nCntPlayer * 300), 600.0f, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(140.0f + (nCntScore * 40) + (nCntPlayer * 300), 600.0f, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(100.0f + (nCntScore * 40) + (nCntPlayer * 300), 650.0f, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(140.0f + (nCntScore * 40) + (nCntPlayer * 300), 650.0f, 0.0f);
+			pVtx[0].pos = D3DXVECTOR3(MINUS_X + (nCntScore * WIDTH_X) + (nCntPlayer * INTERVAL_X), MINUS_Y, NIL_F);
+			pVtx[1].pos = D3DXVECTOR3(PLUS_X  + (nCntScore * WIDTH_X) + (nCntPlayer * INTERVAL_X), MINUS_Y, NIL_F);
+			pVtx[2].pos = D3DXVECTOR3(MINUS_X + (nCntScore * WIDTH_X) + (nCntPlayer * INTERVAL_X), PLUS_Y, NIL_F);
+			pVtx[3].pos = D3DXVECTOR3(PLUS_X  + (nCntScore * WIDTH_X) + (nCntPlayer * INTERVAL_X), PLUS_Y, NIL_F);
 
-			pVtx[0].tex = D3DXVECTOR2(0.0f + (aTexU[nCntPlayer][nCntScore] * 0.1f), 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(0.1f + (aTexU[nCntPlayer][nCntScore] * 0.1f), 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(0.0f + (aTexU[nCntPlayer][nCntScore] * 0.1f), 1.0f);
-			pVtx[3].tex = D3DXVECTOR2(0.1f + (aTexU[nCntPlayer][nCntScore] * 0.1f), 1.0f);
-
-			pVtx += 4;	//頂点データのポインタを4つ分進める
+			pVtx[0].tex = D3DXVECTOR2(NIL_F + (aTexU[nCntPlayer][nCntScore] * 0.1f), NIL_F);
+			pVtx[1].tex = D3DXVECTOR2(0.1f  + (aTexU[nCntPlayer][nCntScore] * 0.1f), NIL_F);
+			pVtx[2].tex = D3DXVECTOR2(NIL_F + (aTexU[nCntPlayer][nCntScore] * 0.1f), 1.0f);
+			pVtx[3].tex = D3DXVECTOR2(0.1f  + (aTexU[nCntPlayer][nCntScore] * 0.1f), 1.0f);
 		}
 	}
 
@@ -177,16 +189,13 @@ void AddScore(int nValue, int nPlayer)
 
 	g_aScore[nPlayer] += nValue;
 
-	aTexU[nPlayer][0] = g_aScore[0] % 100000 / 10000;
-	aTexU[nPlayer][1] = g_aScore[0] % 10000 / 1000;
-	aTexU[nPlayer][2] = g_aScore[0] % 1000 / 100;
-	aTexU[nPlayer][3] = g_aScore[0] % 100 / 10;
-	aTexU[nPlayer][4] = g_aScore[0] % 10;
+	aTexU[nPlayer][0] = g_aScore[0] % 100 / 10;
+	aTexU[nPlayer][1] = g_aScore[0] % 10;
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffScore->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (nCntScore = 0; nCntScore < NUM_PLASE; nCntScore++, pVtx += 4)
+	for (nCntScore = 0; nCntScore < NUM_PLASE; nCntScore++, pVtx += VTX_MAX)
 	{
 		pVtx[0].tex = D3DXVECTOR2(0.0f + (aTexU[nPlayer][nCntScore] * 0.1f), 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(0.1f + (aTexU[nPlayer][nCntScore] * 0.1f), 0.0f);
