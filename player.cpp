@@ -21,7 +21,6 @@
 #define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度7.7f
 #define ACCELERATION_GRAVITY (9.8f)		//重力加速度
 #define PLAYER_WEIGHT		(50)		//質量
-#define PLAYER_POWER_LEVEL	(3)			//パワーレベル
 #define PLAYER_POWER_ADD	(0.01f)		//移動の強さの増加値
 #define DUMP_COEF			(0.04f)		//減衰係数
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)	//[デバッグ用]普通に移動するときの移動量
@@ -29,6 +28,7 @@
 
 #define TEST_SIZE_WIDTH		(15.0f)
 #define TEST_SIZE_HEIGHT	(15.0f)
+#define TEST_SIZE_DEPTH		(15.0f)
 
 //ダッシュ関連マクロ
 
@@ -126,6 +126,7 @@ void UpdatePlayer(void)
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < 1; nCntPlayer++)
 	{
+		g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
 		//現在の位置を前回の位置にする
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
 		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
@@ -161,10 +162,6 @@ void UpdatePlayer(void)
 					g_aPlayer[nCntPlayer].move.x = -sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
 					g_aPlayer[nCntPlayer].move.z = -cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
 
-
-					g_aPlayer[nCntPlayer].move.y = PLAYER_JUMP_SPEED * g_aPlayer[nCntPlayer].moveGauge;//移動量設定
-					g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
-
 					g_aPlayer[nCntPlayer].moveGauge = 0;
 				}
 			}
@@ -176,7 +173,7 @@ void UpdatePlayer(void)
 			//ジャンプ
 			if (GetKeyboardTrigger(DIK_RETURN) == true)
 			{
-				g_aPlayer[nCntPlayer].move.y = PLAYER_JUMP_SPEED;//移動量設定
+				g_aPlayer[nCntPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
 			}
 #endif
@@ -210,20 +207,17 @@ void UpdatePlayer(void)
 			//ジャンプ
 			if (GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true)
 			{
-				g_aPlayer[nCntPlayer].move.y = PLAYER_JUMP_SPEED;//移動量設定
+				g_aPlayer[nCntPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
 			}
 
-			//ボタン操作に応じてプレイヤー移動 - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
-			g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
-			g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
-			g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
+			//ジャンプ量設定
+			g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 
-			//[仮]一旦Y=0.0fになったら着地
-			if (g_aPlayer[nCntPlayer].pos.y <= 0.0f)
-			{
-				g_aPlayer[nCntPlayer].pos.y = 0.0f;
-			}
+			////ボタン操作に応じてプレイヤー移動
+			//g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
+			//g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
+			//g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
 
 			//[デバッグ用]普通に移動する処理
 			MovePlayer(nCntPlayer);
@@ -231,18 +225,52 @@ void UpdatePlayer(void)
 			//当たり判定類
 			CollisionPP(nCntPlayer);
 
-			//移動量減衰
-			g_aPlayer[nCntPlayer].move.x += (0 - g_aPlayer[nCntPlayer].move.x) * DUMP_COEF;
-			//g_aPlayer[nCntPlayer].move.y += (0 - g_aPlayer[nCntPlayer].move.y) * DUMP_COEF;
-			g_aPlayer[nCntPlayer].move.z += (0 - g_aPlayer[nCntPlayer].move.z) * DUMP_COEF;
-
-			
-
 			//影位置設定
 			//一旦なし
 
 			//デバッグ表示（強さ表示）
 			PrintDebugProc("[%d]:Power = %f\n", nCntPlayer, g_aPlayer[nCntPlayer].moveGauge);
+		}
+	}
+
+	//移動量と衝突判定をもとに移動する
+	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+	{
+		if (true)
+		{//判定入れたければ入れて
+			if (g_aPlayer[nCntPlayer].lastAtkPlayer == -1)
+			{//ぶつかってないまたは移動量交換済み
+				//普通に移動
+				g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
+				g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
+				g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
+			}
+			else
+			{//ぶつかった
+				//移動量交換
+				D3DXVECTOR3 moveTmp = g_aPlayer[nCntPlayer].move;
+				g_aPlayer[nCntPlayer].move = g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move;
+				g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move = moveTmp;
+
+				//移動量交換済み扱いにする
+				g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
+				g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].lastAtkPlayer = -1;
+
+				//普通に移動
+				g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
+				g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
+				g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
+			}
+
+			//移動量減衰
+			g_aPlayer[nCntPlayer].move.x += (0 - g_aPlayer[nCntPlayer].move.x) * DUMP_COEF;
+			g_aPlayer[nCntPlayer].move.z += (0 - g_aPlayer[nCntPlayer].move.z) * DUMP_COEF;
+
+			//[仮]一旦Y=0.0fになったら着地
+			if (g_aPlayer[nCntPlayer].pos.y <= 0.0f)
+			{
+				g_aPlayer[nCntPlayer].pos.y = 0.0f;
+			}
 		}
 	}
 }
@@ -425,7 +453,7 @@ void CollisionPP(int nPlayerNum)
 			//-pos0---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
 			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - TEST_SIZE_HEIGHT);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - TEST_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -441,7 +469,7 @@ void CollisionPP(int nPlayerNum)
 			//-pos1---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
 			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - TEST_SIZE_HEIGHT);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - TEST_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -457,7 +485,7 @@ void CollisionPP(int nPlayerNum)
 			//-pos2---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
 			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_HEIGHT);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -473,7 +501,7 @@ void CollisionPP(int nPlayerNum)
 			//-pos3---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
 			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_HEIGHT);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -525,24 +553,38 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaARight / fAreaBRight >= 0.0f && fAreaARight / fAreaBRight <= 1.0f)
 				{
-					//1.0f = pushback
-					float fRate = fAreaARight / fAreaBRight;
-					g_aPlayer[nPlayerNum].pos.x = pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					g_aPlayer[nPlayerNum].pos.z = pos0.z + (vecLineRight.z * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					break;
+					if (g_aPlayer[nPlayerNum].pos.y >= g_aPlayer[nCntOtherPlayer].pos.y && g_aPlayer[nPlayerNum].pos.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					{
+						if (g_aPlayer[nPlayerNum].move.x > 0.0f && g_aPlayer[nPlayerNum].move.z > 0.0f)
+						{//動いてる
+							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+						}
+						//1.0f = pushback
+						float fRate = fAreaARight / fAreaBRight;
+						g_aPlayer[nPlayerNum].pos.x = pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+						g_aPlayer[nPlayerNum].pos.z = pos0.z + (vecLineRight.z * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+						break;
+					}
 				}
 			}
 			else if ((vecLineLeft.z * vecToPosLeft.x) - (vecLineLeft.x * vecToPosLeft.z) <= 0.0f && (vecLineLeft.z * vecToPosOldLeft.x) - (vecLineLeft.x * vecToPosOldLeft.z) >= 0.0f)
 			{
 				if (fAreaALeft / fAreaBLeft >= 0.0f && fAreaALeft / fAreaBLeft <= 1.0f)
 				{
-					float fRate = fAreaALeft / fAreaBLeft;
-					g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					g_aPlayer[nPlayerNum].pos.z = pos2.z + (vecLineLeft.z * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					break;
+					if (g_aPlayer[nPlayerNum].pos.y >= g_aPlayer[nCntOtherPlayer].pos.y && g_aPlayer[nPlayerNum].pos.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					{
+						if (g_aPlayer[nPlayerNum].move.x > 0.0f && g_aPlayer[nPlayerNum].move.z > 0.0f)
+						{//動いてる
+							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+						}
+						float fRate = fAreaALeft / fAreaBLeft;
+						g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+						g_aPlayer[nPlayerNum].pos.z = pos2.z + (vecLineLeft.z * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+						break;
+					}
 				}
 			}
-
+			
 			//Z
 			//面積求める
 			fAreaAUp = TASUKIGAKE(vecToPosUp.x, vecToPosUp.z, vecMoveLeft.x, vecMoveLeft.z);
@@ -555,20 +597,34 @@ void CollisionPP(int nPlayerNum)
 			{
 				if (fAreaAUp / fAreaBUp >= 0.0f && fAreaAUp / fAreaBUp <= 1.0f)
 				{
-					float fRate = fAreaAUp / fAreaBUp;
-					g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					g_aPlayer[nPlayerNum].pos.z = pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					break;
+					if (g_aPlayer[nPlayerNum].pos.y >= g_aPlayer[nCntOtherPlayer].pos.y && g_aPlayer[nPlayerNum].pos.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					{
+						if (g_aPlayer[nPlayerNum].move.x > 0.0f && g_aPlayer[nPlayerNum].move.z > 0.0f)
+						{//動いてる
+							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+						}
+						float fRate = fAreaAUp / fAreaBUp;
+						g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+						g_aPlayer[nPlayerNum].pos.z = pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+						break;
+					}
 				}
 			}
 			else if ((vecLineDown.z * vecToPosDown.x) - (vecLineDown.x * vecToPosDown.z) <= 0.0f && (vecLineDown.z * vecToPosOldDown.x) - (vecLineDown.x * vecToPosOldDown.z) >= 0.0f)
 			{
 				if (fAreaADown / fAreaBDown >= 0.0f && fAreaADown / fAreaBDown <= 1.0f)
 				{
-					float fRate = fAreaADown / fAreaBDown;
-					g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					g_aPlayer[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-					break;
+					if (g_aPlayer[nPlayerNum].pos.y >= g_aPlayer[nCntOtherPlayer].pos.y && g_aPlayer[nPlayerNum].pos.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+					{
+						if (g_aPlayer[nPlayerNum].move.x > 0.0f && g_aPlayer[nPlayerNum].move.z > 0.0f)
+						{//動いてる
+							g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
+						}
+						float fRate = fAreaADown / fAreaBDown;
+						g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+						g_aPlayer[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+						break;
+					}
 				}
 			}
 		}
