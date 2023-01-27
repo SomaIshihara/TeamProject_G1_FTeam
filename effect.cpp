@@ -11,7 +11,7 @@
 #include "player.h"
 
 //テクスチャの情報
-#define NUM_EFFECT				(1)									//テクスチャの最大数
+#define NUM_EFFECT				(2)									//テクスチャの最大数
 
 const char *c_pFileNameEffect[] =
 {
@@ -49,38 +49,38 @@ void InitEffect(void)
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_3D) * 4,
+		sizeof(VERTEX_3D) * VTX_MAX * NUM_EFFECT,
 		D3DUSAGE_WRITEONLY, FVF_VERTEX_3D,
 		D3DPOOL_MANAGED, &g_pVtxBuffEffect, NULL);
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx+=4)
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
 		//頂点座標の設定
-		pVtx[0].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x - 40.0f, g_Effect[nCntEffect].pos.y + 40.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x + 40.0f, g_Effect[nCntEffect].pos.y + 40.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x - 40.0f, g_Effect[nCntEffect].pos.y - 40.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(g_Effect[nCntEffect].pos.x + 40.0f, g_Effect[nCntEffect].pos.y - 40.0f, 0.0f);
+		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-40.0f, +40.0f, 0.0f);
+		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+40.0f, +40.0f, 0.0f);
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-40.0f, -40.0f, 0.0f);
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+40.0f, -40.0f, 0.0f);
 
 		//nor(法線)の設定
-		pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[VTX_RI_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[VTX_LE_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[0].col = RGBA_RED;
-		pVtx[1].col = RGBA_RED;
-		pVtx[2].col = RGBA_RED;
-		pVtx[3].col = RGBA_RED;
+		pVtx[VTX_LE_UP].col = RGBA_RED;
+		pVtx[VTX_RI_UP].col = RGBA_RED;
+		pVtx[VTX_LE_DO].col = RGBA_RED;
+		pVtx[VTX_RI_DO].col = RGBA_RED;
 
 		//テクスチャ頂点座標の設定
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);
+		pVtx[VTX_RI_UP].tex = D3DXVECTOR2(1.0f, 0.0f);
+		pVtx[VTX_LE_DO].tex = D3DXVECTOR2(0.0f, 1.0f);
+		pVtx[VTX_RI_DO].tex = D3DXVECTOR2(1.0f, 1.0f);
 	}
 
 	g_pVtxBuffEffect->Unlock();
@@ -114,14 +114,13 @@ void UninitEffect(void)
 //=================================
 void UpdateEffect(void)
 {
-	Player pPlayer = *GetPlayer();
-	
+	Player *pPlayer = GetPlayer();
 
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
-	{
-		g_Effect[nCntEffect].pos= pPlayer.pos;
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pPlayer++)
+	{	
+		//エフェクトの位置をプレイヤーの位置にする
+		g_Effect[nCntEffect].pos = pPlayer->pos;
 	}
-
 }
 
 //=================================
@@ -129,11 +128,8 @@ void UpdateEffect(void)
 //=================================
 void DrawEffect(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスの取得
 	D3DXMATRIX  mtxTrans, mtxView;			//計算用マトリックス
-
-											//デバイスの取得
-	pDevice = GetDevice();
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 	{
@@ -175,15 +171,14 @@ void DrawEffect(void)
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
 		//テクスチャの設定
-		pDevice->SetTexture(0, g_pTextureEffect[nCntEffect]);
+		pDevice->SetTexture(0, g_pTextureEffect[0]);
 
 		//描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntEffect, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, VTX_MAX * nCntEffect, 2);
 
 		//Zテストを有効にする
 		pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 		pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-
 
 		//アルファテストを無効にする
 		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
