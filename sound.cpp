@@ -43,6 +43,10 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{ "data/SE/Uribou.wav",			SOUND_ONCE, 1.0f },		// コントローラー接続SE
 	{ "data/SE/Title_Decide.wav",	SOUND_ONCE, 0.6f },		// タイトルの決定SE
 	{ "data/SE/Collision.wav",		SOUND_ONCE, 0.6f },		// プレイヤー同士の衝突音SE
+	{ "data/SE/Energy.wav",			SOUND_ONCE, 0.6f },		// プレイヤー1のゲージ充填音
+	{ "data/SE/Energy.wav",			SOUND_ONCE, 0.6f },		// プレイヤー2のゲージ充填音
+	{ "data/SE/Energy.wav",			SOUND_ONCE, 0.6f },		// プレイヤー3のゲージ充填音
+	{ "data/SE/Energy.wav",			SOUND_ONCE, 0.6f },		// プレイヤー4のゲージ充填音
 };
 
 //=============================================================================

@@ -16,6 +16,7 @@
 #include <assert.h>
 #include "color.h"
 #include "Gauge.h"
+#include "sound.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度20.0f
@@ -154,6 +155,11 @@ void UpdatePlayer(void)
 					if (g_aPlayer[nCntPlayer].moveGauge >= PLAYER_POWER_MAX)
 					{
 						g_aPlayer[nCntPlayer].moveGauge = PLAYER_POWER_MAX;
+						StopSound(SOUND_LABEL_SE_ENERGY_00);
+					}
+					if (g_aPlayer[nCntPlayer].moveGauge <= PLAYER_POWER_ADD)
+					{
+						PlaySound(SOUND_LABEL_SE_ENERGY_00);
 					}
 				}
 				else if (GetKeyboardRelease(DIK_SPACE) == true)
@@ -185,9 +191,15 @@ void UpdatePlayer(void)
 				if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == true)
 				{//Aボタンが押された
 					g_aPlayer[nCntPlayer].moveGauge += PLAYER_POWER_ADD;
+
 					if (g_aPlayer[nCntPlayer].moveGauge >= PLAYER_POWER_MAX)
 					{
 						g_aPlayer[nCntPlayer].moveGauge = PLAYER_POWER_MAX;
+						StopSound(SOUND_LABEL_SE_ENERGY_00);
+					}
+					if (g_aPlayer[nCntPlayer].moveGauge <= PLAYER_POWER_ADD)
+					{
+						PlaySound(SOUND_LABEL_SE_ENERGY_00);
 					}
 				}
 				else if (GetGamepadRelease(nCntPlayer, XINPUT_GAMEPAD_X) == true)

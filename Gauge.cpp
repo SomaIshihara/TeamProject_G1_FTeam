@@ -10,6 +10,7 @@ Author:大宮愛羅
 #include "player.h"
 #include "input.h"
 #include "color.h"
+#include "sound.h"
 
 //マクロ定義 
 #define NUM_GAUGE		(GAUGETYPE_MAX * MAX_USE_GAMEPAD)	//ゲージ４人分の全体数
