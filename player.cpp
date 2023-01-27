@@ -21,7 +21,7 @@
 #define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度7.7f
 #define ACCELERATION_GRAVITY (9.8f)		//重力加速度
 #define PLAYER_WEIGHT		(50)		//質量
-#define PLAYER_POWER_ADD	(0.01f)		//移動の強さの増加値
+#define PLAYER_POWER_ADD	(0.03f)		//移動の強さの増加値
 #define DUMP_COEF			(0.04f)		//減衰係数
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)	//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE		(1)			//小数点第何位まで移動していることにするか
@@ -125,7 +125,7 @@ void UpdatePlayer(void)
 	PrintDebugProc("[パラメータ]\n");
 
 	//プレイヤー人数分繰り返す
-	for (int nCntPlayer = 0; nCntPlayer < 1; nCntPlayer++)
+	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
 		g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
 		//現在の位置を前回の位置にする
