@@ -14,11 +14,6 @@ Author:‘å‹{ˆ¤—…
 typedef struct
 {
 	D3DXVECTOR3 pos;		//ˆÊ’u
-	D3DCOLOR col;			//F	
-	float fGaugeWidth;		//ƒQ[ƒW‚Ì•
-	float fWidth;			//•(˜gA”wŒi)
-	float fHeight;			//‚‚³(˜gA”wŒi)
-	int nType;				//í—Ş
 	bool bUse;				//g—p‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 } Gauge;
 

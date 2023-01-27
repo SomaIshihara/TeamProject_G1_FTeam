@@ -12,20 +12,15 @@ Author:大宮愛羅
 #include "color.h"
 
 //マクロ定義 
+#define NUM_GAUGE		(GAUGETYPE_MAX * MAX_USE_GAMEPAD)	//ゲージ４人分の全体数
 
 //初期化関連
-#define MIN_POS			(0.0f)		//位置の初期値
 #define MIN_COL			(0.0f)		//色の初期値
-#define GAUGE_WIDTH		(50.0f)		//ゲージ幅の初期値
-#define SMALL_WIDTH		(200.0f)	//幅の初期値
-#define SMALL_HEIGHT	(200.0f)	//高さの初期値
 
-//位置関連
-#define MAX_WIDTH	(400.0f)	//幅の最大値
-#define MIN_WIDTH	(50.0f)		//幅の最小値
-#define MAX_HEIGHT	(680.0f)	//高さの最大値
-#define MIN_HEIGHT	(650.0f)	//高さの最小値
-#define MIN_DEPTH	(0.0f)		//奥行きの最小値
+//幅のマクロ定義
+#define GAUGE_WIDTH		(200.0f)	//ゲージ幅の初期値
+#define GAUGE_HEIGHT	(50.0f)		//高さの最小値
+#define MIN_DEPTH		(0.0f)		//奥行きの最小値
 
 //rhw関連
 #define MAX_RHW		(1.0f)	//rhwの最大値
@@ -53,15 +48,21 @@ Author:大宮愛羅
 //グローバル変数	
 LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffGauge = NULL;						//バッファへのポインタ
 LPDIRECT3DTEXTURE9      g_pTextureGauge[GAUGETYPE_MAX] = {};		//テクスチャへのポインタ(ゲージ分)
-Gauge					g_Gauge[GAUGETYPE_MAX];						//ゲージ情報		
+Gauge					g_Gauge[GAUGETYPE_MAX];						//ゲージ情報
+
+const D3DXVECTOR3       g_Pos[MAX_USE_GAMEPAD] =					//ゲージの位置
+{
+	D3DXVECTOR3(40.0f,650.0f,0.0f),
+	D3DXVECTOR3(280.0f,650.0f,0.0f),
+	D3DXVECTOR3(520.0f,650.0f,0.0f),
+	D3DXVECTOR3(760.0f,650.0f,0.0f),
+};
 
 //初期化処理
 void InitGauge(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;		//デバイスへのポインタ取得
-
-	//デバイスの取得
-	pDevice = GetDevice();
+	//ポインター取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,			//==============
@@ -75,20 +76,9 @@ void InitGauge(void)
 	D3DXCreateTextureFromFile(pDevice,			//==============
 		"data\\TEXTURE\\GaugeFrame.png",		//ゲージの枠
 		&g_pTextureGauge[GAUGETYPE_FRAME]);		//===========
-	
-	//ゲージ情報の初期化処理
-	for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++)
-	{
-		g_Gauge[nCntGauge].pos = D3DXVECTOR3(MIN_POS, MIN_POS, MIN_POS);
-		g_Gauge[nCntGauge].col = D3DXCOLOR(MIN_COL, MIN_COL, MIN_COL, MIN_COL);
-		g_Gauge[nCntGauge].fGaugeWidth = GAUGE_WIDTH;
-		g_Gauge[nCntGauge].fWidth = SMALL_WIDTH;
-		g_Gauge[nCntGauge].fHeight = SMALL_HEIGHT;
-		g_Gauge[nCntGauge].bUse = false;
-	}
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * MAX_USE_GAMEPAD * VTX_MAX * GAUGETYPE_MAX, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * VTX_MAX * NUM_GAUGE, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 
 	//ポインタを設定
 	VERTEX_2D *pVtx;
@@ -96,21 +86,26 @@ void InitGauge(void)
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffGauge->Lock(0, 0, (void **)&pVtx, 0);
 
-	for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++, pVtx += VTX_MAX)
+	//４人全員のゲージの頂点情報初期化
+	for (int nCntGauge = 0; nCntGauge < NUM_GAUGE; nCntGauge++, pVtx += VTX_MAX)
 	{//ゲージ分
+		int nCntPlayer = nCntGauge / GAUGETYPE_MAX;		//何番目のプレイヤーの情報かを格納する
+
+		g_Gauge[nCntPlayer].pos = g_Pos[nCntPlayer];	//位置を初期化
+
 		//頂点座標の設定
-		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(MIN_WIDTH, MIN_HEIGHT, MIN_DEPTH);	//左上
-		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(MAX_WIDTH, MIN_HEIGHT, MIN_DEPTH);	//右上
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(MIN_WIDTH, MAX_HEIGHT, MIN_DEPTH);	//左下
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(MAX_WIDTH, MAX_HEIGHT, MIN_DEPTH);	//右下
+		pVtx[VTX_LE_UP].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//左上
+		pVtx[VTX_RI_UP].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(GAUGE_WIDTH, 0.0f, 0.0f);	//右上
+		pVtx[VTX_LE_DO].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);	//左下
+		pVtx[VTX_RI_DO].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(GAUGE_WIDTH, GAUGE_HEIGHT, 0.0f);	//右下
 
 		if (nCntGauge % GAUGETYPE_MAX == GAUGETYPE_NORMAL)
 		{//ゲージ本体が読み込まれた時
 			//頂点座標の設定
-			pVtx[VTX_LE_UP].pos = D3DXVECTOR3(GAUGE_WIDTH, MIN_HEIGHT, MIN_DEPTH);
-			pVtx[VTX_RI_UP].pos = D3DXVECTOR3(GAUGE_WIDTH, MIN_HEIGHT, MIN_DEPTH);
-			pVtx[VTX_LE_DO].pos = D3DXVECTOR3(GAUGE_WIDTH, MAX_HEIGHT, MIN_DEPTH);
-			pVtx[VTX_RI_DO].pos = D3DXVECTOR3(GAUGE_WIDTH, MAX_HEIGHT, MIN_DEPTH);
+			pVtx[VTX_LE_UP].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			pVtx[VTX_RI_UP].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			pVtx[VTX_LE_DO].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);
+			pVtx[VTX_RI_DO].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);
 		}
 								
 		//rhwの設定
@@ -167,10 +162,10 @@ void UpdateGauge(void)
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffGauge->Lock(0, 0, (void **)&pVtx, 0);
 
-	//
+	//プレイヤー１のゲージにポインタを合わせる
 	pVtx += VTX_MAX;
 
-	for (int nCntGauge = 0; nCntGauge < MAX_USE_GAMEPAD; nCntGauge++, pPlayer++, pVtx += (VTX_MAX * GAUGETYPE_MAX))
+	for (int nCntGauge = 0; nCntGauge < MAX_USE_GAMEPAD; nCntGauge++, pPlayer++, pVtx += NUM_GAUGE)
 	{//ゲージ分
 		//計算(今のゲージ量　/　最大ゲージ量)
 		float Parcent = pPlayer->moveGauge / 2.25f;
@@ -221,10 +216,10 @@ void UpdateGauge(void)
 		}
 		
 		//頂点座標の設定
-		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(GAUGE_WIDTH, MIN_HEIGHT, MIN_DEPTH);				//左上
-		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(MAX_WIDTH * Parcent, MIN_HEIGHT, MIN_DEPTH);		//右上
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(GAUGE_WIDTH, MAX_HEIGHT, MIN_DEPTH);				//左下
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(MAX_WIDTH * Parcent, MAX_HEIGHT, MIN_DEPTH);		//右下		
+		pVtx[VTX_LE_UP].pos.x = g_Gauge[nCntGauge].pos.x + 0.0f;					//左上
+		pVtx[VTX_RI_UP].pos.x = g_Gauge[nCntGauge].pos.x + GAUGE_WIDTH * Parcent;	//右上
+		pVtx[VTX_LE_DO].pos.x = g_Gauge[nCntGauge].pos.x + 0.0f;					//左下
+		pVtx[VTX_RI_DO].pos.x = g_Gauge[nCntGauge].pos.x + GAUGE_WIDTH * Parcent;	//右下		
 	}
 
 	//頂点バッファをロックする
@@ -234,10 +229,8 @@ void UpdateGauge(void)
 //描画処理
 void DrawGauge(void)
 {
-	LPDIRECT3DDEVICE9 pDevice;		//デバイスへのポインタ
-
-	//デバイスの取得
-	pDevice = GetDevice();
+	//ポインター取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffGauge, 0, sizeof(VERTEX_2D));
@@ -245,12 +238,12 @@ void DrawGauge(void)
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++)
+	for (int nCntGauge = 0; nCntGauge < NUM_GAUGE; nCntGauge++)
 	{//ゲージ分
 		//テクスチャの設定
-		pDevice->SetTexture(0, g_pTextureGauge[nCntGauge]);
+		pDevice->SetTexture(0, g_pTextureGauge[nCntGauge % GAUGETYPE_MAX]);
 
 		//ポリゴンの描画	
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntGauge * 4, 2);
+		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntGauge * VTX_MAX, 2);
 	}
 }
