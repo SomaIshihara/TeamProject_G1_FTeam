@@ -48,6 +48,7 @@ struct Player
 	D3DXVECTOR3 rot;		//向き
 	float moveGauge;		//移動量(ダッシュ)
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
+	bool bJump;				//ジャンプしているかどうか
 
 	//衝突関係
 	D3DXVECTOR3 faceCollider[2];	//当たり判定
@@ -58,6 +59,10 @@ struct Player
 	int nScore;				//得点
 	int nNumHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
 	PLAYERSTAT stat;		//状態
+
+	//アイテム類
+	int nATKItemTime;		//はじき強化アイテムの持続時間
+	int nDEFItemTime;		//押し合い強化アイテムの持続時間
 
 	//描画類
 	Model model;			//使用モデル
