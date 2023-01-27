@@ -16,6 +16,7 @@ typedef enum
 {
 	SOUND_LABEL_SE_CONNECT = 0,		// コントローラー接続時の効果音
 	SOUND_LABEL_SE_TITLE_DECIDE,	// タイトル画面の決定音
+	SOUND_LABEL_SE_COLLISION,		// プレイヤー同士の衝突音
 	SOUND_LABEL_MAX,
 } SOUND_LABEL;
 
