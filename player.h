@@ -49,6 +49,7 @@ struct Player
 	float moveGauge;		//移動量(ダッシュ)
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 	bool bJump;				//ジャンプしているかどうか
+	bool bHipDrop;			//ヒップドロップしているかどうか
 
 	//衝突関係
 	D3DXVECTOR3 faceCollider[2];	//当たり判定

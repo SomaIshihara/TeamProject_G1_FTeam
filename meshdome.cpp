@@ -119,7 +119,7 @@ void SetMeshDomeVertexBuffer(void)
 			pVtx[nNumVtx].col = XCOL_WHITE;
 			pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 0.0f);
 			nNumVtx++;
-
+			
 			//角度を　全体の角度÷分割数で割った答え分、引く
 			rot_Y -= ONE_LAP / MESHDOME_SPLIT;
 		}
