@@ -178,8 +178,7 @@ void UpdatePlayer(void)
 					}
 
 					SetEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer, EFFECTTYPE_CHARGE);
-
-					UpdateEffectSize(nCntPlayer);
+					//UpdateEffectSize(nCntPlayer);
 				}
 				else if (GetKeyboardRelease(DIK_SPACE) == true)
 				{//SPACEキーが離された
@@ -221,6 +220,9 @@ void UpdatePlayer(void)
 					{
 						PlaySound(SOUND_LABEL_SE_ENERGY_00);
 					}
+
+					SetEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer, EFFECTTYPE_CHARGE);
+
 				}
 				else if (GetGamepadRelease(nCntPlayer, XINPUT_GAMEPAD_X) == true)
 				{//Aボタンが離された
