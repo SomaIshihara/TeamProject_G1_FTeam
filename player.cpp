@@ -865,7 +865,7 @@ void DownPlayer(int nDownPlayerNum)
 			if (nCntOtherPlayer != nDownPlayerNum)
 			{
 				g_aPlayer[nCntOtherPlayer].nScore++;
-				SetScore(g_aPlayer[nCntOtherPlayer].nScore, nCntOtherPlayer);
+				AddScore(g_aPlayer[nCntOtherPlayer].nScore, nCntOtherPlayer);
 			}
 		}
 	}
