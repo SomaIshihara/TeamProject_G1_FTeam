@@ -52,6 +52,9 @@ void InitCamera(void)
 		g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT / 2;					//画面高さ初期化
 		g_Camera[nCntCamera].viewport.MinZ = 0.0f;
 		g_Camera[nCntCamera].viewport.MaxZ = 1.0f;
+
+		//注視点の位置更新
+		UpdatePosVCamera(nCntCamera);
 	}
 }
 
@@ -64,18 +67,8 @@ void UninitCamera(void)
 //カメラの更新処理
 void UpdateCamera(void)
 {
-#ifdef _DEBUG
-	//カメラの移動処理を読み込む
+	//カメラの移動処理
 	MoveCamera();
-#endif // _DEBUG
-
-	//プレイヤー情報取得
-	Player *pPlayer = GetPlayer();
-
-	for (int nCntCamera = 0; nCntCamera < MAX_USE_GAMEPAD; nCntCamera++, pPlayer++)
-	{
-		g_Camera[nCntCamera].posR = pPlayer->pos;
-	}
 }
 
 //カメラの設定処理
@@ -110,6 +103,7 @@ void MoveCamera(void)
 {
 	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
 	{
+#ifdef _DEBUG
 		//視点の上下
 		if (GetKeyboardPress(DIK_T) == true)
 		{
@@ -139,8 +133,9 @@ void MoveCamera(void)
 		{
 			g_Camera[nCntCamera].rot.y += POSV_ROTSPEED;
 		}
+#endif // _DEBUG
 
-		//視点の位置更新
+		//注視点の位置更新
 		UpdatePosVCamera(nCntCamera);
 	}
 }
@@ -148,9 +143,18 @@ void MoveCamera(void)
 //視点の位置更新
 void UpdatePosVCamera(int nCntCamera)
 {
+	//プレイヤー情報取得
+	Player *pPlayer = GetPlayer();
+
+	//対象のプレイヤーに注視点を合わせる
+	pPlayer += nCntCamera;
+
+	g_Camera[nCntCamera].posR = pPlayer->pos;
+
 	//視点の位置更新
 	g_Camera[nCntCamera].posV.x = g_Camera[nCntCamera].posR.x + sinf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;
 	g_Camera[nCntCamera].posV.z = g_Camera[nCntCamera].posR.z + cosf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;
+	g_Camera[nCntCamera].posV.y += pPlayer->move.y;
 }
 
 //カメラの取得

@@ -161,6 +161,7 @@
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="bonus.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="camera_frame.cpp" />
     <ClCompile Include="debucproc.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="fade.cpp" />
@@ -185,6 +186,7 @@
   <ItemGroup>
     <ClInclude Include="bg.h" />
     <ClInclude Include="bonus.h" />
+    <ClInclude Include="camera_frame.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="debugproc.h" />
