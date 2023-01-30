@@ -15,13 +15,13 @@
 #define NUM_EFFECT				(4)			//テクスチャの最大数
 
 #define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
-#define EFFECT_CHARGE_MOVE		(1.0f)		//エフェクトのチャージタイプの変化量
+#define EFFECT_CHARGE_MOVE		(2.0f)		//エフェクトのチャージタイプの変化量
 #define EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
 
 //テクスチャのパス名
 const char *c_pFileNameEffect[EFFECTTYPE_MAX] =
 {
-	"data\\TEXTURE\\charge_effect001.png",
+	"data\\TEXTURE\\charge_effect002.png",
 	"data\\TEXTURE\\AttackEffect.png",
 };
 
@@ -158,11 +158,11 @@ void UpdateEffectSize(int nEffect)
 	{
 	case EFFECTTYPE_CHARGE:
 	{
-		//エフェクトの大きさを縮小
-		g_Effect[nEffect].fSize -= EFFECT_CHARGE_MOVE;
+		//エフェクトの大きさを拡大
+		g_Effect[nEffect].fSize += EFFECT_CHARGE_MOVE;
 
 		//エフェクトの大きさがゼロになった
-		if (g_Effect[nEffect].fSize <= 0.0f)
+		if (g_Effect[nEffect].fSize >= EFFECT_SIZE)
 		{
 			//エフェクト本来の大きさに直す
 			g_Effect[nEffect].fSize = EFFECT_SIZE;
@@ -298,7 +298,7 @@ void SetEffect(D3DXVECTOR3 pos, int nCntEffect, EFFECTTYPE type)
 		//種類がチャージ
 		if (type == EFFECTTYPE_CHARGE)
 		{
-			g_Effect[nCntEffect].fSize = EFFECT_SIZE;		//サイズを初期化
+			g_Effect[nCntEffect].fSize = 0.0f;		//サイズを初期化
 		}
 
 		//種類が当たった時のもの
