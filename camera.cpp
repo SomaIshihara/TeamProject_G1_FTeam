@@ -154,7 +154,6 @@ void UpdatePosVCamera(int nCntCamera)
 	//視点の位置更新
 	g_Camera[nCntCamera].posV.x = g_Camera[nCntCamera].posR.x + sinf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;
 	g_Camera[nCntCamera].posV.z = g_Camera[nCntCamera].posR.z + cosf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;
-	g_Camera[nCntCamera].posV.y += pPlayer->move.y;
 }
 
 //カメラの取得
