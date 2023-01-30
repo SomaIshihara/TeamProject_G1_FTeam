@@ -84,6 +84,7 @@ int g_counterKeyInfo;
 int g_counterKey;
 int g_counterReadTexture;
 int g_counterReadModel;		//モデルビューワー・モーションビューワー共通で使用可
+int g_counterReadCamera;	//カメラの数カウント
 int g_counterReadLight;
 int g_counterReadAnimal;
 int g_nIdxParts;
@@ -117,6 +118,7 @@ void InitFile(void)
 	g_counterKey = 0;
 	g_counterReadTexture = 0;
 	g_counterReadModel = 0;
+	g_counterReadCamera = 0;
 	g_counterReadLight = 0;
 	g_counterReadAnimal = 0;
 	g_nIdxParts = -1;
@@ -287,8 +289,9 @@ void LoadModelViewerFile(const char *path)
 					if (strncmp(&aCode[0], CODE_END_CAMERASET, sizeof CODE_END_CAMERASET / sizeof(char) - 1) == 0)
 					{
 						//カメラ設定
-						SetCameraPos(g_readCamera.posV, g_readCamera.posR);
+						SetCameraPos(g_readCamera.posV, g_readCamera.posR, g_counterReadCamera);
 						g_readStat = READSTAT_NONE;
+						g_counterReadCamera++;		//加算
 					}
 					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
 					{

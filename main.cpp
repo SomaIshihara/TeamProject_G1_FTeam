@@ -438,12 +438,16 @@ void Update(void)
 //========================
 void Draw(void)
 {
+	D3DVIEWPORT9 viewportDef;
+
 	//画面クリア（バックバッファとZバッファのクリア
 	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), RGBA_RIGHTBLUE, 1.0f, 0);
 
 	//描画開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{//成功した場合
+		//現在のビューポート取得
+		g_pD3DDevice->GetViewport(&viewportDef);
 
 #ifdef _DEBUG
 	 //FPSを文字にして送る
@@ -468,11 +472,14 @@ void Draw(void)
 			break;
 		}
 
+		//ビューポートを元に戻す
+		g_pD3DDevice->SetViewport(&viewportDef);
+
 		//フェードの描画処理
 		DrawFade();
 
 		//デバッグ表示
-		DrawDebugProc();
+		//DrawDebugProc();
 
 		//描画終了処理
 		g_pD3DDevice->EndScene();

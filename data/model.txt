@@ -30,7 +30,22 @@ MODEL_FILENAME = data/MODEL/stone000.x				# [0]岩(小)
 # カメラ情報
 #------------------------------------------------------------------------------
 CAMERASET
-	POS = 0.0 1050.0 1000.0			# 視点
+	POS = 0.0 400.0 500.0			# 視点
+	REF = 0.0 0.0 0.0				# 注視点
+END_CAMERASET
+
+CAMERASET
+	POS = 0.0 400.0 500.0			# 視点
+	REF = 0.0 0.0 0.0				# 注視点
+END_CAMERASET
+
+CAMERASET
+	POS = 0.0 400.0 500.0			# 視点
+	REF = 0.0 0.0 0.0				# 注視点
+END_CAMERASET
+
+CAMERASET
+	POS = 0.0 400.0 500.0			# 視点
 	REF = 0.0 0.0 0.0				# 注視点
 END_CAMERASET
 
