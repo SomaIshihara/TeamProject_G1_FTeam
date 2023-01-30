@@ -17,6 +17,7 @@
 #include "color.h"
 #include "Gauge.h"
 #include "sound.h"
+#include "effect.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度20.0f
@@ -172,6 +173,10 @@ void UpdatePlayer(void)
 					{
 						PlaySound(SOUND_LABEL_SE_ENERGY_00);
 					}
+
+					SetEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer, EFFECTTYPE_CHARGE);
+
+					UpdateEffectSize(nCntPlayer);
 				}
 				else if (GetKeyboardRelease(DIK_SPACE) == true)
 				{//SPACEキーが離された
