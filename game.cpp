@@ -157,23 +157,26 @@ void DrawGame(void)
 	/*======================================================================
 	各種オブジェクトの描画処理
 	========================================================================*/
-	//ゲーム内オブジェクトの描画処理
-	SetCamera();		// カメラの設定処理
-
-	DrawMeshfield();	// ステージの描画処理
-						//DrawMeshCylinder();	// メッシュシリンダーの描画処理
-	//DrawMeshDome();		// メッシュドームの描画処理	
-	DrawWall();			// 壁の描画処理
-	DrawEffect();		// エフェクトの描画処理
-	DrawPlayer();		// プレイヤーの描画処理
-	DrawBonus();		// ボーナスの描画処理
-	DrawGauge();		// ゲージの描画処理
-	DrawScore();		// スコアの描画処理
-
-						//ポーズがOFF
-	if (g_bPause == true)
+	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
 	{
-		DrawPause();		//ポーズ画面描画処理
+		//ゲーム内オブジェクトの描画処理
+		SetCamera(nCntCamera);		// カメラの設定処理
+
+		DrawMeshfield();			// ステージの描画処理
+									//DrawMeshCylinder();	// メッシュシリンダーの描画処理
+									//DrawMeshDome();		// メッシュドームの描画処理	
+		DrawWall();					// 壁の描画処理
+		DrawEffect();				// エフェクトの描画処理
+		DrawPlayer();				// プレイヤーの描画処理
+		DrawBonus();				// ボーナスの描画処理
+		DrawGauge();				// ゲージの描画処理
+		DrawScore();				// スコアの描画処理
+
+									//ポーズがON
+		if (g_bPause == true)
+		{
+			DrawPause();		//ポーズ画面描画処理
+		}
 	}
 }
 
