@@ -14,9 +14,11 @@
 //****************************//
 //		　 マクロ定義		  //
 //****************************//
-#define INIT_POS_Y	(200.0f)	//初期のY位置
-#define INIT_POS_XZ	(200.0f)	//初期の外位置
-#define RATIO_MOVE	(100.0f)	//移動量の割合
+#define INIT_POS_Y			(200.0f)	//初期のY位置
+#define INIT_POS_XZ			(200.0f)	//初期の外位置
+#define RATIO_MOVE			(100.0f)	//移動量の割合
+#define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
+#define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
 //****************************//
 //		　　出現情報		  //
@@ -115,16 +117,19 @@ void UninitBonus(void)
 //===================================================
 void UpdateBonus(void)
 {
-	//移動処理
-	MoveBonus();
+	if (g_Bonus.buse == true)
+	{
+		//移動処理
+		MoveBonus();
 
-	//位置の更新
-	g_Bonus.pos.x += g_Bonus.move.x;
-	g_Bonus.pos.z += g_Bonus.move.z;
+		//位置の更新
+		g_Bonus.pos.x += g_Bonus.move.x;
+		g_Bonus.pos.z += g_Bonus.move.z;
 
-	//慣性の設定
-	g_Bonus.move.x += (NIL_F - g_Bonus.move.x) * 1.0f;
-	g_Bonus.move.z += (NIL_F - g_Bonus.move.z) * 1.0f;
+		//慣性の設定
+		g_Bonus.move.x += (NIL_F - g_Bonus.move.x) * 1.0f;
+		g_Bonus.move.z += (NIL_F - g_Bonus.move.z) * 1.0f;
+	}
 }
 //===================================================
 //ボーナスの描画処理
@@ -217,5 +222,25 @@ void MoveBonus(void)
 		g_Bonus.move.z += cosf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_THREE].z / RATIO_MOVE;
 
 		break;
+	}
+}
+//===================================================
+//ボーナスの当たり判定処理
+//===================================================
+void CollisionBonus(D3DXVECTOR3 nPlayer)
+{
+	if (g_Bonus.buse == true)
+	{
+		if (nPlayer.x >= g_Bonus.pos.x - COLLISION_SIZE_XZ
+			&&nPlayer.x <= g_Bonus.pos.x + COLLISION_SIZE_XZ
+			&&nPlayer.z >= g_Bonus.pos.z - COLLISION_SIZE_XZ
+			&&nPlayer.z <= g_Bonus.pos.z + COLLISION_SIZE_XZ
+			&&nPlayer.y >= g_Bonus.pos.y - COLLISION_SIZE_Y
+			&&nPlayer.y <= g_Bonus.pos.y + COLLISION_SIZE_Y)
+		{//プレイヤーがの範囲内に入ったとき
+
+			//使われていない状態にする
+			g_Bonus.buse = false;
+		}
 	}
 }

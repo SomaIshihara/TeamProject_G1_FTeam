@@ -36,5 +36,6 @@ void UninitBonus(void);
 void UpdateBonus(void);
 void DrawBonus(void);
 void MoveBonus(void);
+void CollisionBonus(D3DXVECTOR3 nPlayer);
 
 #endif
