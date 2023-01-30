@@ -13,6 +13,7 @@
 
 //テクスチャの情報
 #define NUM_EFFECT				(4)			//テクスチャの最大数
+#define MAX_EFFECT				(128)		//テクスチャ最大数
 
 #define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
 #define EFFECT_CHARGE_MOVE		(3.5f)		//エフェクトのチャージタイプの変化量
@@ -53,14 +54,14 @@ void InitEffect(void)
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_3D) * VTX_MAX * NUM_EFFECT,
+		sizeof(VERTEX_3D) * VTX_MAX * MAX_EFFECT,
 		D3DUSAGE_WRITEONLY, FVF_VERTEX_3D,
 		D3DPOOL_MANAGED, &g_pVtxBuffEffect, NULL);
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx += VTX_MAX)
+	for (int nCntEffect = 0; nCntEffect < MAX_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
 		g_Effect[nCntEffect].nType = EFFECTTYPE_CHARGE;	//種類初期化
 		g_Effect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
@@ -290,10 +291,12 @@ void SetEffectPos(void)
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pPlayer++)
 	{
-
-		//エフェクトの位置をプレイヤーの位置にする
-		g_Effect[nCntEffect].pos = pPlayer->pos;
-
+		//対象のエフェクトが使われている
+		if (g_Effect[nCntEffect].bUse == true)
+		{
+			//エフェクトの位置をプレイヤーの位置にする
+			g_Effect[nCntEffect].pos = pPlayer->pos;
+		}
 		//エフェクトのタイプがチャージなら、追従する
 		if (g_Effect[nCntEffect].nType == EFFECTTYPE_CHARGE)
 		{
@@ -303,26 +306,29 @@ void SetEffectPos(void)
 }
 
 //エフェクトの設定処理
-void SetEffect(D3DXVECTOR3 pos, int nCntEffect, EFFECTTYPE type)
+void SetEffect(D3DXVECTOR3 pos, int nCntType, EFFECTTYPE type)
 {
-	//対象のエフェクトが使われていない
-	if (g_Effect[nCntEffect].bUse == false)
+	for (int nCntEffect = 0; nCntEffect < MAX_EFFECT; nCntEffect++)
 	{
-		//種類がチャージ
-		if (type == EFFECTTYPE_CHARGE)
+		//対象のエフェクトが使われていない
+		if (g_Effect[nCntEffect].bUse == false)
 		{
-			g_Effect[nCntEffect].fSize = 0.0f;		//サイズを初期化
-		}
+			//種類がチャージ
+			if (type == EFFECTTYPE_CHARGE)
+			{
+				g_Effect[nCntEffect].fSize = 0.0f;		//サイズを初期化
+			}
 
-		//種類が当たった時のもの
-		else if(type == EFFECTTYPE_ATTACK)
-		{
-			g_Effect[nCntEffect].fSize = 0.0f;		//サイズを初期化
-		}
+			//種類が当たった時のもの
+			else if (type == EFFECTTYPE_ATTACK)
+			{
+				g_Effect[nCntEffect].fSize = 0.0f;		//サイズを初期化
+			}
 
-		g_Effect[nCntEffect].nType = type;		//種類設定
-		g_Effect[nCntEffect].nCntLoop = 0;		//ループ回数初期化
-		g_Effect[nCntEffect].fAlpha = 1.0f;
-		g_Effect[nCntEffect].bUse = true;		//使われている状態に
+			g_Effect[nCntEffect].nType = type;		//種類設定
+			g_Effect[nCntEffect].nCntLoop = 0;		//ループ回数初期化
+			g_Effect[nCntEffect].fAlpha = 1.0f;
+			g_Effect[nCntEffect].bUse = true;		//使われている状態に
+		}
 	}
 }

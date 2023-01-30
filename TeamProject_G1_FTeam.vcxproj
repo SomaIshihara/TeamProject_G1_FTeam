@@ -178,6 +178,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="sound.cpp" />
+    <ClCompile Include="time.cpp" />
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tutorial.cpp" />
     <ClCompile Include="wall.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="sound.h" />
+    <ClInclude Include="time.h" />
     <ClInclude Include="title.h" />
     <ClInclude Include="tutorial.h" />
     <ClInclude Include="wall.h" />
