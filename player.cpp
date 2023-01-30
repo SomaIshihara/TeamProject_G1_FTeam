@@ -631,7 +631,7 @@ void CollisionPP(int nPlayerNum)
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//ìÆÇ¢ÇƒÇÈ
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
-								g_aPlayer[nPlayerNum].nNumHitPlayer = nCntOtherPlayer;
+								g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
 							}
 							//1.0f = pushback
 							float fRate = fAreaARight[nCntCollision] / fAreaBRight[nCntCollision];
@@ -650,7 +650,7 @@ void CollisionPP(int nPlayerNum)
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//ìÆÇ¢ÇƒÇÈ
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
-								g_aPlayer[nPlayerNum].nNumHitPlayer = nCntOtherPlayer;
+								g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
 							}
 							float fRate = fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
@@ -677,7 +677,7 @@ void CollisionPP(int nPlayerNum)
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//ìÆÇ¢ÇƒÇÈ
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
-								g_aPlayer[nPlayerNum].nNumHitPlayer = nCntOtherPlayer;
+								g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
 							}
 							float fRate = fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
@@ -695,7 +695,7 @@ void CollisionPP(int nPlayerNum)
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//ìÆÇ¢ÇƒÇÈ
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
-								g_aPlayer[nPlayerNum].nNumHitPlayer = nCntOtherPlayer;
+								g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
 							}
 							float fRate = fAreaADown[nCntCollision] / fAreaBDown[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
@@ -861,7 +861,7 @@ void DownPlayer(int nDownPlayerNum)
 	if (g_aPlayer[nDownPlayerNum].nNumHitPlayer != -1)
 	{//ìñÇƒÇÁÇÍÇƒóéÇøÇΩèÍçá
 		g_aPlayer[g_aPlayer[nDownPlayerNum].nNumHitPlayer].nScore++;
-		SetScore(g_aPlayer[g_aPlayer[nDownPlayerNum].nNumHitPlayer].nScore, g_aPlayer[nDownPlayerNum].nNumHitPlayer);
+		AddScore(1, g_aPlayer[nDownPlayerNum].nNumHitPlayer);
 	}
 	else
 	{//ÇΩÇæíPÇ…é©ñ≈ÇµÇΩèÍçá
@@ -870,7 +870,7 @@ void DownPlayer(int nDownPlayerNum)
 			if (nCntOtherPlayer != nDownPlayerNum)
 			{
 				g_aPlayer[nCntOtherPlayer].nScore++;
-				SetScore(g_aPlayer[nCntOtherPlayer].nScore, nCntOtherPlayer);
+				AddScore(1, nCntOtherPlayer);
 			}
 		}
 	}
@@ -887,9 +887,11 @@ void RespawnPlayer(int nRespawnPlayer)
 	g_aPlayer[nRespawnPlayer].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
 	g_aPlayer[nRespawnPlayer].posOld = g_aPlayer[nRespawnPlayer].pos;
 	g_aPlayer[nRespawnPlayer].move = ZERO_SET;
+	g_aPlayer[nRespawnPlayer].moveV0 = ZERO_SET;
 	g_aPlayer[nRespawnPlayer].rot = ZERO_SET;
 	g_aPlayer[nRespawnPlayer].moveGauge = 0;
 	g_aPlayer[nRespawnPlayer].jumpTime = 0;
+	g_aPlayer[nRespawnPlayer].bJump = true;
 
 	g_aPlayer[nRespawnPlayer].lastAtkPlayer = -1;
 	g_aPlayer[nRespawnPlayer].nNumHitPlayer = -1;
