@@ -15,7 +15,7 @@
 #define NUM_EFFECT				(4)			//テクスチャの最大数
 
 #define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
-#define EFFECT_CHARGE_MOVE		(3.0f)		//エフェクトのチャージタイプの変化量
+#define EFFECT_CHARGE_MOVE		(1.0f)		//エフェクトのチャージタイプの変化量
 #define EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
 
 //テクスチャのパス名
@@ -66,6 +66,7 @@ void InitEffect(void)
 		g_Effect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
 		g_Effect[nCntEffect].fSize = EFFECT_SIZE;		//サイズ初期化
 		g_Effect[nCntEffect].bUse = false;				//使われていない状態に
+		g_Effect[nCntEffect].bUseCharge = false;		//使われていない状態に
 
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_Effect[nCntEffect].fSize, 0.0f, +g_Effect[nCntEffect].fSize);
@@ -131,7 +132,7 @@ void UpdateEffect(void)
 		}
 	}
 
-	if (GetKeyboardTrigger(DIK_M) == true)
+	if (GetKeyboardPress(DIK_M) == true)
 	{
 		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 		{
@@ -165,13 +166,14 @@ void UpdateEffectSize(int nEffect)
 		{
 			//エフェクト本来の大きさに直す
 			g_Effect[nEffect].fSize = EFFECT_SIZE;
-			g_Effect[nEffect].nCntLoop++;		//ループ回数加算
+			//g_Effect[nEffect].nCntLoop++;		//ループ回数加算
+			g_Effect[nEffect].bUse = false;
 
-			if (g_Effect[nEffect].nCntLoop >= 5)
+	/*		if (g_Effect[nEffect].nCntLoop >= 5)
 			{
-				g_Effect[nEffect].bUse = false;
+				
 				g_Effect[nEffect].nCntLoop = 0;
-			}
+			}*/
 		}
 	}
 	break;
@@ -275,11 +277,14 @@ void SetEffectPos(void)
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pPlayer++)
 	{
+
+		//エフェクトの位置をプレイヤーの位置にする
+		g_Effect[nCntEffect].pos = pPlayer->pos;
+
 		//エフェクトのタイプがチャージなら、追従する
 		if (g_Effect[nCntEffect].nType == EFFECTTYPE_CHARGE)
 		{
-			//エフェクトの位置をプレイヤーの位置にする
-			g_Effect[nCntEffect].pos = pPlayer->pos;
+			
 		}
 	}
 }

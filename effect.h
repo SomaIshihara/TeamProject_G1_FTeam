@@ -23,6 +23,7 @@ typedef struct
 	int			nCntLoop;	//ループした回数（今だけ）
 	float		fSize;		//半径
 	bool		bUse;		//使われているかどうか
+	bool		bUseCharge;	//チャージが使われているかどうか
 }Effect;
 
 //プロトタイプ宣言
