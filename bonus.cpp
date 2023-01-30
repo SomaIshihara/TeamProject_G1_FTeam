@@ -9,11 +9,35 @@
 #include"input.h"
 #include"score.h"
 #include"bonus.h"
+#include"time.h"
 
 //****************************//
 //		　 マクロ定義		  //
 //****************************//
-#define INIT_POS_Y	(300.0f)	//初期のY位置
+#define INIT_POS_Y	(200.0f)	//初期のY位置
+#define INIT_POS_XZ	(200.0f)	//初期の外位置
+#define RATIO_MOVE	(100.0f)	//移動量の割合
+
+//****************************//
+//		　　出現情報		  //
+//****************************//
+//位置
+const D3DXVECTOR3 g_RespawnPos[] =
+{
+	D3DXVECTOR3(INIT_POS_XZ,INIT_POS_Y,NIL_F),
+	D3DXVECTOR3(NIL_F,INIT_POS_Y,-INIT_POS_XZ),
+	D3DXVECTOR3(-INIT_POS_XZ,INIT_POS_Y,NIL_F),
+	D3DXVECTOR3(NIL_F,INIT_POS_Y,INIT_POS_XZ),
+};
+
+//角度
+const D3DXVECTOR3 g_RespawnRot[] =
+{
+	ZERO_SET,
+	D3DXVECTOR3(NIL_F, 1.57f,NIL_F),
+	D3DXVECTOR3(NIL_F, 3.14f,NIL_F),
+	D3DXVECTOR3(NIL_F,-1.57f,NIL_F),
+};
 
 //****************************//
 //	   グローバル変数宣言     //
@@ -57,16 +81,21 @@ void InitBonus(void)
 		}
 	}
 
+	//現在時間の取得
+	srand((unsigned int)time(0));
+
 	//初期設定
-	g_Bonus.pos = D3DXVECTOR3(NIL_F, INIT_POS_Y, NIL_F);
-	g_Bonus.rot = ZERO_SET;
-	g_Bonus.buse = true;
+	g_Bonus.Respawn = (BONUS)(rand() % 4);
+	g_Bonus.pos     = g_RespawnPos[g_Bonus.Respawn];
+	g_Bonus.rot     = g_RespawnRot[g_Bonus.Respawn];
+	g_Bonus.move    = ZERO_SET;
+	g_Bonus.buse    = true;
 }
 //===================================================
 //ボーナスの終了処理
 //===================================================
 void UninitBonus(void)
-{
+{   
 	//メッシュの破棄
 	if (g_pMeshBonus != NULL)
 	{
@@ -86,7 +115,16 @@ void UninitBonus(void)
 //===================================================
 void UpdateBonus(void)
 {
+	//移動処理
+	MoveBonus();
 
+	//位置の更新
+	g_Bonus.pos.x += g_Bonus.move.x;
+	g_Bonus.pos.z += g_Bonus.move.z;
+
+	//慣性の設定
+	g_Bonus.move.x += (NIL_F - g_Bonus.move.x) * 1.0f;
+	g_Bonus.move.z += (NIL_F - g_Bonus.move.z) * 1.0f;
 }
 //===================================================
 //ボーナスの描画処理
@@ -134,7 +172,50 @@ void DrawBonus(void)
 			g_pMeshBonus->DrawSubset(nCntMat);
 		}
 	}
-
 	//保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
+}
+//===================================================
+//ボーナスの移動処理
+//===================================================
+void MoveBonus(void)
+{
+	//角度加算
+	g_Bonus.rot.y += 0.01f;
+
+	//移動方向に応じた処理
+	switch (g_Bonus.Respawn)
+	{
+	case DIRECTION_ZERO:
+
+		//移動量設定
+		g_Bonus.move.x += sinf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_ZERO].x / RATIO_MOVE;
+		g_Bonus.move.z += cosf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_ZERO].x / RATIO_MOVE;
+
+		break;
+
+	case DIRECTION_ONE:
+
+		//移動量設定
+		g_Bonus.move.x -= sinf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_ONE].z / RATIO_MOVE;
+		g_Bonus.move.z -= cosf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_ONE].z / RATIO_MOVE;
+
+		break;
+
+	case DIRECTION_TWO:
+
+		//移動量設定
+		g_Bonus.move.x -= sinf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_TWO].x / RATIO_MOVE;
+		g_Bonus.move.z -= cosf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_TWO].x / RATIO_MOVE;
+
+		break;
+
+	case DIRECTION_THREE:
+
+		//移動量設定
+		g_Bonus.move.x += sinf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_THREE].z / RATIO_MOVE;
+		g_Bonus.move.z += cosf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_THREE].z / RATIO_MOVE;
+
+		break;
+	}
 }
