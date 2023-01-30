@@ -1,23 +1,28 @@
 /*==========================================================================================================================================================
 
-スコア処理[score.h]
+ボーナス処理[bonus.h]
 Author:藤原龍輝
 
 ============================================================================================================================================================*/
-#ifndef _SCORE_H_
+#ifndef _BONUS_H_
+#define _BONUS_H_
 
-#define _SCORE_H_
-
-#include"main.h"
+//****************************//
+//	    ボーナスの構造体      //
+//****************************//
+typedef struct
+{
+	D3DXVECTOR3 pos;	//位置
+	D3DXVECTOR3 rot;	//角度
+	bool        buse;	//使用しているかどうか
+}Bonus;
 
 //****************************//
 //	    プロトタイプ宣言      //
 //****************************//
-void InitScore(void);
-void UninitScore(void);
-void UpdateScore(void);
-void DrawScore(void);
+void InitBonus(void);
+void UninitBonus(void);
+void UpdateBonus(void);
+void DrawBonus(void);
 
-void SetScore(int nScore, int nPlayer);
-void AddScore(int nValue, int nPlayer);
 #endif

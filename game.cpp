@@ -23,6 +23,7 @@ Author:平澤詩苑
 #include "Gauge.h"
 #include "effect.h"
 #include "score.h"
+#include "bonus.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -49,12 +50,14 @@ void InitGame(void)
 	//InitMeshDome();		// メッシュドーム初期化処理
 	InitModel();		// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();		// プレイヤーの初期化処理
+	InitBonus();		// ボーナスの初期化処理
 	InitCamera();		// カメラの初期化処理
 	InitWall();			// 壁の初期化処理
 	InitGauge();		// ゲージの初期化処理
 	InitPause();		// ポーズ画面の初期化処理
 	InitEffect();		// エフェクトの初期化処理
 	InitScore();		// スコアの初期化
+
 
 	SetScore(0,4);		// スコアの設定処理
 
@@ -83,6 +86,7 @@ void UninitGame(void)
 	UninitWall();		// 壁の終了処理
 	UninitCamera();		// カメラの終了処理
 	UninitPlayer();		// プレイヤーの終了処理
+	UninitBonus();		// ボーナスの終了処理
 	UninitPause();		// ポーズ画面の終了処理
 	UninitGauge();		// ゲージの終了処理
 	UninitModel();		// モデルの終了処理
@@ -110,6 +114,7 @@ void UpdateGame(void)
 		UpdateMeshCylinder();	// メッシュシリンダー更新処理
 		//UpdateMeshDome();	// メッシュドーム更新処理
 		UpdatePlayer();		// プレイヤーの更新処理
+		UpdateBonus();		// ボーナスの更新処理
 		UpdateCamera();		// カメラの更新処理
 		UpdateWall();		// 壁の更新処理
 		UpdateGauge();		// ゲージの更新処理
@@ -161,6 +166,7 @@ void DrawGame(void)
 	DrawWall();			// 壁の描画処理
 	DrawEffect();		// エフェクトの描画処理
 	DrawPlayer();		// プレイヤーの描画処理
+	DrawBonus();		// ボーナスの描画処理
 	DrawGauge();		// ゲージの描画処理
 	DrawScore();		// スコアの描画処理
 
