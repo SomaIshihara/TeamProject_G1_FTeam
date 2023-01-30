@@ -15,7 +15,7 @@
 #define NUM_EFFECT				(4)			//テクスチャの最大数
 
 #define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
-#define EFFECT_CHARGE_MOVE		(2.0f)		//エフェクトのチャージタイプの変化量
+#define EFFECT_CHARGE_MOVE		(3.5f)		//エフェクトのチャージタイプの変化量
 #define EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
 
 //テクスチャのパス名
@@ -65,6 +65,7 @@ void InitEffect(void)
 		g_Effect[nCntEffect].nType = EFFECTTYPE_CHARGE;	//種類初期化
 		g_Effect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
 		g_Effect[nCntEffect].fSize = EFFECT_SIZE;		//サイズ初期化
+		g_Effect[nCntEffect].fAlpha = 1.0f;				//透明度初期化
 		g_Effect[nCntEffect].bUse = false;				//使われていない状態に
 		g_Effect[nCntEffect].bUseCharge = false;		//使われていない状態に
 
@@ -124,7 +125,7 @@ void UninitEffect(void)
 //=================================
 void UpdateEffect(void)
 {
-	if (GetKeyboardTrigger(DIK_X) == true)
+	if (GetKeyboardPress(DIK_X) == true)
 	{
 		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 		{
@@ -180,14 +181,21 @@ void UpdateEffectSize(int nEffect)
 
 	case EFFECTTYPE_ATTACK:
 	{
-		//エフェクトの大きさを縮小
+
+		//エフェクトの大きさを拡大
 		g_Effect[nEffect].fSize += EFFECT_ATTACK_MOVE;
 
 		//エフェクトの大きさが本来の大きさを超えた
 		if (EFFECT_SIZE <= g_Effect[nEffect].fSize)
 		{
-			//使われていない状態に
-			g_Effect[nEffect].bUse = false;
+			g_Effect[nEffect].fAlpha -= 0.1f;
+
+			if (g_Effect[nEffect].fAlpha <= 0.0f)
+			{
+				//使われていない状態に
+				g_Effect[nEffect].bUse = false;
+			}
+			
 			g_Effect[nEffect].nCntLoop = 0;				//ループ回数初期化
 		}
 	}
@@ -195,7 +203,7 @@ void UpdateEffectSize(int nEffect)
 
 	VERTEX_3D *pVtx;							//頂点情報へのポインタ
 
-												//頂点バッファをロックし頂点情報へのポインタを取得
+	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 
 	//ポインターを合わせる
@@ -206,6 +214,11 @@ void UpdateEffectSize(int nEffect)
 	pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, 0.0f, +g_Effect[nEffect].fSize);
 	pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_Effect[nEffect].fSize, 0.0f, -g_Effect[nEffect].fSize);
 	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, 0.0f, -g_Effect[nEffect].fSize);
+
+	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_Effect[nEffect].fAlpha);
+	pVtx[VTX_RI_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_Effect[nEffect].fAlpha);
+	pVtx[VTX_LE_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_Effect[nEffect].fAlpha);
+	pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_Effect[nEffect].fAlpha);
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffEffect->Unlock();
@@ -309,6 +322,7 @@ void SetEffect(D3DXVECTOR3 pos, int nCntEffect, EFFECTTYPE type)
 
 		g_Effect[nCntEffect].nType = type;		//種類設定
 		g_Effect[nCntEffect].nCntLoop = 0;		//ループ回数初期化
+		g_Effect[nCntEffect].fAlpha = 1.0f;
 		g_Effect[nCntEffect].bUse = true;		//使われている状態に
 	}
 }

@@ -20,8 +20,9 @@
 #include "effect.h"
 
 //マクロ
-#define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度20.0f
-#define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度7.7f
+#define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度
+#define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度
+#define PLAYER_HIPDROP_POWER	(5.0f)	//ヒップドロップされた方の移動量
 #define ACCELERATION_GRAVITY (9.8f)		//重力加速度
 #define PLAYER_WEIGHT		(50)		//質量
 #define PLAYER_POWER_ADD	(0.025f)		//移動の強さの増加値
@@ -56,6 +57,7 @@ void MovePlayer(int nPadNum);
 void RotPlayer(int nPadNum);		//MovePlayer のrot.y の計算式だけを残しています
 
 void CollisionPP(int nPlayerNum);	//プレイヤー同士の衝突判定
+void HipDropPP(int nPlayerNum);		//ヒップドロップ時の衝突判定
 void DownPlayer(int nDownPlayerNum);	//ダウンしたプレイヤーの処理
 void RespawnPlayer(int nRespawnPlayer);	//リスポーン処理
 
@@ -89,6 +91,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].moveGauge = 0;
 		g_aPlayer[nCntPlayer].jumpTime = 0;
 		g_aPlayer[nCntPlayer].bJump = false;
+		g_aPlayer[nCntPlayer].bHipDrop = false;
 
 		g_aPlayer[nCntPlayer].faceCollider[0] = D3DXVECTOR3(15.0f, 0.0f, 15.0f);
 		g_aPlayer[nCntPlayer].faceCollider[1] = D3DXVECTOR3(-15.0f, 0.0f, 15.0f);
@@ -275,6 +278,7 @@ void UpdatePlayer(void)
 
 			//当たり判定類
 			CollisionPP(nCntPlayer);
+			HipDropPP(nCntPlayer);
 
 			//影位置設定
 			//一旦なし
@@ -704,6 +708,135 @@ void CollisionPP(int nPlayerNum)
 							g_aPlayer[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 							break;
 						}
+					}
+				}
+			}
+		}
+	}
+}
+
+//========================
+//ヒップドロップ時の衝突処理
+//========================
+void HipDropPP(int nPlayerNum)
+{
+	//=pos0~pos2の説明==================
+	//
+	//		・g_ap[nPNum].posOld
+	//		↓
+	//		・g_ap[nPNum].pos
+	// pos1		pos0
+	//	・<-----・		矢印:vecLine
+	//	｜
+	//	｜
+	//	↓
+	//　・
+	// pos2
+	//==================================
+
+	D3DXVECTOR3 pos0, pos1, pos2;
+	D3DXVECTOR3 vecLineX, vecToPosX, vecToPosOldX;
+	D3DXVECTOR3 vecLineZ, vecToPosZ, vecToPosOldZ;
+	D3DXVECTOR3 vecMove;
+	float fAreaAX, fAreaBX, fAreaAZ, fAreaBZ;
+
+	//未反映の位置考慮
+	D3DXVECTOR3 posTemp = g_aPlayer[nPlayerNum].pos + g_aPlayer[nPlayerNum].move;
+
+	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++)
+	{
+		if (nCntOtherPlayer != nPlayerNum)// && g_aPlayer[nCntOtherPlayer].bUsePlayer == true
+		{
+			//各頂点求める
+			float fLengthX, fLengthZ;
+			float fLength;
+			float fAngle;
+			float rot;
+
+			//-pos0---------------------------------------------------------------------------------------------------------------------------
+			//頂点と中心の距離をXとZ別々で計算する
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + TEST_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_DEPTH);
+
+			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
+			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
+																	//0 - 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
+			rot = FIX_ROT(-fAngle - g_aPlayer[nCntOtherPlayer].rot.y);
+
+			//角度に応じて頂点の位置をずらす
+			pos0.x = g_aPlayer[nCntOtherPlayer].pos.x + sinf(rot) * fLength;
+			pos0.y = 0.0f;
+			pos0.z = g_aPlayer[nCntOtherPlayer].pos.z - cosf(rot) * fLength;
+			//-pos0---------------------------------------------------------------------------------------------------------------------------
+
+			//-pos1---------------------------------------------------------------------------------------------------------------------------
+			//頂点と中心の距離をXとZ別々で計算する
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - TEST_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_DEPTH);
+
+			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
+			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
+																	//0 + 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
+			rot = FIX_ROT(-fAngle - g_aPlayer[nCntOtherPlayer].rot.y);
+
+			//角度に応じて頂点の位置をずらす
+			pos1.x = g_aPlayer[nCntOtherPlayer].pos.x + sinf(rot) * fLength;
+			pos1.y = 0.0f;
+			pos1.z = g_aPlayer[nCntOtherPlayer].pos.z - cosf(rot) * fLength;
+			//-pos1---------------------------------------------------------------------------------------------------------------------------
+
+			//-pos2---------------------------------------------------------------------------------------------------------------------------
+			//頂点と中心の距離をXとZ別々で計算する
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - TEST_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - TEST_SIZE_DEPTH);
+
+			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
+			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
+																	//0 + 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
+			rot = FIX_ROT(-fAngle - g_aPlayer[nCntOtherPlayer].rot.y);
+
+			//角度に応じて頂点の位置をずらす
+			pos2.x = g_aPlayer[nCntOtherPlayer].pos.x + sinf(rot) * fLength;
+			pos2.y = 0.0f;
+			pos2.z = g_aPlayer[nCntOtherPlayer].pos.z - cosf(rot) * fLength;
+			//-pos2---------------------------------------------------------------------------------------------------------------------------
+
+			//ベクトル求める
+			//move
+			vecMove = g_aPlayer[nPlayerNum].pos - g_aPlayer[nPlayerNum].posOld;
+
+			//X
+			vecLineX = pos1 - pos0;
+			vecToPosX = posTemp - pos0;
+			vecToPosOldX = g_aPlayer[nPlayerNum].posOld - pos0;
+
+			//Z
+			vecLineZ = pos2 - pos1;
+			vecToPosZ = posTemp - pos1;
+			vecToPosOldZ = g_aPlayer[nPlayerNum].posOld - pos1;
+
+			//当たり判定本番
+			//X
+			//面積求める
+			fAreaAX = TASUKIGAKE(vecToPosX.x, vecToPosX.y, vecMove.x, vecMove.y);
+			fAreaBX = TASUKIGAKE(vecLineX.x, vecLineX.y, vecMove.x, vecMove.y);
+			fAreaAZ = TASUKIGAKE(vecToPosZ.z, vecToPosZ.y, vecMove.z, vecMove.y);
+			fAreaBZ = TASUKIGAKE(vecLineZ.z, vecLineZ.y, vecMove.z, vecMove.y);
+			//左側AND範囲内
+			if ((vecLineX.y * vecToPosX.x) - (vecLineX.x * vecToPosX.y) <= 0.0f && (vecLineX.y * vecToPosOldX.x) - (vecLineX.x * vecToPosOldX.y) >= 0.0f)
+			{
+				if (fAreaAX / fAreaBX >= 0.0f && fAreaAX / fAreaBX <= 1.0f)
+				{//衝突
+					if (fAreaAZ / fAreaBZ >= 0.0f && fAreaAZ / fAreaBZ <= 1.0f)
+					{
+						//移動量計算
+						float fAngleHipDrop = atan2f(g_aPlayer[nCntOtherPlayer].pos.x - g_aPlayer[nPlayerNum].pos.x,
+							g_aPlayer[nCntOtherPlayer].pos.z - g_aPlayer[nPlayerNum].pos.z);
+						g_aPlayer[nCntOtherPlayer].move.x = sinf(fAngleHipDrop) * PLAYER_HIPDROP_POWER;
+						g_aPlayer[nCntOtherPlayer].move.z = -cosf(fAngleHipDrop) * PLAYER_HIPDROP_POWER;
+
+						//攻撃された扱いにする
+						g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
 					}
 				}
 			}

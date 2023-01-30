@@ -22,6 +22,7 @@ typedef struct
 	int			nType;		//エフェクトのタイプ
 	int			nCntLoop;	//ループした回数（今だけ）
 	float		fSize;		//半径
+	float		fAlpha;		//α値
 	bool		bUse;		//使われているかどうか
 	bool		bUseCharge;	//チャージが使われているかどうか
 }Effect;
