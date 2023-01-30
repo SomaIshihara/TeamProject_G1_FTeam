@@ -2,9 +2,10 @@
 
 #include "main.h"
 #include "game.h"
-#include "time.h"
+#include "timer.h"
 #include "player.h"
 #include "camera.h"
+#include "fade.h"
 
 //マクロ定義
 #define NUM_PLACE  (2)								 //スコアの桁数
@@ -264,9 +265,9 @@ void SetTime(int nTime)
 //===============================
 void AddTime(int nValue)
 {
-	if (GetGameState() == GAMESTATE_NORMAL )
+	/*if (GetGameState() == GAMESTATE_NORMAL )
 	{
-
+*/
 		int aTexU[NUM_PLACE];
 		int nCntTime;
 		VERTEX_3D * pVtx;
@@ -277,10 +278,10 @@ void AddTime(int nValue)
 		aTexU[1] = g_nTime % 10 / 1;
 
 		//制限時間が0になったらゲームオーバー
-		if (g_nTime == 0)
+		/*if (g_nTime == 0)
 		{
-			SetGameState(GAMESTATE_END, 60);
-		}
+			SetFade(MODE_TITLE);
+		}*/
 
 		//頂点バッファをロックし、頂点情報へのポインタを取得
 		g_pVtxBuffTime->Lock(0, 0, (void**)&pVtx, 0);
@@ -295,5 +296,5 @@ void AddTime(int nValue)
 		}
 		//頂点バッファをアンロックする
 		g_pVtxBuffTime->Unlock();
-	}
+	//}
 }
