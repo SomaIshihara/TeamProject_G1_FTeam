@@ -12,6 +12,15 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 
 #define NUM_CAMERA		(4)			//カメラの数
 
+//描画するカメラの数 列挙
+typedef enum
+{
+	CameraNum_ONLY = 1,
+	CameraNum_HALF_SIDE,
+	CameraNum_HALF_HIGH_row,
+	CameraNum_MAX,
+}CameraNum;
+
 //カメラの構造体
 typedef struct
 {
