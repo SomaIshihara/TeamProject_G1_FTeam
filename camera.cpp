@@ -7,6 +7,7 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 #include "camera.h"
 #include "input.h"
 #include "player.h"
+#include "camera_frame.h"
 
 //注視点情報
 #define POSR_SPEED		(10.0f)		//注視点の移動速度
@@ -232,6 +233,9 @@ void Set_NumCamera(NumCamera type)
 	}
 	break;
 	}
+
+	//画面分割の枠を設定
+	SetUseFrame(type);
 
 	//設定する数以上のカメラを使用していないようにする
 	for (int nCntUse = nCntCamera; nCntUse < NUM_CAMERA; nCntUse++)

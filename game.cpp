@@ -46,7 +46,7 @@ void InitGame(void)
 	g_nUseContNum = SetUseController();		// コントローラーの使用設定
 	InitFile();								// ファイルの初期化処理（モデルビューワーファイル読み込み前に行うこと！）
 	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
-	g_NumCamera = NumCamera_FOUR_Separate;
+	g_NumCamera = NumCamera_ONLY;			// 初期カメラの設定（現在はPlayer0を注視点としたカメラ　　画面分割ナシ）
 
 	InitBg();					// 背景の初期化処理
 	InitLight();				// ライト初期化処理
@@ -56,6 +56,7 @@ void InitGame(void)
 	InitModel();				// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();				// プレイヤーの初期化処理
 	InitBonus();				// ボーナスの初期化処理
+	InitCameraFrame();			// 画面分割の枠初期化処理
 	InitCamera(g_NumCamera);	// カメラの初期化処理
 	InitWall();					// 壁の初期化処理
 	InitGauge();				// ゲージの初期化処理
@@ -63,7 +64,6 @@ void InitGame(void)
 	InitParticle();				// パーティクルの初期化処理
 	InitEffect();				// エフェクトの初期化処理
 	InitScore();				// スコアの初期化
-	InitCameraFrame();			// 画面分割の枠初期化処理
 	InitTime();					// タイマーの初期化処理
 	SetTime(LIMIT_TIMER);		// タイマーの設定処理
 
@@ -311,8 +311,5 @@ void ChangeNumCamera(void)
 
 		//カメラの種類を設定
 		Set_NumCamera(g_NumCamera);
-
-		//画面分割の枠を設定
-		SetUseFrame(g_NumCamera);
 	}
 }
