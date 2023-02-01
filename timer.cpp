@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "fade.h"
 #include "color.h"
+#include "bonus.h"
 
 //マクロ定義
 #define NUM_PLACE  (2)								 //スコアの桁数
@@ -15,7 +16,8 @@
 LPDIRECT3DTEXTURE9 g_pTextureTime = NULL;			//テクスチャのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTime = NULL;		//頂点バッファへのポインタ
 TIME g_aTime[NUM_PLACE];
-int g_nTime;											//タイムの値
+int g_nTime;										//タイムの値
+int g_nTimeTemp;									//タイムの保存用
 int g_nTimeCounter;									//タイムのカウンター	
 int g_nTimePattern;									//タイムのパターン
 
@@ -134,6 +136,12 @@ void UpdateTime(void)
 	//頂点バッファをアンロックする
 	g_pVtxBuffTime->Unlock();
 
+	//ボーナスの出現処理
+	if (g_nTime == (int)(g_nTimeTemp * 0.3f))
+	{
+		//ボーナスの設定処理
+		SetBonus();
+	}
 
 	g_nTimeCounter++;
 
@@ -182,6 +190,10 @@ void SetTime(int nTime)
 	VERTEX_2D * pVtx;
 
 	g_nTime = nTime;
+
+	//タイムの保存
+	g_nTimeTemp = g_nTime;
+
 	
 	aTexU[0] = g_nTime % 100 / 10;
 	aTexU[1] = g_nTime % 10 / 1;

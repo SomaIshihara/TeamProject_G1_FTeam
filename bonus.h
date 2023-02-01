@@ -21,11 +21,13 @@ typedef enum
 //****************************//
 typedef struct
 {
-	D3DXVECTOR3 pos;		//位置
-	D3DXVECTOR3 move;		//位置
-	D3DXVECTOR3 rot;		//角度
-	bool        buse;		//使用しているかどうか
-	BONUS		Respawn;	//出現位置
+	D3DXVECTOR3 pos;			//位置
+	D3DXVECTOR3 move;			//位置
+	D3DXVECTOR3 rot;			//角度
+	bool        buse;			//使用しているかどうか
+	BONUS		Respawn;		//出現位置
+	int			DespawnLimit;	//消えるリミット
+
 }Bonus;
 
 //****************************//
@@ -35,6 +37,7 @@ void InitBonus(void);
 void UninitBonus(void);
 void UpdateBonus(void);
 void DrawBonus(void);
+void SetBonus(void);
 void MoveBonus(void);
 void CollisionBonus(D3DXVECTOR3 nPlayer);
 

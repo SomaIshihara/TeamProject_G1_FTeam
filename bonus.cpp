@@ -20,6 +20,8 @@
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
+#define DESPAWN_LIMIT		(1800)		//ボーナスが消えるまでのリミット
+
 //****************************//
 //		　　出現情報		  //
 //****************************//
@@ -83,15 +85,13 @@ void InitBonus(void)
 		}
 	}
 
-	//現在時間の取得
-	srand((unsigned int)time(0));
-
 	//初期設定
-	g_Bonus.Respawn = (BONUS)(rand() % 4);
-	g_Bonus.pos     = g_RespawnPos[g_Bonus.Respawn];
-	g_Bonus.rot     = g_RespawnRot[g_Bonus.Respawn];
-	g_Bonus.move    = ZERO_SET;
-	g_Bonus.buse    = true;
+	g_Bonus.Respawn = DIRECTION_ZERO;
+	g_Bonus.pos = ZERO_SET;
+	g_Bonus.rot = ZERO_SET;
+	g_Bonus.move = ZERO_SET;
+	g_Bonus.DespawnLimit = 0;
+	g_Bonus.buse = false;
 }
 //===================================================
 //ボーナスの終了処理
@@ -121,6 +121,13 @@ void UpdateBonus(void)
 	{
 		//移動処理
 		MoveBonus();
+
+		g_Bonus.DespawnLimit--;
+
+		if (g_Bonus.DespawnLimit <= 0)
+		{
+			g_Bonus.buse = false;
+		}
 
 		//位置の更新
 		g_Bonus.pos.x += g_Bonus.move.x;
@@ -222,6 +229,24 @@ void MoveBonus(void)
 		g_Bonus.move.z += cosf((D3DX_PI * 1.0f) + g_Bonus.rot.y) * g_RespawnPos[DIRECTION_THREE].z / RATIO_MOVE;
 
 		break;
+	}
+}
+//===================================================
+//ボーナスの設定処理
+//===================================================
+void SetBonus(void)
+{
+	if (g_Bonus.buse == false)
+	{
+		//現在時間の取得
+		srand((unsigned int)time(0));
+
+		//初期設定
+		g_Bonus.Respawn = (BONUS)(rand() % 4);
+		g_Bonus.pos = g_RespawnPos[g_Bonus.Respawn];
+		g_Bonus.rot = g_RespawnRot[g_Bonus.Respawn];
+		g_Bonus.DespawnLimit = DESPAWN_LIMIT;
+		g_Bonus.buse = true;
 	}
 }
 //===================================================
