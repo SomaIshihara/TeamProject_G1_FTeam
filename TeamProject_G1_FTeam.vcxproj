@@ -162,6 +162,7 @@
     <ClCompile Include="bonus.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="camera_frame.cpp" />
+    <ClCompile Include="charge_effect.cpp" />
     <ClCompile Include="debucproc.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="fade.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="bg.h" />
     <ClInclude Include="bonus.h" />
     <ClInclude Include="camera_frame.h" />
+    <ClInclude Include="charge_effect.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="debugproc.h" />

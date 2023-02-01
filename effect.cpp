@@ -1,6 +1,6 @@
 //==========================================
 //
-//ポーズプログラム[effect.cpp]
+//エフェクトプログラム[effect.cpp]
 //Author:飯田洲暉
 //
 //==========================================
@@ -13,22 +13,17 @@
 
 //テクスチャの情報
 #define NUM_EFFECT				(4)			//テクスチャの最大数
-#define MAX_EFFECT				(128)		//テクスチャ最大数
 
 #define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
 #define EFFECT_CHARGE_MOVE		(3.5f)		//エフェクトのチャージタイプの変化量
 #define EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
 
-//テクスチャのパス名
-const char *c_pFileNameEffect[EFFECTTYPE_MAX] =
-{
-	"data\\TEXTURE\\charge_effect002.png",
-	"data\\TEXTURE\\AttackEffect.png",
-};
+//マクロ定義
+#define	CHARGE_EFFECT_TEX_PASS		"data\\TEXTURE\\charge_effect002.png"
 
 //グローバル変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffEffect = NULL;				//頂点バッファのポインタ
-LPDIRECT3DTEXTURE9		g_pTextureEffect[EFFECTTYPE_MAX] = {};	//テクスチャのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureEffect = NULL;	//テクスチャのポインタ
 D3DXMATRIX				mtxWorldEffect;							//ワールドマトリックス
 Effect					g_Effect[NUM_EFFECT];					//エフェクトの情報
 
@@ -42,12 +37,10 @@ void InitEffect(void)
 	VERTEX_3D *pVtx;							//頂点情報へのポインタ
 
 	//テクスチャの読み込み
-	for (int nCntEffect = 0; nCntEffect < EFFECTTYPE_MAX; nCntEffect++)
-	{
 		D3DXCreateTextureFromFile(pDevice,
-			c_pFileNameEffect[nCntEffect],
-			&g_pTextureEffect[nCntEffect]);
-	}
+			CHARGE_EFFECT_TEX_PASS,
+			&g_pTextureEffect);
+	
 	
 	//エフェクトの位置を設定
 	SetEffectPos();
@@ -103,15 +96,14 @@ void InitEffect(void)
 //=================================
 void UninitEffect(void)
 {
-	for (int nCntEffect = 0; nCntEffect < EFFECTTYPE_MAX; nCntEffect++)
-	{
+	
 		//テクスチャの破棄
-		if (g_pTextureEffect[nCntEffect] != NULL)
+		if (g_pTextureEffect != NULL)
 		{
-			g_pTextureEffect[nCntEffect]->Release();
-			g_pTextureEffect[nCntEffect] = NULL;
+			g_pTextureEffect ->Release();
+			g_pTextureEffect = NULL;
 		}
-	}
+	
 
 	//バッファの破棄
 	if (g_pVtxBuffEffect != NULL)
@@ -267,7 +259,7 @@ void DrawEffect(void)
 			pDevice->SetFVF(FVF_VERTEX_3D);
 
 			//テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureEffect[g_Effect[nCntEffect].nType]);
+			pDevice->SetTexture(0, g_pTextureEffect);
 
 			//描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, VTX_MAX * nCntEffect, 2);
@@ -285,7 +277,7 @@ void DrawEffect(void)
 }
 
 //エフェクトの位置設定
-void SetEffectPos(void)
+void SetEffectPos()
 {
 	Player *pPlayer = GetPlayer();
 
@@ -311,24 +303,25 @@ void SetEffect(D3DXVECTOR3 pos, int nCntType, EFFECTTYPE type)
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 	{
 		//対象のエフェクトが使われていない
-		if (g_Effect[nCntEffect].bUse == false)
+		if (g_Effect[nCntType].bUse == false)
 		{
 			//種類がチャージ
 			if (type == EFFECTTYPE_CHARGE)
 			{
-				g_Effect[nCntEffect].fSize = 0.0f;		//サイズを初期化
+				g_Effect[nCntType].fSize = 0.0f;		//サイズを初期化
 			}
 
 			//種類が当たった時のもの
 			else if (type == EFFECTTYPE_ATTACK)
 			{
-				g_Effect[nCntEffect].fSize = 0.0f;		//サイズを初期化
+				g_Effect[nCntType].fSize = 0.0f;		//サイズを初期化
 			}
 
-			g_Effect[nCntEffect].nType = type;		//種類設定
-			g_Effect[nCntEffect].nCntLoop = 0;		//ループ回数初期化
-			g_Effect[nCntEffect].fAlpha = 1.0f;
-			g_Effect[nCntEffect].bUse = true;		//使われている状態に
+			g_Effect[nCntType].nType = type;		//種類設定
+			g_Effect[nCntType].nCntLoop = 0;		//ループ回数初期化
+			g_Effect[nCntType].fAlpha = 1.0f;		//透明度
+			g_Effect[nCntType].bUse = true;		//使われている状態に
+			//break;
 		}
 	}
 }
