@@ -106,11 +106,7 @@ void UninitScore(void)
 //=========================================================
 void UpdateScore(void)
 {
-	//ジャンプ
-	if (GetKeyboardTrigger(DIK_RETURN) == true)
-	{
-		AddScore(1, 0);
-	}
+	
 }
 //======================================================
 //スコア描画処理
