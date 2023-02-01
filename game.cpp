@@ -25,6 +25,7 @@ Author:平澤詩苑
 #include "score.h"
 #include "bonus.h"
 #include "camera_frame.h"
+#include "timer.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -59,6 +60,7 @@ void InitGame(void)
 	InitEffect();		// エフェクトの初期化処理
 	InitScore();		// スコアの初期化
 	InitCameraFrame();	// 画面分割の枠初期化処理
+	InitTime();			// タイマーの初期化処理
 
 	SetScore(0,4);		// スコアの設定処理
 
@@ -94,6 +96,7 @@ void UninitGame(void)
 	UninitEffect();	// エフェクトの終了処理（ここは順番は問わない）
 	UninitScore();		// スコアの終了処理
 	UninitCameraFrame();// 画面分割の枠終了処理
+	UninitTime();		//タイマーの終了処理
 
 						//ゲームBGM停止
 						//StopSound(SOUND_LABEL_GAMEBGM);
@@ -122,6 +125,8 @@ void UpdateGame(void)
 		UpdateGauge();		// ゲージの更新処理
 		UpdateEffect();		// エフェクトの更新処理
 		UpdateScore();		//スコアの更新処理
+		UpdateTime();		//タイマーの更新処理
+
 
 		//ポーズ取得
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
@@ -174,6 +179,7 @@ void DrawGame(void)
 		DrawGauge();				// ゲージの描画処理
 		DrawScore();				// スコアの描画処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
+		DrawTime();					//タイマーの描画処理
 
 									//ポーズがON
 		if (g_bPause == true)

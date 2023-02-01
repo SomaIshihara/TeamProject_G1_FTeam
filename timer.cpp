@@ -209,27 +209,7 @@ void DrawTime(void)
 		pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
 	}
 }
-//{
-//	LPDIRECT3DDEVICE9 pDevice; //デバイスポインタ
-//	int nCntTime;
-//
-//	pDevice = GetDevice();	    //デバイスの取得
-//
-//								//頂点バッファをデータストリームに設定
-//	pDevice->SetStreamSource(0, g_pVtxBuffTime, 0, sizeof(VERTEX_2D));
-//
-//	//頂点のフォーマットの設定
-//	pDevice->SetFVF(FVF_VERTEX_2D);
-//
-//	//テクスチャの設定
-//	pDevice->SetTexture(0, g_pTextureTime);
-//
-//	for (nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++)
-//	{
-//		//ポリゴンの描画
-//		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTime * 4, 2);
-//	}
-//}
+
 
 //===============================
 //タイムの設定処理
@@ -278,10 +258,10 @@ void AddTime(int nValue)
 		aTexU[1] = g_nTime % 10 / 1;
 
 		//制限時間が0になったらゲームオーバー
-		/*if (g_nTime == 0)
+		if (g_nTime == 0)
 		{
 			SetFade(MODE_TITLE);
-		}*/
+		}
 
 		//頂点バッファをロックし、頂点情報へのポインタを取得
 		g_pVtxBuffTime->Lock(0, 0, (void**)&pVtx, 0);
