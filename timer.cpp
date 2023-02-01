@@ -115,7 +115,7 @@ void UninitTime(void)
 void UpdateTime(void)
 {
 	//ボーナスの出現処理
-	if (g_aTime.nTime == (int)(g_aTime.nTemp * 0.3f))
+	if (g_aTime.nTime == (int)(g_aTime.nTemp * 1.0f))
 	{
 		//ボーナスの設定処理
 		SetBonus();

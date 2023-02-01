@@ -141,6 +141,9 @@
     <ClCompile Include="charge_effect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="particle.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="charge_effect.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="particle.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
