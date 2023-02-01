@@ -123,26 +123,8 @@ void UpdateBonus(void)
 		//移動処理
 		MoveBonus();
 
-		g_Bonus.DespawnLimit--;
-
-		if (g_Bonus.DespawnLimit <= 0)
-		{
-			if (g_Bonus.a > 0.0f)
-			{
-				//透明にしていく
-				g_Bonus.a -= 0.01;
-			}
-			else
-			{
-				//使われていない状態にする
-				g_Bonus.buse = false;
-			}
-		}
-		else if (g_Bonus.a < 1.0f)
-		{
-			//不透明にしていく
-			g_Bonus.a += 0.01;
-		}
+		//消出現処理
+		AppearandDisAppearBonus();
 
 		//位置の更新
 		g_Bonus.pos.x += g_Bonus.move.x;
@@ -206,6 +188,24 @@ void DrawBonus(void)
 	pDevice->SetMaterial(&matDef);
 }
 //===================================================
+//ボーナスの設定処理
+//===================================================
+void SetBonus(void)
+{
+	if (g_Bonus.buse == false)
+	{
+		//現在時間の取得
+		srand((unsigned int)time(0));
+
+		//初期設定
+		g_Bonus.Respawn = (BONUS)(rand() % 4);
+		g_Bonus.pos = g_RespawnPos[g_Bonus.Respawn];
+		g_Bonus.rot = g_RespawnRot[g_Bonus.Respawn];
+		g_Bonus.DespawnLimit = DESPAWN_LIMIT;
+		g_Bonus.buse = true;
+	}
+}
+//===================================================
 //ボーナスの移動処理
 //===================================================
 void MoveBonus(void)
@@ -250,21 +250,30 @@ void MoveBonus(void)
 	}
 }
 //===================================================
-//ボーナスの設定処理
+//ボーナスの消出現処理
 //===================================================
-void SetBonus(void)
+void AppearandDisAppearBonus(void)
 {
-	if (g_Bonus.buse == false)
-	{
-		//現在時間の取得
-		srand((unsigned int)time(0));
+	//消えるまでのカウントダウン
+	g_Bonus.DespawnLimit--;
 
-		//初期設定
-		g_Bonus.Respawn = (BONUS)(rand() % 4);
-		g_Bonus.pos = g_RespawnPos[g_Bonus.Respawn];
-		g_Bonus.rot = g_RespawnRot[g_Bonus.Respawn];
-		g_Bonus.DespawnLimit = DESPAWN_LIMIT;
-		g_Bonus.buse = true;
+	if (g_Bonus.DespawnLimit <= 0)
+	{
+		if (g_Bonus.a > 0.0f)
+		{
+			//透明にしていく
+			g_Bonus.a -= 0.01;
+		}
+		else
+		{
+			//使われていない状態にする
+			g_Bonus.buse = false;
+		}
+	}
+	else if (g_Bonus.a < 1.0f)
+	{
+		//不透明にしていく
+		g_Bonus.a += 0.01;
 	}
 }
 //===================================================
