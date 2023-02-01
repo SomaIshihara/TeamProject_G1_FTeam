@@ -32,12 +32,28 @@ void InitCameraFrame(void)
 
 	for (int nCntFrame = 0; nCntFrame < UseFrame_MAX; nCntFrame++, pVtx += VTX_MAX)
 	{
+		//枠が使われている
+		g_bUseFrame[nCntFrame] = true;
+
 		//頂点座標の設定
+		//横線の場合
+		if (nCntFrame == UseFrame_WIDTH)
 		{
-			pVtx[VTX_LE_UP].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-			pVtx[VTX_RI_UP].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, 0.0f);
-			pVtx[VTX_LE_DO].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, 0.0f);
-			pVtx[VTX_RI_DO].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f);
+			//画面の横幅の半分の位置を中心として、線のサイズ分　横に分岐させる
+			pVtx[VTX_LE_UP].pos = D3DXVECTOR3(0.0f, (SCREEN_HEIGHT / 2) - FRAME_LINE_SIZE, 0.0f);
+			pVtx[VTX_RI_UP].pos = D3DXVECTOR3(SCREEN_WIDTH, (SCREEN_HEIGHT / 2) - FRAME_LINE_SIZE, 0.0f);
+			pVtx[VTX_LE_DO].pos = D3DXVECTOR3(0.0f, (SCREEN_HEIGHT / 2) + FRAME_LINE_SIZE, 0.0f);
+			pVtx[VTX_RI_DO].pos = D3DXVECTOR3(SCREEN_WIDTH, (SCREEN_HEIGHT / 2) + FRAME_LINE_SIZE, 0.0f);
+		}
+
+		//縦線の場合
+		else if (nCntFrame == UseFrame_HEIGHT)
+		{
+			//画面の高さの半分を中心として、線のサイズ分　縦に分岐させる
+			pVtx[VTX_LE_UP].pos = D3DXVECTOR3((SCREEN_WIDTH / 2) - FRAME_LINE_SIZE, 0.0f, 0.0f);
+			pVtx[VTX_RI_UP].pos = D3DXVECTOR3((SCREEN_WIDTH / 2) + FRAME_LINE_SIZE, 0.0f, 0.0f);
+			pVtx[VTX_LE_DO].pos = D3DXVECTOR3((SCREEN_WIDTH / 2) - FRAME_LINE_SIZE, SCREEN_HEIGHT, 0.0f);
+			pVtx[VTX_RI_DO].pos = D3DXVECTOR3((SCREEN_WIDTH / 2) + FRAME_LINE_SIZE, SCREEN_HEIGHT, 0.0f);
 		}
 
 		//rhwの設定
@@ -79,7 +95,6 @@ void UninitCameraFrame(void)
 //===============================================================
 void DrawCameraFrame(void)
 {
-	return;
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//頂点バッファをデータストリームに設定
@@ -91,7 +106,58 @@ void DrawCameraFrame(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, NULL);
 
+	for (int nCntFrame = 0; nCntFrame < UseFrame_MAX; nCntFrame++)
+	{
+		//そのフレームが使われている
+		if (g_bUseFrame[nCntFrame] == true)
+		{
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntFrame * VTX_MAX, 2);
+		}
+	}
+}
 
-	//ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+//使用する枠を設定
+void SetUseFrame(NumCamera type)
+{
+	switch (type)
+	{
+	//=============================
+	//４分割の場合
+	//=============================
+	case NumCamera_FOUR_Separate:
+	{
+		g_bUseFrame[UseFrame_WIDTH] = true;		//横線枠をON
+		g_bUseFrame[UseFrame_HEIGHT] = true;	//縦線枠をON
+	}
+		break;
+	
+	//=============================
+	//横に分割の場合
+	//=============================
+	case NumCamera_HALF_SIDE:
+	{
+		g_bUseFrame[UseFrame_WIDTH] = false;	//横線枠をOFF
+		g_bUseFrame[UseFrame_HEIGHT] = true;	//縦線枠をON
+	}
+	break;
+	
+	//=============================
+	//縦に分割の場合
+	//=============================
+	case NumCamera_HALF_HIGH_row:
+	{
+		g_bUseFrame[UseFrame_WIDTH] = true;		//横線枠をON
+		g_bUseFrame[UseFrame_HEIGHT] = false;	//縦線枠をOFF
+	}
+	break;
+
+	//それ以外	===================
+	case NumCamera_ONLY:
+	{
+		g_bUseFrame[UseFrame_WIDTH] = false;	//横線枠をOFF
+		g_bUseFrame[UseFrame_HEIGHT] = false;	//縦線枠をOFF
+	}
+		break;
+	}
 }

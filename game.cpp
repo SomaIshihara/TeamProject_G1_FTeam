@@ -311,5 +311,8 @@ void ChangeNumCamera(void)
 
 		//ƒJƒƒ‰‚Ìí—Ş‚ğİ’è
 		Set_NumCamera(g_NumCamera);
+
+		//‰æ–Ê•ªŠ„‚Ì˜g‚ğİ’è
+		SetUseFrame(g_NumCamera);
 	}
 }
