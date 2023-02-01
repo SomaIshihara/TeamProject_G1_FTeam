@@ -27,7 +27,7 @@ typedef struct
 	bool        buse;			//使用しているかどうか
 	BONUS		Respawn;		//出現位置
 	int			DespawnLimit;	//消えるリミット
-
+	float		a;				//アルファ値
 }Bonus;
 
 //****************************//

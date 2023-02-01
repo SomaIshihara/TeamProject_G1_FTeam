@@ -20,7 +20,7 @@
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
-#define DESPAWN_LIMIT		(1800)		//ボーナスが消えるまでのリミット
+#define DESPAWN_LIMIT		(800)		//ボーナスが消えるまでのリミット
 
 //****************************//
 //		　　出現情報		  //
@@ -91,6 +91,7 @@ void InitBonus(void)
 	g_Bonus.rot = ZERO_SET;
 	g_Bonus.move = ZERO_SET;
 	g_Bonus.DespawnLimit = 0;
+	g_Bonus.a = 0.0f;					//透明度の設定
 	g_Bonus.buse = false;
 }
 //===================================================
@@ -126,7 +127,21 @@ void UpdateBonus(void)
 
 		if (g_Bonus.DespawnLimit <= 0)
 		{
-			g_Bonus.buse = false;
+			if (g_Bonus.a > 0.0f)
+			{
+				//透明にしていく
+				g_Bonus.a -= 0.01;
+			}
+			else
+			{
+				//使われていない状態にする
+				g_Bonus.buse = false;
+			}
+		}
+		else if (g_Bonus.a < 1.0f)
+		{
+			//不透明にしていく
+			g_Bonus.a += 0.01;
 		}
 
 		//位置の更新
@@ -174,6 +189,9 @@ void DrawBonus(void)
 
 		for (int nCntMat = 0; nCntMat < (int)g_dwNumMatBonus; nCntMat++)
 		{
+			//マテリアルの色設定
+			pMat[nCntMat].MatD3D.Diffuse.a = g_Bonus.a;
+
 			//マテリアルの設定
 			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
