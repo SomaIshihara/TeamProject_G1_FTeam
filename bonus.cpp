@@ -10,6 +10,7 @@
 #include"score.h"
 #include"bonus.h"
 #include"time.h"
+#include"particle.h"
 
 //****************************//
 //		　 マクロ定義		  //
@@ -20,7 +21,8 @@
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
-#define DESPAWN_LIMIT		(1800)		//ボーナスが消えるまでのリミット
+#define DESPAWN_LIMIT		(800)		//ボーナスが消えるまでのリミット
+#define PARTICLE_LIMIT		(6)			//ボーナスパーティクルのリミット
 
 //****************************//
 //		　　出現情報		  //
@@ -52,6 +54,7 @@ LPD3DXBUFFER			g_pBuffMatBonus		= NULL;	//マテリアルへのポインタ
 DWORD					g_dwNumMatBonus		= 0;	//マテリアルの数
 D3DXMATRIX				g_mtxWorldBonus;			//ワールドマトリックス
 Bonus					g_Bonus;					//ボーナスの情報
+int						g_ParticleCounter;
 //===================================================
 //ボーナスの初期化処理
 //===================================================
@@ -91,7 +94,9 @@ void InitBonus(void)
 	g_Bonus.rot = ZERO_SET;
 	g_Bonus.move = ZERO_SET;
 	g_Bonus.DespawnLimit = 0;
+	g_Bonus.a = 0.0f;					//透明度の設定
 	g_Bonus.buse = false;
+	g_ParticleCounter = PARTICLE_LIMIT;
 }
 //===================================================
 //ボーナスの終了処理
@@ -119,15 +124,20 @@ void UpdateBonus(void)
 {
 	if (g_Bonus.buse == true)
 	{
+		g_ParticleCounter--;
+
+		if (g_ParticleCounter <= 0)
+		{
+			SetParticle(g_Bonus.pos, 10.0f, 30, PARTICLE_NORMAL);
+
+			g_ParticleCounter = PARTICLE_LIMIT;
+		}
+
 		//移動処理
 		MoveBonus();
 
-		g_Bonus.DespawnLimit--;
-
-		if (g_Bonus.DespawnLimit <= 0)
-		{
-			g_Bonus.buse = false;
-		}
+		//消出現処理
+		AppearandDisAppearBonus();
 
 		//位置の更新
 		g_Bonus.pos.x += g_Bonus.move.x;
@@ -174,6 +184,9 @@ void DrawBonus(void)
 
 		for (int nCntMat = 0; nCntMat < (int)g_dwNumMatBonus; nCntMat++)
 		{
+			//マテリアルの色設定
+			pMat[nCntMat].MatD3D.Diffuse.a = g_Bonus.a;
+
 			//マテリアルの設定
 			pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
@@ -186,6 +199,24 @@ void DrawBonus(void)
 	}
 	//保存していたマテリアルを戻す
 	pDevice->SetMaterial(&matDef);
+}
+//===================================================
+//ボーナスの設定処理
+//===================================================
+void SetBonus(void)
+{
+	if (g_Bonus.buse == false)
+	{
+		//現在時間の取得
+		srand((unsigned int)time(0));
+
+		//初期設定
+		g_Bonus.Respawn = (BONUS)(rand() % 4);
+		g_Bonus.pos = g_RespawnPos[g_Bonus.Respawn];
+		g_Bonus.rot = g_RespawnRot[g_Bonus.Respawn];
+		g_Bonus.DespawnLimit = DESPAWN_LIMIT;
+		g_Bonus.buse = true;
+	}
 }
 //===================================================
 //ボーナスの移動処理
@@ -232,21 +263,30 @@ void MoveBonus(void)
 	}
 }
 //===================================================
-//ボーナスの設定処理
+//ボーナスの消出現処理
 //===================================================
-void SetBonus(void)
+void AppearandDisAppearBonus(void)
 {
-	if (g_Bonus.buse == false)
-	{
-		//現在時間の取得
-		srand((unsigned int)time(0));
+	//消えるまでのカウントダウン
+	g_Bonus.DespawnLimit--;
 
-		//初期設定
-		g_Bonus.Respawn = (BONUS)(rand() % 4);
-		g_Bonus.pos = g_RespawnPos[g_Bonus.Respawn];
-		g_Bonus.rot = g_RespawnRot[g_Bonus.Respawn];
-		g_Bonus.DespawnLimit = DESPAWN_LIMIT;
-		g_Bonus.buse = true;
+	if (g_Bonus.DespawnLimit <= 0)
+	{
+		if (g_Bonus.a > 0.0f)
+		{
+			//透明にしていく
+			g_Bonus.a -= 0.01;
+		}
+		else
+		{
+			//使われていない状態にする
+			g_Bonus.buse = false;
+		}
+	}
+	else if (g_Bonus.a < 1.0f)
+	{
+		//不透明にしていく
+		g_Bonus.a += 0.01;
 	}
 }
 //===================================================

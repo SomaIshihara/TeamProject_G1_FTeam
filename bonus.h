@@ -27,7 +27,7 @@ typedef struct
 	bool        buse;			//使用しているかどうか
 	BONUS		Respawn;		//出現位置
 	int			DespawnLimit;	//消えるリミット
-
+	float		a;				//アルファ値
 }Bonus;
 
 //****************************//
@@ -39,6 +39,7 @@ void UpdateBonus(void);
 void DrawBonus(void);
 void SetBonus(void);
 void MoveBonus(void);
+void AppearandDisAppearBonus(void);
 void CollisionBonus(D3DXVECTOR3 nPlayer);
 
 #endif
