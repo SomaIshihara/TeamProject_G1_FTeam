@@ -61,6 +61,7 @@ void InitGame(void)
 	InitScore();		// スコアの初期化
 	InitCameraFrame();	// 画面分割の枠初期化処理
 	InitTime();			// タイマーの初期化処理
+	SetTime(5);		// タイマーの設定処理
 
 	SetScore(0,4);		// スコアの設定処理
 
