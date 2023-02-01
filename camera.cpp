@@ -1,7 +1,7 @@
 /*==========================================================================================================================================================
 
 カメラの処理[camera.cpp]
-Author:大宮愛羅
+Author:大宮愛羅  平澤詩苑  石原颯馬
 
 ============================================================================================================================================================*/
 #include "camera.h"
@@ -36,108 +36,247 @@ Author:大宮愛羅
 //位置の差分を2乗
 #define DIFF_TIMES		(2.0f)		//2乗
 
+//カメラ単体の場合の視点座標
+#define ALONE_CAMERA_POS	(D3DXVECTOR3(0.0f, 400.0f, 500.0f))
+
 //グローバル変数
-Camera g_Camera[NUM_CAMERA];		//カメラの情報
+Camera		g_Camera[NUM_CAMERA];	//カメラの情報
 
-//カメラの初期化
-void InitCamera(void)
+//=========================================
+//カメラの位置設定処理
+//Author:石原颯馬
+//=========================================
+void InitSetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera)
 {
-	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
-	{
-		g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
+	//設定
+	g_Camera[nNumCamera].posV = posV;	//視点
+	g_Camera[nNumCamera].posR = posR;	//注視点
 
-		g_Camera[nCntCamera].viewport.X = (SCREEN_WIDTH / 2) * (nCntCamera % 2);	//原点Ⅹ位置代入
-		g_Camera[nCntCamera].viewport.Y = (SCREEN_HEIGHT / 2) * (nCntCamera / 2);	//原点Ｙ位置代入
-		g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH / 2;						//画面幅初期化
-		g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT / 2;					//画面高さ初期化
-		g_Camera[nCntCamera].viewport.MinZ = 0.0f;
-		g_Camera[nCntCamera].viewport.MaxZ = 1.0f;
+										//上方向ベクトルだけ固定
+	g_Camera[nNumCamera].vecU = VECU_OVER;	//上方向ベクトル
 
-		//注視点の位置更新
-		UpdatePosVCamera(nCntCamera);
-	}
+											//それぞれの位置の差分を格納する変数
+	float PosDiffX, PosDiffZ;
+
+	PosDiffX = powf(g_Camera[nNumCamera].posR.x - g_Camera[nNumCamera].posV.x, DIFF_TIMES);	//２乗
+	PosDiffZ = powf(g_Camera[nNumCamera].posR.z - g_Camera[nNumCamera].posV.z, DIFF_TIMES);	//２乗
+
+																							//長さの算出
+	g_Camera[nNumCamera].fLength = sqrtf(PosDiffX + PosDiffZ);
+
+	//視点の位置更新
+	UpdatePosVCamera(nNumCamera);
 }
 
+//=========================================
+//カメラの初期化処理
+//=========================================
+void InitCamera(NumCamera type)
+{
+	Set_NumCamera(type);		//カメラの数によるカメラ情報の初期化
+}
+
+//=========================================
 //カメラの終了処理
+//=========================================
 void UninitCamera(void)
 {
 
 }
 
+//=========================================
 //カメラの更新処理
+//=========================================
 void UpdateCamera(void)
-{
-	//カメラの移動処理
-	MoveCamera();
-}
-
-//カメラの設定処理
-void SetCamera(int nIdx)
-{
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-
-	//ビューポートの設定
-	pDevice->SetViewport(&g_Camera[nIdx].viewport);
-
-	//プロジェクションマトリックスの初期化
-	D3DXMatrixIdentity(&g_Camera[nIdx].mtxProjection);
-
-	//プロジェクションマトリックスの作成
-	D3DXMatrixPerspectiveFovLH(&g_Camera[nIdx].mtxProjection, D3DXToRadian(ANGLE_OF_VIEW), (float)g_Camera[nIdx].viewport.Width / (float)g_Camera[nIdx].viewport.Height, MIN_DRAW, g_Camera[nIdx].fMaxLength);
-
-	//プロジェクションマトリックスの設定
-	pDevice->SetTransform(D3DTS_PROJECTION, &g_Camera[nIdx].mtxProjection);
-
-	//ビューマトリックスの初期化
-	D3DXMatrixIdentity(&g_Camera[nIdx].mtxView);
-
-	//ビューマトリックスの作成
-	D3DXMatrixLookAtLH(&g_Camera[nIdx].mtxView, &g_Camera[nIdx].posV, &g_Camera[nIdx].posR, &g_Camera[nIdx].vecU);
-
-	//ビューマトリックスの設定
-	pDevice->SetTransform(D3DTS_VIEW, &g_Camera[nIdx].mtxView);
-}
-
-//カメラの移動処理
-void MoveCamera(void)
 {
 	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
 	{
+		//カメラが使われている
+		if (g_Camera[nCntCamera].bUse == true)
+		{
+			//カメラの移動処理
+			MoveCamera(nCntCamera);
+		}
+	}
+}
+
+//=========================================
+//カメラの設定処理
+//=========================================
+void SetCamera(int nIdx)
+{
+	//カメラが使われている
+	if (g_Camera[nIdx].bUse == true)
+	{
+		LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
+		//ビューポートの設定
+		pDevice->SetViewport(&g_Camera[nIdx].viewport);
+
+		//プロジェクションマトリックスの初期化
+		D3DXMatrixIdentity(&g_Camera[nIdx].mtxProjection);
+
+		//プロジェクションマトリックスの作成
+		D3DXMatrixPerspectiveFovLH(&g_Camera[nIdx].mtxProjection, D3DXToRadian(ANGLE_OF_VIEW), (float)g_Camera[nIdx].viewport.Width / (float)g_Camera[nIdx].viewport.Height, MIN_DRAW, g_Camera[nIdx].fMaxLength);
+
+		//プロジェクションマトリックスの設定
+		pDevice->SetTransform(D3DTS_PROJECTION, &g_Camera[nIdx].mtxProjection);
+
+		//ビューマトリックスの初期化
+		D3DXMatrixIdentity(&g_Camera[nIdx].mtxView);
+
+		//ビューマトリックスの作成
+		D3DXMatrixLookAtLH(&g_Camera[nIdx].mtxView, &g_Camera[nIdx].posV, &g_Camera[nIdx].posR, &g_Camera[nIdx].vecU);
+
+		//ビューマトリックスの設定
+		pDevice->SetTransform(D3DTS_VIEW, &g_Camera[nIdx].mtxView);
+	}
+}
+
+//=========================================
+//カメラの台数別　設定処理
+//=========================================
+void Set_NumCamera(NumCamera type)
+{
+	int nCntCamera = 0;				//カウンター初期化
+	Player *pPlayer = GetPlayer();	//プレイヤーの情報取得
+
+	switch (type)
+	{
+	/*----------------------------------------------------------------
+	俯瞰で全体が見える視点の処理
+	----------------------------------------------------------------*/
+	case NumCamera_ONLY:
+	{
+		g_Camera[nCntCamera].posV = ALONE_CAMERA_POS;			//視点座標初期化
+		g_Camera[nCntCamera].posR = ZERO_SET;					//注視点座標初期化
+
+		g_Camera[nCntCamera].fMaxLength = MAX_DRAW;				//最大描画距離設定
+
+		g_Camera[nCntCamera].viewport.X = 0.0f;					//原点Ⅹ位置代入
+		g_Camera[nCntCamera].viewport.Y = 0.0f;					//原点Ｙ位置代入
+		g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH;		//画面幅初期化
+		g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;	//画面高さ初期化
+		g_Camera[nCntCamera].viewport.MinZ = 0.0f;
+		g_Camera[nCntCamera].viewport.MaxZ = 1.0f;
+		g_Camera[nCntCamera++].bUse = true;
+	}
+	break;
+	
+	/*----------------------------------------------------------------
+	横２分割の視点の処理
+	----------------------------------------------------------------*/
+	case NumCamera_HALF_SIDE:
+	{
+		for (nCntCamera; nCntCamera < NUM_CAMERA_HALF; nCntCamera++)
+		{
+			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
+
+			g_Camera[nCntCamera].viewport.X = (SCREEN_WIDTH / 2) * (nCntCamera % 2);	//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = NIL_F;									//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH / 2;						//画面幅初期化
+			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;						//画面高さ初期化
+			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
+			g_Camera[nCntCamera].viewport.MaxZ = 1.0f;
+			g_Camera[nCntCamera].bUse = true;
+
+			//注視点の位置更新
+			UpdatePosVCamera(nCntCamera);
+		}
+	}
+	break;
+
+	/*----------------------------------------------------------------
+	縦２分割の視点の処理
+	----------------------------------------------------------------*/
+	case NumCamera_HALF_HIGH_row:
+	{
+		for (nCntCamera; nCntCamera < NUM_CAMERA_HALF; nCntCamera++)
+		{
+			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
+
+			g_Camera[nCntCamera].viewport.X = NIL_F;									//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = (SCREEN_HEIGHT / 2) * (nCntCamera % 2);	//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH;							//画面幅初期化
+			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT / 2;					//画面高さ初期化
+			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
+			g_Camera[nCntCamera].viewport.MaxZ = 1.0f;
+			g_Camera[nCntCamera].bUse = true;
+
+			//注視点の位置更新
+			UpdatePosVCamera(nCntCamera);
+		}
+	}
+	break;
+
+	/*----------------------------------------------------------------
+					各プレイヤー専用のカメラの処理
+	----------------------------------------------------------------*/
+	case NumCamera_FOUR_Separate:
+	{
+		for (nCntCamera; nCntCamera < NUM_CAMERA; nCntCamera++)
+		{
+			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
+
+			g_Camera[nCntCamera].viewport.X = (SCREEN_WIDTH / 2) * (nCntCamera % 2);	//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = (SCREEN_HEIGHT / 2) * (nCntCamera / 2);	//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH / 2;						//画面幅初期化
+			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT / 2;					//画面高さ初期化
+			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
+			g_Camera[nCntCamera].viewport.MaxZ = 1.0f;
+			g_Camera[nCntCamera].bUse = true;
+
+			//注視点の位置更新
+			UpdatePosVCamera(nCntCamera);
+		}
+	}
+	break;
+	}
+
+	//設定する数以上のカメラを使用していないようにする
+	for (int nCntUse = nCntCamera; nCntUse < NUM_CAMERA; nCntUse++)
+	{
+		g_Camera[nCntUse].bUse = false;
+	}
+}
+
+//カメラの移動処理
+void MoveCamera(int nCntCamera)
+{
 #ifdef _DEBUG
-		//視点の上下
-		if (GetKeyboardPress(DIK_T) == true)
-		{
-			g_Camera[nCntCamera].posV.y += POSV_SPEED;
-		}
-		if (GetKeyboardPress(DIK_B) == true)
-		{
-			g_Camera[nCntCamera].posV.y -= POSV_SPEED;
-		}
+	//視点の上下
+	if (GetKeyboardPress(DIK_T) == true)
+	{
+		g_Camera[nCntCamera].posV.y += POSV_SPEED;
+	}
+	if (GetKeyboardPress(DIK_B) == true)
+	{
+		g_Camera[nCntCamera].posV.y -= POSV_SPEED;
+	}
 
-		//視点の前後
-		if (GetKeyboardPress(DIK_Y) == true)
-		{
-			g_Camera[nCntCamera].fLength += POSV_SPEED;
-		}
-		if (GetKeyboardPress(DIK_N) == true)
-		{
-			g_Camera[nCntCamera].fLength -= POSV_SPEED;
-		}
+	//視点の前後
+	if (GetKeyboardPress(DIK_Y) == true)
+	{
+		g_Camera[nCntCamera].fLength += POSV_SPEED;
+	}
+	if (GetKeyboardPress(DIK_N) == true)
+	{
+		g_Camera[nCntCamera].fLength -= POSV_SPEED;
+	}
 
-		//視点の左右
-		if (GetKeyboardPress(DIK_Z) == true)
-		{
-			g_Camera[nCntCamera].rot.y -= POSV_ROTSPEED;
-		}
-		if (GetKeyboardPress(DIK_C) == true)
-		{
-			g_Camera[nCntCamera].rot.y += POSV_ROTSPEED;
-		}
+	//視点の左右
+	if (GetKeyboardPress(DIK_Z) == true)
+	{
+		g_Camera[nCntCamera].rot.y -= POSV_ROTSPEED;
+	}
+	if (GetKeyboardPress(DIK_C) == true)
+	{
+		g_Camera[nCntCamera].rot.y += POSV_ROTSPEED;
+	}
 #endif // _DEBUG
 
-		//注視点の位置更新
-		UpdatePosVCamera(nCntCamera);
-	}
+	//注視点の位置更新
+	UpdatePosVCamera(nCntCamera);
 }
 
 //視点の位置更新
@@ -160,30 +299,4 @@ void UpdatePosVCamera(int nCntCamera)
 Camera *GetCamera(void)
 {
 	return &g_Camera[0];
-}
-
-//=========================================
-//カメラの位置設定処理
-//Author:石原颯馬
-//=========================================
-void SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera)
-{
-	//設定
-	g_Camera[nNumCamera].posV = posV;	//視点
-	g_Camera[nNumCamera].posR = posR;	//注視点
-
-	//上方向ベクトルだけ固定
-	g_Camera[nNumCamera].vecU = VECU_OVER;	//上方向ベクトル
-
-	//それぞれの位置の差分を格納する変数
-	float PosDiffX, PosDiffZ;
-
-	PosDiffX = powf(g_Camera[nNumCamera].posR.x - g_Camera[nNumCamera].posV.x, DIFF_TIMES);	//２乗
-	PosDiffZ = powf(g_Camera[nNumCamera].posR.z - g_Camera[nNumCamera].posV.z, DIFF_TIMES);	//２乗
-
-	//長さの算出
-	g_Camera[nNumCamera].fLength = sqrtf(PosDiffX + PosDiffZ);
-
-	//視点の位置更新
-	UpdatePosVCamera(nNumCamera);
 }

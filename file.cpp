@@ -289,7 +289,7 @@ void LoadModelViewerFile(const char *path)
 					if (strncmp(&aCode[0], CODE_END_CAMERASET, sizeof CODE_END_CAMERASET / sizeof(char) - 1) == 0)
 					{
 						//ÉJÉÅÉâê›íË
-						SetCameraPos(g_readCamera.posV, g_readCamera.posR, g_counterReadCamera);
+						InitSetCameraPos(g_readCamera.posV, g_readCamera.posR, g_counterReadCamera);
 						g_readStat = READSTAT_NONE;
 						g_counterReadCamera++;		//â¡éZ
 					}

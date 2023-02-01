@@ -32,5 +32,6 @@ bool GetUseController(int nPadNum);
 int GetUseControllerNum(void);
 void SetEnablePause(bool pause);
 bool CheckUseController(CHECKMODE mode);
+void ChangeNumCamera(void);
 
 #endif

@@ -35,6 +35,7 @@ bool g_abUsePlayer[MAX_USE_GAMEPAD];// g—p‚µ‚Ä‚¢‚éƒvƒŒƒCƒ„[iÚ‘±ƒ`ƒFƒbƒN‚Ég—
 bool g_bDisconnectPlayer;			// Ú‘±‚ªØ‚ê‚½‚±‚Æ‚ğŠm”F‚·‚é
 int  g_numGamePad;
 CHECKMODE g_CheckMode;
+NumCamera g_NumCamera;
 
 //------------------------------------------------
 //				ƒQ[ƒ€‚Ì‰Šú‰»ˆ—
@@ -44,28 +45,29 @@ void InitGame(void)
 	g_nUseContNum = SetUseController();		// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
 	InitFile();								// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
 	LoadModelViewerFile("data\\model.txt");	// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
+	g_NumCamera = NumCamera_FOUR_Separate;
 
-	InitBg();			// ”wŒi‚Ì‰Šú‰»ˆ—
-	InitLight();		// ƒ‰ƒCƒg‰Šú‰»ˆ—
-	InitMeshfield();	// ƒXƒe[ƒW‰Šú‰»ˆ—
-	InitMeshCylinder();	// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[‰Šú‰»ˆ—
-	//InitMeshDome();		// ƒƒbƒVƒ…ƒh[ƒ€‰Šú‰»ˆ—
-	InitModel();		// ƒ‚ƒfƒ‹‚Ì‰Šú‰»ˆ—iƒvƒŒƒCƒ„[‚Ì‘O‚És‚¤‚±‚ÆIj
-	InitPlayer();		// ƒvƒŒƒCƒ„[‚Ì‰Šú‰»ˆ—
-	InitBonus();		// ƒ{[ƒiƒX‚Ì‰Šú‰»ˆ—
-	InitCamera();		// ƒJƒƒ‰‚Ì‰Šú‰»ˆ—
-	InitWall();			// •Ç‚Ì‰Šú‰»ˆ—
-	InitGauge();		// ƒQ[ƒW‚Ì‰Šú‰»ˆ—
-	InitPause();		// ƒ|[ƒY‰æ–Ê‚Ì‰Šú‰»ˆ—
-	InitEffect();		// ƒGƒtƒFƒNƒg‚Ì‰Šú‰»ˆ—
-	InitScore();		// ƒXƒRƒA‚Ì‰Šú‰»
-	InitCameraFrame();	// ‰æ–Ê•ªŠ„‚Ì˜g‰Šú‰»ˆ—
-	InitTime();			// ƒ^ƒCƒ}[‚Ì‰Šú‰»ˆ—
-	SetTime(LIMIT_TIMER);// ƒ^ƒCƒ}[‚Ìİ’èˆ—
+	InitBg();					// ”wŒi‚Ì‰Šú‰»ˆ—
+	InitLight();				// ƒ‰ƒCƒg‰Šú‰»ˆ—
+	InitMeshfield();			// ƒXƒe[ƒW‰Šú‰»ˆ—
+	InitMeshCylinder();			// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[‰Šú‰»ˆ—
+	//InitMeshDome();			// ƒƒbƒVƒ…ƒh[ƒ€‰Šú‰»ˆ—
+	InitModel();				// ƒ‚ƒfƒ‹‚Ì‰Šú‰»ˆ—iƒvƒŒƒCƒ„[‚Ì‘O‚És‚¤‚±‚ÆIj
+	InitPlayer();				// ƒvƒŒƒCƒ„[‚Ì‰Šú‰»ˆ—
+	InitBonus();				// ƒ{[ƒiƒX‚Ì‰Šú‰»ˆ—
+	InitCamera(g_NumCamera);	// ƒJƒƒ‰‚Ì‰Šú‰»ˆ—
+	InitWall();					// •Ç‚Ì‰Šú‰»ˆ—
+	InitGauge();				// ƒQ[ƒW‚Ì‰Šú‰»ˆ—
+	InitPause();				// ƒ|[ƒY‰æ–Ê‚Ì‰Šú‰»ˆ—
+	InitEffect();				// ƒGƒtƒFƒNƒg‚Ì‰Šú‰»ˆ—
+	InitScore();				// ƒXƒRƒA‚Ì‰Šú‰»
+	InitCameraFrame();			// ‰æ–Ê•ªŠ„‚Ì˜g‰Šú‰»ˆ—
+	InitTime();					// ƒ^ƒCƒ}[‚Ì‰Šú‰»ˆ—
+	SetTime(LIMIT_TIMER);		// ƒ^ƒCƒ}[‚Ìİ’èˆ—
 
-	SetScore(0,4);		// ƒXƒRƒA‚Ìİ’èˆ—
+	SetScore(0,4);				// ƒXƒRƒA‚Ìİ’èˆ—
 
-	g_bPause = false;	// ƒ|[ƒY‚Ì‰Šú‰»
+	g_bPause = false;			// ƒ|[ƒY‚Ì‰Šú‰»
 	g_bDisconnectPlayer = false;	//³í‚ÉƒRƒ“ƒgƒ[ƒ‰[‚ªÚ‘±‚³‚ê‚Ä‚¢‚éó‘Ô‚Æ‚·‚é
 
 									//ƒQ[ƒ€BGMŠJn
@@ -128,6 +130,7 @@ void UpdateGame(void)
 		UpdateScore();		//ƒXƒRƒA‚ÌXVˆ—
 		UpdateTime();		//ƒ^ƒCƒ}[‚ÌXVˆ—
 
+		ChangeNumCamera();	//ƒJƒƒ‰‚Ì”•ÏXˆ—
 
 		//ƒ|[ƒYæ“¾
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
@@ -279,4 +282,29 @@ int GetUseControllerNum(void)
 void SetEnablePause(bool pause)
 {
 	g_bPause = pause;
+}
+
+//------------------------------------------------
+//		ƒJƒƒ‰‚Ì”•ÏXˆ—
+//		Author:•½àV‰‘
+//------------------------------------------------
+void ChangeNumCamera(void)
+{
+	if (GetKeyboardTrigger(DIK_F7))
+	{
+		//Œ»İ‚ÌƒJƒƒ‰‚Ìí—Ş‚ğ•Û‘¶
+		int nType = g_NumCamera;
+
+		//Ÿ‚Ìí—Ş‚É•ÏX
+		nType++;
+
+		//•ÏX‚É”º‚¢A‘Sí—Ş‚Ì”‚ğ’´‚¦‚È‚¢‚æ‚¤‚É‚·‚é
+		nType %= NumCamera_MAX;
+
+		//•ÏX‚µ‚½‚à‚Ì‚ğ“ü‚ê‚é
+		g_NumCamera = (NumCamera)nType;
+
+		//ƒJƒƒ‰‚Ìí—Ş‚ğİ’è
+		Set_NumCamera(g_NumCamera);
+	}
 }
