@@ -16,13 +16,13 @@
 #define NUM_SCORE		(4)		//スコアの数
 #define NUM_PLASE		(2)		//スコア桁数
 
-#define MINUS_X			(230.0f)	//スコアのマイナスX座標
-#define PLUS_X			(270.0f)	//スコアのプラスX座標
-#define WIDTH_X			(30.0f)	    //スコアの幅
-#define INTERVAL_X		(300.0f)	//スコア同士の間隔
+#define SCORE_MINUS_X			(230.0f)	//スコアのマイナスX座標
+#define SCORE_PLUS_X			(270.0f)	//スコアのプラスX座標
+#define SCORE_WIDTH_X			(30.0f)	    //スコアの幅
+#define SCORE_INTERVAL_X		(300.0f)	//スコア同士の間隔
 
-#define MINUS_Y			(600.0f)	//スコアのマイナスY座標
-#define PLUS_Y			(650.0f)	//スコアのプラスX座標
+#define SCORE_MINUS_Y			(600.0f)	//スコアのマイナスY座標
+#define SCORE_PLUS_Y			(650.0f)	//スコアのプラスX座標
 
 //****************************//
 //	   グローバル変数宣言     //
@@ -160,10 +160,10 @@ void SetScore(int nScore, int nPlayer)
 
 		for (nCntScore = 0; nCntScore < NUM_PLASE; nCntScore++, pVtx += VTX_MAX)
 		{
-			pVtx[0].pos = D3DXVECTOR3(MINUS_X + (nCntScore * WIDTH_X) + (nCntPlayer * INTERVAL_X), MINUS_Y, NIL_F);
-			pVtx[1].pos = D3DXVECTOR3(PLUS_X  + (nCntScore * WIDTH_X) + (nCntPlayer * INTERVAL_X), MINUS_Y, NIL_F);
-			pVtx[2].pos = D3DXVECTOR3(MINUS_X + (nCntScore * WIDTH_X) + (nCntPlayer * INTERVAL_X), PLUS_Y, NIL_F);
-			pVtx[3].pos = D3DXVECTOR3(PLUS_X  + (nCntScore * WIDTH_X) + (nCntPlayer * INTERVAL_X), PLUS_Y, NIL_F);
+			pVtx[0].pos = D3DXVECTOR3(SCORE_MINUS_X + (nCntScore * SCORE_WIDTH_X) + (nCntPlayer * SCORE_INTERVAL_X), SCORE_MINUS_Y, NIL_F);
+			pVtx[1].pos = D3DXVECTOR3(SCORE_PLUS_X  + (nCntScore * SCORE_WIDTH_X) + (nCntPlayer * SCORE_INTERVAL_X), SCORE_MINUS_Y, NIL_F);
+			pVtx[2].pos = D3DXVECTOR3(SCORE_MINUS_X + (nCntScore * SCORE_WIDTH_X) + (nCntPlayer * SCORE_INTERVAL_X), SCORE_PLUS_Y, NIL_F);
+			pVtx[3].pos = D3DXVECTOR3(SCORE_PLUS_X  + (nCntScore * SCORE_WIDTH_X) + (nCntPlayer * SCORE_INTERVAL_X), SCORE_PLUS_Y, NIL_F);
 
 			pVtx[0].tex = D3DXVECTOR2(NIL_F + (aTexU[nCntPlayer][nCntScore] * 0.1f), NIL_F);
 			pVtx[1].tex = D3DXVECTOR2(0.1f  + (aTexU[nCntPlayer][nCntScore] * 0.1f), NIL_F);
