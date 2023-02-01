@@ -95,6 +95,7 @@ void UninitCameraFrame(void)
 //===============================================================
 void DrawCameraFrame(void)
 {
+	return;
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//頂点バッファをデータストリームに設定

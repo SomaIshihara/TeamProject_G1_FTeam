@@ -54,14 +54,14 @@ void InitEffect(void)
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_3D) * VTX_MAX * MAX_EFFECT,
+		sizeof(VERTEX_3D) * VTX_MAX * NUM_EFFECT,
 		D3DUSAGE_WRITEONLY, FVF_VERTEX_3D,
 		D3DPOOL_MANAGED, &g_pVtxBuffEffect, NULL);
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffEffect->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCntEffect = 0; nCntEffect < MAX_EFFECT; nCntEffect++, pVtx += VTX_MAX)
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
 		g_Effect[nCntEffect].nType = EFFECTTYPE_CHARGE;	//種類初期化
 		g_Effect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
@@ -308,7 +308,7 @@ void SetEffectPos(void)
 //エフェクトの設定処理
 void SetEffect(D3DXVECTOR3 pos, int nCntType, EFFECTTYPE type)
 {
-	for (int nCntEffect = 0; nCntEffect < MAX_EFFECT; nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 	{
 		//対象のエフェクトが使われていない
 		if (g_Effect[nCntEffect].bUse == false)

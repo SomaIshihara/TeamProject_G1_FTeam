@@ -22,7 +22,8 @@
 //マクロ
 #define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度
 #define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度
-#define PLAYER_HIPDROP_POWER	(5.0f)	//ヒップドロップされた方の移動量
+#define PLAYER_BLOWING_POWER	(5.0f)	//ヒップドロップされた方の移動量
+#define PLAYER_HIPDROP_POWER	(-10.0f)	//ヒップドロップするときの移動量
 #define ACCELERATION_GRAVITY (9.8f)		//重力加速度
 #define PLAYER_WEIGHT		(50)		//質量
 #define PLAYER_POWER_ADD	(0.025f)		//移動の強さの増加値
@@ -153,97 +154,123 @@ void UpdatePlayer(void)
 				g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
 			}
 
-			
-
 			//ジャンプ時間を増やす
 			g_aPlayer[nCntPlayer].jumpTime++;
-			//キーボード操作時の動作
+			
+			//ヒップドロップ中でなければ操作できる
+			if (g_aPlayer[nCntPlayer].bHipDrop == false)
+			{
+				//キーボード操作時の動作
 #if 1
-			//移動方法（ダッシュ）押して離す
-			if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
-				&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
-			{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-				if (GetKeyboardPress(DIK_SPACE) == true)
-				{//スペースキーは押された
-					g_aPlayer[nCntPlayer].moveGauge += PLAYER_POWER_ADD;
+				//移動方法（ダッシュ）押して離す
+				if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
+					&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
+				{//もうこれ動いてるって言わないよね（ほぼ動いていない）
+					if (GetKeyboardPress(DIK_SPACE) == true)
+					{//スペースキーは押された
+						g_aPlayer[nCntPlayer].moveGauge += PLAYER_POWER_ADD;
 
-					if (g_aPlayer[nCntPlayer].moveGauge >= PLAYER_POWER_MAX)
-					{
-						g_aPlayer[nCntPlayer].moveGauge = PLAYER_POWER_MAX;
-						StopSound(SOUND_LABEL_SE_ENERGY_00);
-					}
-					if (g_aPlayer[nCntPlayer].moveGauge <= PLAYER_POWER_ADD)
-					{
-						PlaySound(SOUND_LABEL_SE_ENERGY_00);
-					}
+						if (g_aPlayer[nCntPlayer].moveGauge >= PLAYER_POWER_MAX)
+						{
+							g_aPlayer[nCntPlayer].moveGauge = PLAYER_POWER_MAX;
+							StopSound(SOUND_LABEL_SE_ENERGY_00);
+						}
+						if (g_aPlayer[nCntPlayer].moveGauge <= PLAYER_POWER_ADD)
+						{
+							PlaySound(SOUND_LABEL_SE_ENERGY_00);
+						}
 
-					SetEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer, EFFECTTYPE_CHARGE);
-					//UpdateEffectSize(nCntPlayer);
+						SetEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer, EFFECTTYPE_CHARGE);
+						//UpdateEffectSize(nCntPlayer);
+					}
+					else if (GetKeyboardRelease(DIK_SPACE) == true)
+					{//SPACEキーが離された
+					 //進行方向の設定
+						g_aPlayer[nCntPlayer].move.x = -sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
+						g_aPlayer[nCntPlayer].move.z = -cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
+
+						g_aPlayer[nCntPlayer].moveGauge = 0;
+					}
 				}
-				else if (GetKeyboardRelease(DIK_SPACE) == true)
-				{//SPACEキーが離された
-					//進行方向の設定
-					g_aPlayer[nCntPlayer].move.x = -sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
-					g_aPlayer[nCntPlayer].move.z = -cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
-
+				else
+				{
 					g_aPlayer[nCntPlayer].moveGauge = 0;
 				}
-			}
-			else
-			{
-				g_aPlayer[nCntPlayer].moveGauge = 0;
-			}
 
-			//ジャンプ
-			if (g_aPlayer[nCntPlayer].bJump == false && GetKeyboardTrigger(DIK_RETURN) == true)
-			{
-				g_aPlayer[nCntPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
-				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
-				g_aPlayer[nCntPlayer].bJump = true;
-			}
+				//ジャンプ・ヒップドロップ
+				if (GetKeyboardTrigger(DIK_RETURN) == true)
+				{
+					if (g_aPlayer[nCntPlayer].bJump)
+					{
+						g_aPlayer[nCntPlayer].moveV0.y = PLAYER_HIPDROP_POWER;
+						g_aPlayer[nCntPlayer].jumpTime = 0;
+						g_aPlayer[nCntPlayer].bHipDrop = true;
+					}
+					else
+					{
+						g_aPlayer[nCntPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
+						g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
+						g_aPlayer[nCntPlayer].bJump = true;
+					}
+				}
 #endif
-			//ゲームパッドの操作
-			//移動方法（ダッシュ）押して離す
-			if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
-				&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
-			{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-				if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == true)
-				{//Aボタンが押された
-					g_aPlayer[nCntPlayer].moveGauge += PLAYER_POWER_ADD;
+				//ゲームパッドの操作
+				//移動方法（ダッシュ）押して離す
+				if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
+					&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
+				{//もうこれ動いてるって言わないよね（ほぼ動いていない）
+					if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == true)
+					{//Aボタンが押された
+						g_aPlayer[nCntPlayer].moveGauge += PLAYER_POWER_ADD;
 
-					if (g_aPlayer[nCntPlayer].moveGauge >= PLAYER_POWER_MAX)
-					{
-						g_aPlayer[nCntPlayer].moveGauge = PLAYER_POWER_MAX;
-						StopSound(SOUND_LABEL_SE_ENERGY_00);
+						if (g_aPlayer[nCntPlayer].moveGauge >= PLAYER_POWER_MAX)
+						{
+							g_aPlayer[nCntPlayer].moveGauge = PLAYER_POWER_MAX;
+							StopSound(SOUND_LABEL_SE_ENERGY_00);
+						}
+						if (g_aPlayer[nCntPlayer].moveGauge <= PLAYER_POWER_ADD)
+						{
+							PlaySound(SOUND_LABEL_SE_ENERGY_00);
+						}
+
+						SetEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer, EFFECTTYPE_CHARGE);
+
 					}
-					if (g_aPlayer[nCntPlayer].moveGauge <= PLAYER_POWER_ADD)
-					{
-						PlaySound(SOUND_LABEL_SE_ENERGY_00);
+					else if (GetGamepadRelease(nCntPlayer, XINPUT_GAMEPAD_X) == true)
+					{//Aボタンが離された
+					 //進行方向の設定
+						g_aPlayer[nCntPlayer].move.x = -sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
+						g_aPlayer[nCntPlayer].move.z = -cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
+
+						g_aPlayer[nCntPlayer].moveGauge = 0;
 					}
-
-					SetEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer, EFFECTTYPE_CHARGE);
-
 				}
-				else if (GetGamepadRelease(nCntPlayer, XINPUT_GAMEPAD_X) == true)
-				{//Aボタンが離された
-					//進行方向の設定
-					g_aPlayer[nCntPlayer].move.x = -sinf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
-					g_aPlayer[nCntPlayer].move.z = -cosf(g_aPlayer[nCntPlayer].rot.y) * g_aPlayer[nCntPlayer].moveGauge * PLAYER_MOVE_SPEED;
-										
+				else
+				{
 					g_aPlayer[nCntPlayer].moveGauge = 0;
 				}
-			}
-			else
-			{
-				g_aPlayer[nCntPlayer].moveGauge = 0;
-			}
 
-			//ジャンプ
-			if (g_aPlayer[nCntPlayer].bJump == false && GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true)
-			{
-				g_aPlayer[nCntPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
-				g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
-				g_aPlayer[nCntPlayer].bJump = true;
+				//ジャンプ・ヒップドロップ
+				if (GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true)
+				{
+					if (g_aPlayer[nCntPlayer].bJump)
+					{
+						g_aPlayer[nCntPlayer].moveV0.y = PLAYER_HIPDROP_POWER;
+						g_aPlayer[nCntPlayer].jumpTime = 0;
+						g_aPlayer[nCntPlayer].bHipDrop = true;
+					}
+					else
+					{
+						g_aPlayer[nCntPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
+						g_aPlayer[nCntPlayer].jumpTime = 0;	//ジャンプ時間リセット
+						g_aPlayer[nCntPlayer].bJump = true;
+					}
+				}
+				
+				//[デバッグ用]普通に移動する処理
+#ifdef _DEBUG
+				MovePlayer(nCntPlayer);
+#endif
 			}
 
 			//ジャンプ量設定
@@ -262,6 +289,7 @@ void UpdatePlayer(void)
 				else
 				{
 					g_aPlayer[nCntPlayer].bJump = false;
+					g_aPlayer[nCntPlayer].bHipDrop = false;
 					g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
 					g_aPlayer[nCntPlayer].move.y = 0.0f;
 					g_aPlayer[nCntPlayer].jumpTime = 0;
@@ -269,10 +297,6 @@ void UpdatePlayer(void)
 				}
 			}
 
-			//[デバッグ用]普通に移動する処理
-#ifdef _DEBUG
-			MovePlayer(nCntPlayer);
-#endif
 			//向きを変える処理
 			RotPlayer(nCntPlayer);
 
@@ -832,8 +856,8 @@ void HipDropPP(int nPlayerNum)
 						//移動量計算
 						float fAngleHipDrop = atan2f(g_aPlayer[nCntOtherPlayer].pos.x - g_aPlayer[nPlayerNum].pos.x,
 							g_aPlayer[nCntOtherPlayer].pos.z - g_aPlayer[nPlayerNum].pos.z);
-						g_aPlayer[nCntOtherPlayer].move.x = sinf(fAngleHipDrop) * PLAYER_HIPDROP_POWER;
-						g_aPlayer[nCntOtherPlayer].move.z = -cosf(fAngleHipDrop) * PLAYER_HIPDROP_POWER;
+						g_aPlayer[nCntOtherPlayer].move.x = sinf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
+						g_aPlayer[nCntOtherPlayer].move.z = -cosf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
 
 						//攻撃された扱いにする
 						g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
