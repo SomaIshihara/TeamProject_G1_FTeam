@@ -26,6 +26,7 @@ Author:平澤詩苑
 #include "bonus.h"
 #include "camera_frame.h"
 #include "timer.h"
+#include "particle.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -59,6 +60,7 @@ void InitGame(void)
 	InitWall();					// 壁の初期化処理
 	InitGauge();				// ゲージの初期化処理
 	InitPause();				// ポーズ画面の初期化処理
+	InitParticle();				// パーティクルの初期化処理
 	InitEffect();				// エフェクトの初期化処理
 	InitScore();				// スコアの初期化
 	InitCameraFrame();			// 画面分割の枠初期化処理
@@ -96,6 +98,7 @@ void UninitGame(void)
 	UninitPause();		// ポーズ画面の終了処理
 	UninitGauge();		// ゲージの終了処理
 	UninitModel();		// モデルの終了処理
+	UninitParticle();	// パーティクルの終了処理
 	UninitEffect();	// エフェクトの終了処理（ここは順番は問わない）
 	UninitScore();		// スコアの終了処理
 	UninitCameraFrame();// 画面分割の枠終了処理
@@ -127,6 +130,7 @@ void UpdateGame(void)
 		UpdateWall();		// 壁の更新処理
 		UpdateGauge();		// ゲージの更新処理
 		UpdateEffect();		// エフェクトの更新処理
+		UpdateParticle();	// パーティクルの更新処理
 		UpdateScore();		//スコアの更新処理
 		UpdateTime();		//タイマーの更新処理
 
@@ -178,6 +182,7 @@ void DrawGame(void)
 									//DrawMeshDome();		// メッシュドームの描画処理	
 		DrawWall();					// 壁の描画処理
 		DrawEffect();				// エフェクトの描画処理
+		DrawParticle();				// パーティクルの描画処理
 		DrawPlayer();				// プレイヤーの描画処理
 		DrawBonus();				// ボーナスの描画処理
 		DrawGauge();				// ゲージの描画処理
