@@ -10,6 +10,7 @@
 #include"score.h"
 #include"bonus.h"
 #include"time.h"
+#include"particle.h"
 
 //****************************//
 //		　 マクロ定義		  //
@@ -21,6 +22,7 @@
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
 #define DESPAWN_LIMIT		(800)		//ボーナスが消えるまでのリミット
+#define PARTICLE_LIMIT		(6)			//ボーナスパーティクルのリミット
 
 //****************************//
 //		　　出現情報		  //
@@ -52,6 +54,7 @@ LPD3DXBUFFER			g_pBuffMatBonus		= NULL;	//マテリアルへのポインタ
 DWORD					g_dwNumMatBonus		= 0;	//マテリアルの数
 D3DXMATRIX				g_mtxWorldBonus;			//ワールドマトリックス
 Bonus					g_Bonus;					//ボーナスの情報
+int						g_ParticleCounter;
 //===================================================
 //ボーナスの初期化処理
 //===================================================
@@ -93,6 +96,7 @@ void InitBonus(void)
 	g_Bonus.DespawnLimit = 0;
 	g_Bonus.a = 0.0f;					//透明度の設定
 	g_Bonus.buse = false;
+	g_ParticleCounter = PARTICLE_LIMIT;
 }
 //===================================================
 //ボーナスの終了処理
@@ -120,6 +124,15 @@ void UpdateBonus(void)
 {
 	if (g_Bonus.buse == true)
 	{
+		g_ParticleCounter--;
+
+		if (g_ParticleCounter <= 0)
+		{
+			SetParticle(g_Bonus.pos, 10.0f, 30, PARTICLE_NORMAL);
+
+			g_ParticleCounter = PARTICLE_LIMIT;
+		}
+
 		//移動処理
 		MoveBonus();
 
