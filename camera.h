@@ -39,7 +39,7 @@ typedef struct
 } Camera;
 
 //プロトタイプ宣言
-void InitSetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera);		//カメラの位置設定
+void InitSetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera);	//カメラの位置設定
 void InitCamera(NumCamera type);		//初期化処理
 void UninitCamera(void);				//終了処理
 void UpdateCamera(void);				//更新処理
