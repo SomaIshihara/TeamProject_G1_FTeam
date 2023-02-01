@@ -6,6 +6,7 @@
 #include "player.h"
 #include "camera.h"
 #include "fade.h"
+#include "color.h"
 
 //マクロ定義
 #define NUM_PLACE  (2)								 //スコアの桁数
@@ -31,7 +32,7 @@ void InitTime(void)
 
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\number01.png",
+		"data/TEXTURE/Number.png",
 		&g_pTextureTime);
 
 	for (int nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++)
@@ -71,10 +72,10 @@ void InitTime(void)
 		pVtx[VTX_RI_DO].rhw = RHW;
 
 		//頂点カラーの設定
-		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[0].col = RGBA_ORANGE;
+		pVtx[1].col = RGBA_ORANGE;
+		pVtx[2].col = RGBA_ORANGE;
+		pVtx[3].col = RGBA_ORANGE;
 
 		//テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
