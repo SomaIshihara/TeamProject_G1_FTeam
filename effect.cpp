@@ -12,11 +12,11 @@
 #include "input.h"
 
 //テクスチャの情報
-#define NUM_EFFECT				(4)			//テクスチャの最大数
+#define NUM_EFFECT				(4)			//テクスチャの最大表示数
 
-#define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
-#define EFFECT_CHARGE_MOVE		(3.5f)		//エフェクトのチャージタイプの変化量
-#define EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
+#define CHARGE_EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
+#define CHARGE_EFFECT_CHARGE_MOVE		(3.5f)		//エフェクトのチャージタイプの変化量
+#define CHARGE_EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
 
 //マクロ定義
 #define	CHARGE_EFFECT_TEX_PASS		"data\\TEXTURE\\charge_effect002.png"
@@ -37,9 +37,9 @@ void InitEffect(void)
 	VERTEX_3D *pVtx;							//頂点情報へのポインタ
 
 	//テクスチャの読み込み
-		D3DXCreateTextureFromFile(pDevice,
-			CHARGE_EFFECT_TEX_PASS,
-			&g_pTextureEffect);
+	D3DXCreateTextureFromFile(pDevice,
+		CHARGE_EFFECT_TEX_PASS,
+		&g_pTextureEffect);
 	
 	
 	//エフェクトの位置を設定
@@ -58,7 +58,7 @@ void InitEffect(void)
 	{
 		g_Effect[nCntEffect].nType = EFFECTTYPE_CHARGE;	//種類初期化
 		g_Effect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
-		g_Effect[nCntEffect].fSize = EFFECT_SIZE;		//サイズ初期化
+		g_Effect[nCntEffect].fSize = CHARGE_EFFECT_SIZE;		//サイズ初期化
 		g_Effect[nCntEffect].fAlpha = 1.0f;				//透明度初期化
 		g_Effect[nCntEffect].bUse = false;				//使われていない状態に
 		g_Effect[nCntEffect].bUseCharge = false;		//使われていない状態に
@@ -118,14 +118,6 @@ void UninitEffect(void)
 //=================================
 void UpdateEffect(void)
 {
-	if (GetKeyboardPress(DIK_X) == true)
-	{
-		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
-		{
-			SetEffect(g_Effect[nCntEffect].pos ,nCntEffect, EFFECTTYPE_ATTACK);
-		}
-	}
-
 	if (GetKeyboardPress(DIK_M) == true)
 	{
 		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
@@ -153,13 +145,13 @@ void UpdateEffectSize(int nEffect)
 	case EFFECTTYPE_CHARGE:
 	{
 		//エフェクトの大きさを拡大
-		g_Effect[nEffect].fSize += EFFECT_CHARGE_MOVE;
+		g_Effect[nEffect].fSize += CHARGE_EFFECT_CHARGE_MOVE;
 
 		//エフェクトの大きさがゼロになった
-		if (g_Effect[nEffect].fSize >= EFFECT_SIZE)
+		if (g_Effect[nEffect].fSize >= CHARGE_EFFECT_SIZE)
 		{
 			//エフェクト本来の大きさに直す
-			g_Effect[nEffect].fSize = EFFECT_SIZE;
+			g_Effect[nEffect].fSize = CHARGE_EFFECT_SIZE;
 			//g_Effect[nEffect].nCntLoop++;		//ループ回数加算
 			g_Effect[nEffect].bUse = false;
 
@@ -176,10 +168,10 @@ void UpdateEffectSize(int nEffect)
 	{
 
 		//エフェクトの大きさを拡大
-		g_Effect[nEffect].fSize += EFFECT_ATTACK_MOVE;
+		g_Effect[nEffect].fSize += CHARGE_EFFECT_ATTACK_MOVE;
 
 		//エフェクトの大きさが本来の大きさを超えた
-		if (EFFECT_SIZE <= g_Effect[nEffect].fSize)
+		if (CHARGE_EFFECT_SIZE <= g_Effect[nEffect].fSize)
 		{
 			g_Effect[nEffect].fAlpha -= 0.1f;
 

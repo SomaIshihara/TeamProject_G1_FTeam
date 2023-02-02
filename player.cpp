@@ -17,7 +17,7 @@
 #include "color.h"
 #include "Gauge.h"
 #include "sound.h"
-#include "effect.h"
+#include "charge_effect.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度
@@ -520,7 +520,7 @@ void ChargePlayer(int nChargePlayer)
 		PlaySound(SOUND_LABEL_SE_ENERGY_00);
 	}
 
-	SetEffect(g_aPlayer[nChargePlayer].pos, nChargePlayer, EFFECTTYPE_CHARGE);
+	SetChargeEffect(g_aPlayer[nChargePlayer].pos, nChargePlayer);
 }
 
 //========================
