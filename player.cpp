@@ -23,9 +23,9 @@
 #define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度
 #define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度
 
-#define PLAYER_HIPDROP_WAIT		(20)		//ヒップドロップの「開始・着地」硬直時間
+#define PLAYER_HIPDROP_WAIT		(15)		//ヒップドロップの「開始・着地」硬直時間
 #define PLAYER_BLOWING_POWER	(5.0f)	//ヒップドロップされた方の移動量
-#define PLAYER_HIPDROP_POWER	(-10.0f)	//ヒップドロップするときの移動量
+#define PLAYER_HIPDROP_POWER	(-15.0f)	//ヒップドロップするときの移動量
 #define ACCELERATION_GRAVITY (9.8f)		//重力加速度
 #define PLAYER_WEIGHT		(50)		//質量
 #define PLAYER_POWER_ADD	(0.025f)		//移動の強さの増加値
@@ -1096,7 +1096,9 @@ void RespawnPlayer(int nRespawnPlayer)
 	g_aPlayer[nRespawnPlayer].rot = ZERO_SET;
 	g_aPlayer[nRespawnPlayer].moveGauge = 0;
 	g_aPlayer[nRespawnPlayer].jumpTime = 0;
+	g_aPlayer[nRespawnPlayer].nHipDropWait = 0;
 	g_aPlayer[nRespawnPlayer].bJump = true;
+	g_aPlayer[nRespawnPlayer].bHipDrop = false;
 
 	g_aPlayer[nRespawnPlayer].lastAtkPlayer = -1;
 	g_aPlayer[nRespawnPlayer].nNumHitPlayer = -1;
