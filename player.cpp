@@ -41,6 +41,11 @@
 #define DEFANCE_CONS			(0.0f)		//防御定数（1.0で完全防御）
 #define DEFANCE_ITEMADD			(0.3f)		//アイテム所持中の強化量
 
+//ゴースト化状態
+#define GOAST_ALPHA			(0.25f)			//不透明度
+#define GOAST_FLASHSTART	(240)			//点滅開始する残り時間
+#define GOAST_FLASHPULSE	(20)			//点滅の切り替え時間
+
 #define TEST_SIZE_WIDTH		(30.0f)
 #define TEST_SIZE_HEIGHT	(15.0f)
 #define TEST_SIZE_DEPTH		(30.0f)
@@ -113,6 +118,7 @@ void InitPlayer(void)
 
 		g_aPlayer[nCntPlayer].nATKItemTime = 0;
 		g_aPlayer[nCntPlayer].nDEFItemTime = 0;
+		g_aPlayer[nCntPlayer].nGoastItemTime = 600;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
@@ -151,10 +157,16 @@ void UpdatePlayer(void)
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
+		//前回の情報初期化
 		g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
 
 		//現在の位置を前回の位置にする
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
+
+		//アイテム持続時間減らす
+		g_aPlayer[nCntPlayer].nATKItemTime--;
+		g_aPlayer[nCntPlayer].nDEFItemTime--;
+		g_aPlayer[nCntPlayer].nGoastItemTime--;
 
 		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
 		{
@@ -291,14 +303,18 @@ void UpdatePlayer(void)
 			RotPlayer(nCntPlayer);
 
 			//当たり判定類
-			CollisionPP(nCntPlayer);
-			HipDropPP(nCntPlayer);
+			if (g_aPlayer[nCntPlayer].nGoastItemTime <= 0)
+			{//ゴースト化状態でなければ
+				CollisionPP(nCntPlayer);
+			}
 
-			//影位置設定
-			//一旦なし
+			if (g_aPlayer[nCntPlayer].bHipDrop)
+			{//ヒップドロップ中なら
+				HipDropPP(nCntPlayer);
+			}
 
 			if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_FALL && g_aPlayer[nCntPlayer].jumpTime >= DOWN_TIME)
-			{
+			{//落ち切った
 				DownPlayer(nCntPlayer);
 			}
 
@@ -352,12 +368,6 @@ void UpdatePlayer(void)
 			//移動量減衰
 			g_aPlayer[nCntPlayer].move.x += (0 - g_aPlayer[nCntPlayer].move.x) * DUMP_COEF;
 			g_aPlayer[nCntPlayer].move.z += (0 - g_aPlayer[nCntPlayer].move.z) * DUMP_COEF;
-
-			////[仮]一旦Y=0.0fになったら着地
-			//if (g_aPlayer[nCntPlayer].pos.y <= 0.0f)
-			//{
-			//	g_aPlayer[nCntPlayer].pos.y = 0.0f;
-			//}
 		}
 	}
 }
@@ -435,8 +445,20 @@ void DrawPlayer(void)
 
 				for (int nCntMat = 0; nCntMat < (int)g_aPlayer[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
 				{
+					//ゴースト化状態を考慮した変更用マテリアル変数
+					D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
+
+					//ゴースト化状態なら半透明で設定
+					if (g_aPlayer[nCntPlayer].nGoastItemTime > GOAST_FLASHSTART)
+					{
+						matChange.Diffuse.a = GOAST_ALPHA;
+					}
+					else if (g_aPlayer[nCntPlayer].nGoastItemTime > 0 && g_aPlayer[nCntPlayer].nGoastItemTime % (GOAST_FLASHPULSE * 2) < GOAST_FLASHPULSE)
+					{
+						matChange.Diffuse.a = GOAST_ALPHA;
+					}
 					//マテリアル設定
-					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+					pDevice->SetMaterial(&matChange);
 
 					//テクスチャ設定
 					pDevice->SetTexture(0, g_aPlayer[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
@@ -541,6 +563,9 @@ void DashPlayer(int nDashPlayer)
 void HipDropPlayer(int nHipDropPlayer)
 {
 	g_aPlayer[nHipDropPlayer].moveV0.y = PLAYER_HIPDROP_POWER;		//ヒップドロップの降下速度を代入
+	g_aPlayer[nHipDropPlayer].move.x = 0.0f;						//X・Zの移動量消す
+	g_aPlayer[nHipDropPlayer].move.z = 0.0f;
+	g_aPlayer[nHipDropPlayer].moveGauge = 0.0f;
 	g_aPlayer[nHipDropPlayer].jumpTime = 0;							//ジャンプ時間リセット
 	g_aPlayer[nHipDropPlayer].bHipDrop = true;						//ヒップドロップしている
 }
@@ -1103,6 +1128,10 @@ void RespawnPlayer(int nRespawnPlayer)
 	g_aPlayer[nRespawnPlayer].lastAtkPlayer = -1;
 	g_aPlayer[nRespawnPlayer].nNumHitPlayer = -1;
 	g_aPlayer[nRespawnPlayer].stat = PLAYERSTAT_WAIT;
+
+	g_aPlayer[nRespawnPlayer].nATKItemTime = 0;
+	g_aPlayer[nRespawnPlayer].nDEFItemTime = 0;
+	g_aPlayer[nRespawnPlayer].nGoastItemTime = 0;
 }
 
 //========================

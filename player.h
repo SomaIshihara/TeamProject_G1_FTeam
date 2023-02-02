@@ -65,6 +65,7 @@ struct Player
 	//アイテム類
 	int nATKItemTime;		//はじき強化アイテムの持続時間
 	int nDEFItemTime;		//押し合い強化アイテムの持続時間
+	int nGoastItemTime;		//ゴースト化アイテムの持続時間
 
 	//描画類
 	Model model;			//使用モデル
