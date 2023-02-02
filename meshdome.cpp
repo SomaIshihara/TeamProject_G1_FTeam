@@ -15,13 +15,14 @@
 #define MESHDOME_SPLIT				(8)					//背景の頂点数
 #define MESHDOME_SEPALATE			(8)					//背景の縦の分割数
 #define MESHDOME_NUM_OVERLAP		(2)					//最初と最後の頂点が重なる数
-#define MESHDOME_ALL_VERTEX			((MESHDOME_SPLIT * (MESHDOME_SEPALATE - 1)) + MESHDOME_NUM_OVERLAP)	//全体の頂点数
+//#define MESHDOME_ALL_VERTEX			((MESHDOME_SPLIT * (MESHDOME_SEPALATE - 1)) + MESHDOME_NUM_OVERLAP)	//全体の頂点数
 #define CREATE_SQUARE_NEED_TRIANGLE	(2)					//四角形を作るのに必要な三角形の数
 #define TRIANGLE					(3)					//３角形に必要な頂点
 #define SQUARE_NUM_VERTEX			(6)					//四角形の中に含まれる頂点の数(重複も含む)
 #define ONE_LAP						(D3DX_PI * 2.0f)	//１周分の角度
 #define MESHDOME_ALL_VERTEX			(19)				//全体の頂点数
-#define MESHDOME_ALL_INDEX			(19)				//全体のインデックス数
+#define MESHDOME_COVER_INDEX		(10)				//フタのインデックス数
+#define MESHDOME_SIDE_INDEX			(MESHDOME_SEPALATE * (MESHDOME_SPLIT - MESHDOME_NUM_OVERLAP) * 2 * TRIANGLE)	//側面のインデックス数  1周分の分割数 × 側面だけのインデックス × 四角形に必要な三角形数 × 三角形の頂点数
 
 //メッシュドームの構造体
 typedef struct
@@ -34,7 +35,8 @@ typedef struct
 //グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureMeshDome = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshDome = NULL;
-LPDIRECT3DINDEXBUFFER9	g_pIdxBuffMeshDome = NULL;
+LPDIRECT3DINDEXBUFFER9	g_pIdxBuffCoverMeshDome = NULL;		//フタのインデックス番号
+LPDIRECT3DINDEXBUFFER9	g_pIdxBuffSideMeshDome = NULL;		//側面のインデックス番号
 D3DXMATRIX				g_mtxWorldMeshDome;
 MeshDome				g_MeshDome;
 
@@ -62,11 +64,17 @@ void InitMeshDome(void)
 	//--------------------------------------
 	SetMeshDomeVertexBuffer();
 
-	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHDOME_ALL_INDEX, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshDome, NULL);
-
 	//--------------------------------------
 	//		インデックスバッファの生成
+	//--------------------------------------
+	//フタのインデックスバッファ
+	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHDOME_COVER_INDEX, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffCoverMeshDome, NULL);
+	
+	//側面のインデックスバッファ
+	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHDOME_SIDE_INDEX, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffSideMeshDome, NULL);
+
+	//--------------------------------------
+	//		インデックスバッファの設定
 	//--------------------------------------
 	SetMeshDomeIndexBuffer();
 }
@@ -139,54 +147,33 @@ void SetMeshDomeVertexBuffer(void)
 //インデックス番号の設定
 void SetMeshDomeIndexBuffer(void)
 {
-	WORD *pIdx;
-	//インデックスバッファをロックし、頂点番号へのポインタを取得
-	g_pIdxBuffMeshDome->Lock(0, 0, (void**)&pIdx, 0);
+	WORD *pIdx;		//インデックスのポインタ
+
+	//フタのインデックスバッファをロックし、頂点番号へのポインタを取得
+	g_pIdxBuffCoverMeshDome->Lock(0, 0, (void**)&pIdx, 0);
 
 	int nNumIdx = 0;		/*インデックス番号*/
-
 	int offsetIndex = 0;	/*天面の出っ張りの外に広がる頂点の基準番号（基本的に中心頂点の次に指定される頂点番号）*/
 
 	//			／＼
 	//		  ／天面＼
 	//		／番号設定＼
-	for (nNumIdx = 0; nNumIdx < 10; nNumIdx++)
+	for (nNumIdx = 0; nNumIdx < MESHDOME_COVER_INDEX; nNumIdx++)
 	{
 		pIdx[nNumIdx] = nNumIdx;
 	}
-
-
-
-	//			／＼
-	//		  ／天面＼
-	//		／番号設定＼			MESHDOME_SEPALATE * TRIANGLE	分割数分の三角形を作成するために、三角形に必要な頂点数3を乗算する
-	/*for (int nCntIdx = 0; nCntIdx < MESHDOME_SEPALATE * TRIANGLE; nCntIdx++)
-	{
-		switch (nCntIdx % 3)
-		{
-		case 0:		//天面のでっぱり番号
-			pIdx[nNumIdx++] = 0;
-			break;
-
-		case 1:		//２番目の頂点番号
-			pIdx[nNumIdx++] = 1 + offsetIndex;
-			break;
-
-		case 2:		//最後の頂点番号
-			int LapIndex = 2 + offsetIndex++;
-
-			// インデックス番号が１周したとき、下の3項演算子が　Trueとなり、１を返す
-			LapIndex = MESHDOME_SEPALATE < LapIndex ? pIdx[1] : LapIndex;
-			
-			//３角形最後のインデックス番号を代入
-			pIdx[nNumIdx++] = LapIndex;
-			break;
-		}
-	}*/
 	
+	//インデックスバッファのアンロック
+	g_pIdxBuffCoverMeshDome->Unlock();
+
+	
+	//側面のインデックスバッファをロックし、頂点番号へのポインタを取得
+	g_pIdxBuffSideMeshDome->Lock(0, 0, (void**)&pIdx, 0);
+
 	//	／----------------＼
 	// <	側面番号設定	>
 	//	＼----------------／
+	nNumIdx = 0;				//インデックス番号初期化
 	int StartIndex = pIdx[1];	/*開始Index番号*/
 	int SideIndexLen = MESHDOME_SEPALATE * (MESHDOME_SPLIT - MESHDOME_NUM_OVERLAP) * 2 * TRIANGLE;	/*天面・底面を除いたIndex要素数*/
 	int LapDiv = MESHDOME_SEPALATE * 2 * TRIANGLE;	/*１周分必要なIndex数*/
@@ -194,77 +181,24 @@ void SetMeshDomeIndexBuffer(void)
 		LapBoobyIndex = 0;							/*ループ時使用する最後から2番目のIndex*/
 	int CreateSquareCnt = 0;						/*作成した四角形の数*/
 
-	for (int nCntSideIdx = 0; nCntSideIdx < SideIndexLen; nCntSideIdx++)
+	for (int nCntHeight = 0; nCntHeight < MESHDOME_SEPALATE - 1; nCntHeight++)
 	{
-		// 一周の頂点数を超えたら更新(初回も含む)
-		if (nCntSideIdx % LapDiv == 0)
+		for (int nCntWidth = 0; nCntWidth < MESHDOME_SPLIT + 1; nCntWidth++)
 		{
-			LapLastIndex = StartIndex;
-			LapBoobyIndex = StartIndex + MESHDOME_SEPALATE;
-			CreateSquareCnt++;
+			pIdx[nNumIdx++] = (nCntWidth + ((MESHDOME_SPLIT + 1) * (nCntHeight + 1)));
+			pIdx[nNumIdx++] = nCntWidth + ((MESHDOME_SPLIT + 1) * nCntHeight);
 		}
 
-		switch (nCntSideIdx % 6)
+		if (nCntHeight < MESHDOME_SEPALATE - 2)
 		{
-		case 0:
-		case 3:
-		{
-			pIdx[nNumIdx++] = StartIndex;
-		}
-		break;
-
-		case 1:
-		{
-			pIdx[nNumIdx++] = StartIndex + MESHDOME_SEPALATE;
-		}
-		break;
-
-		case 2:
-		case 4:
-		{
-			if (nCntSideIdx > 0
-				&& (nCntSideIdx % (LapDiv * CreateSquareCnt - 2) == 0 || nCntSideIdx % (LapDiv * CreateSquareCnt - 4) == 0))
-			{
-				// 1周したときのループ処理
-				// 周回ポリゴンの最後から2番目のIndex
-				pIdx[nNumIdx++] = LapBoobyIndex;
-			}
-			else
-			{
-				pIdx[nNumIdx++] = StartIndex + MESHDOME_SEPALATE + 1;
-			}
-		}
-		break;
-
-		case 5:
-		{
-			if (0 < nCntSideIdx && nCntSideIdx % (LapDiv * CreateSquareCnt - 1) == 0)
-			{
-				// 1周したときのループ処理
-				// 周回ポリゴンの最後のIndex
-				pIdx[nNumIdx++] = LapLastIndex;
-			}
-			else
-			{
-				pIdx[nNumIdx++] = StartIndex + 1;
-			}
-
-			// 開始Indexの更新 
-			StartIndex++;
-		}
-		break;
+			pIdx[nNumIdx++] = ((MESHDOME_SPLIT + 1) * (nCntHeight + 1)) - 1;
+			pIdx[nNumIdx++] = (MESHDOME_SPLIT + 1) * (nCntHeight + 2);
 		}
 	}
 
 	//		＼底面番号／
 	//		  ＼設定／
 	//			＼／
-	for (int nCnt = 0; nCnt < 10; nCnt++)
-	{
-		pIdx[nCnt] = nCnt;
-	}
-
-
 	//最後の頂点番号（底面の先頂点)
 	offsetIndex = MESHDOME_ALL_VERTEX - 1;
 	int LoopIndex = offsetIndex;
@@ -289,7 +223,7 @@ void SetMeshDomeIndexBuffer(void)
 	}*/
 
 	//インデックスバッファのアンロック
-	g_pIdxBuffMeshDome->Unlock();
+	g_pIdxBuffSideMeshDome->Unlock();
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -297,11 +231,18 @@ void SetMeshDomeIndexBuffer(void)
 //--------------------------------------------------------------------------------------------------------
 void UninitMeshDome(void)
 {
-	//インデックスの破棄
-	if (g_pIdxBuffMeshDome != NULL)
+	//フタのインデックスの破棄
+	if (g_pIdxBuffCoverMeshDome != NULL)
 	{
-		g_pIdxBuffMeshDome->Release();
-		g_pIdxBuffMeshDome = NULL;
+		g_pIdxBuffCoverMeshDome->Release();
+		g_pIdxBuffCoverMeshDome = NULL;
+	}
+
+	//側面のインデックスの破棄
+	if (g_pIdxBuffSideMeshDome != NULL)
+	{
+		g_pIdxBuffSideMeshDome->Release();
+		g_pIdxBuffSideMeshDome = NULL;
 	}
 
 	//テクスチャの破棄
@@ -352,10 +293,14 @@ void DrawMeshDome(void)
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffMeshDome, 0, sizeof(VERTEX_3D));
 
-	//インデックスバッファをデータストリームに設定
-	pDevice->SetIndices(g_pIdxBuffMeshDome);
-
+	//両面カリングをON
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	//-----------------------------------------------------------
+	//フタのインデックスを設定し、描画する
+	//-----------------------------------------------------------
+	//インデックスバッファをデータストリームに設定
+	pDevice->SetIndices(g_pIdxBuffCoverMeshDome);
 
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_3D);
@@ -363,9 +308,24 @@ void DrawMeshDome(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureMeshDome);
 
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN, 0, 0, 10, 0, 8);		//フタ描画
-	//pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, 16, MESHDOME_ALL_VERTEX + 1, 16);	//側面描画
-	//pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN, 0, 0, MESHDOME_ALL_VERTEX, 0, MESHDOME_ALL_VERTEX);
+	//ポリゴン描画
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN, 0, 0, MESHDOME_COVER_INDEX, 0, 8);
 	
+	//-----------------------------------------------------------
+	//側面のインデックスを設定し、描画する
+	//-----------------------------------------------------------
+	//インデックスバッファをデータストリームに設定
+	pDevice->SetIndices(g_pIdxBuffSideMeshDome);
+
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
+
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_pTextureMeshDome);
+
+	//ポリゴン描画
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MESHDOME_SEPALATE * (MESHDOME_SPLIT - MESHDOME_NUM_OVERLAP) * 2 * TRIANGLE, 0, MESHDOME_SEPALATE * (MESHDOME_SPLIT - MESHDOME_NUM_OVERLAP) * 2 * TRIANGLE);
+
+	//普通のカリングモードにする
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
