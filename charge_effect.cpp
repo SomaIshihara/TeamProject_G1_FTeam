@@ -12,11 +12,10 @@
 #include "input.h"
 
 //テクスチャの情報
-#define NUM_EFFECT				(4)			//テクスチャの最大表示数
+#define NUM_CHARGE_EFFECT				(4)			//テクスチャの最大表示数
 
 #define CHARGE_EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
-#define CHARGE_EFFECT_CHARGE_MOVE		(3.5f)		//エフェクトのチャージタイプの変化量
-#define CHARGE_EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
+#define EFFECT_CHARGE_MOVE				(3.5f)		//エフェクトのチャージタイプの変化量
 
 //マクロ定義
 #define	CHARGE_EFFECT_TEX_PASS		"data\\TEXTURE\\charge_effect002.png"
@@ -25,7 +24,7 @@
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffChargeEffect = NULL;				//頂点バッファのポインタ
 LPDIRECT3DTEXTURE9		g_pTextureChargeEffect = NULL;	//テクスチャのポインタ
 D3DXMATRIX				mtxWorldChargeEffect;							//ワールドマトリックス
-ChargeEffect			g_ChargeEffect[NUM_EFFECT];					//エフェクトの情報
+ChargeEffect			g_ChargeEffect[NUM_CHARGE_EFFECT];					//エフェクトの情報
 
 //=================================
 //エフェクトの初期化処理
@@ -47,14 +46,14 @@ void InitChargeEffect(void)
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_3D) * VTX_MAX * NUM_EFFECT,
+		sizeof(VERTEX_3D) * VTX_MAX * NUM_CHARGE_EFFECT,
 		D3DUSAGE_WRITEONLY, FVF_VERTEX_3D,
 		D3DPOOL_MANAGED, &g_pVtxBuffChargeEffect, NULL);
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffChargeEffect->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pVtx += VTX_MAX)
+	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
 		//g_ChargeEffect[nCntEffect].nType = EFFECTTYPE_CHARGE;	//種類初期化
 		g_ChargeEffect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
@@ -120,7 +119,7 @@ void UpdateChargeEffect(void)
 {
 	if (GetKeyboardPress(DIK_M) == true)
 	{
-		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
+		for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++)
 		{
 			SetChargeEffect(g_ChargeEffect[nCntEffect].pos, nCntEffect);
 		}
@@ -130,7 +129,7 @@ void UpdateChargeEffect(void)
 	SetChargeEffectPos();
 
 	//エフェクトのサイズ更新  (頂点座標の更新もするので、このUpdate関数の最後が望ましい)
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++)
 	{
 		UpdateChargeEffectSize(nCntEffect);
 	}
@@ -141,7 +140,7 @@ void UpdateChargeEffectSize(int nEffect)
 {
 	
 		//エフェクトの大きさを拡大
-		g_ChargeEffect[nEffect].fSize += CHARGE_EFFECT_CHARGE_MOVE;
+		g_ChargeEffect[nEffect].fSize += EFFECT_CHARGE_MOVE;
 
 		//エフェクトの大きさがゼロになった
 		if (g_ChargeEffect[nEffect].fSize >= CHARGE_EFFECT_SIZE)
@@ -183,7 +182,7 @@ void DrawChargeEffect(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスの取得
 	D3DXMATRIX  mtxTrans, mtxView;			//計算用マトリックス
 
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++)
 	{
 		if (g_ChargeEffect[nCntEffect].bUse == true)
 		{
@@ -239,7 +238,7 @@ void SetChargeEffectPos()
 {
 	Player *pPlayer = GetPlayer();
 
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++, pPlayer++)
+	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++, pPlayer++)
 	{
 		//対象のエフェクトが使われている
 		if (g_ChargeEffect[nCntEffect].bUse == true)
@@ -254,7 +253,7 @@ void SetChargeEffectPos()
 //エフェクトの設定処理
 void SetChargeEffect(D3DXVECTOR3 pos, int nCntType)
 {
-	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
+	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++)
 	{
 		//対象のエフェクトが使われていない
 		if (g_ChargeEffect[nCntType].bUse == false)
@@ -271,7 +270,7 @@ void SetChargeEffect(D3DXVECTOR3 pos, int nCntType)
 //"data\\TEXTURE\\AttackEffect.png",
 //if (GetKeyboardPress(DIK_X) == true)
 //{
-//	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
+//	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++)
 //	{
 //		SetEffect(g_ChargeEffect[nCntEffect].pos, nCntEffect, EFFECTTYPE_ATTACK);
 //	}
