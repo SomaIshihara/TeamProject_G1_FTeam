@@ -61,6 +61,12 @@
     <Filter Include="ヘッダー ファイル\Game\Pause">
       <UniqueIdentifier>{796dc22e-93b6-46fa-8484-4e0792b167a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Effect">
+      <UniqueIdentifier>{acf3622e-16b2-4e17-9539-a4c82c68ee5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Effect">
+      <UniqueIdentifier>{8b5f2fe8-b784-48ff-805d-f55b3225ede9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -123,9 +129,6 @@
     <ClCompile Include="sound.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="effect.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="score.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
@@ -138,11 +141,14 @@
     <ClCompile Include="timer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="charge_effect.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="particle.cpp">
       <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="charge_effect.cpp">
+      <Filter>ソース ファイル\Game\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="effect.cpp">
+      <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,9 +215,6 @@
     <ClInclude Include="sound.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="effect.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="score.h">
       <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
@@ -224,11 +227,14 @@
     <ClInclude Include="timer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="charge_effect.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="particle.h">
       <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="charge_effect.h">
+      <Filter>ヘッダー ファイル\Game\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="effect.h">
+      <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
