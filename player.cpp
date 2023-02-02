@@ -118,7 +118,7 @@ void InitPlayer(void)
 
 		g_aPlayer[nCntPlayer].nATKItemTime = 0;
 		g_aPlayer[nCntPlayer].nDEFItemTime = 0;
-		g_aPlayer[nCntPlayer].nGoastItemTime = 600;
+		g_aPlayer[nCntPlayer].nGoastItemTime = 0;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
