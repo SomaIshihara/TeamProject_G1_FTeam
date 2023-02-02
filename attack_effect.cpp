@@ -14,7 +14,8 @@
 //テクスチャの情報
 #define NUM_ATTACK_EFFECT				(4)			//テクスチャの最大表示数
 
-#define ATTACK_EFFECT_SIZE				(40.0f)		//エフェクトのサイズ
+#define ATTACK_EFFECT_SIZE				(60.0f)		//エフェクトのサイズ
+#define ATTACK_EFFECT_MAX_SIZE			(100.0f)	//エフェクトの最大サイズ
 #define EFFECT_ATTACK_MOVE				(8.0f)		//エフェクトのアタックタイプの変化量
 
 //マクロ定義
@@ -139,11 +140,16 @@ void UpdateAttackEffect(void)
 //エフェクトのサイズ更新
 void UpdateAttackEffectSize(int nEffect)
 {
-	g_AttackEffect[nEffect].fResize += EFFECT_ATTACK_MOVE;
 
-	//エフェクトの大きさを拡大
-	g_AttackEffect[nEffect].fSize += g_AttackEffect[nEffect].fResize;
+	if (g_AttackEffect[nEffect].fSize <= ATTACK_EFFECT_MAX_SIZE)
+	{
+		g_AttackEffect[nEffect].fResize += EFFECT_ATTACK_MOVE;
 
+		//エフェクトの大きさを拡大
+		g_AttackEffect[nEffect].fSize += g_AttackEffect[nEffect].fResize;
+
+	}
+	
 	//エフェクトの大きさが規定値になった
 	if (g_AttackEffect[nEffect].fSize >= ATTACK_EFFECT_SIZE)
 	{
