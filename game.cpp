@@ -21,7 +21,7 @@ Author:平澤詩苑
 #include "pause.h"
 #include "meshdome.h"
 #include "Gauge.h"
-#include "effect.h"
+#include "charge_effect.h"
 #include "score.h"
 #include "bonus.h"
 #include "camera_frame.h"
@@ -62,7 +62,7 @@ void InitGame(void)
 	InitGauge();				// ゲージの初期化処理
 	InitPause();				// ポーズ画面の初期化処理
 	InitParticle();				// パーティクルの初期化処理
-	InitEffect();				// エフェクトの初期化処理
+	InitChargeEffect();				// エフェクトの初期化処理
 	InitScore();				// スコアの初期化
 	InitTime();					// タイマーの初期化処理
 	SetTime(LIMIT_TIMER);		// タイマーの設定処理
@@ -99,7 +99,7 @@ void UninitGame(void)
 	UninitGauge();		// ゲージの終了処理
 	UninitModel();		// モデルの終了処理
 	UninitParticle();	// パーティクルの終了処理
-	UninitEffect();	// エフェクトの終了処理（ここは順番は問わない）
+	UninitChargeEffect();	// エフェクトの終了処理（ここは順番は問わない）
 	UninitScore();		// スコアの終了処理
 	UninitCameraFrame();// 画面分割の枠終了処理
 	UninitTime();		//タイマーの終了処理
@@ -129,7 +129,7 @@ void UpdateGame(void)
 		UpdateCamera();		// カメラの更新処理
 		UpdateWall();		// 壁の更新処理
 		UpdateGauge();		// ゲージの更新処理
-		UpdateEffect();		// エフェクトの更新処理
+		UpdateChargeEffect();		// エフェクトの更新処理
 		UpdateParticle();	// パーティクルの更新処理
 		UpdateScore();		//スコアの更新処理
 		UpdateTime();		//タイマーの更新処理
@@ -181,7 +181,7 @@ void DrawGame(void)
 									//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 									//DrawMeshDome();		// メッシュドームの描画処理	
 		DrawWall();					// 壁の描画処理
-		DrawEffect();				// エフェクトの描画処理
+		DrawChargeEffect();				// エフェクトの描画処理
 		DrawParticle();				// パーティクルの描画処理
 		DrawPlayer();				// プレイヤーの描画処理
 		DrawBonus();				// ボーナスの描画処理
