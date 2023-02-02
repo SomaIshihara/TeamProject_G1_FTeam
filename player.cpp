@@ -278,6 +278,20 @@ void UpdatePlayer(void)
 			//ジャンプ量設定
 			g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 
+			//向きを変える処理
+			RotPlayer(nCntPlayer);
+
+			//当たり判定類
+			if (g_aPlayer[nCntPlayer].nGoastItemTime <= 0)
+			{//ゴースト化状態でなければ
+				CollisionPP(nCntPlayer);
+			}
+
+			if (g_aPlayer[nCntPlayer].bHipDrop)
+			{//ヒップドロップ中なら
+				HipDropPP(nCntPlayer);
+			}
+
 			//移動後がy<0なら落ちるか移動量消す
 			if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f && g_aPlayer[nCntPlayer].stat != PLAYERSTAT_FALL)
 			{
@@ -297,20 +311,6 @@ void UpdatePlayer(void)
 					g_aPlayer[nCntPlayer].jumpTime = 0;
 					g_aPlayer[nCntPlayer].pos.y = 0.0f;
 				}
-			}
-
-			//向きを変える処理
-			RotPlayer(nCntPlayer);
-
-			//当たり判定類
-			if (g_aPlayer[nCntPlayer].nGoastItemTime <= 0)
-			{//ゴースト化状態でなければ
-				CollisionPP(nCntPlayer);
-			}
-
-			if (g_aPlayer[nCntPlayer].bHipDrop)
-			{//ヒップドロップ中なら
-				HipDropPP(nCntPlayer);
 			}
 
 			if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_FALL && g_aPlayer[nCntPlayer].jumpTime >= DOWN_TIME)
