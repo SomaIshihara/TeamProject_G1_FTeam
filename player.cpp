@@ -347,10 +347,10 @@ void UpdatePlayer(void)
 				D3DXVECTOR3 moveTmp2 = g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move;
 
 				//Š„‡Ý’è
-				float fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayer[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+				float fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
 					DEFANCE_CONS + (g_aPlayer[nCntPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
 
-				float fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+				float fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayer[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
 					DEFANCE_CONS + (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
 
 				g_aPlayer[nCntPlayer].move = moveTmp2 * fPowerConvertion1;
@@ -736,6 +736,8 @@ void CollisionPP(int nPlayerNum)
 							{//“®‚¢‚Ä‚é
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 								g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
+
+								SetAttackEffect(g_aPlayer[nCntOtherPlayer].pos, nCntOtherPlayer);
 							}
 							//1.0f = pushback
 							float fRate = fAreaARight[nCntCollision] / fAreaBRight[nCntCollision];
@@ -755,6 +757,8 @@ void CollisionPP(int nPlayerNum)
 							{//“®‚¢‚Ä‚é
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 								g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
+
+								SetAttackEffect(g_aPlayer[nCntOtherPlayer].pos, nCntOtherPlayer);
 							}
 							float fRate = fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
@@ -782,6 +786,8 @@ void CollisionPP(int nPlayerNum)
 							{//“®‚¢‚Ä‚é
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 								g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
+
+								SetAttackEffect(g_aPlayer[nCntOtherPlayer].pos, nCntOtherPlayer);
 							}
 							float fRate = fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
@@ -800,6 +806,8 @@ void CollisionPP(int nPlayerNum)
 							{//“®‚¢‚Ä‚é
 								g_aPlayer[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
 								g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
+
+								SetAttackEffect(g_aPlayer[nCntOtherPlayer].pos, nCntOtherPlayer);
 							}
 							float fRate = fAreaADown[nCntCollision] / fAreaBDown[nCntCollision];
 							g_aPlayer[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayer[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;

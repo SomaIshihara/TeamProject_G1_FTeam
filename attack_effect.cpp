@@ -14,8 +14,10 @@
 //テクスチャの情報
 #define NUM_ATTACK_EFFECT				(4)			//テクスチャの最大表示数
 
-#define ATTACK_EFFECT_SIZE				(40.0f)		//エフェクトのサイズ
-#define EFFECT_ATTACK_MOVE				(8.0f)		//エフェクトのアタックタイプの変化量
+#define ATTACK_EFFECT_SIZE				(50.0f)		//エフェクトのサイズ
+#define ATTACK_EFFECT_MAX_SIZE			(150.0f)	//エフェクトの最大サイズ
+#define EFFECT_ATTACK_MOVE				(3.0f)		//エフェクトのアタックタイプの変化量
+#define EFFECT_CLEAACCEL				(0.1f)		//エフェクトの透明加速度
 
 //マクロ定義
 #define	CHARGE_EFFECT_TEX_PASS		"data\\TEXTURE\\AttackEffect.png"
@@ -139,15 +141,20 @@ void UpdateAttackEffect(void)
 //エフェクトのサイズ更新
 void UpdateAttackEffectSize(int nEffect)
 {
-	g_AttackEffect[nEffect].fResize += EFFECT_ATTACK_MOVE;
 
-	//エフェクトの大きさを拡大
-	g_AttackEffect[nEffect].fSize += g_AttackEffect[nEffect].fResize;
+	if (g_AttackEffect[nEffect].fSize <= ATTACK_EFFECT_MAX_SIZE)
+	{
+		g_AttackEffect[nEffect].fResize += EFFECT_ATTACK_MOVE;
 
+		//エフェクトの大きさを拡大
+		g_AttackEffect[nEffect].fSize += g_AttackEffect[nEffect].fResize;
+
+	}
+	
 	//エフェクトの大きさが規定値になった
 	if (g_AttackEffect[nEffect].fSize >= ATTACK_EFFECT_SIZE)
 	{
-		g_AttackEffect[nEffect].fAlpha -= 0.2f;
+		g_AttackEffect[nEffect].fAlpha -= EFFECT_CLEAACCEL;
 
 		if (g_AttackEffect[nEffect].fAlpha <= 0.0f)
 		{

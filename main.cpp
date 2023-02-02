@@ -479,7 +479,7 @@ void Draw(void)
 		DrawFade();
 
 		//デバッグ表示
-		//DrawDebugProc();
+		DrawDebugProc();
 
 		//描画終了処理
 		g_pD3DDevice->EndScene();
