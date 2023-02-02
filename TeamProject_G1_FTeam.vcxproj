@@ -158,6 +158,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="attack_effect.cpp" />
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="bonus.cpp" />
     <ClCompile Include="camera.cpp" />
@@ -187,6 +188,7 @@
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="attack_effect.h" />
     <ClInclude Include="bg.h" />
     <ClInclude Include="bonus.h" />
     <ClInclude Include="camera_frame.h" />

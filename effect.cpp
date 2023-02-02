@@ -14,9 +14,9 @@
 //テクスチャの情報
 #define NUM_EFFECT				(4)			//テクスチャの最大表示数
 
-#define CHARGE_EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
-#define CHARGE_EFFECT_CHARGE_MOVE		(3.5f)		//エフェクトのチャージタイプの変化量
-#define CHARGE_EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
+#define EFFECT_SIZE				(80.0f)		//エフェクトのサイズ
+#define EFFECT_CHARGE_MOVE		(3.5f)		//エフェクトのチャージタイプの変化量
+#define EFFECT_ATTACK_MOVE		(8.0f)		//エフェクトのアタックタイプの変化量
 
 //マクロ定義
 #define	CHARGE_EFFECT_TEX_PASS		"data\\TEXTURE\\charge_effect002.png"
@@ -58,7 +58,7 @@ void InitEffect(void)
 	{
 		g_Effect[nCntEffect].nType = EFFECTTYPE_CHARGE;	//種類初期化
 		g_Effect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
-		g_Effect[nCntEffect].fSize = CHARGE_EFFECT_SIZE;		//サイズ初期化
+		g_Effect[nCntEffect].fSize = EFFECT_SIZE;		//サイズ初期化
 		g_Effect[nCntEffect].fAlpha = 1.0f;				//透明度初期化
 		g_Effect[nCntEffect].bUse = false;				//使われていない状態に
 		g_Effect[nCntEffect].bUseCharge = false;		//使われていない状態に
@@ -118,6 +118,8 @@ void UninitEffect(void)
 //=================================
 void UpdateEffect(void)
 {
+	//対象のキーが押された（デバック用）
+
 	if (GetKeyboardPress(DIK_M) == true)
 	{
 		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
@@ -139,51 +141,18 @@ void UpdateEffect(void)
 //エフェクトのサイズ更新
 void UpdateEffectSize(int nEffect)
 {
-	//エフェクトの種類によるサイズの更新
-	switch (g_Effect[nEffect].nType)
+
+	//エフェクトの大きさを拡大or縮小
+	g_Effect[nEffect].fSize += EFFECT_CHARGE_MOVE;
+
+	//エフェクトの大きさがゼロになった
+	if (g_Effect[nEffect].fSize >= EFFECT_SIZE)
 	{
-	case EFFECTTYPE_CHARGE:
-	{
-		//エフェクトの大きさを拡大
-		g_Effect[nEffect].fSize += CHARGE_EFFECT_CHARGE_MOVE;
+		//エフェクト本来の大きさに直す
+		g_Effect[nEffect].fSize = EFFECT_SIZE;
+		//g_Effect[nEffect].nCntLoop++;		//ループ回数加算
+		g_Effect[nEffect].bUse = false;
 
-		//エフェクトの大きさがゼロになった
-		if (g_Effect[nEffect].fSize >= CHARGE_EFFECT_SIZE)
-		{
-			//エフェクト本来の大きさに直す
-			g_Effect[nEffect].fSize = CHARGE_EFFECT_SIZE;
-			//g_Effect[nEffect].nCntLoop++;		//ループ回数加算
-			g_Effect[nEffect].bUse = false;
-
-	/*		if (g_Effect[nEffect].nCntLoop >= 5)
-			{
-				
-				g_Effect[nEffect].nCntLoop = 0;
-			}*/
-		}
-	}
-	break;
-
-	case EFFECTTYPE_ATTACK:
-	{
-
-		//エフェクトの大きさを拡大
-		g_Effect[nEffect].fSize += CHARGE_EFFECT_ATTACK_MOVE;
-
-		//エフェクトの大きさが本来の大きさを超えた
-		if (CHARGE_EFFECT_SIZE <= g_Effect[nEffect].fSize)
-		{
-			g_Effect[nEffect].fAlpha -= 0.1f;
-
-			if (g_Effect[nEffect].fAlpha <= 0.0f)
-			{
-				//使われていない状態に
-				g_Effect[nEffect].bUse = false;
-			}
-			
-			g_Effect[nEffect].nCntLoop = 0;				//ループ回数初期化
-		}
-	}
 	}
 
 	VERTEX_3D *pVtx;							//頂点情報へのポインタ
@@ -199,6 +168,7 @@ void UpdateEffectSize(int nEffect)
 	pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, 0.0f, +g_Effect[nEffect].fSize);
 	pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_Effect[nEffect].fSize, 0.0f, -g_Effect[nEffect].fSize);
 	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_Effect[nEffect].fSize, 0.0f, -g_Effect[nEffect].fSize);
+
 
 	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_Effect[nEffect].fAlpha);
 	pVtx[VTX_RI_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_Effect[nEffect].fAlpha);
