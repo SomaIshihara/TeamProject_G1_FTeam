@@ -75,6 +75,8 @@ void CollisionHipDropPP(int nPlayerNum);		//ヒップドロップ時の衝突判定
 void DownPlayer(int nDownPlayerNum);	//ダウンしたプレイヤーの処理
 void RespawnPlayer(int nRespawnPlayer);	//リスポーン処理
 
+void DecrementItemTime(int nPlayerNum);	//アイテムカウントをすべて減らす
+
 //グローバル変数
 Player g_aPlayer[MAX_USE_GAMEPAD];
 int g_nIdxShadow = -1;
@@ -174,9 +176,7 @@ void UpdatePlayer(void)
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
 
 		//アイテム持続時間減らす
-		g_aPlayer[nCntPlayer].nATKItemTime--;
-		g_aPlayer[nCntPlayer].nDEFItemTime--;
-		g_aPlayer[nCntPlayer].nGoastItemTime--;
+		DecrementItemTime(nCntPlayer);
 
 		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
 		{
@@ -319,8 +319,13 @@ void UpdatePlayer(void)
 				}
 				else
 				{
+					if (g_aPlayer[nCntPlayer].bHipDrop == true)
+					{//ヒップドロップしてたならエフェクト出す
+						SetChargeEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer);
+						g_aPlayer[nCntPlayer].bHipDrop = false;	//ヒップドロップしてない
+					}
+					//ここ問題ありそう
 					g_aPlayer[nCntPlayer].bJump = false;
-					g_aPlayer[nCntPlayer].bHipDrop = false;
 					g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
 					g_aPlayer[nCntPlayer].move.y = 0.0f;
 					g_aPlayer[nCntPlayer].jumpTime = 0;
@@ -1162,6 +1167,16 @@ void RespawnPlayer(int nRespawnPlayer)
 	g_aPlayer[nRespawnPlayer].nATKItemTime = 0;
 	g_aPlayer[nRespawnPlayer].nDEFItemTime = 0;
 	g_aPlayer[nRespawnPlayer].nGoastItemTime = 0;
+}
+
+//========================
+//アイテムカウント減らす処理
+//========================
+void DecrementItemTime(int nPlayerNum)
+{
+	g_aPlayer[nPlayerNum].nATKItemTime--;
+	g_aPlayer[nPlayerNum].nDEFItemTime--;
+	g_aPlayer[nPlayerNum].nGoastItemTime--;
 }
 
 //========================
