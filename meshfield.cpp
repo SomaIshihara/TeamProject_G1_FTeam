@@ -8,33 +8,31 @@
 #include "player.h"
 #include "meshfield.h"
 #include "file.h"
+#include "color.h"
+#include "input.h"
 
-//マクロ定義       ファイル読み込みに変える可能性あり
-#define BESIDE					(2)						//横の分割数
-#define VERTICAL				(2)						//縦の分割数
-#define BESIDE_LENGTH			(250.0f)				//横の長さ
-#define VERTICAL_LENGTH			(250.0f)				//縦の長さ
-#define MAX_FIELD				(1)					//メッシュフィールド最大数
+//マクロ定義		ファイル読み込みに変える可能性あり
+#define NUM_MESHFIELD			(1)						//メッシュフィールド最大数
+#define MESHFIELD_RADIUS		(353.5f)				//フィールドの半径
+#define MESHFIELD_SPLIT			(64)					//分割数
+#define CENTER_AND_ONELAP		(2)						//中心点と１周で重なる点
+#define MESHFIELD_ALL_VERTEX	(MESHFIELD_SPLIT + 1)	//周辺の分割地点と中心
+#define MESHFIELD_ALL_INDEX		(MESHFIELD_SPLIT + 2)	//周辺の分割地点と中心・１周で重なる点
 
 //グローバル変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshfield = NULL;		//頂点バッファのポインタ
-LPDIRECT3DTEXTURE9 g_pTextureMeshfield = NULL;			//テクスチャのポインタ
-LPDIRECT3DINDEXBUFFER9 g_pIdxBuffMeshField = NULL;		//インデックスバッファへのポインタ
-D3DXMATRIX g_mtxWorldMeshfield;							//ワールドマトリックス
+LPDIRECT3DTEXTURE9		g_pTextureMeshfield = NULL;		//テクスチャのポインタ
+LPDIRECT3DINDEXBUFFER9	g_pIdxBuffMeshField = NULL;		//インデックスバッファへのポインタ
+D3DXMATRIX				g_mtxWorldMeshfield;			//ワールドマトリックス
 
-MESHFIELD g_MeshField[MAX_FIELD];
+MESHFIELD				g_MeshField[NUM_MESHFIELD];
 
 //====================================================================
 //メッシュフィールドの初期化処理
 //====================================================================
 void InitMeshfield(void)
 {
-
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
-
-	VERTEX_3D *pVtx;			//頂点情報へのポインタ
-
-	WORD *pIdx;					//インデックス情報へのポインタ
 
 	//設定類は外部ファイルに移動
 #if 0
@@ -56,65 +54,82 @@ void InitMeshfield(void)
 #endif
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (g_MeshField[0].nBlock_X + 1)*(g_MeshField[0].nBlock_Z + 1),
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHFIELD_ALL_VERTEX,
 		D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED,
 		&g_pVtxBuffMeshfield, NULL);
 
+	//頂点情報設定
+	SetFieldVertex();
 
 	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * ((g_MeshField[0].nBlock_X + 1) * 2 * g_MeshField[0].nBlock_Z +
-		(g_MeshField[0].nBlock_Z - 1) * 2),
+	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHFIELD_ALL_INDEX,
 		D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED,
 		&g_pIdxBuffMeshField, NULL);
+
+	//インデックス情報を設定
+	SetFieldIndex();
+}
+
+//メッシュフィールドの頂点情報を設定
+void SetFieldVertex(void)
+{
+	VERTEX_3D *pVtx;			//頂点情報へのポインタ
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffMeshfield->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点座標の設定
-	for (int nCntVtxZ = 0; nCntVtxZ < g_MeshField[0].nBlock_X + 1; nCntVtxZ++)
+	//頂点番号
+	int nNumVtx = 0;
+	float Rot = D3DX_PI;	//角度
+
+	pVtx[nNumVtx].pos = ZERO_SET;				//中心座標代入
+	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);	//法線
+	pVtx[nNumVtx].col = XCOL_WHITE;
+	pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 0.5f);
+	nNumVtx++;
+
+	//周辺の頂点情報の設定
+	for (int nCntVtx = 0; nCntVtx < MESHFIELD_SPLIT; nCntVtx++, nNumVtx++)
 	{
-		for (int nCntVtxX = 0; nCntVtxX < g_MeshField[0].nBlock_Z + 1; nCntVtxX++)
-		{
-			pVtx[nCntVtxZ*(g_MeshField[0].nBlock_X + 1) + nCntVtxX].pos
-				= D3DXVECTOR3(
-					(nCntVtxX - g_MeshField[0].nBlock_X / 2) * g_MeshField[0].fLength_X,
-					0.0f,
-					-(nCntVtxZ - g_MeshField[0].nBlock_Z / 2) * g_MeshField[0].fLength_Z);
+		pVtx[nNumVtx].pos =	D3DXVECTOR3(
+				sinf(Rot) * g_MeshField[0].fRadius,		//Xの位置
+				0.0f,									//Yの位置
+				cosf(Rot) * g_MeshField[0].fRadius);	//Zの位置
 
-			//法線の設定
-			pVtx[nCntVtxZ*(g_MeshField[0].nBlock_X + 1) + nCntVtxX].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nNumVtx].col = XCOL_WHITE;
 
-			//頂点カラーの設定
-			pVtx[nCntVtxZ*(g_MeshField[0].nBlock_X + 1) + nCntVtxX].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		float sin = sinf(Rot);
+		float cos = cosf(Rot);
 
-			//テクスチャ頂点座標の設定
-			pVtx[nCntVtxZ*(g_MeshField[0].nBlock_X + 1) + nCntVtxX].tex = D3DXVECTOR2(1.0f*nCntVtxX, 1.0f*nCntVtxZ);
-		}
+		float aTexU = 0.5f - 0.5f * sinf(Rot);	//テクスチャ幅
+		float aTexV = 0.5f - 0.5f * cosf(Rot);	//テクスチャ高さ
+		
+		pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, aTexV);
+
+		//角度を　全体の角度÷分割数で割った答え分、引く
+		Rot -= ONE_LAP / MESHFIELD_SPLIT;
 	}
 
 	g_pVtxBuffMeshfield->Unlock();
+}
+
+//メッシュフィールドのインデックス情報を設定
+void SetFieldIndex(void)
+{
+	WORD *pIdx;					//インデックス情報へのポインタ
 
 	//インデックスバッファをロックし頂点情報へのポインタを取得
 	g_pIdxBuffMeshField->Lock(0, 0, (void**)&pIdx, 0);
 
 	//頂点番号データの設定
+	int nNumIdx = 0;
 
-	int nCntIdx = 0;
-
-	for (int nCntDepth = 0; nCntDepth < g_MeshField[0].nBlock_X; nCntDepth++)
+	for (nNumIdx = 0; nNumIdx < MESHFIELD_ALL_INDEX; nNumIdx++)
 	{
-		for (int nCntWidth = 0; nCntWidth < g_MeshField[0].nBlock_Z + 1; nCntWidth++)
-		{
-			pIdx[nCntIdx] = (nCntWidth + ((g_MeshField[0].nBlock_Z + 1) * (nCntDepth + 1)));
-			pIdx[nCntIdx + 1] = nCntWidth + ((g_MeshField[0].nBlock_Z + 1) * nCntDepth);
-			nCntIdx += 2;
-		}
-		if (nCntDepth < g_MeshField[0].nBlock_X - 1)
-		{
-			pIdx[nCntIdx] = ((g_MeshField[0].nBlock_Z + 1) * (nCntDepth + 1)) - 1;
-			pIdx[nCntIdx + 1] = (g_MeshField[0].nBlock_Z + 1) * (nCntDepth + 2);
-			nCntIdx += 2;
-		}
+		int nTest = (nNumIdx / (MESHFIELD_ALL_INDEX - 1)) + (nNumIdx % (MESHFIELD_ALL_INDEX - 1));
+		//下の計算式では、　ちょうど1周するときに答えが1になる　　それ以外では、カウンター÷分割数　の余りが番号として設定される
+		pIdx[nNumIdx] = (nNumIdx / (MESHFIELD_ALL_INDEX - 1)) + (nNumIdx % (MESHFIELD_ALL_INDEX - 1));
 	}
 
 	g_pIdxBuffMeshField->Unlock();
@@ -161,9 +176,12 @@ void DrawMeshfield(void)
 {
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	D3DXMATRIX mtxRot, mtxTrans;				//計算用マトリックス
+	D3DXMATRIX mtxRot, mtxTrans;		//計算用マトリックス
 
-	for (int nCntfield = 0; nCntfield < MAX_FIELD; nCntfield++)
+	//両面カリングをON
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	for (int nCntfield = 0; nCntfield < NUM_MESHFIELD; nCntfield++)
 	{
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_mtxWorldMeshfield);
@@ -194,11 +212,11 @@ void DrawMeshfield(void)
 		pDevice->SetTexture(0, g_pTextureMeshfield);
 
 		//描画
-		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0,
-			(g_MeshField[0].nBlock_X + 1)*(g_MeshField[0].nBlock_Z + 1),
-			0,
-			g_MeshField[0].nBlock_X*g_MeshField[0].nBlock_Z * 2 + (g_MeshField[0].nBlock_Z - 1) * 4);
+		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN, 0, 0, MESHFIELD_ALL_VERTEX, 0, MESHFIELD_SPLIT);
 	}
+
+	//普通のカリングモードにする
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
 //====================================================================

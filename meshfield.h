@@ -12,14 +12,13 @@ typedef struct
 {
 	D3DXVECTOR3 pos;			//フィールドの位置
 	D3DXVECTOR3 rot;			//フィールドの向き
-	float fLength_X;			//X軸の幅（半分）
-	float fLength_Z;			//Y軸の幅（半分）
-	int nBlock_X;				//X軸の分割数
-	int nBlock_Z;				//Y軸の分割数
+	float		fRadius;		//半径
 }MESHFIELD;
 
 //プロトタイプ宣言
 void InitMeshfield(void);
+void SetFieldVertex(void);
+void SetFieldIndex(void);
 void UninitMeshfield(void);
 void UpdateMeshfield(void);
 void DrawMeshfield(void);

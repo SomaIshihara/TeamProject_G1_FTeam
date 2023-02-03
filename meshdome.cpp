@@ -20,7 +20,6 @@
 #define CREATE_SQUARE_NEED_TRIANGLE	(2)					//四角形を作るのに必要な三角形の数
 #define TRIANGLE					(3)					//３角形に必要な頂点
 #define SQUARE_NUM_VERTEX			(6)					//四角形の中に含まれる頂点の数(重複も含む)
-#define ONE_LAP						(D3DX_PI * 2.0f)	//１周分の角度
 #define MESHDOME_COVER_INDEX		(10)				//フタのインデックス数
 #define MESHDOME_SIDE_INDEX			((MESHDOME_SPLIT + 1) * (MESHDOME_SEPALATE - 2) * 2)	//側面のインデックス数  1周するのに必要な数 × 側面だけのインデックス × ペアでインデックスを設定する数（２）
 
