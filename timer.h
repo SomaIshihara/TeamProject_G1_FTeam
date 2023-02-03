@@ -10,11 +10,11 @@
 #include "main.h"
 
 //マクロ定義
-#define LIMIT_TIMER			(60)		//ゲーム時間
+#define LIMIT_TIMER				(90)		//ゲーム時間
 
 #define TIMER_MINUS_X			(300.0f)	//タイマーのマイナスX座標
 #define TIMER_PLUS_X			(350.0f)	//タイマーのプラスX座標
-#define TIMER_WIDTH_X			(50.0f)	    //タイマーの幅
+#define TIMER_WIDTH_X			(50.0f)		//タイマーの幅
 
 #define TIMER_MINUS_Y			(50.0f)		//タイマーのマイナスY座標
 #define TIMER_PLUS_Y			(150.0f)	//タイマーのプラスX座標
