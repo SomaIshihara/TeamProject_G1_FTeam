@@ -29,6 +29,7 @@ Author:平澤詩苑
 #include "timer.h"
 #include "particle.h"
 #include "attack_effect.h"
+#include "tremor_effect.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -68,6 +69,7 @@ void InitGame(void)
 	{// エフェクトの初期化処理
 		InitChargeEffect();//チャージエフェクト
 		InitAttackEffect();//攻撃エフェクト
+		InitTremorEffect();//ヒップドロップエフェクト
 	}	
 	InitScore();				// スコアの初期化
 	InitTime();					// タイマーの初期化処理
@@ -109,6 +111,7 @@ void UninitGame(void)
 	{	// エフェクトの終了処理
 		UninitChargeEffect();	//チャージエフェクト
 		UninitAttackEffect();	//攻撃エフェクト
+		UninitTremorEffect();	//ヒップドロップエフェクト
 	}
 	UninitScore();		// スコアの終了処理
 	UninitCameraFrame();// 画面分割の枠終了処理
@@ -143,6 +146,7 @@ void UpdateGame(void)
 		{// エフェクトの更新処理
 			UpdateChargeEffect();	//チャージエフェクト
 			UpdateAttackEffect();	//攻撃エフェクト
+			UpdateTremorEffect();	//ヒップドロップエフェクト
 		}
 		UpdateParticle();	// パーティクルの更新処理
 		UpdateScore();		//スコアの更新処理
@@ -198,6 +202,7 @@ void DrawGame(void)
 		{// エフェクトの描画処理
 			DrawChargeEffect();//チャージエフェクト
 			DrawAttackEffect();//攻撃エフェクト
+			DrawTremorEffect();//ヒップドロップエフェクト
 		}	
 		DrawParticle();				// パーティクルの描画処理
 		DrawPlayer();				// プレイヤーの描画処理
