@@ -153,6 +153,9 @@
     <ClCompile Include="attack_effect.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="tremor_effect.cpp">
+      <Filter>ソース ファイル\Game\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -240,6 +243,9 @@
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
     <ClInclude Include="attack_effect.h">
+      <Filter>ヘッダー ファイル\Game\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="tremor_effect.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
   </ItemGroup>
