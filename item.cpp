@@ -8,6 +8,12 @@
 #include "item.h"
 #include "player.h"
 
+//マクロ定義
+#define INIT_POS_Y			(200.0f)	//初期のY位置
+#define INIT_POS_XZ			(200.0f)	//初期の外位置
+#define RATIO_MOVE			(100.0f)	//移動量の割合
+#define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
+#define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
 //グローバル変数宣言     
 LPDIRECT3DTEXTURE9		g_pTextureItem[10] = {};	//テクスチャへにポインタ
@@ -55,7 +61,7 @@ void InitItem(void)
 	g_Item.rot = ZERO_SET;
 	g_Item.move = ZERO_SET;
 	g_Item.DespawnLimit = 0;
-	g_Item.fAlpha = 1.0f;					//透明度の設定
+	g_Item.fAlpha = 0.0f;					//透明度の設定
 	g_Item.buse = false;
 }
 
@@ -164,7 +170,19 @@ void DrawItem(void)
 void CollisionIP(int nPlayerNum)
 {
 	Player *pPlayer = GetPlayer();
+	/*if (g_Item.buse == true)
+	{*/
+		if (pPlayer[nPlayerNum].pos.x >= g_Item.pos.x - COLLISION_SIZE_XZ
+			&&pPlayer[nPlayerNum].pos.x <= g_Item.pos.x + COLLISION_SIZE_XZ
+			&&pPlayer[nPlayerNum].pos.z >= g_Item.pos.z - COLLISION_SIZE_XZ
+			&&pPlayer[nPlayerNum].pos.z <= g_Item.pos.z + COLLISION_SIZE_XZ
+			&&pPlayer[nPlayerNum].pos.y >= g_Item.pos.y - COLLISION_SIZE_Y
+			&&pPlayer[nPlayerNum].pos.y <= g_Item.pos.y + COLLISION_SIZE_Y)
+		{//プレイヤーがの範囲内に入ったとき
 
-	pPlayer[nPlayerNum].nATKItemTime = 300;
-
+			pPlayer[nPlayerNum].nATKItemTime = 300;
+		 //使われていない状態にする
+			g_Item.buse = false;
+		}
+	//}
 }
