@@ -21,20 +21,20 @@
 #include "attack_effect.h"
 
 //マクロ
-#define PLAYER_MOVE_SPEED	(20.0f)		//プレイヤー移動速度
-#define PLAYER_JUMP_SPEED	(7.7f)		//プレイヤージャンプ速度
+#define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
+#define PLAYER_JUMP_SPEED		(7.7f)		//プレイヤージャンプ速度
 
 #define PLAYER_HIPDROP_WAIT		(15)		//ヒップドロップの「開始・着地」硬直時間
-#define PLAYER_BLOWING_POWER	(5.0f)	//ヒップドロップされた方の移動量
+#define PLAYER_BLOWING_POWER	(5.0f)		//ヒップドロップされた方の移動量
 #define PLAYER_HIPDROP_POWER	(-15.0f)	//ヒップドロップするときの移動量
-#define ACCELERATION_GRAVITY (9.8f)		//重力加速度
-#define PLAYER_WEIGHT		(50)		//質量
-#define PLAYER_POWER_ADD	(0.025f)		//移動の強さの増加値
-#define DUMP_COEF			(0.04f)		//減衰係数
-#define DEBUG_PLAYER_MOVE_SPEED	(5.0f)	//[デバッグ用]普通に移動するときの移動量
-#define DECIMAL_PLACE		(1)			//小数点第何位まで移動していることにするか
-#define BF_RADIUS			(353.5f)	//バトルフィールドの半径
-#define DOWN_TIME			(200)		//ダウン判定とする時間
+#define ACCELERATION_GRAVITY	(9.8f)		//重力加速度
+#define PLAYER_WEIGHT			(50)		//質量
+#define PLAYER_POWER_ADD		(0.025f)	//移動の強さの増加値
+#define DUMP_COEF				(0.04f)		//減衰係数
+#define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
+#define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
+#define BF_RADIUS				(353.5f)	//バトルフィールドの半径
+#define DOWN_TIME				(160)		//ダウン判定とする時間
 
 //移動量関係
 #define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
@@ -63,7 +63,7 @@
 
 //プロト
 void MovePlayer(int nPadNum);
-void RotPlayer(int nPadNum);		//MovePlayer のrot.y の計算式だけを残しています
+void RotatePlayer(int nPadNum);		//MovePlayer のrot.y の計算式だけを残しています
 
 void ChargePlayer(int nChargePlayer);	//チャージ処理
 void DashPlayer(int nDashPlayer);		//ダッシュ処理
@@ -71,13 +71,14 @@ void JumpPlayer(int nJumpPlayer);		//ジャンプ処理
 void HipDropPlayer(int nHipDropPlayer);	//ヒップドロップ処理
 
 void CollisionPP(int nPlayerNum);	//プレイヤー同士の衝突判定
-void HipDropPP(int nPlayerNum);		//ヒップドロップ時の衝突判定
+void CollisionHipDropPP(int nPlayerNum);		//ヒップドロップ時の衝突判定
 void DownPlayer(int nDownPlayerNum);	//ダウンしたプレイヤーの処理
 void RespawnPlayer(int nRespawnPlayer);	//リスポーン処理
 
 //グローバル変数
 Player g_aPlayer[MAX_USE_GAMEPAD];
 int g_nIdxShadow = -1;
+bool g_bDebugMove = false;	//[デバッグ用]自由に動き回れるかどうか
 
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
@@ -130,6 +131,8 @@ void InitPlayer(void)
 	{
 		g_aPlayer[0].bUsePlayer = true;
 	}
+
+	g_bDebugMove = false;
 }
 
 //========================
@@ -154,6 +157,12 @@ void UpdatePlayer(void)
 {
 	//デバッグ表示
 	PrintDebugProc("[パラメータ]\n");
+
+	//[デバッグ用]自由移動設定
+	if (GetKeyboardTrigger(DIK_F8))
+	{
+		g_bDebugMove = g_bDebugMove ? false : true;
+	}
 
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
@@ -184,7 +193,7 @@ void UpdatePlayer(void)
 			if (g_aPlayer[nCntPlayer].bHipDrop == false)
 			{
 				//キーボード操作時の動作
-#if 1
+#if 0
 				//移動方法（ダッシュ）押して離す
 				if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
 					&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
@@ -207,7 +216,7 @@ void UpdatePlayer(void)
 				}
 
 				//ジャンプ・ヒップドロップ
-				if (GetKeyboardTrigger(DIK_RETURN) == true)
+				if (GetKeyboardTrigger(DIK_RETURN) == true && g_aPlayer[nCntPlayer].bHipDrop == false)
 				{
 					if (g_aPlayer[nCntPlayer].bJump)
 					{
@@ -242,7 +251,7 @@ void UpdatePlayer(void)
 				}
 
 				//ジャンプ・ヒップドロップ
-				if (GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true)
+				if (GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true && g_aPlayer[nCntPlayer].bHipDrop == false)
 				{
 					if (g_aPlayer[nCntPlayer].bJump)
 					{
@@ -257,7 +266,10 @@ void UpdatePlayer(void)
 				
 				//[デバッグ用]普通に移動する処理
 #ifdef _DEBUG
-				MovePlayer(nCntPlayer);
+				if (g_bDebugMove)
+				{
+					MovePlayer(nCntPlayer);
+				}
 #endif
 			}
 
@@ -280,12 +292,15 @@ void UpdatePlayer(void)
 			g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 
 			//向きを変える処理
-			RotPlayer(nCntPlayer);
+			if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == false)
+			{//Xボタンが押されていない
+				RotatePlayer(nCntPlayer);
+			}
 
 			//当たり判定類
 			if (g_aPlayer[nCntPlayer].bHipDrop)
 			{//ヒップドロップ中なら
-				HipDropPP(nCntPlayer);
+				CollisionHipDropPP(nCntPlayer);
 			}
 
 			//移動後がy<0なら落ちるか移動量消す
@@ -824,7 +839,7 @@ void CollisionPP(int nPlayerNum)
 //========================
 //ヒップドロップ時の衝突処理
 //========================
-void HipDropPP(int nPlayerNum)
+void CollisionHipDropPP(int nPlayerNum)
 {
 	//=pos0~pos2の説明==================
 	//
@@ -1037,7 +1052,7 @@ void MovePlayer(int nPadNum)
 //========================
 //プレイヤーの向き変更処理
 //========================
-void RotPlayer(int nPadNum)
+void RotatePlayer(int nPadNum)
 {
 	//モデル移動
 	//ゲームパッド部
