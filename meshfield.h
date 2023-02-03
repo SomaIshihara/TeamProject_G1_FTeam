@@ -23,5 +23,7 @@ void UninitMeshfield(void);
 void UpdateMeshfield(void);
 void DrawMeshfield(void);
 void SetMeshField(int nTexNum, MESHFIELD mf);
+MESHFIELD *GetMeshField(void);
+bool LandMeshfield(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove);
 
 #endif 
