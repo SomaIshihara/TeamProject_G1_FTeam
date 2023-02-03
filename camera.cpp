@@ -42,7 +42,6 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 
 //グローバル変数
 Camera		g_Camera[NUM_CAMERA];	//カメラの情報
-bool bPath = false;
 
 //=========================================
 //カメラの位置設定処理
@@ -75,7 +74,6 @@ void InitSetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera)
 //=========================================
 void InitCamera(NumCamera type)
 {
-	bPath = false;
 	Set_NumCamera(type);		//カメラの数によるカメラ情報の初期化
 }
 

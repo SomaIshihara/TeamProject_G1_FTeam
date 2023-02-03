@@ -462,27 +462,13 @@ void LoadModelViewerFile(const char *path)
 						pSprit = strtok(NULL, " =\n");
 						g_readmeshfield.mf.rot.z = fatof(pSprit);
 					}
-					else if (strncmp(&aCode[0], CODE_BLOCK, sizeof CODE_BLOCK / sizeof(char) - 1) == 0)
-					{
-						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
-
-						//分割数読み取り
-						pSprit = strtok(NULL, " =\n");
-						g_readmeshfield.mf.nBlock_X = atoi(pSprit);
-
-						pSprit = strtok(NULL, " =\n");
-						g_readmeshfield.mf.nBlock_Z = atoi(pSprit);
-					}
 					else if (strncmp(&aCode[0], CODE_SIZE, sizeof CODE_SIZE / sizeof(char) - 1) == 0)
 					{
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
 						//サイズ読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_readmeshfield.mf.fLength_X = fatof(pSprit);
-
-						pSprit = strtok(NULL, " =\n");
-						g_readmeshfield.mf.fLength_Z = fatof(pSprit);
+						g_readmeshfield.mf.fRadius = fatof(pSprit);
 					}
 					break;
 				case READSTAT_WALLSET:		//壁情報取得
