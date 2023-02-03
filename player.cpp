@@ -20,6 +20,7 @@
 #include "charge_effect.h"
 #include "attack_effect.h"
 #include "tremor_effect.h"
+#include "item.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -337,6 +338,7 @@ void UpdatePlayer(void)
 			if (g_aPlayer[nCntPlayer].nGoastItemTime <= 0)
 			{//ゴースト化状態でなければ
 				CollisionPP(nCntPlayer);
+				CollisionIP(nCntPlayer);
 			}
 
 			if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_FALL && g_aPlayer[nCntPlayer].jumpTime >= DOWN_TIME)
