@@ -97,7 +97,7 @@ void SetMeshDomeVertexBuffer(void)
 	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, MESHDOME_RADIS, 0.0f);
 	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	pVtx[nNumVtx].col = XCOL_WHITE;
-	pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 1.0f);
 	nNumVtx++;
 	
 	//２番目の頂点から、横の分割数　‐　底面の出っ張りの１頂点　回数分 for文を回す
@@ -116,6 +116,7 @@ void SetMeshDomeVertexBuffer(void)
 		{//横１周分の頂点座標を設定
 			
 			float aTexU = 0.125f * nCntDevideX;
+			float aTexV = 0.125f * nCntDevideY;
 
 			pVtx[nNumVtx].pos = 
 				D3DXVECTOR3(
@@ -125,7 +126,7 @@ void SetMeshDomeVertexBuffer(void)
 
 			pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pVtx[nNumVtx].col = XCOL_WHITE;
-			pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, 0.5f * nCntDevideY);
+			pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, 1.0f - aTexV);
 			nNumVtx++;
 			
 			//角度を　全体の角度÷分割数で割った答え分、引く

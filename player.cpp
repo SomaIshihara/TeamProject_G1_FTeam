@@ -21,6 +21,7 @@
 #include "attack_effect.h"
 #include "tremor_effect.h"
 #include "item.h"
+#include "meshfield.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -160,6 +161,9 @@ void UninitPlayer(void)
 //========================
 void UpdatePlayer(void)
 {
+	//メッシュフィールドの情報取得
+	MESHFIELD *pField = GetMeshField();
+
 	//デバッグ表示
 	PrintDebugProc("[パラメータ]\n");
 
@@ -316,7 +320,7 @@ void UpdatePlayer(void)
 				float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) +
 					powf((g_aPlayer[nCntPlayer].pos.z + g_aPlayer[nCntPlayer].move.z), 2));
 
-				if (fLength >= BF_RADIUS)
+				if (fLength >= pField->fRadius)
 				{
 					g_aPlayer[nCntPlayer].stat = PLAYERSTAT_FALL;
 				}
