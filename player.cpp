@@ -106,6 +106,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
 		g_aPlayer[nCntPlayer].move = ZERO_SET;
+		g_aPlayer[nCntPlayer].moveV0 = ZERO_SET;
 		g_aPlayer[nCntPlayer].rot = ZERO_SET;
 		g_aPlayer[nCntPlayer].moveGauge = 0;
 		g_aPlayer[nCntPlayer].jumpTime = 0;
@@ -326,12 +327,12 @@ void UpdatePlayer(void)
 						SetTremorEffect(g_aPlayer[nCntPlayer].pos);
 						g_aPlayer[nCntPlayer].bHipDrop = false;	//ヒップドロップしてない
 					}
-					//ここ問題ありそう
 					g_aPlayer[nCntPlayer].bJump = false;
 					g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
 					g_aPlayer[nCntPlayer].move.y = 0.0f;
 					g_aPlayer[nCntPlayer].jumpTime = 0;
 					g_aPlayer[nCntPlayer].pos.y = 0.0f;
+					g_aPlayer[nCntPlayer].nHipDropWait = 0;
 				}
 			}
 
