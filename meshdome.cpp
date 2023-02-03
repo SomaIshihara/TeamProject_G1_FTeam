@@ -125,7 +125,7 @@ void SetMeshDomeVertexBuffer(void)
 
 			pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pVtx[nNumVtx].col = XCOL_WHITE;
-			pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, 1.0f * nCntDevideY);
+			pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, 0.5f * nCntDevideY);
 			nNumVtx++;
 			
 			//角度を　全体の角度÷分割数で割った答え分、引く
@@ -178,15 +178,10 @@ void SetMeshDomeIndexBuffer(void)
 		//側面のインデックスバッファをロックし、頂点番号へのポインタを取得
 		g_pIdxBuffSideMeshDome->Lock(0, 0, (void**)&pIdx, 0);
 
-		int n, m;
-
 		for (int nCntHeight = 1; nCntHeight < MESHDOME_SEPALATE - 1; nCntHeight++)
 		{
 			for (int nCntWidth = 0; nCntWidth < MESHDOME_SPLIT + 1; nCntWidth++)
 			{
-				n = ((nCntHeight - 1) * 8 + 1) + (nCntWidth % MESHDOME_SPLIT);
-				m = ((nCntHeight - 0) * 8 + 1) + (nCntWidth % MESHDOME_SPLIT);
-
 				pIdx[nNumIdx++] = ((nCntHeight - 1) * 8 + 1) + (nCntWidth % MESHDOME_SPLIT);
 				pIdx[nNumIdx++] = ((nCntHeight - 0) * 8 + 1) + (nCntWidth % MESHDOME_SPLIT);
 			}
@@ -210,7 +205,6 @@ void SetMeshDomeIndexBuffer(void)
 		//全体の頂点数から逆算して番号を割り出す
 		//--------------------------------------------------
 		int nTest = (MESHDOME_ALL_VERTEX - 1) - ((nCntIdx / (MESHDOME_COVER_INDEX - 1)) + (nCntIdx % (MESHDOME_COVER_INDEX - 1)));
-		int nAll = MESHDOME_ALL_VERTEX;
 
 		pIdx[nNumIdx++] = nTest;
 	}
@@ -324,7 +318,7 @@ void DrawMeshDome(void)
 	pDevice->SetTexture(0, g_pTextureMeshDome);
 
 	//ポリゴン描画
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MESHDOME_SIDE_INDEX, 0, MESHDOME_SIDE_INDEX-2);
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MESHDOME_SIDE_INDEX, 0, MESHDOME_SPLIT * 2 * (MESHDOME_SEPALATE-2)+10);
 
 	//-----------------------------------------------------------
 	//底面のインデックスを設定し、描画する

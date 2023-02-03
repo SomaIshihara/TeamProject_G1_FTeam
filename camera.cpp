@@ -244,7 +244,7 @@ void Set_NumCamera(NumCamera type)
 		if (nCntUse <= nCntCamera)
 		{
 			//注視点の位置更新
-			UpdatePosVCamera(nCntCamera);
+			UpdatePosVCamera(nCntUse);
 		}
 
 		//設定されたカメラ以外のカメラを使用していないようにする
