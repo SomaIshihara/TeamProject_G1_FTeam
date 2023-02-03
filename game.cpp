@@ -59,8 +59,8 @@ void InitGame(void)
 	InitBonus();				// ボーナスの初期化処理
 	InitCameraFrame();			// 画面分割の枠初期化処理
 	InitCamera(g_NumCamera);	// カメラの初期化処理
-	InitWall();					// 壁の初期化処理
 	InitGauge();				// ゲージの初期化処理
+	InitWall();					// 壁の初期化処理
 	InitPause();				// ポーズ画面の初期化処理
 	InitParticle();				// パーティクルの初期化処理
 	{// エフェクトの初期化処理

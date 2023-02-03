@@ -19,6 +19,7 @@
 #include "sound.h"
 #include "charge_effect.h"
 #include "attack_effect.h"
+#include "meshfield.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
