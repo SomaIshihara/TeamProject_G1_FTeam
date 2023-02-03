@@ -193,7 +193,7 @@ void UpdatePlayer(void)
 			if (g_aPlayer[nCntPlayer].bHipDrop == false)
 			{
 				//キーボード操作時の動作
-#if 0
+#if 1
 				//移動方法（ダッシュ）押して離す
 				if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
 					&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
@@ -292,7 +292,11 @@ void UpdatePlayer(void)
 			g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 
 			//向きを変える処理
-			if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == false)
+			if (GetKeyboardPress(DIK_SPACE) == false)
+			{
+				RotatePlayer(nCntPlayer);
+			}
+			else if (GetUseController(nCntPlayer) && GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == false)
 			{//Xボタンが押されていない
 				RotatePlayer(nCntPlayer);
 			}
