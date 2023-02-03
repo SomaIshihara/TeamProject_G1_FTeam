@@ -42,6 +42,7 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 
 //グローバル変数
 Camera		g_Camera[NUM_CAMERA];	//カメラの情報
+bool bPath = false;
 
 //=========================================
 //カメラの位置設定処理
@@ -74,6 +75,7 @@ void InitSetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera)
 //=========================================
 void InitCamera(NumCamera type)
 {
+	bPath = false;
 	Set_NumCamera(type);		//カメラの数によるカメラ情報の初期化
 }
 
@@ -144,9 +146,9 @@ void Set_NumCamera(NumCamera type)
 
 	switch (type)
 	{
-	/*----------------------------------------------------------------
-	俯瞰で全体が見える視点の処理
-	----------------------------------------------------------------*/
+		/*----------------------------------------------------------------
+		俯瞰で全体が見える視点の処理
+		----------------------------------------------------------------*/
 	case NumCamera_ONLY:
 	{
 		g_Camera[nCntCamera].posV = ALONE_CAMERA_POS;			//視点座標初期化
@@ -160,10 +162,10 @@ void Set_NumCamera(NumCamera type)
 		g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;	//画面高さ初期化
 		g_Camera[nCntCamera].viewport.MinZ = 0.0f;
 		g_Camera[nCntCamera].viewport.MaxZ = 1.0f;
-		g_Camera[nCntCamera++].bUse = true;
+		g_Camera[nCntCamera].bUse = true;
 	}
 	break;
-	
+
 	/*----------------------------------------------------------------
 	横２分割の視点の処理
 	----------------------------------------------------------------*/
@@ -211,7 +213,7 @@ void Set_NumCamera(NumCamera type)
 	break;
 
 	/*----------------------------------------------------------------
-					各プレイヤー専用のカメラの処理
+	各プレイヤー専用のカメラの処理
 	----------------------------------------------------------------*/
 	case NumCamera_FOUR_Separate:
 	{
@@ -237,10 +239,21 @@ void Set_NumCamera(NumCamera type)
 	//画面分割の枠を設定
 	SetUseFrame(type);
 
-	//設定する数以上のカメラを使用していないようにする
-	for (int nCntUse = nCntCamera; nCntUse < NUM_CAMERA; nCntUse++)
+	//各カメラの設定
+	for (int nCntUse = 0; nCntUse < NUM_CAMERA; nCntUse++)
 	{
-		g_Camera[nCntUse].bUse = false;
+		//上のスイッチ文で使われることになったカメラ
+		if (nCntUse <= nCntCamera)
+		{
+			//注視点の位置更新
+			UpdatePosVCamera(nCntCamera);
+		}
+
+		//設定されたカメラ以外のカメラを使用していないようにする
+		else
+		{
+			g_Camera[nCntUse].bUse = false;
+		}
 	}
 }
 
