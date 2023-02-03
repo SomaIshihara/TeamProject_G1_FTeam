@@ -259,11 +259,11 @@ void MoveCamera(int nCntCamera)
 	}
 
 	//Ž‹“_‚Ì‘OŒã
-	if (GetKeyboardPress(DIK_Y) == true)
+	if (GetKeyboardPress(DIK_N) == true)
 	{
 		g_Camera[nCntCamera].fLength += POSV_SPEED;
 	}
-	if (GetKeyboardPress(DIK_N) == true)
+	if (GetKeyboardPress(DIK_Y) == true)
 	{
 		g_Camera[nCntCamera].fLength -= POSV_SPEED;
 	}
