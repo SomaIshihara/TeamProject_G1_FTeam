@@ -24,6 +24,7 @@ Author:平澤詩苑
 #include "charge_effect.h"
 #include "score.h"
 #include "bonus.h"
+#include "item.h"
 #include "camera_frame.h"
 #include "timer.h"
 #include "particle.h"
@@ -58,6 +59,7 @@ void InitGame(void)
 	InitModel();				// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();				// プレイヤーの初期化処理
 	InitBonus();				// ボーナスの初期化処理
+	InitItem();					// アイテムの初期化処理
 	InitCameraFrame();			// 画面分割の枠初期化処理
 	InitCamera(g_NumCamera);	// カメラの初期化処理
 	InitGauge();				// ゲージの初期化処理
@@ -101,6 +103,7 @@ void UninitGame(void)
 	UninitCamera();		// カメラの終了処理
 	UninitPlayer();		// プレイヤーの終了処理
 	UninitBonus();		// ボーナスの終了処理
+	UninitItem();		// アイテムの終了処理
 	UninitPause();		// ポーズ画面の終了処理
 	UninitGauge();		// ゲージの終了処理
 	UninitModel();		// モデルの終了処理
@@ -136,6 +139,7 @@ void UpdateGame(void)
 		UpdateMeshDome();	// メッシュドーム更新処理
 		UpdatePlayer();		// プレイヤーの更新処理
 		UpdateBonus();		// ボーナスの更新処理
+		UpdateItem();		// アイテムの更新処理
 		UpdateCamera();		// カメラの更新処理
 		UpdateWall();		// 壁の更新処理
 		UpdateGauge();		// ゲージの更新処理
@@ -203,6 +207,7 @@ void DrawGame(void)
 		DrawParticle();				// パーティクルの描画処理
 		DrawPlayer();				// プレイヤーの描画処理
 		DrawBonus();				// ボーナスの描画処理
+		DrawItem();					// アイテムの描画処理
 		DrawGauge();				// ゲージの描画処理
 		DrawScore();				// スコアの描画処理
 		DrawCameraFrame();			// 画面分割の枠描画処理

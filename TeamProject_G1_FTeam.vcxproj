@@ -171,6 +171,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="Gauge.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="item.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="meshcylinder.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="Gauge.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="meshcylinder.h" />
