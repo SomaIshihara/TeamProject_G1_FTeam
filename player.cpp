@@ -19,7 +19,6 @@
 #include "sound.h"
 #include "charge_effect.h"
 #include "attack_effect.h"
-#include "tremor_effect.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -322,7 +321,7 @@ void UpdatePlayer(void)
 				{
 					if (g_aPlayer[nCntPlayer].bHipDrop == true)
 					{//ヒップドロップしてたならエフェクト出す
-						SetTremorEffect(g_aPlayer[nCntPlayer].pos);
+						SetChargeEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer);
 						g_aPlayer[nCntPlayer].bHipDrop = false;	//ヒップドロップしてない
 					}
 					//ここ問題ありそう
@@ -581,6 +580,8 @@ void DashPlayer(int nDashPlayer)
 	g_aPlayer[nDashPlayer].move.z = -cosf(g_aPlayer[nDashPlayer].rot.y) * g_aPlayer[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
 
 	g_aPlayer[nDashPlayer].moveGauge = 0;
+
+	//SetAttackEffect(g_aPlayer[nDashPlayer].pos, nDashPlayer);
 }
 
 //========================
