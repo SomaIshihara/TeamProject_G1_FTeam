@@ -25,10 +25,11 @@
 //マクロ
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
 #define PLAYER_JUMP_SPEED		(7.7f)		//プレイヤージャンプ速度
-
 #define PLAYER_HIPDROP_WAIT		(15)		//ヒップドロップの「開始・着地」硬直時間
 #define PLAYER_BLOWING_POWER	(5.0f)		//ヒップドロップされた方の移動量
 #define PLAYER_HIPDROP_POWER	(-15.0f)	//ヒップドロップするときの移動量
+#define PLAYER_ROTATE_SPEED		(0.02f * D3DX_PI)	//回転速度
+
 #define ACCELERATION_GRAVITY	(9.8f)		//重力加速度
 #define PLAYER_WEIGHT			(50)		//質量
 #define PLAYER_POWER_ADD		(0.025f)	//移動の強さの増加値
@@ -83,6 +84,7 @@ void DecrementItemTime(int nPlayerNum);	//アイテムカウントをすべて減らす
 Player g_aPlayer[MAX_USE_GAMEPAD];
 int g_nIdxShadow = -1;
 bool g_bDebugMove = false;	//[デバッグ用]自由に動き回れるかどうか
+Player *g_pNotMove[MAX_USE_GAMEPAD];	//移動していないプレイヤー検知用ポインタ
 
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
@@ -113,6 +115,8 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].bJump = false;
 		g_aPlayer[nCntPlayer].bHipDrop = false;
 		g_aPlayer[nCntPlayer].nHipDropWait = 0;
+		g_aPlayer[nCntPlayer].bNotMove = true;
+		g_aPlayer[nCntPlayer].nRespawnPosNum = nCntPlayer;
 
 		g_aPlayer[nCntPlayer].faceCollider[0] = D3DXVECTOR3(15.0f, 0.0f, 15.0f);
 		g_aPlayer[nCntPlayer].faceCollider[1] = D3DXVECTOR3(-15.0f, 0.0f, 15.0f);
@@ -129,6 +133,8 @@ void InitPlayer(void)
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
+
+		g_pNotMove[nCntPlayer] = &g_aPlayer[nCntPlayer];
 	}
 
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
@@ -137,6 +143,7 @@ void InitPlayer(void)
 		g_aPlayer[0].bUsePlayer = true;
 	}
 
+	//その他変数
 	g_bDebugMove = false;
 }
 
@@ -160,9 +167,6 @@ void UninitPlayer(void)
 //========================
 void UpdatePlayer(void)
 {
-	//デバッグ表示
-	PrintDebugProc("[パラメータ]\n");
-
 	//[デバッグ用]自由移動設定
 	if (GetKeyboardTrigger(DIK_F8))
 	{
@@ -178,20 +182,20 @@ void UpdatePlayer(void)
 		//現在の位置を前回の位置にする
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
 
+		//ジャンプ時間を増やす
+		g_aPlayer[nCntPlayer].jumpTime++;
+
 		//アイテム持続時間減らす
 		DecrementItemTime(nCntPlayer);
 
 		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
-		{
+		{//使用時のみ行う
 			//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
 			if (GetUseControllerNum() != 0)
 			{
 				g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
 			}
 
-			//ジャンプ時間を増やす
-			g_aPlayer[nCntPlayer].jumpTime++;
-			
 			//ヒップドロップ中でなければ操作できる
 			if (g_aPlayer[nCntPlayer].bHipDrop == false)
 			{
@@ -266,12 +270,13 @@ void UpdatePlayer(void)
 						JumpPlayer(nCntPlayer);			//プレイヤーのジャンプ処理
 					}
 				}
-				
+
 				//[デバッグ用]普通に移動する処理
 #ifdef _DEBUG
 				if (g_bDebugMove)
 				{
 					MovePlayer(nCntPlayer);
+					RotatePlayer(nCntPlayer);
 				}
 #endif
 			}
@@ -291,16 +296,17 @@ void UpdatePlayer(void)
 				}
 			}
 
-			//ジャンプ量設定
-			g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 
 			//向きを変える処理
-			if (GetKeyboardPress(DIK_SPACE) == false)
-			{
-				RotatePlayer(nCntPlayer);
+			if (GetUseController(nCntPlayer))
+			{//ゲームパッド使用
+				if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == false)
+				{//Xボタンが押されていない
+					RotatePlayer(nCntPlayer);
+				}
 			}
-			else if (GetUseController(nCntPlayer) && GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == false)
-			{//Xボタンが押されていない
+			else if (GetKeyboardPress(DIK_SPACE) == false)
+			{//未使用かつチャージ中ではない
 				RotatePlayer(nCntPlayer);
 			}
 
@@ -310,94 +316,101 @@ void UpdatePlayer(void)
 				CollisionHipDropPP(nCntPlayer);
 			}
 
-			//移動後がy<0なら落ちるか移動量消す
-			if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f && g_aPlayer[nCntPlayer].stat != PLAYERSTAT_FALL)
-			{
-				float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) +
-					powf((g_aPlayer[nCntPlayer].pos.z + g_aPlayer[nCntPlayer].move.z), 2));
-
-				if (fLength >= BF_RADIUS)
-				{
-					g_aPlayer[nCntPlayer].stat = PLAYERSTAT_FALL;
-				}
-				else
-				{
-					if (g_aPlayer[nCntPlayer].bHipDrop == true)
-					{//ヒップドロップしてたならエフェクト出す
-						SetTremorEffect(g_aPlayer[nCntPlayer].pos);
-						g_aPlayer[nCntPlayer].bHipDrop = false;	//ヒップドロップしてない
-					}
-					g_aPlayer[nCntPlayer].bJump = false;
-					g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
-					g_aPlayer[nCntPlayer].move.y = 0.0f;
-					g_aPlayer[nCntPlayer].jumpTime = 0;
-					g_aPlayer[nCntPlayer].pos.y = 0.0f;
-					g_aPlayer[nCntPlayer].nHipDropWait = 0;
-				}
-			}
-
 			if (g_aPlayer[nCntPlayer].nGoastItemTime <= 0)
 			{//ゴースト化状態でなければ
 				CollisionPP(nCntPlayer);
 				CollisionIP(nCntPlayer);
 			}
+		}
 
-			if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_FALL && g_aPlayer[nCntPlayer].jumpTime >= DOWN_TIME)
-			{//落ち切った
-				DownPlayer(nCntPlayer);
+		//使用されているかにかかわらず行う
+		//ジャンプ量設定
+		g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
+
+		//移動後がy<0なら落ちるか移動量消す
+		if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f && g_aPlayer[nCntPlayer].stat != PLAYERSTAT_FALL)
+		{
+			float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) + 
+				powf((g_aPlayer[nCntPlayer].pos.z + g_aPlayer[nCntPlayer].move.z), 2));
+
+			if (fLength >= BF_RADIUS)
+			{
+				g_aPlayer[nCntPlayer].stat = PLAYERSTAT_FALL;
 			}
+			else
+			{
+				if (g_aPlayer[nCntPlayer].bHipDrop == true)
+				{//ヒップドロップしてたならエフェクト出す
+					SetTremorEffect(g_aPlayer[nCntPlayer].pos);
+					g_aPlayer[nCntPlayer].bHipDrop = false;	//ヒップドロップしてない
+				}
+				g_aPlayer[nCntPlayer].bJump = false;
+				g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
+				g_aPlayer[nCntPlayer].move.y = 0.0f;
+				g_aPlayer[nCntPlayer].jumpTime = 0;
+				g_aPlayer[nCntPlayer].pos.y = 0.0f;
+				g_aPlayer[nCntPlayer].nHipDropWait = 0;
+			}
+		}
 
-			//デバッグ表示（強さ表示）
-			PrintDebugProc("[%d]:Power = %f\n", nCntPlayer, g_aPlayer[nCntPlayer].moveGauge);
+		if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_FALL && g_aPlayer[nCntPlayer].jumpTime >= DOWN_TIME)
+		{//落ち切った
+			DownPlayer(nCntPlayer);
 		}
 	}
 
 	//移動量と衝突判定をもとに移動する
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
-		if (true)
-		{//判定入れたければ入れて
-			if (g_aPlayer[nCntPlayer].lastAtkPlayer == -1)
-			{//ぶつかってないまたは移動量交換済み		
-				//ヒップドロップしておらず、ヒップドロップの硬直中でもない
-				if (g_aPlayer[nCntPlayer].bHipDrop == false && g_aPlayer[nCntPlayer].nHipDropWait <= 0)
-				{
-					//普通に移動
-					g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
-					g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
-					g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
-				}
+		//移動検知
+		if (g_aPlayer[nCntPlayer].bNotMove == true)
+		{
+			if (fabsf(g_aPlayer[nCntPlayer].move.x) > 0.0f || fabsf(g_aPlayer[nCntPlayer].move.z) > 0.0f)
+			{
+				g_aPlayer[nCntPlayer].bNotMove = false;
 			}
-			else
-			{//ぶつかった
-				//移動量交換
-				D3DXVECTOR3 moveTmp1 = g_aPlayer[nCntPlayer].move;
-				D3DXVECTOR3 moveTmp2 = g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move;
+		}
 
-				//割合設定
-				float fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
-					DEFANCE_CONS + (g_aPlayer[nCntPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
-
-				float fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayer[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
-					DEFANCE_CONS + (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
-
-				g_aPlayer[nCntPlayer].move = moveTmp2 * fPowerConvertion1;
-				g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move = moveTmp1 * fPowerConvertion2;
-
-				//移動量交換済み扱いにする
-				g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
-				g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].lastAtkPlayer = -1;
-
+		if (g_aPlayer[nCntPlayer].lastAtkPlayer == -1)
+		{//ぶつかってないまたは移動量交換済み		
+			//ヒップドロップしておらず、ヒップドロップの硬直中でもない
+			if (g_aPlayer[nCntPlayer].bHipDrop == false && g_aPlayer[nCntPlayer].nHipDropWait <= 0)
+			{
 				//普通に移動
 				g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
 				g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
 				g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
 			}
-
-			//移動量減衰
-			g_aPlayer[nCntPlayer].move.x += (0 - g_aPlayer[nCntPlayer].move.x) * DUMP_COEF;
-			g_aPlayer[nCntPlayer].move.z += (0 - g_aPlayer[nCntPlayer].move.z) * DUMP_COEF;
 		}
+		else
+		{//ぶつかった
+			//移動量交換
+			D3DXVECTOR3 moveTmp1 = g_aPlayer[nCntPlayer].move;
+			D3DXVECTOR3 moveTmp2 = g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move;
+
+			//割合設定
+			float fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+				DEFANCE_CONS + (g_aPlayer[nCntPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
+
+			float fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayer[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+				DEFANCE_CONS + (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
+
+			g_aPlayer[nCntPlayer].move = moveTmp2 * fPowerConvertion1;
+			g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move = moveTmp1 * fPowerConvertion2;
+
+			//移動量交換済み扱いにする
+			g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
+			g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].lastAtkPlayer = -1;
+
+			//普通に移動
+			g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
+			g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
+			g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
+		}
+
+		//移動量減衰
+		g_aPlayer[nCntPlayer].move.x += (0 - g_aPlayer[nCntPlayer].move.x) * DUMP_COEF;
+		g_aPlayer[nCntPlayer].move.z += (0 - g_aPlayer[nCntPlayer].move.z) * DUMP_COEF;
 	}
 }
 
@@ -1065,58 +1078,82 @@ void MovePlayer(int nPadNum)
 //========================
 void RotatePlayer(int nPadNum)
 {
-	//モデル移動
-	//ゲームパッド部
-	if (GetLStickX(nPadNum) > 0 || GetLStickX(nPadNum) < 0)
-	{//X方向のスティックが傾いている
-		g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
-	}
-	else if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
-	{//Y方向のスティックだけ傾いている
-		g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
-	}
-	//キーボード部
-	else if (GetKeyboardPress(DIK_W) == true)
-	{
-		if (GetKeyboardPress(DIK_A) == true)
+	if (!g_bDebugMove)
+	{//リリース用
+	 //ゲームパッド部
+		if (GetLStickX(nPadNum) > 0)
 		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WA);
+			g_aPlayer[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
+		}
+		else if (GetLStickX(nPadNum) < 0)
+		{
+			g_aPlayer[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
+		}
+		//キーボード部
+		else if (GetKeyboardPress(DIK_A) == true)
+		{
+			g_aPlayer[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WD);
+			g_aPlayer[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
 		}
-		else
-		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_W);
-		}
-	}
-	else if (GetKeyboardPress(DIK_S) == true)
-	{
-		if (GetKeyboardPress(DIK_A) == true)
-		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SA);
-		}
-		else if (GetKeyboardPress(DIK_D) == true)
-		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SD);
-		}
-		else
-		{
-			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_S);
-		}
-	}
-	else if (GetKeyboardPress(DIK_A) == true)
-	{
-		g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_A);
-	}
-	else if (GetKeyboardPress(DIK_D) == true)
-	{
-		g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_D);
 	}
 	else
-	{
-		return;
+	{//デバッグ用
+		//モデル移動
+		//ゲームパッド部
+		if (GetLStickX(nPadNum) > 0 || GetLStickX(nPadNum) < 0)
+		{//X方向のスティックが傾いている
+			g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
+		}
+		else if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
+		{//Y方向のスティックだけ傾いている
+			g_aPlayer[nPadNum].rot.y = FIX_ROT(atan2f(GetLStickX(nPadNum), GetLStickY(nPadNum)) + D3DX_PI);
+		}
+		//キーボード部
+		else if (GetKeyboardPress(DIK_W) == true)
+		{
+			if (GetKeyboardPress(DIK_A) == true)
+			{
+				g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WA);
+			}
+			else if (GetKeyboardPress(DIK_D) == true)
+			{
+				g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WD);
+			}
+			else
+			{
+				g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_W);
+			}
+		}
+		else if (GetKeyboardPress(DIK_S) == true)
+		{
+			if (GetKeyboardPress(DIK_A) == true)
+			{
+				g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SA);
+			}
+			else if (GetKeyboardPress(DIK_D) == true)
+			{
+				g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SD);
+			}
+			else
+			{
+				g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_S);
+			}
+		}
+		else if (GetKeyboardPress(DIK_A) == true)
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_A);
+		}
+		else if (GetKeyboardPress(DIK_D) == true)
+		{
+			g_aPlayer[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_D);
+		}
+		else
+		{
+			return;
+		}
 	}
 }
 
@@ -1151,7 +1188,29 @@ void DownPlayer(int nDownPlayerNum)
 void RespawnPlayer(int nRespawnPlayer)
 {
 	//各ステータス再設定
-	g_aPlayer[nRespawnPlayer].pos = D3DXVECTOR3(0.0f, 70.0f, 0.0f);
+	//位置設定（かぶらないようにする）
+	for (int nCntNUse = 0; nCntNUse < MAX_USE_GAMEPAD; nCntNUse++)
+	{
+		if (g_pNotMove[nCntNUse] == NULL || g_pNotMove[nCntNUse]->bNotMove == false)
+		{
+			//前にリスポーンした位置番号のポインタをNULLにする
+			g_pNotMove[g_aPlayer[nRespawnPlayer].nRespawnPosNum] = NULL;
+
+			//新しい位置を入れる
+			g_aPlayer[nRespawnPlayer].nRespawnPosNum = nCntNUse;
+			g_aPlayer[nRespawnPlayer].pos = D3DXVECTOR3(c_aPosRot[nCntNUse][0].x, 70.0f, c_aPosRot[nCntNUse][0].z);
+			//角度も調整するならここに書く
+
+			//動いていないことにする
+			g_aPlayer[nRespawnPlayer].bNotMove = true;
+
+			//参照用ポインタ代入
+			g_pNotMove[nCntNUse] = &g_aPlayer[nRespawnPlayer];
+			break;
+		}
+	}
+
+	//その他設定
 	g_aPlayer[nRespawnPlayer].posOld = g_aPlayer[nRespawnPlayer].pos;
 	g_aPlayer[nRespawnPlayer].move = ZERO_SET;
 	g_aPlayer[nRespawnPlayer].moveV0 = ZERO_SET;

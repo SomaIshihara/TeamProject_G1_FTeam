@@ -51,6 +51,8 @@ struct Player
 	bool bJump;				//ジャンプしているかどうか
 	bool bHipDrop;			//ヒップドロップしているかどうか
 	int nHipDropWait;		//ヒップドロップの「開始・着地」硬直カウンター
+	bool bNotMove;			//移動していない
+	int nRespawnPosNum;		//復活した位置番号
 
 	//衝突関係
 	D3DXVECTOR3 faceCollider[2];	//当たり判定
@@ -66,6 +68,7 @@ struct Player
 	int nATKItemTime;		//はじき強化アイテムの持続時間
 	int nDEFItemTime;		//押し合い強化アイテムの持続時間
 	int nGoastItemTime;		//ゴースト化アイテムの持続時間
+	bool bMUTEKI;			//無敵状態かどうか（変数名は仮ですいい変数名考えてくれ）
 
 	//描画類
 	Model model;			//使用モデル
@@ -74,7 +77,6 @@ struct Player
 	bool bUsePlayer;		//プレイヤー使用の有無
 
 	PlayModel aPlaymodel[10];
-
 };
 
 //プロトタイプ宣言
