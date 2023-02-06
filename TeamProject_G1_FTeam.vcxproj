@@ -176,6 +176,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="meshcylinder.cpp" />
     <ClCompile Include="meshdome.cpp" />
+    <ClCompile Include="meshfault.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="meshfield.cpp" />
     <ClCompile Include="particle.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="meshcylinder.h" />
     <ClInclude Include="meshdome.h" />
+    <ClInclude Include="meshfault.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="meshfield.h" />
     <ClInclude Include="particle.h" />

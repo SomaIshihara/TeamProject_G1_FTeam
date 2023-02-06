@@ -159,6 +159,9 @@
     <ClCompile Include="item.cpp">
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
+    <ClCompile Include="meshfault.cpp">
+      <Filter>ソース ファイル\Game\Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -253,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="item.h">
       <Filter>ヘッダー ファイル\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="meshfault.h">
+      <Filter>ヘッダー ファイル\Game\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
