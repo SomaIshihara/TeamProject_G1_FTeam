@@ -6,14 +6,23 @@
 //--------------------------------------------------------------------------------------------------------
 #include "main.h"
 #include "meshfault.h"
+#include "meshfield.h"
+#include "color.h"
+
+//断面情報の構造体
+typedef struct
+{
+	D3DXVECTOR3		pos;		//位置
+	D3DXVECTOR3		rot;		//向き
+	D3DXMATRIX		mtxWorld;	//ワールドマトリックス
+	float			fRadius;	//半径の大きさ
+}Fault;
 
 //グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureMeshFault = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshFault = NULL;
 LPDIRECT3DINDEXBUFFER9	g_pIdxBuffMeshFault = NULL;
-D3DXVECTOR3				g_posMeshFault;
-D3DXVECTOR3				g_rotMeshFault;
-D3DXMATRIX				g_mtxWorldMeshFault;	//ワールドマトリックス
+Fault					g_Fault;
 
 //--------------------------------------------------------------------------------------------------------
 //断面の初期化処理
@@ -24,15 +33,29 @@ void InitMeshFault(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//テクスチャーの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshFault);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\fault002.png", &g_pTextureMeshFault);
 
-	//ポリゴンの初期化
-	g_posMeshFault = ZERO_SET;
-	g_rotMeshFault = ZERO_SET;
+	//断面情報初期化の初期化
+	g_Fault.pos = ZERO_SET;
+	g_Fault.rot = ZERO_SET;
+	g_Fault.fRadius = GetMeshField()->fRadius;
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (MESHFAULT_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshFault, NULL);
 
+	//頂点情報の設定処理
+	SetMeshFaultVertex();
+
+	//インデックスバッファの生成
+	pDevice->CreateIndexBuffer(sizeof(WORD) * (MESHFAULT_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshFault, NULL);
+
+	//インデックス番号の設定処理
+	SetMeshFaultIndex();
+}
+
+//断面の頂点情報の設定処理
+void SetMeshFaultVertex(void)
+{
 	VERTEX_3D *pVtx;
 
 	//頂点バッファのロック
@@ -41,47 +64,43 @@ void InitMeshFault(void)
 	//頂点座標の設定
 	for (int nCntMeshFault = 0; nCntMeshFault < MESHFAULT_SPLIT + 1; nCntMeshFault++)
 	{
-		float	VtxPos_X = sinf(D3DX_PI * (1.0f - (2.0f / MESHFAULT_SPLIT * nCntMeshFault))) * MESHFAULT_WIDTH,
-				VtxPos_Z = cosf(D3DX_PI * (1.0f - (2.0f / MESHFAULT_SPLIT * nCntMeshFault))) * MESHFAULT_WIDTH;
+		float	VtxPos_X = sinf(D3DX_PI * (1.0f - (2.0f / MESHFAULT_SPLIT * nCntMeshFault))) * g_Fault.fRadius,		//Ｘ座標
+				VtxPos_Z = cosf(D3DX_PI * (1.0f - (2.0f / MESHFAULT_SPLIT * nCntMeshFault))) * g_Fault.fRadius;		//Ｚ座標
+		int		nNumBottomVtx = MESHFAULT_SPLIT + nCntMeshFault + 1;												//対象の頂点の真下の頂点番号
 
-		//原点位置と同じ高さの頂点座標を設定
+																													//原点位置と同じ高さの頂点座標を設定
 		pVtx[nCntMeshFault].pos = D3DXVECTOR3(VtxPos_X, 0.0f, VtxPos_Z);
 
 		//上で設定した頂点座標の真下の頂点座標を設定
-		pVtx[MESHFAULT_SPLIT + nCntMeshFault + 1].pos = D3DXVECTOR3(VtxPos_X, MESHFAULT_BOTTOM, VtxPos_Z);
+		pVtx[nNumBottomVtx].pos = D3DXVECTOR3(VtxPos_X, MESHFAULT_BOTTOM, VtxPos_Z);
 
+		//１周したときの頂点座標
 		if (nCntMeshFault == MESHFAULT_SPLIT)
 		{
-			pVtx[nCntMeshFault].pos = D3DXVECTOR3(
-				sinf(D3DX_PI * 1.0f) * MESHFAULT_WIDTH,
-				MESHFAULT_BOTTOM,
-				cosf(D3DX_PI * 1.0f) * MESHFAULT_WIDTH);
-
-			pVtx[MESHFAULT_SPLIT + 1 + nCntMeshFault].pos = D3DXVECTOR3(
-				sinf(D3DX_PI * 1.0f) * MESHFAULT_WIDTH,
-				0.0f,
-				cosf(D3DX_PI * 1.0f) * MESHFAULT_WIDTH);
+			pVtx[nCntMeshFault].pos = pVtx[0].pos;						//最初の頂点座標を代入
+			pVtx[nNumBottomVtx].pos = pVtx[MESHFAULT_SPLIT + 1].pos;	//最初の足元の頂点座標を代入
 		}
 
 		//法線ベクトルの設定
 		pVtx[nCntMeshFault].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[MESHFAULT_SPLIT + 1 + nCntMeshFault].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nNumBottomVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[nCntMeshFault].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[MESHFAULT_SPLIT + 1 + nCntMeshFault].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[nCntMeshFault].col = XCOL_WHITE;
+		pVtx[nNumBottomVtx].col = XCOL_WHITE;
 
 		//テクスチャ座標の設定
 		pVtx[nCntMeshFault].tex = D3DXVECTOR2(nCntMeshFault * (MESHFAULT_TEX_RESOLUTION / MESHFAULT_SPLIT), 0.0f);
-		pVtx[MESHFAULT_SPLIT + 1 + nCntMeshFault].tex = D3DXVECTOR2(nCntMeshFault * (MESHFAULT_TEX_RESOLUTION / MESHFAULT_SPLIT), 1.0f);
+		pVtx[nNumBottomVtx].tex = D3DXVECTOR2(nCntMeshFault * (MESHFAULT_TEX_RESOLUTION / MESHFAULT_SPLIT), 1.0f);
 	}
 
 	//頂点バッファのアンロック
 	g_pVtxBuffMeshFault->Unlock();
+}
 
-	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * (MESHFAULT_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshFault, NULL);
-
+//断面のインデックス番号の設定処理
+void SetMeshFaultIndex(void)
+{
 	WORD*pIdx;
 
 	//インデックスバッファをロックし、頂点番号へのポインタを取得
@@ -136,7 +155,8 @@ void UninitMeshFault(void)
 //--------------------------------------------------------------------------------------------------------
 void UpdateMeshFault(void)
 {
-
+	//頂点情報の設定処理
+	SetMeshFaultVertex();
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -148,21 +168,24 @@ void DrawMeshFault(void)
 	D3DXMATRIX mtxRot, mtxTrans;
 
 	//ワールドマトリックスの初期化
-	D3DXMatrixIdentity(&g_mtxWorldMeshFault);
+	D3DXMatrixIdentity(&g_Fault.mtxWorld);
 
 	//向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_rotMeshFault.y, g_rotMeshFault.x, g_rotMeshFault.z);
-	D3DXMatrixMultiply(&g_mtxWorldMeshFault, &g_mtxWorldMeshFault, &mtxRot);
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_Fault.rot.y, g_Fault.rot.x, g_Fault.rot.z);
+	D3DXMatrixMultiply(&g_Fault.mtxWorld, &g_Fault.mtxWorld, &mtxRot);
 
 	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, g_posMeshFault.x, g_posMeshFault.y, g_posMeshFault.z);
-	D3DXMatrixMultiply(&g_mtxWorldMeshFault, &g_mtxWorldMeshFault, &mtxTrans);
+	D3DXMatrixTranslation(&mtxTrans, g_Fault.pos.x, g_Fault.pos.y, g_Fault.pos.z);
+	D3DXMatrixMultiply(&g_Fault.mtxWorld, &g_Fault.mtxWorld, &mtxTrans);
 
 	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldMeshFault);
+	pDevice->SetTransform(D3DTS_WORLD, &g_Fault.mtxWorld);
 
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffMeshFault, 0, sizeof(VERTEX_3D));
+
+	//裏面カリングをON
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	//インデックスバッファをデータストリームに設定
 	pDevice->SetIndices(g_pIdxBuffMeshFault);
@@ -174,4 +197,7 @@ void DrawMeshFault(void)
 	pDevice->SetTexture(0, g_pTextureMeshFault);
 
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (MESHFAULT_SPLIT * 2 + 2), 0, (MESHFAULT_SPLIT * 2 + 2));
+
+	//普通のカリングモードにする
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }

@@ -30,6 +30,7 @@ Author:平澤詩苑
 #include "particle.h"
 #include "attack_effect.h"
 #include "tremor_effect.h"
+#include "meshfault.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -56,6 +57,7 @@ void InitGame(void)
 	InitMeshfield();			// ステージ初期化処理
 	InitMeshCylinder();			// メッシュシリンダー初期化処理
 	InitMeshDome();				// メッシュドーム初期化処理
+	InitMeshFault();			// メッシュの断面初期化処理
 	InitModel();				// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();				// プレイヤーの初期化処理
 	InitBonus();				// ボーナスの初期化処理
@@ -94,20 +96,21 @@ void UninitGame(void)
 	========================================================================*/
 
 	/*エフェクトなどの板ポリゴンの終了処理*/
-	UninitBg();			// 背景の終了処理
-	UninitLight();		// ライト終了処理
-	UninitMeshfield();	// ステージ終了処理
+	UninitBg();				// 背景の終了処理
+	UninitLight();			// ライト終了処理
+	UninitMeshfield();		// ステージ終了処理
 	UninitMeshCylinder();	// メッシュシリンダー終了処理
-	UninitMeshDome();	// メッシュドーム終了処理
-	UninitWall();		// 壁の終了処理
-	UninitCamera();		// カメラの終了処理
-	UninitPlayer();		// プレイヤーの終了処理
-	UninitBonus();		// ボーナスの終了処理
-	UninitItem();		// アイテムの終了処理
-	UninitPause();		// ポーズ画面の終了処理
-	UninitGauge();		// ゲージの終了処理
-	UninitModel();		// モデルの終了処理
-	UninitParticle();	// パーティクルの終了処理
+	UninitMeshDome();		// メッシュドーム終了処理
+	UninitMeshFault();		// メッシュの断面終了処理
+	UninitWall();			// 壁の終了処理
+	UninitCamera();			// カメラの終了処理
+	UninitPlayer();			// プレイヤーの終了処理
+	UninitBonus();			// ボーナスの終了処理
+	UninitItem();			// アイテムの終了処理
+	UninitPause();			// ポーズ画面の終了処理
+	UninitGauge();			// ゲージの終了処理
+	UninitModel();			// モデルの終了処理
+	UninitParticle();		// パーティクルの終了処理
 	{	// エフェクトの終了処理
 		UninitChargeEffect();	//チャージエフェクト
 		UninitAttackEffect();	//攻撃エフェクト
@@ -132,17 +135,18 @@ void UpdateGame(void)
 	//ポーズがOFF
 	if (g_bPause == false)
 	{
-		UpdateBg();			// 背景の更新処理
-		UpdateLight();		// ライトの更新処理
-		UpdateMeshfield();	// ステージ更新処理
+		UpdateBg();				// 背景の更新処理
+		UpdateLight();			// ライトの更新処理
+		UpdateMeshfield();		// ステージ更新処理
 		UpdateMeshCylinder();	// メッシュシリンダー更新処理
-		UpdateMeshDome();	// メッシュドーム更新処理
-		UpdatePlayer();		// プレイヤーの更新処理
-		UpdateBonus();		// ボーナスの更新処理
-		UpdateItem();		// アイテムの更新処理
-		UpdateCamera();		// カメラの更新処理
-		UpdateWall();		// 壁の更新処理
-		UpdateGauge();		// ゲージの更新処理
+		UpdateMeshDome();		// メッシュドーム更新処理
+		UpdateMeshFault();		// メッシュの断面更新処理
+		UpdatePlayer();			// プレイヤーの更新処理
+		UpdateBonus();			// ボーナスの更新処理
+		UpdateItem();			// アイテムの更新処理
+		UpdateCamera();			// カメラの更新処理
+		UpdateWall();			// 壁の更新処理
+		UpdateGauge();			// ゲージの更新処理
 		{// エフェクトの更新処理
 			UpdateChargeEffect();	//チャージエフェクト
 			UpdateAttackEffect();	//攻撃エフェクト
@@ -198,6 +202,7 @@ void DrawGame(void)
 		DrawMeshfield();			// ステージの描画処理
 									//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 		DrawMeshDome();				// メッシュドームの描画処理	
+		DrawMeshFault();			// メッシュの断面描画処理
 		DrawWall();					// 壁の描画処理
 		{// エフェクトの描画処理
 			DrawChargeEffect();//チャージエフェクト
