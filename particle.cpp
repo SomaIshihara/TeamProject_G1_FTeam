@@ -20,6 +20,7 @@ void InitParticle(void)
 
 	VERTEX_3D *pVtx;
 
+	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		"data/TEXTURE/effect000.jpg",
 		&g_pTextureParticle);
@@ -47,21 +48,25 @@ void InitParticle(void)
 
 	for (int nCntParticle = 0; nCntParticle < MAX_PARTICLE; nCntParticle++, pVtx += VTX_MAX)
 	{
-		pVtx[0].pos = D3DXVECTOR3(-4.0f, 4.0f, 0.0f);
-		pVtx[1].pos = D3DXVECTOR3(4.0f, 4.0f, 0.0f);
-		pVtx[2].pos = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
-		pVtx[3].pos = D3DXVECTOR3(4.0f, -4.0f, 0.0f);
+		//位置の設定
+		pVtx[0].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[2].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
+		//法線の設定
 		pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		pVtx[1].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		pVtx[2].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		pVtx[3].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
+		//色の設定
 		pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 		pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
+		//テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
@@ -71,9 +76,9 @@ void InitParticle(void)
 	//頂点バッファをアンロック
 	g_pVtxBuffParticle->Unlock();
 }
-//==============================================================
+//======================================================================
 //パーティクルの終了処理
-//==============================================================
+//======================================================================
 void UninitParticle(void)
 {
 	//テクスチャの破棄
@@ -90,9 +95,9 @@ void UninitParticle(void)
 		g_pVtxBuffParticle = NULL;
 	}
 }
-//==============================================================
+//======================================================================
 //パーティクルの更新処理
-//==============================================================
+//======================================================================
 void UpdateParticle(void)
 {
 	VERTEX_3D *pVtx;
@@ -103,60 +108,10 @@ void UpdateParticle(void)
 	for (int nCntParticle = 0; nCntParticle < MAX_PARTICLE; nCntParticle++, pVtx += VTX_MAX)
 	{
 		if (g_aParticle[nCntParticle].bUse == true)
-		{
-			//寿命の減少
-			g_aParticle[nCntParticle].nLife--;
+		{//使用されているとき
 
-			//座標の設定
-			pVtx[0].pos = D3DXVECTOR3(-g_aParticle[nCntParticle].fRadius, g_aParticle[nCntParticle].fRadius, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(g_aParticle[nCntParticle].fRadius, g_aParticle[nCntParticle].fRadius, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(-g_aParticle[nCntParticle].fRadius, -g_aParticle[nCntParticle].fRadius, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(g_aParticle[nCntParticle].fRadius, -g_aParticle[nCntParticle].fRadius, 0.0f);
-
-			//移動量の設定
-			g_aParticle[nCntParticle].pos.x += g_aParticle[nCntParticle].move.x;
-			g_aParticle[nCntParticle].pos.y += g_aParticle[nCntParticle].move.y;
-			g_aParticle[nCntParticle].pos.z += g_aParticle[nCntParticle].move.z;
-
-			switch (g_aParticle[nCntParticle].nType)
-			{
-				//通常のパーティクル
-			case PARTICLE_NORMAL:
-
-				g_aParticle[nCntParticle].move.x += (0.0f - g_aParticle[nCntParticle].move.x) * 0.3f;
-				g_aParticle[nCntParticle].move.y += (0.0f - g_aParticle[nCntParticle].move.y) * 0.3f;
-				g_aParticle[nCntParticle].move.z += (0.0f - g_aParticle[nCntParticle].move.z) * 0.3f;
-
-				pVtx[0].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCntParticle].nLife / (float)g_aParticle[nCntParticle].nLifeTemp));
-				pVtx[1].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCntParticle].nLife / (float)g_aParticle[nCntParticle].nLifeTemp));
-				pVtx[2].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCntParticle].nLife / (float)g_aParticle[nCntParticle].nLifeTemp));
-				pVtx[3].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCntParticle].nLife / (float)g_aParticle[nCntParticle].nLifeTemp));
-
-				break;
-
-				//吸収のパーティクル
-			case PARTICLE_ACSORPTION:
-
-				Bonus pBonus;
-				pBonus = GetBonus();
-
-				g_aParticle[nCntParticle].move.x += (0.0f - g_aParticle[nCntParticle].move.x) * 0.2f;
-				g_aParticle[nCntParticle].move.y += (0.0f - g_aParticle[nCntParticle].move.y) * 0.2f;
-				g_aParticle[nCntParticle].move.z += (0.0f - g_aParticle[nCntParticle].move.z) * 0.2f;
-
-				pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f,1.0f);
-				pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f,1.0f);
-				pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f,1.0f);
-				pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f,1.0f);
-
-				break;
-			}
-
-			//パーティクルの破棄
-			if (g_aParticle[nCntParticle].nLife <= 0)
-			{
-				g_aParticle[nCntParticle].bUse = false;
-			}
+			//パーティクルの状態設定
+			StateParticle(nCntParticle);
 		}
 	}
 	//頂点バッファをアンロック
@@ -217,6 +172,7 @@ void DrawParticle(void)
 		}
 	}
 
+	//元に戻す
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
@@ -304,9 +260,77 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType)
 	//頂点バッファをアンロック
 	g_pVtxBuffParticle->Unlock();
 }
-//=================================================
+//======================================================================
+//パーティクルの状態設定
+//======================================================================
+void StateParticle(int nCount)
+{
+	VERTEX_3D *pVtx;
+
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffParticle->Lock(0, 0, (void**)&pVtx, 0);
+
+	//寿命の減少
+	g_aParticle[nCount].nLife--;
+
+	//座標の設定
+	pVtx[0].pos = D3DXVECTOR3(-g_aParticle[nCount].fRadius, g_aParticle[nCount].fRadius, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(g_aParticle[nCount].fRadius, g_aParticle[nCount].fRadius, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-g_aParticle[nCount].fRadius, -g_aParticle[nCount].fRadius, 0.0f);
+	pVtx[3].pos = D3DXVECTOR3(g_aParticle[nCount].fRadius, -g_aParticle[nCount].fRadius, 0.0f);
+
+	//移動量の設定
+	g_aParticle[nCount].pos.x += g_aParticle[nCount].move.x;
+	g_aParticle[nCount].pos.y += g_aParticle[nCount].move.y;
+	g_aParticle[nCount].pos.z += g_aParticle[nCount].move.z;
+
+	//パーティクルの状態処理
+	switch (g_aParticle[nCount].nType)
+	{
+		//通常のパーティクル
+	case PARTICLE_NORMAL:
+
+		g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.3f;
+		g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.3f;
+		g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.3f;
+
+		pVtx[0].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+		pVtx[1].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+		pVtx[2].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+		pVtx[3].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+
+		break;
+
+		//吸収のパーティクル
+	case PARTICLE_ACSORPTION:
+
+		Bonus pBonus;
+		pBonus = GetBonus();
+
+		g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.2f;
+		g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.2f;
+		g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.2f;
+
+		pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, 1.0f);
+		pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, 1.0f);
+		pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, 1.0f);
+		pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, 1.0f);
+
+		break;
+	}
+
+	//頂点バッファをアンロック
+	g_pVtxBuffParticle->Unlock();
+
+	//パーティクルの破棄
+	if (g_aParticle[nCount].nLife <= 0)
+	{
+		g_aParticle[nCount].bUse = false;
+	}
+}
+//======================================================================
 //パーティクルの移動方向設定
-//=================================================
+//======================================================================
 void DirectionParticle(int nCount)
 {
 	Bonus pBonus;

@@ -89,14 +89,14 @@ void InitBonus(void)
 	}
 
 	//初期設定
-	g_Bonus.Respawn = DIRECTION_ZERO;
-	g_Bonus.pos = ZERO_SET;
-	g_Bonus.rot = ZERO_SET;
-	g_Bonus.move = ZERO_SET;
-	g_Bonus.DespawnLimit = 0;
+	g_Bonus.Respawn = DIRECTION_ZERO;	//リスポーンの位置番号
+	g_Bonus.pos = ZERO_SET;				//位置
+	g_Bonus.rot = ZERO_SET;				//角度
+	g_Bonus.move = ZERO_SET;			//移動量
+	g_Bonus.DespawnLimit = 0;			//消える時間
 	g_Bonus.a = 0.0f;					//透明度の設定
-	g_Bonus.buse = false;
-	g_ParticleCounter = PARTICLE_LIMIT;
+	g_Bonus.buse = false;				//使用しているかどうか
+	g_ParticleCounter = PARTICLE_LIMIT;	//パーティクルのでる間隔
 }
 //===================================================
 //ボーナスの終了処理
@@ -123,15 +123,19 @@ void UninitBonus(void)
 void UpdateBonus(void)
 {
 	if (g_Bonus.buse == true)
-	{
+	{//使用されているとき
+
+		//パーティクルセットまでの制限時間
 		g_ParticleCounter--;
 
 		if (g_ParticleCounter <= 0)
-		{
+		{//0になったとき
 		
+			//パーティクルのセット
 			SetParticle(g_Bonus.pos, 12.0f, 15, PARTICLE_NORMAL);
 			SetParticle(g_Bonus.pos, 7.0f, 15, PARTICLE_ACSORPTION);
 
+			//リミットの再設定
 			g_ParticleCounter = PARTICLE_LIMIT;
 		}
 
@@ -237,7 +241,7 @@ void DrawBonus(void)
 		{
 			D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
 
-															//黒色に設定						//自己発光を無くす
+			//黒色に設定						//自己発光を無くす
 			MatCopy.Diffuse = XCOL_BLACKSHADOW;	MatCopy.Emissive = XCOL_BLACK;
 
 			//マテリアル設定
@@ -348,18 +352,19 @@ void AppearandDisAppearBonus(void)
 void CollisionBonus(D3DXVECTOR3 nPlayer , int NumPlayer)
 {
 	if (g_Bonus.buse == true)
-	{
+	{//使用されているとき
 		if (nPlayer.x >= g_Bonus.pos.x - COLLISION_SIZE_XZ
 			&&nPlayer.x <= g_Bonus.pos.x + COLLISION_SIZE_XZ
 			&&nPlayer.z >= g_Bonus.pos.z - COLLISION_SIZE_XZ
 			&&nPlayer.z <= g_Bonus.pos.z + COLLISION_SIZE_XZ
 			&&nPlayer.y >= g_Bonus.pos.y - COLLISION_SIZE_Y
 			&&nPlayer.y <= g_Bonus.pos.y + COLLISION_SIZE_Y)
-		{//プレイヤーがの範囲内に入ったとき
+		{//プレイヤーがボーナスの範囲内に入ったとき
 
 			//使われていない状態にする
 			g_Bonus.buse = false;
 
+			//スコアを加算
 			AddScore(2, NumPlayer);
 		}
 	}
