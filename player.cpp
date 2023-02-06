@@ -46,6 +46,8 @@
 #define ACCELERATION_ITEMMAG	(1.5f)		//アイテム所持中の強化倍率
 #define DEFANCE_CONS			(0.0f)		//防御定数（1.0で完全防御）
 #define DEFANCE_ITEMADD			(0.3f)		//アイテム所持中の強化量
+#define MUTEKI_ATK				(1.0f)		//MUTEKI状態の自分の変換割合
+#define MUTEKI_DEF				(0.0f)		//MUTEKI状態の相手の変換割合
 
 //ゴースト化状態
 #define GOAST_ALPHA			(0.25f)			//不透明度
@@ -132,6 +134,8 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].nATKItemTime = 0;
 		g_aPlayer[nCntPlayer].nDEFItemTime = 0;
 		g_aPlayer[nCntPlayer].nGoastItemTime = 0;
+		g_aPlayer[nCntPlayer].bMUTEKI = false;
+		g_aPlayer[nCntPlayer].nMUTEKITime = 0;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
@@ -394,11 +398,25 @@ void UpdatePlayer(void)
 			D3DXVECTOR3 moveTmp2 = g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move;
 
 			//割合設定
-			float fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
-				DEFANCE_CONS + (g_aPlayer[nCntPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
+			float fPowerConvertion1, fPowerConvertion2;
+			if (g_aPlayer[nCntPlayer].bMUTEKI == true)
+			{//我無敵也(自分0%,相手100%)
+				fPowerConvertion1 = MUTEKI_DEF;
+				fPowerConvertion2 = MUTEKI_ATK;
+			}
+			else if (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].bMUTEKI == true)
+			{//相手無敵也(自分100%,相手0%)
+				fPowerConvertion1 = MUTEKI_ATK;
+				fPowerConvertion2 = MUTEKI_DEF;
+			}
+			else
+			{//どっちもむてきじゃないよ
+				fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+					DEFANCE_CONS + (g_aPlayer[nCntPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
 
-			float fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayer[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
-				DEFANCE_CONS + (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
+				fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayer[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+					DEFANCE_CONS + (g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
+			}
 
 			g_aPlayer[nCntPlayer].move = moveTmp2 * fPowerConvertion1;
 			g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].move = moveTmp1 * fPowerConvertion2;
