@@ -35,4 +35,5 @@ void UninitParticle(void);
 void UpdateParticle(void);
 void DrawParticle(void);
 void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType);
+void DirectionParticle(int nCount);
 #endif

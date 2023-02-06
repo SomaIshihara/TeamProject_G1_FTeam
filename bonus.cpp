@@ -21,7 +21,7 @@
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
-#define DESPAWN_LIMIT		(1800)		//ボーナスが消えるまでのリミット
+#define DESPAWN_LIMIT		(600)		//ボーナスが消えるまでのリミット
 #define PARTICLE_LIMIT		(6)			//ボーナスパーティクルのリミット
 
 //****************************//

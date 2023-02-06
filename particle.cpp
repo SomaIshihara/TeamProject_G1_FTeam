@@ -233,9 +233,6 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType)
 	VERTEX_3D *pVtx;
 	int ParticleCount = 0;
 
-	Bonus pBonus;
-	pBonus = GetBonus();
-
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffParticle->Lock(0, 0, (void**)&pVtx, 0);
 
@@ -279,70 +276,9 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType)
 				g_aParticle[nCntParticle].pos.y = g_aParticle[nCntParticle].pos.y + cosf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % 2 + 20) *3.0f;
 				g_aParticle[nCntParticle].pos.z = g_aParticle[nCntParticle].pos.z + cosf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % 2 + 20) *3.0f;
 
-				//
-				if (pBonus.pos.x > g_aParticle[nCntParticle].pos.x)
-				{
-					g_aParticle[nCntParticle].move.x = 10;
+				//パーティクルの移動方向設定
+				DirectionParticle(nCntParticle);
 
-					if (pBonus.pos.z > g_aParticle[nCntParticle].pos.z)
-					{
-						g_aParticle[nCntParticle].move.z = 10;
-
-						if (pBonus.pos.y > g_aParticle[nCntParticle].pos.y)
-						{
-							g_aParticle[nCntParticle].move.y = 10;
-						}
-						else if (pBonus.pos.y < g_aParticle[nCntParticle].pos.y)
-						{
-							g_aParticle[nCntParticle].move.y = -10;
-						}
-					}
-					else if (pBonus.pos.z < g_aParticle[nCntParticle].pos.z)
-					{
-						g_aParticle[nCntParticle].move.z = -10;
-
-						if (pBonus.pos.y > g_aParticle[nCntParticle].pos.y)
-						{
-							g_aParticle[nCntParticle].move.y = 10;
-						}
-						else if (pBonus.pos.y < g_aParticle[nCntParticle].pos.y)
-						{
-							g_aParticle[nCntParticle].move.y = -10;
-						}
-					}
-				}
-				else if (pBonus.pos.x < g_aParticle[nCntParticle].pos.x)
-				{
-					g_aParticle[nCntParticle].move.x = -10;
-
-					if (pBonus.pos.z > g_aParticle[nCntParticle].pos.z)
-					{
-						g_aParticle[nCntParticle].move.z = 10;
-
-						if (pBonus.pos.y > g_aParticle[nCntParticle].pos.y)
-						{
-							g_aParticle[nCntParticle].move.y = 10;
-						}
-						else if (pBonus.pos.y < g_aParticle[nCntParticle].pos.y)
-						{
-							g_aParticle[nCntParticle].move.y = -10;
-						}
-					}
-					else if (pBonus.pos.z < g_aParticle[nCntParticle].pos.z)
-					{
-						g_aParticle[nCntParticle].move.z = -10;
-
-						if (pBonus.pos.y > g_aParticle[nCntParticle].pos.y)
-						{
-							g_aParticle[nCntParticle].move.y = 10;
-						}
-						else if (pBonus.pos.y < g_aParticle[nCntParticle].pos.y)
-						{
-							g_aParticle[nCntParticle].move.y = -10;
-						}
-					}
-				}
-				
 				//寿命の設定
 				g_aParticle[nCntParticle].nLife = (rand() % 30 - 15) + nLife;
 
@@ -367,4 +303,75 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType)
 
 	//頂点バッファをアンロック
 	g_pVtxBuffParticle->Unlock();
+}
+//=================================================
+//パーティクルの移動方向設定
+//=================================================
+void DirectionParticle(int nCount)
+{
+	Bonus pBonus;
+	pBonus = GetBonus();
+
+	if (pBonus.pos.x > g_aParticle[nCount].pos.x)
+	{
+		g_aParticle[nCount].move.x = 10;
+
+		if (pBonus.pos.z > g_aParticle[nCount].pos.z)
+		{
+			g_aParticle[nCount].move.z = 10;
+
+			if (pBonus.pos.y > g_aParticle[nCount].pos.y)
+			{
+				g_aParticle[nCount].move.y = 10;
+			}
+			else if (pBonus.pos.y < g_aParticle[nCount].pos.y)
+			{
+				g_aParticle[nCount].move.y = -10;
+			}
+		}
+		else if (pBonus.pos.z < g_aParticle[nCount].pos.z)
+		{
+			g_aParticle[nCount].move.z = -10;
+
+			if (pBonus.pos.y > g_aParticle[nCount].pos.y)
+			{
+				g_aParticle[nCount].move.y = 10;
+			}
+			else if (pBonus.pos.y < g_aParticle[nCount].pos.y)
+			{
+				g_aParticle[nCount].move.y = -10;
+			}
+		}
+	}
+	else if (pBonus.pos.x < g_aParticle[nCount].pos.x)
+	{
+		g_aParticle[nCount].move.x = -10;
+
+		if (pBonus.pos.z > g_aParticle[nCount].pos.z)
+		{
+			g_aParticle[nCount].move.z = 10;
+
+			if (pBonus.pos.y > g_aParticle[nCount].pos.y)
+			{
+				g_aParticle[nCount].move.y = 10;
+			}
+			else if (pBonus.pos.y < g_aParticle[nCount].pos.y)
+			{
+				g_aParticle[nCount].move.y = -10;
+			}
+		}
+		else if (pBonus.pos.z < g_aParticle[nCount].pos.z)
+		{
+			g_aParticle[nCount].move.z = -10;
+
+			if (pBonus.pos.y > g_aParticle[nCount].pos.y)
+			{
+				g_aParticle[nCount].move.y = 10;
+			}
+			else if (pBonus.pos.y < g_aParticle[nCount].pos.y)
+			{
+				g_aParticle[nCount].move.y = -10;
+			}
+		}
+	}
 }
