@@ -13,6 +13,8 @@
 #include "fade.h"
 #include "color.h"
 #include "bonus.h"
+#include "time.h"
+#include "item.h"
 
 //マクロ定義
 #define NUM_PLACE  (2)								 //スコアの桁数
@@ -24,6 +26,9 @@ TIME g_aTime;
 
 
 D3DXMATRIX mtxWorldTime;
+
+int BonusLimit;
+bool bBonusUse;
 
 //===============================
 //タイムの初期化の処理 
@@ -85,6 +90,15 @@ void InitTime(void)
 		pVtx[3].tex = D3DXVECTOR2(0.1f, 1.0f);
 	}
 
+	//現在時間の取得
+	srand((unsigned int)time(0));
+
+	//ボーナスのリミットをランダムに設定
+	BonusLimit = rand() % 900;
+
+	//ボーナスの使用できるようにする
+	bBonusUse = false;
+
 	//頂点バッファをアンロックする
 	g_pVtxBuffTime->Unlock();
 }
@@ -115,10 +129,21 @@ void UninitTime(void)
 void UpdateTime(void)
 {
 	//ボーナスの出現処理
-	if (g_aTime.nTime == (int)(g_aTime.nTemp * 1.0f))
+	if (g_aTime.nTime <= 40)
 	{
-		//ボーナスの設定処理
-		SetBonus();
+		BonusLimit--;
+
+		if (bBonusUse == false)
+		{
+			if (BonusLimit <= 0)
+			{
+				//ボーナスのセット処理
+				SetBonus();
+
+				//ボーナスを使用できないようにする
+				bBonusUse = true;
+			}
+		}
 	}
 
 	g_aTime.nCounter++;
@@ -126,6 +151,8 @@ void UpdateTime(void)
 	if ((g_aTime.nCounter % 60) == 0)
 	{//一定時間経過
 		g_aTime.nCounter = 0;		//カウンターを初期値に戻す
+
+		SetItem();
 
 		AddTime(1);
 	}

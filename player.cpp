@@ -21,6 +21,8 @@
 #include "attack_effect.h"
 #include "tremor_effect.h"
 #include "item.h"
+#include "meshfield.h"
+#include "bonus.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -357,6 +359,9 @@ void UpdatePlayer(void)
 		{//落ち切った
 			DownPlayer(nCntPlayer);
 		}
+
+		//ボーナスの当たり判定
+		CollisionBonus(g_aPlayer[nCntPlayer].pos, nCntPlayer);
 	}
 
 	//移動量と衝突判定をもとに移動する

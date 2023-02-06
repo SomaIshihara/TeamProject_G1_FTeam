@@ -18,10 +18,10 @@
 #define INIT_POS_Y			(200.0f)	//初期のY位置
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
 #define RATIO_MOVE			(100.0f)	//移動量の割合
-#define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
+#define COLLISION_SIZE_XZ	(50.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
-#define DESPAWN_LIMIT		(800)		//ボーナスが消えるまでのリミット
+#define DESPAWN_LIMIT		(1200)		//ボーナスが消えるまでのリミット
 #define PARTICLE_LIMIT		(6)			//ボーナスパーティクルのリミット
 
 //****************************//
@@ -89,14 +89,14 @@ void InitBonus(void)
 	}
 
 	//初期設定
-	g_Bonus.Respawn = DIRECTION_ZERO;
-	g_Bonus.pos = ZERO_SET;
-	g_Bonus.rot = ZERO_SET;
-	g_Bonus.move = ZERO_SET;
-	g_Bonus.DespawnLimit = 0;
+	g_Bonus.Respawn = DIRECTION_ZERO;	//リスポーンの位置番号
+	g_Bonus.pos = ZERO_SET;				//位置
+	g_Bonus.rot = ZERO_SET;				//角度
+	g_Bonus.move = ZERO_SET;			//移動量
+	g_Bonus.DespawnLimit = 0;			//消える時間
 	g_Bonus.a = 0.0f;					//透明度の設定
-	g_Bonus.buse = false;
-	g_ParticleCounter = PARTICLE_LIMIT;
+	g_Bonus.buse = false;				//使用しているかどうか
+	g_ParticleCounter = PARTICLE_LIMIT;	//パーティクルのでる間隔
 }
 //===================================================
 //ボーナスの終了処理
@@ -123,13 +123,19 @@ void UninitBonus(void)
 void UpdateBonus(void)
 {
 	if (g_Bonus.buse == true)
-	{
+	{//使用されているとき
+
+		//パーティクルセットまでの制限時間
 		g_ParticleCounter--;
 
 		if (g_ParticleCounter <= 0)
-		{
-			SetParticle(g_Bonus.pos, 10.0f, 30, PARTICLE_NORMAL);
+		{//0になったとき
+		
+			//パーティクルのセット
+			SetParticle(g_Bonus.pos, 12.0f, 15, PARTICLE_NORMAL);
+			SetParticle(g_Bonus.pos, 7.0f, 15, PARTICLE_ACSORPTION);
 
+			//リミットの再設定
 			g_ParticleCounter = PARTICLE_LIMIT;
 		}
 
@@ -194,6 +200,57 @@ void DrawBonus(void)
 			pDevice->SetTexture(0, g_pTextureBonus[nCntMat]);
 
 			//モデル(パーツ)の描画
+			g_pMeshBonus->DrawSubset(nCntMat);
+		}
+
+		//************************//
+		//************************//
+		//		  影の描画		  //
+		//************************//
+		//************************//
+
+		D3DXMATRIX	mtxShadow;		//シャドウマトリックス
+		D3DLIGHT9	light;			//ライト情報
+		D3DXVECTOR4	posLight;		//ライトの位置
+		D3DXVECTOR3	pos, normal;	//平面上の任意の点、法線ベクトル
+		D3DXPLANE	plane;			//平面情報
+
+									//ライトの位置を設定
+		pDevice->GetLight(0, &light);
+		posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
+
+		//平面情報を生成
+		pos = ZERO_SET;
+		normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		D3DXPlaneFromPointNormal(&plane, &pos, &normal);
+
+		//シャドウマトリックスの初期化
+		D3DXMatrixIdentity(&mtxShadow);
+
+		//シャドウマトリックスの作成
+		D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
+		D3DXMatrixMultiply(&mtxShadow, &g_mtxWorldBonus, &mtxShadow);
+
+		//シャドウマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
+
+		//マテリアルデータへのポインタを取得
+		pMat = (D3DXMATERIAL *)g_pBuffMatBonus->GetBufferPointer();
+
+		for (int nCntMat = 0; nCntMat < (int)g_dwNumMatBonus; nCntMat++)
+		{
+			D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
+
+			//黒色に設定						//自己発光を無くす
+			MatCopy.Diffuse = XCOL_BLACKSHADOW;	MatCopy.Emissive = XCOL_BLACK;
+
+			//マテリアル設定
+			pDevice->SetMaterial(&MatCopy);
+
+			//テクスチャ設定
+			pDevice->SetTexture(0, NULL);
+
+			//モデル描画
 			g_pMeshBonus->DrawSubset(nCntMat);
 		}
 	}
@@ -275,7 +332,7 @@ void AppearandDisAppearBonus(void)
 		if (g_Bonus.a > 0.0f)
 		{
 			//透明にしていく
-			g_Bonus.a -= 0.01;
+			g_Bonus.a -= 0.01f;
 		}
 		else
 		{
@@ -286,26 +343,36 @@ void AppearandDisAppearBonus(void)
 	else if (g_Bonus.a < 1.0f)
 	{
 		//不透明にしていく
-		g_Bonus.a += 0.01;
+		g_Bonus.a += 0.01f;
 	}
 }
 //===================================================
 //ボーナスの当たり判定処理
 //===================================================
-void CollisionBonus(D3DXVECTOR3 nPlayer)
+void CollisionBonus(D3DXVECTOR3 nPlayer , int NumPlayer)
 {
 	if (g_Bonus.buse == true)
-	{
+	{//使用されているとき
 		if (nPlayer.x >= g_Bonus.pos.x - COLLISION_SIZE_XZ
 			&&nPlayer.x <= g_Bonus.pos.x + COLLISION_SIZE_XZ
 			&&nPlayer.z >= g_Bonus.pos.z - COLLISION_SIZE_XZ
 			&&nPlayer.z <= g_Bonus.pos.z + COLLISION_SIZE_XZ
 			&&nPlayer.y >= g_Bonus.pos.y - COLLISION_SIZE_Y
 			&&nPlayer.y <= g_Bonus.pos.y + COLLISION_SIZE_Y)
-		{//プレイヤーがの範囲内に入ったとき
+		{//プレイヤーがボーナスの範囲内に入ったとき
 
 			//使われていない状態にする
 			g_Bonus.buse = false;
+
+			//スコアを加算
+			AddScore(2, NumPlayer);
 		}
 	}
+}
+//====================================================
+//ボーナスの取得処理
+//====================================================
+Bonus GetBonus(void)
+{
+	return g_Bonus;
 }

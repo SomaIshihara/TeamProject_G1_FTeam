@@ -40,6 +40,7 @@ void DrawBonus(void);
 void SetBonus(void);
 void MoveBonus(void);
 void AppearandDisAppearBonus(void);
-void CollisionBonus(D3DXVECTOR3 nPlayer,int nPlayerNum);
+void CollisionBonus(D3DXVECTOR3 nPlayer,int NumPlayer);
+Bonus GetBonus(void);
 
 #endif

@@ -138,6 +138,7 @@ void UpdateChargeEffect(void)
 //エフェクトのサイズ更新
 void UpdateChargeEffectSize(int nEffect)
 {
+	Player *pPlayer = GetPlayer();
 	
 		//エフェクトの大きさを拡大
 		g_ChargeEffect[nEffect].fSize += EFFECT_CHARGE_MOVE;
@@ -165,10 +166,11 @@ void UpdateChargeEffectSize(int nEffect)
 	pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_ChargeEffect[nEffect].fSize, 0.0f, -g_ChargeEffect[nEffect].fSize);
 	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_ChargeEffect[nEffect].fSize, 0.0f, -g_ChargeEffect[nEffect].fSize);
 
-	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_ChargeEffect[nEffect].fAlpha);
-	pVtx[VTX_RI_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_ChargeEffect[nEffect].fAlpha);
-	pVtx[VTX_LE_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_ChargeEffect[nEffect].fAlpha);
-	pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_ChargeEffect[nEffect].fAlpha);
+	//エフェクト色設定
+	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge , 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
+	pVtx[VTX_RI_UP].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge, 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
+	pVtx[VTX_LE_DO].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge, 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
+	pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge, 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffChargeEffect->Unlock();
