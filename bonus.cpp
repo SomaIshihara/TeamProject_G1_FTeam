@@ -21,8 +21,8 @@
 #define COLLISION_SIZE_XZ	(50.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
-#define DESPAWN_LIMIT		(1200)		//ボーナスが消えるまでのリミット
-#define PARTICLE_LIMIT		(6)			//ボーナスパーティクルのリミット
+#define DESPAWN_LIMIT_BONUS (1200)		//ボーナスが消えるまでのリミット
+#define PARTICLE_LIMIT_BONUS (6)		//ボーナスパーティクルのリミット
 
 //****************************//
 //		　　出現情報		  //
@@ -96,7 +96,7 @@ void InitBonus(void)
 	g_Bonus.DespawnLimit = 0;			//消える時間
 	g_Bonus.a = 0.0f;					//透明度の設定
 	g_Bonus.buse = false;				//使用しているかどうか
-	g_ParticleCounter = PARTICLE_LIMIT;	//パーティクルのでる間隔
+	g_ParticleCounter = PARTICLE_LIMIT_BONUS;	//パーティクルのでる間隔
 }
 //===================================================
 //ボーナスの終了処理
@@ -136,7 +136,7 @@ void UpdateBonus(void)
 			SetParticle(g_Bonus.pos, 7.0f, 15, PARTICLE_ACSORPTION);
 
 			//リミットの再設定
-			g_ParticleCounter = PARTICLE_LIMIT;
+			g_ParticleCounter = PARTICLE_LIMIT_BONUS;
 		}
 
 		//移動処理
@@ -271,7 +271,7 @@ void SetBonus(void)
 		g_Bonus.Respawn = (BONUS)(rand() % 4);
 		g_Bonus.pos = g_RespawnPos[g_Bonus.Respawn];
 		g_Bonus.rot = g_RespawnRot[g_Bonus.Respawn];
-		g_Bonus.DespawnLimit = DESPAWN_LIMIT;
+		g_Bonus.DespawnLimit = DESPAWN_LIMIT_BONUS;
 		g_Bonus.buse = true;
 	}
 }
