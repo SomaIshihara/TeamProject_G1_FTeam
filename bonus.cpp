@@ -21,7 +21,7 @@
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
-#define DESPAWN_LIMIT		(800)		//ボーナスが消えるまでのリミット
+#define DESPAWN_LIMIT		(1800)		//ボーナスが消えるまでのリミット
 #define PARTICLE_LIMIT		(6)			//ボーナスパーティクルのリミット
 
 //****************************//
@@ -128,7 +128,9 @@ void UpdateBonus(void)
 
 		if (g_ParticleCounter <= 0)
 		{
-			SetParticle(g_Bonus.pos, 10.0f, 30, PARTICLE_NORMAL);
+		
+			SetParticle(g_Bonus.pos, 12.0f, 15, PARTICLE_NORMAL);
+			SetParticle(g_Bonus.pos, 7.0f, 15, PARTICLE_ACSORPTION);
 
 			g_ParticleCounter = PARTICLE_LIMIT;
 		}
@@ -308,4 +310,11 @@ void CollisionBonus(D3DXVECTOR3 nPlayer)
 			g_Bonus.buse = false;
 		}
 	}
+}
+//====================================================
+//ボーナスの取得処理
+//====================================================
+Bonus GetBonus(void)
+{
+	return g_Bonus;
 }
