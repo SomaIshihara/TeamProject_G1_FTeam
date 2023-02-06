@@ -21,10 +21,10 @@
 #define	CHARGE_EFFECT_TEX_PASS		"data\\TEXTURE\\charge_effect002.png"
 
 //グローバル変数
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffChargeEffect = NULL;				//頂点バッファのポインタ
-LPDIRECT3DTEXTURE9		g_pTextureChargeEffect = NULL;	//テクスチャのポインタ
-D3DXMATRIX				mtxWorldChargeEffect;							//ワールドマトリックス
-ChargeEffect			g_ChargeEffect[NUM_CHARGE_EFFECT];					//エフェクトの情報
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffChargeEffect = NULL;			//頂点バッファのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureChargeEffect = NULL;			//テクスチャのポインタ
+D3DXMATRIX				mtxWorldChargeEffect;					//ワールドマトリックス
+ChargeEffect			g_ChargeEffect[NUM_CHARGE_EFFECT];		//エフェクトの情報
 
 //=================================
 //エフェクトの初期化処理
@@ -38,8 +38,7 @@ void InitChargeEffect(void)
 	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,
 		CHARGE_EFFECT_TEX_PASS,
-		&g_pTextureChargeEffect);
-	
+		&g_pTextureChargeEffect);	
 	
 	//エフェクトの位置を設定
 	SetChargeEffectPos();
@@ -55,12 +54,10 @@ void InitChargeEffect(void)
 
 	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
-		//g_ChargeEffect[nCntEffect].nType = EFFECTTYPE_CHARGE;	//種類初期化
-		g_ChargeEffect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
-		g_ChargeEffect[nCntEffect].fSize = CHARGE_EFFECT_SIZE;		//サイズ初期化
+		g_ChargeEffect[nCntEffect].fSize = CHARGE_EFFECT_SIZE;	//サイズ初期化
 		g_ChargeEffect[nCntEffect].fAlpha = 1.0f;				//透明度初期化
 		g_ChargeEffect[nCntEffect].bUse = false;				//使われていない状態に
-		g_ChargeEffect[nCntEffect].bUseCharge = false;		//使われていない状態に
+		g_ChargeEffect[nCntEffect].bUseCharge = false;			//使われていない状態に
 
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_ChargeEffect[nCntEffect].fSize, 0.0f, +g_ChargeEffect[nCntEffect].fSize);
@@ -94,15 +91,13 @@ void InitChargeEffect(void)
 //エフェクトの終了処理
 //=================================
 void UninitChargeEffect(void)
-{
-	
+{	
 	//テクスチャの破棄
 	if (g_pTextureChargeEffect != NULL)
 	{
 		g_pTextureChargeEffect->Release();
 		g_pTextureChargeEffect = NULL;
-	}
-	
+	}	
 
 	//バッファの破棄
 	if (g_pVtxBuffChargeEffect != NULL)
@@ -140,17 +135,16 @@ void UpdateChargeEffectSize(int nEffect)
 {
 	Player *pPlayer = GetPlayer();
 	
-		//エフェクトの大きさを拡大
-		g_ChargeEffect[nEffect].fSize += EFFECT_CHARGE_MOVE;
+	//エフェクトの大きさを拡大
+	g_ChargeEffect[nEffect].fSize += EFFECT_CHARGE_MOVE;
 
-		//エフェクトの大きさがゼロになった
-		if (g_ChargeEffect[nEffect].fSize >= CHARGE_EFFECT_SIZE)
-		{
-			//エフェクト本来の大きさに直す
-			g_ChargeEffect[nEffect].fSize = CHARGE_EFFECT_SIZE;
-			//g_ChargeEffect[nEffect].nCntLoop++;		//ループ回数加算
-			g_ChargeEffect[nEffect].bUse = false;
-		}
+	//エフェクトの大きさがゼロになった
+	if (g_ChargeEffect[nEffect].fSize >= CHARGE_EFFECT_SIZE)
+	{
+		//エフェクト本来の大きさに直す
+		g_ChargeEffect[nEffect].fSize = CHARGE_EFFECT_SIZE;
+		g_ChargeEffect[nEffect].bUse = false;
+	}
 
 	VERTEX_3D *pVtx;							//頂点情報へのポインタ
 
@@ -167,7 +161,7 @@ void UpdateChargeEffectSize(int nEffect)
 	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_ChargeEffect[nEffect].fSize, 0.0f, -g_ChargeEffect[nEffect].fSize);
 
 	//エフェクト色設定
-	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge , 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
+	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge, 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
 	pVtx[VTX_RI_UP].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge, 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
 	pVtx[VTX_LE_DO].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge, 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
 	pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f * pPlayer[nEffect].moveGauge, 1.0f - pPlayer[nEffect].moveGauge *0.3f, 1.0f - pPlayer[nEffect].moveGauge *1.0f, g_ChargeEffect[nEffect].fAlpha);
@@ -248,7 +242,6 @@ void SetChargeEffectPos()
 			//エフェクトの位置をプレイヤーの位置にする
 			g_ChargeEffect[nCntEffect].pos = pPlayer->pos;
 		}
-
 	}
 }
 
@@ -262,18 +255,9 @@ void SetChargeEffect(D3DXVECTOR3 pos, int nCntType)
 		{
 			g_ChargeEffect[nCntType].fSize = 0.0f;		//サイズを初期化
 			
-			g_ChargeEffect[nCntType].nCntLoop = 0;		//ループ回数初期化
 			g_ChargeEffect[nCntType].fAlpha = 1.0f;		//透明度
 			g_ChargeEffect[nCntType].bUse = true;		//使われている状態に
-			//break;
+			break;
 		}
 	}
 }
-//"data\\TEXTURE\\AttackEffect.png",
-//if (GetKeyboardPress(DIK_X) == true)
-//{
-//	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++)
-//	{
-//		SetEffect(g_ChargeEffect[nCntEffect].pos, nCntEffect, EFFECTTYPE_ATTACK);
-//	}
-//}

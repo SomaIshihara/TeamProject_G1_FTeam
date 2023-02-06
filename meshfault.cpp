@@ -38,7 +38,6 @@ void InitMeshFault(void)
 	//断面情報初期化の初期化
 	g_Fault.pos = ZERO_SET;
 	g_Fault.rot = ZERO_SET;
-	g_Fault.fRadius = GetMeshField()->fRadius;
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (MESHFAULT_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshFault, NULL);
@@ -56,19 +55,24 @@ void InitMeshFault(void)
 //断面の頂点情報の設定処理
 void SetMeshFaultVertex(void)
 {
+	//半径を設定
+	g_Fault.fRadius = GetMeshField()->fRadius;
+
 	VERTEX_3D *pVtx;
 
 	//頂点バッファのロック
 	g_pVtxBuffMeshFault->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点座標の設定
-	for (int nCntMeshFault = 0; nCntMeshFault < MESHFAULT_SPLIT + 1; nCntMeshFault++)
-	{
-		float	VtxPos_X = sinf(D3DX_PI * (1.0f - (2.0f / MESHFAULT_SPLIT * nCntMeshFault))) * g_Fault.fRadius,		//Ｘ座標
-				VtxPos_Z = cosf(D3DX_PI * (1.0f - (2.0f / MESHFAULT_SPLIT * nCntMeshFault))) * g_Fault.fRadius;		//Ｚ座標
-		int		nNumBottomVtx = MESHFAULT_SPLIT + nCntMeshFault + 1;												//対象の頂点の真下の頂点番号
+	float Rot = D3DX_PI;	//Y軸の角度
 
-																													//原点位置と同じ高さの頂点座標を設定
+	//頂点座標の設定
+	for (int nCntMeshFault = 0; nCntMeshFault <= MESHFAULT_SPLIT; nCntMeshFault++)
+	{
+		float	VtxPos_X = sinf(Rot) * g_Fault.fRadius,					//Ｘ座標
+				VtxPos_Z = cosf(Rot) * g_Fault.fRadius;					//Ｚ座標
+		int		nNumBottomVtx = MESHFAULT_SPLIT + nCntMeshFault + 1;	//対象の頂点の真下の頂点番号
+
+		//原点位置と同じ高さの頂点座標を設定
 		pVtx[nCntMeshFault].pos = D3DXVECTOR3(VtxPos_X, 0.0f, VtxPos_Z);
 
 		//上で設定した頂点座標の真下の頂点座標を設定
@@ -92,6 +96,9 @@ void SetMeshFaultVertex(void)
 		//テクスチャ座標の設定
 		pVtx[nCntMeshFault].tex = D3DXVECTOR2(nCntMeshFault * (MESHFAULT_TEX_RESOLUTION / MESHFAULT_SPLIT), 0.0f);
 		pVtx[nNumBottomVtx].tex = D3DXVECTOR2(nCntMeshFault * (MESHFAULT_TEX_RESOLUTION / MESHFAULT_SPLIT), 1.0f);
+
+		//角度を　全体の角度÷分割数で割った答え分、引く
+		Rot -= ONE_LAP / MESHFAULT_SPLIT;
 	}
 
 	//頂点バッファのアンロック
@@ -185,7 +192,7 @@ void DrawMeshFault(void)
 	pDevice->SetStreamSource(0, g_pVtxBuffMeshFault, 0, sizeof(VERTEX_3D));
 
 	//裏面カリングをON
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
 	//インデックスバッファをデータストリームに設定
 	pDevice->SetIndices(g_pIdxBuffMeshFault);

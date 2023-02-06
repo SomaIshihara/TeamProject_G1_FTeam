@@ -335,7 +335,7 @@ void UpdatePlayer(void)
 			float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) + 
 				powf((g_aPlayer[nCntPlayer].pos.z + g_aPlayer[nCntPlayer].move.z), 2));
 
-			if (fLength >= BF_RADIUS)
+			if (fLength >= GetMeshField()->fRadius)
 			{
 				g_aPlayer[nCntPlayer].stat = PLAYERSTAT_FALL;
 			}

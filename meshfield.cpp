@@ -162,7 +162,15 @@ void UninitMeshfield(void)
 //====================================================================
 void UpdateMeshfield(void)
 {
+	g_MeshField[0].fRadius -= 0.1f;
 
+	if (g_MeshField[0].fRadius <= 100.0f)
+	{
+		g_MeshField[0].fRadius = 100.0f;
+	}
+
+	//’¸“_À•WÝ’è
+	SetFieldVertex();
 }
 
 //====================================================================
