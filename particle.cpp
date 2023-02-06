@@ -111,7 +111,7 @@ void UpdateParticle(void)
 		{//使用されているとき
 
 			//パーティクルの状態設定
-			StateParticle(nCntParticle);
+			StateParticle(nCntParticle,pVtx);
 		}
 	}
 	//頂点バッファをアンロック
@@ -263,13 +263,8 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType)
 //======================================================================
 //パーティクルの状態設定
 //======================================================================
-void StateParticle(int nCount)
+void StateParticle(int nCount,VERTEX_3D *pVtx)
 {
-	VERTEX_3D *pVtx;
-
-	//頂点バッファをロックし、頂点情報へのポインタを取得
-	g_pVtxBuffParticle->Lock(0, 0, (void**)&pVtx, 0);
-
 	//寿命の減少
 	g_aParticle[nCount].nLife--;
 
@@ -318,9 +313,6 @@ void StateParticle(int nCount)
 
 		break;
 	}
-
-	//頂点バッファをアンロック
-	g_pVtxBuffParticle->Unlock();
 
 	//パーティクルの破棄
 	if (g_aParticle[nCount].nLife <= 0)
