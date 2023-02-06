@@ -1199,7 +1199,10 @@ void RespawnPlayer(int nRespawnPlayer)
 		if (g_pNotMove[nCntNUse] == NULL || g_pNotMove[nCntNUse]->bNotMove == false)
 		{
 			//前にリスポーンした位置番号のポインタをNULLにする
-			g_pNotMove[g_aPlayer[nRespawnPlayer].nRespawnPosNum] = NULL;
+			if (g_pNotMove[g_aPlayer[nRespawnPlayer].nRespawnPosNum] == &g_aPlayer[nRespawnPlayer])
+			{
+				g_pNotMove[g_aPlayer[nRespawnPlayer].nRespawnPosNum] = NULL;
+			}			
 
 			//新しい位置を入れる
 			g_aPlayer[nRespawnPlayer].nRespawnPosNum = nCntNUse;
