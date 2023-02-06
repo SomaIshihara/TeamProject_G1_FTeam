@@ -16,6 +16,15 @@
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
+const D3DXVECTOR3 g_ItemRespawnPos[] =
+{
+	D3DXVECTOR3(INIT_POS_XZ,NIL_F,NIL_F),
+	D3DXVECTOR3(NIL_F,NIL_F,-INIT_POS_XZ),
+	D3DXVECTOR3(-INIT_POS_XZ,NIL_F,NIL_F),
+	D3DXVECTOR3(NIL_F,NIL_F,INIT_POS_XZ),
+	D3DXVECTOR3(NIL_F,NIL_F,NIL_F),
+};
+
 //グローバル変数宣言     
 LPDIRECT3DTEXTURE9		g_pTextureItem[10] = {};	//テクスチャへにポインタ
 LPD3DXMESH				g_pMeshItem = NULL;	//メッシュ(頂点情報)へのポインタ
@@ -126,12 +135,12 @@ void DrawItem(void)
 
 			//向きを反映
 			D3DXMatrixRotationYawPitchRoll(&mtxRot,
-				g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
+			g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
 			D3DXMatrixMultiply(&g_mtxWorldItem, &g_mtxWorldItem, &mtxRot);
 
 			//位置を反映
 			D3DXMatrixTranslation(&mtxTrans,
-				g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y, g_Item[nCntItem].pos.z);
+			g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y, g_Item[nCntItem].pos.z);
 			D3DXMatrixMultiply(&g_mtxWorldItem, &g_mtxWorldItem, &mtxTrans);
 
 			//ワールドマトリックスの設定
@@ -173,6 +182,9 @@ void SetItem(void)
 
 			if (g_Item[nCntItem].RespawnDelay <= 0)
 			{
+				g_Item[nCntItem].RespawnPos = (rand() % 5);
+				g_Item[nCntItem].pos = g_ItemRespawnPos[g_Item[nCntItem].RespawnPos]
+										+ D3DXVECTOR3(NIL_F, (float)(rand() % 200), NIL_F);
 				g_Item[nCntItem].type = (ITEMTYPE)(rand() % ITEMTYPE_MAX);
 				g_Item[nCntItem].DespawnLimit = 0;
 				g_Item[nCntItem].buse = true;

@@ -16,6 +16,8 @@ typedef enum
 	ITEMTYPE_MAX
 }ITEMTYPE;
 
+
+
 //アイテムの構造体を定義
 typedef struct
 {
@@ -23,6 +25,7 @@ typedef struct
 	D3DXVECTOR3 move;			//位置
 	D3DXVECTOR3 rot;			//角度
 	ITEMTYPE	type;			//種類
+	int			RespawnPos;		//リスポーン位置
 	int			RespawnDelay;	//リスポーンするまでの時間
 	int			DespawnLimit;	//消えるリミット
 	float		fAlpha;			//アルファ値

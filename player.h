@@ -69,6 +69,7 @@ struct Player
 	int nDEFItemTime;		//押し合い強化アイテムの持続時間
 	int nGoastItemTime;		//ゴースト化アイテムの持続時間
 	bool bMUTEKI;			//無敵状態かどうか（変数名は仮ですいい変数名考えてくれ）
+	int nMUTEKITime;		//無敵の持続時間
 
 	//描画類
 	Model model;			//使用モデル
