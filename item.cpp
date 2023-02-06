@@ -60,12 +60,12 @@ void InitItem(void)
 	//初期設定
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		g_Item[MAX_ITEM].pos = ZERO_SET;
-		g_Item[MAX_ITEM].rot = ZERO_SET;
-		g_Item[MAX_ITEM].move = ZERO_SET;
-		g_Item[MAX_ITEM].DespawnLimit = 0;
-		g_Item[MAX_ITEM].fAlpha = 0.0f;					//透明度の設定
-		g_Item[MAX_ITEM].buse = false;
+		g_Item[nCntItem].pos = ZERO_SET;
+		g_Item[nCntItem].rot = ZERO_SET;
+		g_Item[nCntItem].move = ZERO_SET;
+		g_Item[nCntItem].DespawnLimit = 0;
+		g_Item[nCntItem].fAlpha = 1.0f;					//透明度の設定
+		g_Item[nCntItem].buse = false;
 	}
 	
 }
@@ -97,7 +97,7 @@ void UpdateItem(void)
 {
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		if (g_Item[MAX_ITEM].buse == true)
+		if (g_Item[nCntItem].buse == true)
 		{
 		
 		}
@@ -119,19 +119,19 @@ void DrawItem(void)
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		if (g_Item[MAX_ITEM].buse == true)
+		if (g_Item[nCntItem].buse == true)
 		{
 			//ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&g_mtxWorldItem);
 
 			//向きを反映
 			D3DXMatrixRotationYawPitchRoll(&mtxRot,
-				g_Item[MAX_ITEM].rot.y, g_Item[MAX_ITEM].rot.x, g_Item[MAX_ITEM].rot.z);
+				g_Item[nCntItem].rot.y, g_Item[nCntItem].rot.x, g_Item[nCntItem].rot.z);
 			D3DXMatrixMultiply(&g_mtxWorldItem, &g_mtxWorldItem, &mtxRot);
 
 			//位置を反映
 			D3DXMatrixTranslation(&mtxTrans,
-				g_Item[MAX_ITEM].pos.x, g_Item[MAX_ITEM].pos.y, g_Item[MAX_ITEM].pos.z);
+				g_Item[nCntItem].pos.x, g_Item[nCntItem].pos.y, g_Item[nCntItem].pos.z);
 			D3DXMatrixMultiply(&g_mtxWorldItem, &g_mtxWorldItem, &mtxTrans);
 
 			//ワールドマトリックスの設定
@@ -143,7 +143,7 @@ void DrawItem(void)
 			for (int nCntMat = 0; nCntMat < (int)g_dwNumMatItem; nCntMat++)
 			{
 				//マテリアルの色設定
-				pMat[nCntMat].MatD3D.Diffuse.a = g_Item[MAX_ITEM].fAlpha;
+				pMat[nCntMat].MatD3D.Diffuse.a = g_Item[nCntItem].fAlpha;
 
 				//マテリアルの設定
 				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
@@ -167,14 +167,15 @@ void SetItem(void)
 {
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		if (g_Item[MAX_ITEM].buse == false)
+		if (g_Item[nCntItem].buse == false)
 		{
-			g_Item[MAX_ITEM].RespawnDelay -= 1;//リスポーンディレイ減少
+			g_Item[nCntItem].RespawnDelay -= 1;//リスポーンディレイ減少
 
-			if (g_Item[MAX_ITEM].RespawnDelay <= 0)
+			if (g_Item[nCntItem].RespawnDelay <= 0)
 			{
-				g_Item[MAX_ITEM].DespawnLimit = 0;
-				g_Item[MAX_ITEM].buse = true;
+				g_Item[nCntItem].type = (ITEMTYPE)(rand() % ITEMTYPE_MAX);
+				g_Item[nCntItem].DespawnLimit = 0;
+				g_Item[nCntItem].buse = true;
 			}
 		}
 	}
@@ -189,21 +190,21 @@ void CollisionIP(int nPlayerNum)
 
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
-		if (g_Item[MAX_ITEM].buse == true)
+		if (g_Item[nCntItem].buse == true)
 		{
-			if (pPlayer[nPlayerNum].pos.x >= g_Item[MAX_ITEM].pos.x - COLLISION_SIZE_XZ
-				&&pPlayer[nPlayerNum].pos.x <= g_Item[MAX_ITEM].pos.x + COLLISION_SIZE_XZ
-				&&pPlayer[nPlayerNum].pos.z >= g_Item[MAX_ITEM].pos.z - COLLISION_SIZE_XZ
-				&&pPlayer[nPlayerNum].pos.z <= g_Item[MAX_ITEM].pos.z + COLLISION_SIZE_XZ
-				&&pPlayer[nPlayerNum].pos.y >= g_Item[MAX_ITEM].pos.y - COLLISION_SIZE_Y
-				&&pPlayer[nPlayerNum].pos.y <= g_Item[MAX_ITEM].pos.y + COLLISION_SIZE_Y)
+			if (pPlayer[nPlayerNum].pos.x >= g_Item[nCntItem].pos.x - COLLISION_SIZE_XZ
+				&&pPlayer[nPlayerNum].pos.x <= g_Item[nCntItem].pos.x + COLLISION_SIZE_XZ
+				&&pPlayer[nPlayerNum].pos.z >= g_Item[nCntItem].pos.z - COLLISION_SIZE_XZ
+				&&pPlayer[nPlayerNum].pos.z <= g_Item[nCntItem].pos.z + COLLISION_SIZE_XZ
+				&&pPlayer[nPlayerNum].pos.y >= g_Item[nCntItem].pos.y - COLLISION_SIZE_Y
+				&&pPlayer[nPlayerNum].pos.y <= g_Item[nCntItem].pos.y + COLLISION_SIZE_Y)
 			{//プレイヤーがの範囲内に入ったとき
 
 				pPlayer[nPlayerNum].nATKItemTime = 300;
 				//使われていない状態にする
-				g_Item[MAX_ITEM].RespawnDelay = 3;
-				g_Item[MAX_ITEM].fAlpha = 1.0f;
-				g_Item[MAX_ITEM].buse = false;
+				g_Item[nCntItem].RespawnDelay = 3;
+				g_Item[nCntItem].fAlpha = 1.0f;
+				g_Item[nCntItem].buse = false;
 			}
 		}
 	}

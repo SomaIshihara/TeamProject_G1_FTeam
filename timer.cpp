@@ -14,6 +14,7 @@
 #include "color.h"
 #include "bonus.h"
 #include "time.h"
+#include "item.h"
 
 //マクロ定義
 #define NUM_PLACE  (2)								 //スコアの桁数
@@ -150,6 +151,8 @@ void UpdateTime(void)
 	if ((g_aTime.nCounter % 60) == 0)
 	{//一定時間経過
 		g_aTime.nCounter = 0;		//カウンターを初期値に戻す
+
+		SetItem();
 
 		AddTime(1);
 	}
