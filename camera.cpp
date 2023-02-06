@@ -8,6 +8,7 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 #include "input.h"
 #include "player.h"
 #include "camera_frame.h"
+#include "input.h"
 
 //注視点情報
 #define POSR_SPEED		(10.0f)		//注視点の移動速度
@@ -42,6 +43,7 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 
 //グローバル変数
 Camera		g_Camera[NUM_CAMERA];	//カメラの情報
+bool		g_bChase = true;		//プレイヤーに注視点を置くかどうか　　TRUE：追いかける　　false：原点を見る
 
 //=========================================
 //カメラの位置設定処理
@@ -74,7 +76,14 @@ void InitSetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera)
 //=========================================
 void InitCamera(NumCamera type)
 {
-	Set_NumCamera(type);		//カメラの数によるカメラ情報の初期化
+	//基本情報の初期化処理
+	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
+	{
+		g_Camera[nCntCamera].rot = ZERO_SET;
+	}
+
+	g_bChase = true;		//プレイヤーを追いかける
+	Set_NumCamera(type);	//カメラの数によるカメラ情報の初期化
 }
 
 //=========================================
@@ -98,6 +107,12 @@ void UpdateCamera(void)
 			//カメラの移動処理
 			MoveCamera(nCntCamera);
 		}
+	}
+
+	if (GetKeyboardTrigger(DIK_F4))
+	{
+		//追従  ON / OFF 切り替え
+		g_bChase = g_bChase ? false : true;
 	}
 }
 
@@ -244,7 +259,7 @@ void Set_NumCamera(NumCamera type)
 		if (nCntUse <= nCntCamera)
 		{
 			//注視点の位置更新
-			UpdatePosVCamera(nCntCamera);
+			UpdatePosVCamera(nCntUse);
 		}
 
 		//設定されたカメラ以外のカメラを使用していないようにする
@@ -297,13 +312,24 @@ void MoveCamera(int nCntCamera)
 //視点の位置更新
 void UpdatePosVCamera(int nCntCamera)
 {
-	//プレイヤー情報取得
-	Player *pPlayer = GetPlayer();
+	//追従ON
+	if (g_bChase)
+	{
+		//プレイヤー情報取得
+		Player *pPlayer = GetPlayer();
 
-	//対象のプレイヤーに注視点を合わせる
-	pPlayer += nCntCamera;
+		//対象のプレイヤーに注視点を合わせる
+		pPlayer += nCntCamera;
 
-	g_Camera[nCntCamera].posR = pPlayer->pos;
+		g_Camera[nCntCamera].posR = pPlayer->pos;
+	}
+
+	//追従OFF
+	else
+	{
+		//原点を見る
+		g_Camera[nCntCamera].posR = ZERO_SET;
+	}
 
 	//視点の位置更新
 	g_Camera[nCntCamera].posV.x = g_Camera[nCntCamera].posR.x + sinf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;

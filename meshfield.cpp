@@ -13,7 +13,6 @@
 
 //マクロ定義		ファイル読み込みに変える可能性あり
 #define NUM_MESHFIELD			(1)						//メッシュフィールド最大数
-#define MESHFIELD_RADIUS		(353.5f)				//フィールドの半径
 #define MESHFIELD_SPLIT			(64)					//分割数
 #define CENTER_AND_ONELAP		(2)						//中心点と１周で重なる点
 #define MESHFIELD_ALL_VERTEX	(MESHFIELD_SPLIT + 1)	//周辺の分割地点と中心
@@ -98,9 +97,6 @@ void SetFieldVertex(void)
 
 		pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		pVtx[nNumVtx].col = XCOL_WHITE;
-
-		float sin = sinf(Rot);
-		float cos = cosf(Rot);
 
 		float aTexU = 0.5f - 0.5f * sinf(Rot);	//テクスチャ幅
 		float aTexV = 0.5f - 0.5f * cosf(Rot);	//テクスチャ高さ
@@ -234,4 +230,45 @@ void SetMeshField(int nTexNum, MESHFIELD mf)
 		&g_pTextureMeshfield);
 
 	g_MeshField[0] = mf;
+}
+
+//====================================================================
+//メッシュフィールドに乗ったかどうかの判定
+//Author:平澤詩苑
+//Memo:フィールドは当たり判定というより「乗る」イメージが強かったので、変数名を  Land (乗る)  にしています
+//現在、プレイヤーの更新処理の関係で処理を行っておりません
+//====================================================================
+bool LandMeshfield(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove)
+{
+	for (int nCntField = 0; nCntField < NUM_MESHFIELD; nCntField++)
+	{
+		//現在・前回の位置とフィールドの中心位置の差を格納
+		D3DXVECTOR2 PosDiff;
+
+		PosDiff.x = powf(g_MeshField[nCntField].pos.x - pPos->x, 2.0f);	//現在のＸ座標の差の２乗
+		PosDiff.y = powf(g_MeshField[nCntField].pos.z - pPos->z, 2.0f);	//現在のＺ座標の差の２乗	変数は  "Ｙ" だけど、Ｚ座標の差を入れます 
+
+		float fLength	= sqrtf(PosDiff.x + PosDiff.y);					//現在のＸ・Ｚの長さを取得
+
+		//中心位置からの距離がフィールドの半径以下だった
+		if (fLength <= g_MeshField[nCntField].fRadius)
+		{
+			if (g_MeshField[nCntField].pos.y <= pPosOld->y &&	//前回はフィールドから上に居て、
+				g_MeshField[nCntField].pos.y >= pPos->y)		//現在はフィールドから下にいる
+			{
+				pPos->y = g_MeshField[nCntField].pos.y;			//フィールドの高さに戻す
+
+				return true;									//乗った判定を返して終了
+			}
+		}
+	}
+
+	//乗っていなかった
+	return false;
+}
+
+//メッシュフィールドの情報取得
+MESHFIELD *GetMeshField(void)
+{
+	return &g_MeshField[0];
 }

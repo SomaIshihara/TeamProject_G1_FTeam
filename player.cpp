@@ -19,6 +19,9 @@
 #include "sound.h"
 #include "charge_effect.h"
 #include "attack_effect.h"
+#include "tremor_effect.h"
+#include "item.h"
+#include "meshfield.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -104,6 +107,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
 		g_aPlayer[nCntPlayer].move = ZERO_SET;
+		g_aPlayer[nCntPlayer].moveV0 = ZERO_SET;
 		g_aPlayer[nCntPlayer].rot = ZERO_SET;
 		g_aPlayer[nCntPlayer].moveGauge = 0;
 		g_aPlayer[nCntPlayer].jumpTime = 0;
@@ -157,6 +161,9 @@ void UninitPlayer(void)
 //========================
 void UpdatePlayer(void)
 {
+	//メッシュフィールドの情報取得
+	MESHFIELD *pField = GetMeshField();
+
 	//デバッグ表示
 	PrintDebugProc("[パラメータ]\n");
 
@@ -313,7 +320,7 @@ void UpdatePlayer(void)
 				float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) +
 					powf((g_aPlayer[nCntPlayer].pos.z + g_aPlayer[nCntPlayer].move.z), 2));
 
-				if (fLength >= BF_RADIUS)
+				if (fLength >= pField->fRadius)
 				{
 					g_aPlayer[nCntPlayer].stat = PLAYERSTAT_FALL;
 				}
@@ -321,21 +328,22 @@ void UpdatePlayer(void)
 				{
 					if (g_aPlayer[nCntPlayer].bHipDrop == true)
 					{//ヒップドロップしてたならエフェクト出す
-						SetChargeEffect(g_aPlayer[nCntPlayer].pos, nCntPlayer);
+						SetTremorEffect(g_aPlayer[nCntPlayer].pos);
 						g_aPlayer[nCntPlayer].bHipDrop = false;	//ヒップドロップしてない
 					}
-					//ここ問題ありそう
 					g_aPlayer[nCntPlayer].bJump = false;
 					g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
 					g_aPlayer[nCntPlayer].move.y = 0.0f;
 					g_aPlayer[nCntPlayer].jumpTime = 0;
 					g_aPlayer[nCntPlayer].pos.y = 0.0f;
+					g_aPlayer[nCntPlayer].nHipDropWait = 0;
 				}
 			}
 
 			if (g_aPlayer[nCntPlayer].nGoastItemTime <= 0)
 			{//ゴースト化状態でなければ
 				CollisionPP(nCntPlayer);
+				CollisionIP(nCntPlayer);
 			}
 
 			if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_FALL && g_aPlayer[nCntPlayer].jumpTime >= DOWN_TIME)
@@ -580,8 +588,6 @@ void DashPlayer(int nDashPlayer)
 	g_aPlayer[nDashPlayer].move.z = -cosf(g_aPlayer[nDashPlayer].rot.y) * g_aPlayer[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
 
 	g_aPlayer[nDashPlayer].moveGauge = 0;
-
-	//SetAttackEffect(g_aPlayer[nDashPlayer].pos, nDashPlayer);
 }
 
 //========================
