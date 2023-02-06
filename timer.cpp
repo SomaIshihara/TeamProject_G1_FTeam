@@ -27,6 +27,7 @@ TIME g_aTime;
 D3DXMATRIX mtxWorldTime;
 
 int BonusLimit;
+bool bBonusUse;
 
 //===============================
 //タイムの初期化の処理 
@@ -94,6 +95,9 @@ void InitTime(void)
 	//ボーナスのリミットをランダムに設定
 	BonusLimit = rand() % 900;
 
+	//ボーナスの使用できるようにする
+	bBonusUse = false;
+
 	//頂点バッファをアンロックする
 	g_pVtxBuffTime->Unlock();
 }
@@ -128,9 +132,16 @@ void UpdateTime(void)
 	{
 		BonusLimit--;
 
-		if (BonusLimit <= 0)
+		if (bBonusUse == false)
 		{
-			SetBonus();
+			if (BonusLimit <= 0)
+			{
+				//ボーナスのセット処理
+				SetBonus();
+
+				//ボーナスを使用できないようにする
+				bBonusUse = true;
+			}
 		}
 	}
 
