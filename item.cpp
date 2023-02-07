@@ -290,8 +290,8 @@ void CollisionIP(int nPlayerNum)
 					pPlayer[nPlayerNum].nDEFItemTime = 300;
 					break;
 
-				case ITEMTYPE_GOAST:
-					pPlayer[nPlayerNum].nGoastItemTime = 150;
+				case ITEMTYPE_GHOST:
+					pPlayer[nPlayerNum].nGhostItemTime = 150;
 					break;
 
 				}
