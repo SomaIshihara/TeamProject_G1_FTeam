@@ -1,6 +1,7 @@
 #include"main.h"
 #include"particle.h"
 #include"bonus.h"
+#include"Player.h"
 
 //**********************************************************************
 //グローバル変数
@@ -9,6 +10,8 @@ LPDIRECT3DTEXTURE9		g_pTextureParticle = NULL;			//テクスチャバッファ
 LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffParticle = NULL;			//頂点バッファ
 D3DXMATRIX				g_mtxWorldParticle;					//ワールドマトリックス
 Particle				g_aParticle[MAX_PARTICLE];			//パーティクルの情報
+
+D3DXVECTOR3 posTemp;
 
 //======================================================================
 //パーティクルの初期化処理
@@ -412,66 +415,84 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 //======================================================================
 void DirectionParticle(int nCount)
 {
-	Bonus pBonus;
-	pBonus = GetBonus();
+	Player *pPlayer = GetPlayer();
 
-	if (pBonus.pos.x > g_aParticle[nCount].pos.x)
+	Bonus pBonus = GetBonus();
+
+	switch (g_aParticle[nCount].nObject)
+	{
+		//プレイヤーパーティクル
+	case OBJECT_PLAYER:
+
+		posTemp = pPlayer->pos;
+
+		break;
+
+		//ボーナスパーティクル
+	case OBJECT_BONUS:
+
+		posTemp = pBonus.pos;
+
+		break;
+	}
+
+	if (posTemp.x > g_aParticle[nCount].pos.x)
 	{
 		g_aParticle[nCount].move.x = 10;
 
-		if (pBonus.pos.z > g_aParticle[nCount].pos.z)
+		if (posTemp.z > g_aParticle[nCount].pos.z)
 		{
 			g_aParticle[nCount].move.z = 10;
 
-			if (pBonus.pos.y > g_aParticle[nCount].pos.y)
+			if (posTemp.y > g_aParticle[nCount].pos.y)
 			{
 				g_aParticle[nCount].move.y = 10;
 			}
-			else if (pBonus.pos.y < g_aParticle[nCount].pos.y)
+			else if (posTemp.y < g_aParticle[nCount].pos.y)
 			{
 				g_aParticle[nCount].move.y = -10;
 			}
 		}
-		else if (pBonus.pos.z < g_aParticle[nCount].pos.z)
+		else if (posTemp.z < g_aParticle[nCount].pos.z)
 		{
 			g_aParticle[nCount].move.z = -10;
 
-			if (pBonus.pos.y > g_aParticle[nCount].pos.y)
+			if (posTemp.y > g_aParticle[nCount].pos.y)
 			{
 				g_aParticle[nCount].move.y = 10;
 			}
-			else if (pBonus.pos.y < g_aParticle[nCount].pos.y)
+			else if (posTemp.y < g_aParticle[nCount].pos.y)
 			{
 				g_aParticle[nCount].move.y = -10;
 			}
 		}
 	}
-	else if (pBonus.pos.x < g_aParticle[nCount].pos.x)
+	else if (posTemp.x < g_aParticle[nCount].pos.x)
 	{
 		g_aParticle[nCount].move.x = -10;
 
-		if (pBonus.pos.z > g_aParticle[nCount].pos.z)
+		if (posTemp.z > g_aParticle[nCount].pos.z)
 		{
 			g_aParticle[nCount].move.z = 10;
 
-			if (pBonus.pos.y > g_aParticle[nCount].pos.y)
+			if (posTemp.y > g_aParticle[nCount].pos.y)
 			{
 				g_aParticle[nCount].move.y = 10;
 			}
-			else if (pBonus.pos.y < g_aParticle[nCount].pos.y)
+			else if (posTemp.y < g_aParticle[nCount].pos.y)
 			{
 				g_aParticle[nCount].move.y = -10;
 			}
 		}
-		else if (pBonus.pos.z < g_aParticle[nCount].pos.z)
+		else if (posTemp.z < g_aParticle[nCount].pos.z)
 		{
 			g_aParticle[nCount].move.z = -10;
 
-			if (pBonus.pos.y > g_aParticle[nCount].pos.y)
+			if (posTemp.y > g_aParticle[nCount].pos.y)
 			{
 				g_aParticle[nCount].move.y = 10;
 			}
-			else if (pBonus.pos.y < g_aParticle[nCount].pos.y)
+			else if (posTemp.y < g_aParticle[nCount].pos.y)
 			{
 				g_aParticle[nCount].move.y = -10;
 			}

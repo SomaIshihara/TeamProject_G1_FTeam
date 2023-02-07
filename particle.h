@@ -6,7 +6,7 @@
 
 #define MAX_PARTICLE			(8192)	//パーティクルの最大数
 #define NORMAL_PARTICLE			(16)	//通常パーティクルの発生数
-#define ACSORPTION_PARTICLE		(16)	//吸収パーティクルの発生数
+#define ACSORPTION_PARTICLE		(4)	//吸収パーティクルの発生数
 
 //パーティクルの種類
 typedef enum
