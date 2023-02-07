@@ -18,11 +18,12 @@
 #define INIT_POS_Y			(200.0f)	//初期のY位置
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
 #define RATIO_MOVE			(100.0f)	//移動量の割合
-#define COLLISION_SIZE_XZ	(50.0f)		//縦横の当たり判定サイズ
+#define COLLISION_SIZE_XZ	(200.0f)	//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
 #define DESPAWN_LIMIT_BONUS (1200)		//ボーナスが消えるまでのリミット
 #define PARTICLE_LIMIT_BONUS (6)		//ボーナスパーティクルのリミット
+#define LIFE_CT				(60)		//ボーナス当たり判定のクールタイム
 
 //****************************//
 //		　　出現情報		  //
@@ -55,6 +56,8 @@ DWORD					g_dwNumMatBonus		= 0;	//マテリアルの数
 D3DXMATRIX				g_mtxWorldBonus;			//ワールドマトリックス
 Bonus					g_Bonus;					//ボーナスの情報
 int						g_ParticleCounter;
+int						g_LifeCT;					//体力のクールタイム
+int						g_PlayerNumTemp;				//プレイヤー番号の保存用
 //===================================================
 //ボーナスの初期化処理
 //===================================================
@@ -89,14 +92,17 @@ void InitBonus(void)
 	}
 
 	//初期設定
-	g_Bonus.Respawn = DIRECTION_ZERO;	//リスポーンの位置番号
-	g_Bonus.pos = ZERO_SET;				//位置
-	g_Bonus.rot = ZERO_SET;				//角度
-	g_Bonus.move = ZERO_SET;			//移動量
-	g_Bonus.DespawnLimit = 0;			//消える時間
-	g_Bonus.a = 0.0f;					//透明度の設定
-	g_Bonus.buse = false;				//使用しているかどうか
+	g_Bonus.Respawn = DIRECTION_ZERO;			//リスポーンの位置番号
+	g_Bonus.pos = ZERO_SET;						//位置
+	g_Bonus.rot = ZERO_SET;						//角度
+	g_Bonus.move = ZERO_SET;					//移動量
+	g_Bonus.DespawnLimit = 0;					//消える時間
+	g_Bonus.a = 0.0f;							//透明度の設定
+	g_Bonus.buse = false;						//使用しているかどうか
 	g_ParticleCounter = PARTICLE_LIMIT_BONUS;	//パーティクルのでる間隔
+	g_Bonus.nLife = 3;							//体力		
+	g_LifeCT = 0;
+	g_PlayerNumTemp = -1;
 }
 //===================================================
 //ボーナスの終了処理
@@ -132,8 +138,8 @@ void UpdateBonus(void)
 		{//0になったとき
 		
 			//パーティクルのセット
-			SetParticle(g_Bonus.pos, 12.0f, 15, PARTICLE_NORMAL);
-			SetParticle(g_Bonus.pos, 7.0f, 15, PARTICLE_ACSORPTION);
+			SetParticle(g_Bonus.pos, 12.0f, 15, PARTICLE_NORMAL,OBJECT_BONUS);
+			SetParticle(g_Bonus.pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_BONUS);
 
 			//リミットの再設定
 			g_ParticleCounter = PARTICLE_LIMIT_BONUS;
@@ -351,7 +357,16 @@ void AppearandDisAppearBonus(void)
 //===================================================
 void CollisionBonus(D3DXVECTOR3 nPlayer , int NumPlayer)
 {
-	if (g_Bonus.buse == true)
+	if (g_LifeCT > 0)
+	{
+		g_LifeCT--;
+	}
+	else
+	{
+		g_PlayerNumTemp = -1;
+	}
+
+	if (g_Bonus.buse == true && g_PlayerNumTemp != NumPlayer)
 	{//使用されているとき
 		if (nPlayer.x >= g_Bonus.pos.x - COLLISION_SIZE_XZ
 			&&nPlayer.x <= g_Bonus.pos.x + COLLISION_SIZE_XZ
@@ -361,11 +376,27 @@ void CollisionBonus(D3DXVECTOR3 nPlayer , int NumPlayer)
 			&&nPlayer.y <= g_Bonus.pos.y + COLLISION_SIZE_Y)
 		{//プレイヤーがボーナスの範囲内に入ったとき
 
-			//使われていない状態にする
-			g_Bonus.buse = false;
+			if (g_Bonus.nLife > 0)
+			{
+				//体力の減少
 
-			//スコアを加算
-			AddScore(2, NumPlayer);
+				g_Bonus.nLife--;
+
+				//クールタイムの設定
+				g_LifeCT = LIFE_CT;
+
+				//触れたプレイヤーの保存
+				g_PlayerNumTemp = NumPlayer;
+			}
+
+			if (g_Bonus.nLife <= 0)
+			{
+				//使われていない状態にする
+				g_Bonus.buse = false;
+
+				//スコアを加算
+				AddScore(3, NumPlayer);
+			}
 		}
 	}
 }
