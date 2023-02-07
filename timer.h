@@ -4,20 +4,20 @@
 //Author:飯田洲暉
 //
 //==========================================
-#ifndef _TIME_H_
-#define _TIME_H_
+#ifndef _TIMER_H_
+#define _TIMER_H_
 
 #include "main.h"
 
 //マクロ定義
 #define LIMIT_TIMER				(90)		//ゲーム時間
 
-#define TIMER_MINUS_X			(300.0f)	//タイマーのマイナスX座標
-#define TIMER_PLUS_X			(350.0f)	//タイマーのプラスX座標
-#define TIMER_WIDTH_X			(50.0f)		//タイマーの幅
+#define TIMER_MINUS_X			(590.0f)						//タイマーのマイナスX座標
+#define TIMER_WIDTH_X			(50.0f)							//タイマーの幅
+#define TIMER_PLUS_X			(TIMER_MINUS_X + TIMER_WIDTH_X)	//タイマーのプラスX座標
 
-#define TIMER_MINUS_Y			(50.0f)		//タイマーのマイナスY座標
-#define TIMER_PLUS_Y			(150.0f)	//タイマーのプラスX座標
+#define TIMER_MINUS_Y			(20.0f)		//タイマーのマイナスY座標
+#define TIMER_PLUS_Y			(120.0f)	//タイマーのプラスX座標
 
 //画面（モード）の種類
 typedef enum
