@@ -9,6 +9,7 @@
 
 #include "main.h"
 #include "model.h"
+#include "item.h"
 
 //マクロ
 #define PLAYER_POWER_LEVEL	(3)			//パワーレベル
@@ -67,7 +68,7 @@ struct Player
 	//アイテム類
 	int nATKItemTime;		//はじき強化アイテムの持続時間
 	int nDEFItemTime;		//押し合い強化アイテムの持続時間
-	int nGoastItemTime;		//ゴースト化アイテムの持続時間
+	int nGhostItemTime;		//ゴースト化アイテムの持続時間
 	bool bMUTEKI;			//無敵状態かどうか（変数名は仮ですいい変数名考えてくれ）
 	int nMUTEKITime;		//無敵の持続時間
 
@@ -85,6 +86,7 @@ void InitPlayer(void);
 void UninitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
+void EffectingPlayer(Player *pBuffPlayer, ITEMTYPE type, int nTime);
 Player *GetPlayer(void);
 
 #endif // !_PLAYER_H_

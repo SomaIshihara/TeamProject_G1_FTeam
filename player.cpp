@@ -135,7 +135,7 @@ void InitPlayer(void)
 
 		g_aPlayer[nCntPlayer].nATKItemTime = 0;
 		g_aPlayer[nCntPlayer].nDEFItemTime = 0;
-		g_aPlayer[nCntPlayer].nGoastItemTime = 1;
+		g_aPlayer[nCntPlayer].nGhostItemTime = 0;
 		g_aPlayer[nCntPlayer].bMUTEKI = false;
 		g_aPlayer[nCntPlayer].nMUTEKITime = 0;
 
@@ -327,7 +327,7 @@ void UpdatePlayer(void)
 				CollisionHipDropPP(nCntPlayer);
 			}
 
-			if (g_aPlayer[nCntPlayer].nGoastItemTime <= 0)
+			if (g_aPlayer[nCntPlayer].nGhostItemTime <= 0)
 			{//ゴースト化状態でなければ
 				CollisionPP(nCntPlayer);
 				CollisionIP(nCntPlayer);
@@ -519,11 +519,11 @@ void DrawPlayer(void)
 					D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
 
 					//ゴースト化状態なら半透明で設定
-					if (g_aPlayer[nCntPlayer].nGoastItemTime > GOAST_FLASHSTART)
+					if (g_aPlayer[nCntPlayer].nGhostItemTime > GOAST_FLASHSTART)
 					{
 						matChange.Diffuse.a = GOAST_ALPHA;
 					}
-					else if (g_aPlayer[nCntPlayer].nGoastItemTime > 0 && g_aPlayer[nCntPlayer].nGoastItemTime % (GOAST_FLASHPULSE * 2) < GOAST_FLASHPULSE)
+					else if (g_aPlayer[nCntPlayer].nGhostItemTime > 0 && g_aPlayer[nCntPlayer].nGhostItemTime % (GOAST_FLASHPULSE * 2) < GOAST_FLASHPULSE)
 					{
 						matChange.Diffuse.a = GOAST_ALPHA;
 					}
@@ -1258,7 +1258,7 @@ void RespawnPlayer(int nRespawnPlayer)
 
 	g_aPlayer[nRespawnPlayer].nATKItemTime = 0;
 	g_aPlayer[nRespawnPlayer].nDEFItemTime = 0;
-	g_aPlayer[nRespawnPlayer].nGoastItemTime = 0;
+	g_aPlayer[nRespawnPlayer].nGhostItemTime = 0;
 }
 
 //========================
@@ -1268,7 +1268,7 @@ void DecrementItemTime(int nPlayerNum)
 {
 	/*g_aPlayer[nPlayerNum].nATKItemTime--;
 	g_aPlayer[nPlayerNum].nDEFItemTime--;
-	g_aPlayer[nPlayerNum].nGoastItemTime--;*/
+	g_aPlayer[nPlayerNum].nGhostItemTime--;
 }
 
 //========================
@@ -1290,10 +1290,30 @@ void ItemStateParticle(int nPlayerNum)
 	}
 
 
-	if (g_aPlayer[nPlayerNum].nGoastItemTime > 0)
+	if (g_aPlayer[nPlayerNum].nGhostItemTime > 0)
 	{
 		SetParticle(g_aPlayer[nPlayerNum].pos, 1.0f, 0, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
 		SetParticle(g_aPlayer[nPlayerNum].pos, 1.0f, 0, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
+	}
+}
+
+//========================
+//アイテムの効果付与処理
+//========================
+void EffectingPlayer(Player *pBuffPlayer, ITEMTYPE type, int nTime)
+{
+	switch (type)
+	{
+	case ITEMTYPE_ATK:
+		pBuffPlayer->nATKItemTime = nTime;
+		break;
+	case ITEMTYPE_DEF:
+		pBuffPlayer->nDEFItemTime = nTime;
+		break;
+	case ITEMTYPE_GHOST:
+		pBuffPlayer->nGhostItemTime = nTime;
+		break;
+		//MUTEKI状態も入れて
 	}
 }
 
