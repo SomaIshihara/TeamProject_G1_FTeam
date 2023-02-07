@@ -23,6 +23,7 @@
 #include "item.h"
 #include "meshfield.h"
 #include "bonus.h"
+#include "particle.h"
 
 //マクロ
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -83,6 +84,7 @@ void DownPlayer(int nDownPlayerNum);	//ダウンしたプレイヤーの処理
 void RespawnPlayer(int nRespawnPlayer);	//リスポーン処理
 
 void DecrementItemTime(int nPlayerNum);	//アイテムカウントをすべて減らす
+void ItemStateParticle(int nPlayerNum);	//アイテムパーティクル表示処理
 
 //グローバル変数
 Player g_aPlayer[MAX_USE_GAMEPAD];
@@ -190,6 +192,9 @@ void UpdatePlayer(void)
 
 		//ジャンプ時間を増やす
 		g_aPlayer[nCntPlayer].jumpTime++;
+
+		//パーティクル表示
+		ItemStateParticle(nCntPlayer);
 
 		//アイテム持続時間減らす
 		DecrementItemTime(nCntPlayer);
@@ -1264,6 +1269,31 @@ void DecrementItemTime(int nPlayerNum)
 	g_aPlayer[nPlayerNum].nATKItemTime--;
 	g_aPlayer[nPlayerNum].nDEFItemTime--;
 	g_aPlayer[nPlayerNum].nGoastItemTime--;
+}
+
+//========================
+//アイテムパーティクル表示処理
+//========================
+void ItemStateParticle(int nPlayerNum)
+{
+	if (g_aPlayer[nPlayerNum].nATKItemTime > 0)
+	{
+		SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER);
+		SetParticle(g_aPlayer[nPlayerNum].pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER);
+	}
+
+
+	if (g_aPlayer[nPlayerNum].nDEFItemTime > 0)
+	{
+		SetParticle(g_aPlayer[nPlayerNum].pos, 5.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER);
+		SetParticle(g_aPlayer[nPlayerNum].pos, 7.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER);
+	}
+
+
+	if (g_aPlayer[nPlayerNum].nGoastItemTime > 0)
+	{
+
+	}
 }
 
 //========================
