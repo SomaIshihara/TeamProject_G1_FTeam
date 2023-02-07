@@ -16,8 +16,6 @@ typedef enum
 	ITEMTYPE_MAX
 }ITEMTYPE;
 
-
-
 //アイテムの構造体を定義
 typedef struct
 {
@@ -28,6 +26,7 @@ typedef struct
 	int			RespawnPos;		//リスポーン位置
 	int			RespawnDelay;	//リスポーンするまでの時間
 	int			DespawnLimit;	//消えるリミット
+	float		fWidth;			//
 	float		fAlpha;			//アルファ値
 	bool        buse;			//使用しているかどうか
 }Item;
