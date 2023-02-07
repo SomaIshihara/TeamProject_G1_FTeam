@@ -135,7 +135,7 @@ void InitPlayer(void)
 
 		g_aPlayer[nCntPlayer].nATKItemTime = 0;
 		g_aPlayer[nCntPlayer].nDEFItemTime = 0;
-		g_aPlayer[nCntPlayer].nGoastItemTime = 0;
+		g_aPlayer[nCntPlayer].nGoastItemTime = 1;
 		g_aPlayer[nCntPlayer].bMUTEKI = false;
 		g_aPlayer[nCntPlayer].nMUTEKITime = 0;
 
@@ -1266,9 +1266,9 @@ void RespawnPlayer(int nRespawnPlayer)
 //========================
 void DecrementItemTime(int nPlayerNum)
 {
-	g_aPlayer[nPlayerNum].nATKItemTime--;
+	/*g_aPlayer[nPlayerNum].nATKItemTime--;
 	g_aPlayer[nPlayerNum].nDEFItemTime--;
-	g_aPlayer[nPlayerNum].nGoastItemTime--;
+	g_aPlayer[nPlayerNum].nGoastItemTime--;*/
 }
 
 //========================
@@ -1278,21 +1278,22 @@ void ItemStateParticle(int nPlayerNum)
 {
 	if (g_aPlayer[nPlayerNum].nATKItemTime > 0)
 	{
-		SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER);
-		SetParticle(g_aPlayer[nPlayerNum].pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER);
+		SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER_ATK);
+		SetParticle(g_aPlayer[nPlayerNum].pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER_ATK);
 	}
 
 
 	if (g_aPlayer[nPlayerNum].nDEFItemTime > 0)
 	{
-		SetParticle(g_aPlayer[nPlayerNum].pos, 5.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER);
-		SetParticle(g_aPlayer[nPlayerNum].pos, 7.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER);
+		SetParticle(g_aPlayer[nPlayerNum].pos, 5.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER_DEF);
+		SetParticle(g_aPlayer[nPlayerNum].pos, 7.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER_DEF);
 	}
 
 
 	if (g_aPlayer[nPlayerNum].nGoastItemTime > 0)
 	{
-
+		SetParticle(g_aPlayer[nPlayerNum].pos, 1.0f, 0, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
+		SetParticle(g_aPlayer[nPlayerNum].pos, 1.0f, 0, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
 	}
 }
 

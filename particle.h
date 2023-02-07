@@ -20,7 +20,9 @@ typedef enum
 //パーティクルの種類
 typedef enum
 {
-	OBJECT_PLAYER = 0,
+	OBJECT_PLAYER_ATK = 0,
+	OBJECT_PLAYER_DEF,
+	OBJECT_PLAYER_GOAST,
 	OBJECT_BONUS,
 	OBJECT_MAX,
 
