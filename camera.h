@@ -4,7 +4,6 @@
 Author:大宮愛羅  平澤詩苑  石原颯馬
 
 ============================================================================================================================================================*/
-
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
@@ -45,6 +44,8 @@ void UninitCamera(void);				//終了処理
 void UpdateCamera(void);				//更新処理
 void SetCamera(int nIdx);				//設定処理
 void MoveCamera(int nCntCamera);		//カメラの移動処理
+
+void SetPosRCamera(int nCntCamera);		//注視点設定
 void UpdatePosVCamera(int nCntCamera);	//視点の位置更新
 Camera *GetCamera(void);				//カメラの取得
 
@@ -52,5 +53,6 @@ Camera *GetCamera(void);				//カメラの取得
 //カメラの台数別　設定処理
 //=========================================
 void Set_NumCamera(NumCamera type);
+void TPS_ChaseCamera(int nCntCamera, D3DXVECTOR3 rot);
 
 #endif

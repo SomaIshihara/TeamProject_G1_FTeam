@@ -41,9 +41,16 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 //カメラ単体の場合の視点座標
 #define ALONE_CAMERA_POS	(D3DXVECTOR3(0.0f, 400.0f, 500.0f))
 
+//３人称視点時のマクロ
+#define TPS_LENGTH		(150.0f)	//注視点～視点間の距離
+#define TPS_posV_HEIGHT	(100.0f)	//視点の高さ
+#define TPS_posR_HEIGHT	(30.0f)		//注視点の高さ
+
 //グローバル変数
 Camera		g_Camera[NUM_CAMERA];	//カメラの情報
-bool		g_bChase = true;		//プレイヤーに注視点を置くかどうか　　TRUE：追いかける　　false：原点を見る
+NumCamera	g_NumCameraType;		//カメラ分割の情報
+bool		g_bChase = true;		//プレイヤーに注視点を置くかどうか				TRUE：追いかける　　false：原点を見る
+bool		g_bTPS = false;			//３人称か、定点カメラか ただし、４分割時のみ	TRUE：３人称		false：定点カメラ
 
 //=========================================
 //カメラの位置設定処理
@@ -83,6 +90,7 @@ void InitCamera(NumCamera type)
 	}
 
 	g_bChase = true;		//プレイヤーを追いかける
+	g_bTPS = true;			//３人称カメラに設定
 	Set_NumCamera(type);	//カメラの数によるカメラ情報の初期化
 }
 
@@ -99,6 +107,18 @@ void UninitCamera(void)
 //=========================================
 void UpdateCamera(void)
 {
+	//追従  ON / OFF 切り替え
+	if (GetKeyboardTrigger(DIK_F4))
+	{
+		g_bChase = g_bChase ? false : true;
+	}
+
+	//３人称　ON / OFF 切り替え
+	if (GetKeyboardTrigger(DIK_F6))
+	{
+		g_bTPS = g_bTPS ? false : true;
+	}
+	
 	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
 	{
 		//カメラが使われている
@@ -107,12 +127,6 @@ void UpdateCamera(void)
 			//カメラの移動処理
 			MoveCamera(nCntCamera);
 		}
-	}
-
-	if (GetKeyboardTrigger(DIK_F4))
-	{
-		//追従  ON / OFF 切り替え
-		g_bChase = g_bChase ? false : true;
 	}
 }
 
@@ -156,6 +170,7 @@ void Set_NumCamera(NumCamera type)
 {
 	int nCntCamera = 0;				//カウンター初期化
 	Player *pPlayer = GetPlayer();	//プレイヤーの情報取得
+	g_NumCameraType = type;			//カメラの分割情報格納
 
 	switch (type)
 	{
@@ -258,7 +273,10 @@ void Set_NumCamera(NumCamera type)
 		//上のスイッチ文で使われることになったカメラ
 		if (nCntUse <= nCntCamera)
 		{
-			//注視点の位置更新
+			//注視点の位置設定
+			SetPosRCamera(nCntCamera);
+
+			//視点の位置設定
 			UpdatePosVCamera(nCntUse);
 		}
 
@@ -305,23 +323,59 @@ void MoveCamera(int nCntCamera)
 	}
 #endif // _DEBUG
 
-	//注視点の位置更新
+	//注視点の位置設定
+	SetPosRCamera(nCntCamera);
+
+	//視点カメラ更新
+	UpdatePosVCamera(nCntCamera);
+}
+
+//３人称視点
+void TPS_ChaseCamera(int nCntCamera, D3DXVECTOR3 rot)
+{
+	//プレイヤーの角度の逆に設定
+	g_Camera[nCntCamera].rot.y = (D3DX_PI - rot.y);
+
+	//角度修正
+	FIX_ROT(g_Camera[nCntCamera].rot.y);
+
+	//視点の高さ設定
+	g_Camera[nCntCamera].posV.y = g_Camera[nCntCamera].posR.y + TPS_posV_HEIGHT;
+	g_Camera[nCntCamera].posR.y += TPS_posR_HEIGHT;
+	
+	//注視点～視点　間の距離設定
+	g_Camera[nCntCamera].fLength = TPS_LENGTH;
+
+	//視点位置更新
 	UpdatePosVCamera(nCntCamera);
 }
 
 //視点の位置更新
 void UpdatePosVCamera(int nCntCamera)
 {
-	//追従ON
-	if (g_bChase)
+	//視点の位置更新
+	g_Camera[nCntCamera].posV.x = g_Camera[nCntCamera].posR.x + sinf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;
+	g_Camera[nCntCamera].posV.z = g_Camera[nCntCamera].posR.z + cosf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;
+}
+
+//注視点の位置設定
+void SetPosRCamera(int nCntCamera)
+{
+	//追従 または ３人称が  ON
+	if (g_bChase == true || g_bTPS == true)
 	{
 		//プレイヤー情報取得
 		Player *pPlayer = GetPlayer();
 
 		//対象のプレイヤーに注視点を合わせる
-		pPlayer += nCntCamera;
+		g_Camera[nCntCamera].posR = pPlayer[nCntCamera].pos;
 
-		g_Camera[nCntCamera].posR = pPlayer->pos;
+		//３人称視点
+		if (g_bTPS)
+		{
+			//3人称視点設定
+			TPS_ChaseCamera(nCntCamera, pPlayer[nCntCamera].rot);
+		}
 	}
 
 	//追従OFF
@@ -330,10 +384,6 @@ void UpdatePosVCamera(int nCntCamera)
 		//原点を見る
 		g_Camera[nCntCamera].posR = ZERO_SET;
 	}
-
-	//視点の位置更新
-	g_Camera[nCntCamera].posV.x = g_Camera[nCntCamera].posR.x + sinf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;
-	g_Camera[nCntCamera].posV.z = g_Camera[nCntCamera].posR.z + cosf(D3DX_PI - g_Camera[nCntCamera].rot.y) * g_Camera[nCntCamera].fLength;
 }
 
 //カメラの取得
