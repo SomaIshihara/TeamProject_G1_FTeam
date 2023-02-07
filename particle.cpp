@@ -184,7 +184,7 @@ void DrawParticle(void)
 //======================================================================
 //パーティクルのセット処理
 //======================================================================
-void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType)
+void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PARTICLE_OBJECT nObject)
 {
 	VERTEX_3D *pVtx;
 	int ParticleCount = 0;
@@ -207,6 +207,9 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType)
 
 			//種類の設定
 			g_aParticle[nCntParticle].nType = nType;
+
+			//オブジェクト種類の設定
+			g_aParticle[nCntParticle].nObject = nObject;
 
 			switch (nType)
 			{
@@ -265,6 +268,9 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType)
 //======================================================================
 void StateParticle(int nCount,VERTEX_3D *pVtx)
 {
+	//ボーナスの情報取得
+	Bonus pBonus = GetBonus();
+
 	//寿命の減少
 	g_aParticle[nCount].nLife--;
 
@@ -282,36 +288,117 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 	//パーティクルの状態処理
 	switch (g_aParticle[nCount].nType)
 	{
-		//通常のパーティクル
+		//******************//
+		//==================//
+		//通常のパーティクル//
+		//==================//
+		//******************//
 	case PARTICLE_NORMAL:
 
 		g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.3f;
 		g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.3f;
 		g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.3f;
 
-		pVtx[0].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
-		pVtx[1].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
-		pVtx[2].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
-		pVtx[3].col = D3DXCOLOR(1.0f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+		//**********************//
+		//パーティクルの種類処理//
+		//**********************//
+		switch (g_aParticle[nCount].nObject)
+		{
+
+			//プレイヤーパーティクル
+		case OBJECT_PLAYER:
+
+			pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+
+			break;
+
+			//ボーナスパーティクル
+		case OBJECT_BONUS:
+
+			if (pBonus.nLife == 3)
+			{
+				pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			}
+			else if (pBonus.nLife == 2)
+			{
+				pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			}
+			else
+			{
+				pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[1].col = D3DXCOLOR(0.6f, 0.4f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[2].col = D3DXCOLOR(0.4f, 0.6f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[3].col = D3DXCOLOR(0.2f, 0.8f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			}
+			
+			break;
+		}
 
 		break;
 
-		//吸収のパーティクル
+		//******************//
+		//==================//
+		//吸収のパーティクル//
+		//==================//
+		//******************//
 	case PARTICLE_ACSORPTION:
-
-		Bonus pBonus;
-		pBonus = GetBonus();
 
 		g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.2f;
 		g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.2f;
 		g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.2f;
 
-		pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, 1.0f);
-		pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, 1.0f);
-		pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, 1.0f);
-		pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, 1.0f);
+		//**********************//
+		//パーティクルの種類処理//
+		//**********************//
+		switch (g_aParticle[nCount].nObject)
+		{
 
-		break;
+			//プレイヤーパーティクル
+		case OBJECT_PLAYER:
+
+			pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+
+			break;
+
+			//ボーナスパーティクル
+		case OBJECT_BONUS:
+
+			if (pBonus.nLife == 3)
+			{
+				pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			}
+			else if (pBonus.nLife == 2)
+			{
+				pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			}
+			else
+			{
+				pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[1].col = D3DXCOLOR(0.6f, 0.4f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[2].col = D3DXCOLOR(0.4f, 0.6f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+				pVtx[3].col = D3DXCOLOR(0.2f, 0.8f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			}
+
+			break;
+		}
 	}
 
 	//パーティクルの破棄

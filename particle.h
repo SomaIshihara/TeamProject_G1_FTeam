@@ -17,6 +17,15 @@ typedef enum
 
 }PARTICLE;
 
+//パーティクルの種類
+typedef enum
+{
+	OBJECT_PLAYER = 0,
+	OBJECT_BONUS,
+	OBJECT_MAX,
+
+}PARTICLE_OBJECT;
+
 typedef struct
 {
 	D3DXVECTOR3 pos;
@@ -25,7 +34,9 @@ typedef struct
 	int nLife;
 	int nLifeTemp;
 	float fRadius;
-	int nType;
+	PARTICLE nType;
+	PARTICLE_OBJECT nObject;
+
 	bool bUse;
 
 }Particle;
@@ -34,7 +45,7 @@ void InitParticle(void);
 void UninitParticle(void);
 void UpdateParticle(void);
 void DrawParticle(void);
-void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, int nType);
+void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PARTICLE_OBJECT nObject);
 void StateParticle(int nCount,VERTEX_3D *pVtx);
 void DirectionParticle(int nCount);
 #endif
