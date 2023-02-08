@@ -360,7 +360,7 @@ void UpdatePlayer(void)
 			}
 		}
 
-		if (g_aPlayer[nCntPlayer].pos.y <= -DOWN_HEIGHT)
+		if (g_aPlayer[nCntPlayer].pos.y <= DOWN_HEIGHT)
 		{//—Ž‚¿Ø‚Á‚½
 			DownPlayer(nCntPlayer);
 		}
@@ -1262,7 +1262,7 @@ void RespawnPlayer(int nRespawnPlayer)
 //========================
 void DecrementItemTime(int nPlayerNum)
 {
-	/*g_aPlayer[nPlayerNum].nATKItemTime--;
+	g_aPlayer[nPlayerNum].nATKItemTime--;
 	g_aPlayer[nPlayerNum].nDEFItemTime--;
 	g_aPlayer[nPlayerNum].nGhostItemTime--;
 }

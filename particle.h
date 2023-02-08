@@ -50,4 +50,5 @@ void DrawParticle(void);
 void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PARTICLE_OBJECT nObject);
 void StateParticle(int nCount,VERTEX_3D *pVtx);
 void DirectionParticle(int nCount);
+
 #endif
