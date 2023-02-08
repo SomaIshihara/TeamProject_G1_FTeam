@@ -309,12 +309,30 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 		{
 
 			//プレイヤーパーティクル
-		case OBJECT_PLAYER:
+		case OBJECT_PLAYER_ATK:
 
 			pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
 			pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
 			pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
 			pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+
+			break;
+
+		case OBJECT_PLAYER_DEF:
+
+			pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+
+			break;
+
+		case OBJECT_PLAYER_GOAST:
+
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
 
 			break;
 
@@ -366,12 +384,30 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 		{
 
 			//プレイヤーパーティクル
-		case OBJECT_PLAYER:
+		case OBJECT_PLAYER_ATK:
+
+			pVtx[0].col = D3DXCOLOR(1.0f, 0.4f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[1].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[2].col = D3DXCOLOR(0.6f, 0.2f, 0.3f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[3].col = D3DXCOLOR(0.8f, 0.5f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+
+			break;
+
+		case OBJECT_PLAYER_DEF:
 
 			pVtx[0].col = D3DXCOLOR(0.8f, 0.2f, 0.2f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
 			pVtx[1].col = D3DXCOLOR(0.6f, 0.2f, 0.4f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
 			pVtx[2].col = D3DXCOLOR(0.4f, 0.2f, 0.6f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
 			pVtx[3].col = D3DXCOLOR(0.2f, 0.2f, 0.8f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+
+			break;
+
+		case OBJECT_PLAYER_GOAST:
+
+			pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
+			pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, ((float)g_aParticle[nCount].nLife / (float)g_aParticle[nCount].nLifeTemp));
 
 			break;
 
@@ -422,7 +458,19 @@ void DirectionParticle(int nCount)
 	switch (g_aParticle[nCount].nObject)
 	{
 		//プレイヤーパーティクル
-	case OBJECT_PLAYER:
+	case OBJECT_PLAYER_ATK:
+
+		posTemp = pPlayer->pos;
+
+		break;
+
+	case OBJECT_PLAYER_DEF:
+
+		posTemp = pPlayer->pos;
+
+		break;
+
+	case OBJECT_PLAYER_GOAST:
 
 		posTemp = pPlayer->pos;
 
