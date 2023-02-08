@@ -162,6 +162,9 @@
     <ClCompile Include="player.cpp">
       <Filter>ソース ファイル\Game\Player</Filter>
     </ClCompile>
+    <ClCompile Include="charge_cylinder.cpp">
+      <Filter>ソース ファイル\Game\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -259,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="meshfault.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="charge_cylinder.h">
+      <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
