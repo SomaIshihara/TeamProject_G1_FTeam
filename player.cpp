@@ -40,7 +40,7 @@
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
 #define BF_RADIUS				(353.5f)	//バトルフィールドの半径
-#define DOWN_TIME				(160)		//ダウン判定とする時間
+#define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
 
 //移動量関係
 #define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
@@ -339,16 +339,12 @@ void UpdatePlayer(void)
 		g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 
 		//移動後がy<0なら落ちるか移動量消す
-		if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f && g_aPlayer[nCntPlayer].stat != PLAYERSTAT_FALL)
+		if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f)
 		{
 			float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) + 
 				powf((g_aPlayer[nCntPlayer].pos.z + g_aPlayer[nCntPlayer].move.z), 2));
 
-			if (fLength >= GetMeshField()->fRadius)
-			{
-				g_aPlayer[nCntPlayer].stat = PLAYERSTAT_FALL;
-			}
-			else
+			if (fLength <= GetMeshField()->fRadius)
 			{
 				if (g_aPlayer[nCntPlayer].bHipDrop == true)
 				{//ヒップドロップしてたならエフェクト出す
@@ -364,7 +360,7 @@ void UpdatePlayer(void)
 			}
 		}
 
-		if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_FALL && g_aPlayer[nCntPlayer].jumpTime >= DOWN_TIME)
+		if (g_aPlayer[nCntPlayer].pos.y <= -DOWN_HEIGHT)
 		{//落ち切った
 			DownPlayer(nCntPlayer);
 		}
@@ -538,9 +534,9 @@ void DrawPlayer(void)
 				}
 
 				/*------------------------------------------------------------------
-				影の描画		Author:平澤詩苑
+				影の描画		Author:平澤詩苑 石原颯馬
 				--------------------------------------------------------------------*/
-				if (g_aPlayer[nCntPlayer].stat != PLAYERSTAT_FALL)
+				if (g_aPlayer[nCntPlayer].pos.y >= 0.0f)
 				{
 					D3DXMATRIX	mtxShadow;		//シャドウマトリックス
 					D3DLIGHT9	light;			//ライト情報
