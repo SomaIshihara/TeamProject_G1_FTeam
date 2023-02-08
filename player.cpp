@@ -26,13 +26,14 @@
 #include "particle.h"
 
 //マクロ
-#define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
-#define PLAYER_JUMP_SPEED		(7.7f)		//プレイヤージャンプ速度
 #define PLAYER_HIPDROP_WAIT		(15)		//ヒップドロップの「開始・着地」硬直時間
 #define PLAYER_BLOWING_POWER	(5.0f)		//ヒップドロップされた方の移動量
 #define PLAYER_HIPDROP_POWER	(-15.0f)	//ヒップドロップするときの移動量
 #define PLAYER_ROTATE_SPEED		(0.02f * D3DX_PI)	//回転速度
 
+//移動量関係
+#define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
+#define PLAYER_JUMP_SPEED		(7.7f)		//プレイヤージャンプ速度
 #define ACCELERATION_GRAVITY	(9.8f)		//重力加速度
 #define PLAYER_WEIGHT			(50)		//質量
 #define PLAYER_POWER_ADD		(0.025f)	//移動の強さの増加値
@@ -42,7 +43,7 @@
 #define BF_RADIUS				(353.5f)	//バトルフィールドの半径
 #define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
 
-//移動量関係
+//アイテム関係
 #define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
 #define ACCELERATION_ITEMMAG	(1.5f)		//アイテム所持中の強化倍率
 #define DEFANCE_CONS			(0.0f)		//防御定数（1.0で完全防御）
@@ -322,15 +323,15 @@ void UpdatePlayer(void)
 			}
 
 			//当たり判定類
-			if (g_aPlayer[nCntPlayer].bHipDrop)
-			{//ヒップドロップ中なら
-				CollisionHipDropPP(nCntPlayer);
-			}
-
 			if (g_aPlayer[nCntPlayer].nGhostItemTime <= 0)
 			{//ゴースト化状態でなければ
 				CollisionPP(nCntPlayer);
 				CollisionIP(nCntPlayer);
+
+				if (g_aPlayer[nCntPlayer].bHipDrop)
+				{//ヒップドロップ中なら
+					CollisionHipDropPP(nCntPlayer);
+				}
 			}
 		}
 
@@ -1003,6 +1004,10 @@ void CollisionHipDropPP(int nPlayerNum)
 							g_aPlayer[nCntOtherPlayer].pos.z - g_aPlayer[nPlayerNum].pos.z);
 						g_aPlayer[nCntOtherPlayer].move.x = sinf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
 						g_aPlayer[nCntOtherPlayer].move.z = -cosf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
+
+						//ちょっと飛ばす
+						g_aPlayer[nCntOtherPlayer].moveV0.y = PLAYER_BLOWING_POWER;
+						g_aPlayer[nCntOtherPlayer].jumpTime = 0;
 
 						//攻撃された扱いにする
 						g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
