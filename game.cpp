@@ -39,8 +39,9 @@ int  g_nUseContNum;					// 使用しているコントローラーの数
 bool g_abUsePlayer[MAX_USE_GAMEPAD];// 使用しているプレイヤー（接続チェックに使用）
 bool g_bDisconnectPlayer;			// 接続が切れたことを確認する
 int  g_numGamePad;
-CHECKMODE g_CheckMode;
-NumCamera g_NumCamera;
+CHECKMODE	g_CheckMode;
+NumCamera	g_NumCamera;
+bool		g_bPhotoMode;			// フォトモード切替		true:ポーズ画面非表示	false:ボーズ画面表示
 
 //------------------------------------------------
 //				ゲームの初期化処理
@@ -81,7 +82,7 @@ void InitGame(void)
 
 	g_bPause = false;			// ポーズの初期化
 	g_bDisconnectPlayer = false;	//正常にコントローラーが接続されている状態とする
-
+	g_bPhotoMode = false;		// フォトモード初期化
 									//ゲームBGM開始
 									//PlaySound(SOUND_LABEL_GAMEBGM);
 }
@@ -178,12 +179,28 @@ void UpdateGame(void)
 
 	else
 	{
-		//ポーズ画面の更新処理
-		UpdatePause();
+		//フォトモードOFF
+		if (g_bPhotoMode == false)
+		{
+			//ポーズ画面の更新処理
+			UpdatePause();
+		}
+
+		//カメラだけは動かせる
+		else
+		{
+			UpdateCamera();
+		}
 	}
 
 	//コントローラーの使用チェックはポーズ状態関係なく呼び出し
 	CheckUseController(CHECKMODE_DISCONPAUSE);
+
+	//フォトモード切替
+	if (GetKeyboardTrigger(DIK_F9) && g_bPause)
+	{
+		g_bPhotoMode = g_bPhotoMode ? false : true;
+	}
 }
 
 //------------------------------------------------
@@ -219,7 +236,7 @@ void DrawGame(void)
 		DrawTime();					//タイマーの描画処理
 
 									//ポーズがON
-		if (g_bPause == true)
+		if (g_bPause == true && g_bPhotoMode == false)
 		{
 			DrawPause();		//ポーズ画面描画処理
 		}
