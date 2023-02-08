@@ -441,7 +441,7 @@ void Draw(void)
 	D3DVIEWPORT9 viewportDef;
 
 	//画面クリア（バックバッファとZバッファのクリア
-	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), RGBA_RIGHTBLUE, 1.0f, 0);
+	g_pD3DDevice->Clear(0, NULL, (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER), RGBA_WHITE, 1.0f, 0);
 
 	//描画開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))

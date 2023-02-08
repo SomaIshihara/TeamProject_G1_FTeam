@@ -1266,7 +1266,7 @@ void RespawnPlayer(int nRespawnPlayer)
 //========================
 void DecrementItemTime(int nPlayerNum)
 {
-	/*g_aPlayer[nPlayerNum].nATKItemTime--;
+	g_aPlayer[nPlayerNum].nATKItemTime--;
 	g_aPlayer[nPlayerNum].nDEFItemTime--;
 	g_aPlayer[nPlayerNum].nGhostItemTime--;
 }
@@ -1292,28 +1292,8 @@ void ItemStateParticle(int nPlayerNum)
 
 	if (g_aPlayer[nPlayerNum].nGhostItemTime > 0)
 	{
-		SetParticle(g_aPlayer[nPlayerNum].pos, 1.0f, 0, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
-		SetParticle(g_aPlayer[nPlayerNum].pos, 1.0f, 0, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
-	}
-}
-
-//========================
-//アイテムの効果付与処理
-//========================
-void EffectingPlayer(Player *pBuffPlayer, ITEMTYPE type, int nTime)
-{
-	switch (type)
-	{
-	case ITEMTYPE_ATK:
-		pBuffPlayer->nATKItemTime = nTime;
-		break;
-	case ITEMTYPE_DEF:
-		pBuffPlayer->nDEFItemTime = nTime;
-		break;
-	case ITEMTYPE_GHOST:
-		pBuffPlayer->nGhostItemTime = nTime;
-		break;
-		//MUTEKI状態も入れて
+		//SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
+		//SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
 	}
 }
 
