@@ -31,6 +31,7 @@ Author:平澤詩苑
 #include "attack_effect.h"
 #include "tremor_effect.h"
 #include "meshfault.h"
+#include "charge_cylinder.h"
 //#include "sound.h"
 
 //グローバル変数宣言
@@ -71,6 +72,7 @@ void InitGame(void)
 	InitParticle();				// パーティクルの初期化処理
 	{// エフェクトの初期化処理
 		InitChargeEffect();//チャージエフェクト
+		InitChargeCylinder();//チャージエフェクト(しりんだー)
 		InitAttackEffect();//攻撃エフェクト
 		InitTremorEffect();//ヒップドロップエフェクト
 	}	
@@ -114,6 +116,7 @@ void UninitGame(void)
 	UninitParticle();		// パーティクルの終了処理
 	{	// エフェクトの終了処理
 		UninitChargeEffect();	//チャージエフェクト
+		UninitChargeCylinder();	//チャージエフェクト(しりんだー)
 		UninitAttackEffect();	//攻撃エフェクト
 		UninitTremorEffect();	//ヒップドロップエフェクト
 	}
@@ -150,6 +153,7 @@ void UpdateGame(void)
 		UpdateGauge();			// ゲージの更新処理
 		{// エフェクトの更新処理
 			UpdateChargeEffect();	//チャージエフェクト
+			UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
 			UpdateAttackEffect();	//攻撃エフェクト
 			UpdateTremorEffect();	//ヒップドロップエフェクト
 		}
@@ -222,9 +226,10 @@ void DrawGame(void)
 		DrawMeshFault();			// メッシュの断面描画処理
 		DrawWall();					// 壁の描画処理
 		{// エフェクトの描画処理
-			DrawChargeEffect();//チャージエフェクト
-			DrawAttackEffect();//攻撃エフェクト
-			DrawTremorEffect();//ヒップドロップエフェクト
+			DrawChargeEffect();		//チャージエフェクト
+			DrawChargeCylinder();	//チャージエフェクト(しりんだー)
+			DrawAttackEffect();		//攻撃エフェクト
+			DrawTremorEffect();		//ヒップドロップエフェクト
 		}	
 		DrawParticle();				// パーティクルの描画処理
 		DrawPlayer();				// プレイヤーの描画処理

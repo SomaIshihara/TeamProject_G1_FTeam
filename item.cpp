@@ -33,7 +33,7 @@ LPD3DXBUFFER			g_pBuffMatItem = NULL;	//マテリアルへのポインタ
 DWORD					g_dwNumMatItem = 0;	//マテリアルの数
 D3DXMATRIX				g_mtxWorldItem;			//ワールドマトリックス
 Item					g_Item[MAX_ITEM];		//アイテムの情報
-bool					bposuse[MAX_POS] = {false};		//その座標を使用しているかどうか
+bool					bposuse[MAX_POS];		//その座標を使用しているかどうか
 
 //========================
 //初期化処理
@@ -78,6 +78,11 @@ void InitItem(void)
 		g_Item[nCntItem].fWidth = COLLISION_SIZE_XZ;
 		g_Item[nCntItem].fAlpha = 1.0f;					//透明度の設定
 		g_Item[nCntItem].buse = false;
+	}
+
+	for (int nCntPos = 0; nCntPos < MAX_POS; nCntPos++)
+	{
+		bposuse[nCntPos] = false;
 	}
 	
 }

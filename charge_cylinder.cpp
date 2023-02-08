@@ -6,14 +6,27 @@
 //--------------------------------------------------------------------------------------------------------
 #include "main.h"
 #include "charge_cylinder.h"
+#include "color.h"
+
+//マクロ定義
+#define NUM_CHARGE_CYLINDER			(4)		//シリンダー数
+
+//断面情報の構造体
+typedef struct
+{
+	D3DXVECTOR3		pos;		//位置
+	D3DXVECTOR3		rot;		//向き
+	D3DXMATRIX		mtxWorld;	//ワールドマトリックス
+	float			fRadius;	//半径の大きさ
+	bool			bUse;		//使われているかどうか
+}ChargeCylinder;
 
 //グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureChargeCylinder = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffChargeCylinder = NULL;
 LPDIRECT3DINDEXBUFFER9	g_pIdxBuffChargeCylinder = NULL;
-D3DXVECTOR3				g_posChargeCylinder;
-D3DXVECTOR3				g_rotChargeCylinder;
 D3DXMATRIX				g_mtxWorldChargeCylinder;	//ワールドマトリックス
+ChargeCylinder			g_ChargeCylinder[NUM_CHARGE_CYLINDER];
 
 //--------------------------------------------------------------------------------------------------------
 //チャージシリンダーの初期化処理
@@ -26,63 +39,83 @@ void InitChargeCylinder(void)
 	//テクスチャーの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureChargeCylinder);
 
-	//チャージシリンダーの初期化
-	g_posChargeCylinder = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_rotChargeCylinder = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++)
+	{
+		//チャージシリンダーの初期化
+		g_ChargeCylinder[nCntCylinder].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_ChargeCylinder[nCntCylinder].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_ChargeCylinder[nCntCylinder].bUse = false;
 
-	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (CHARGESYLINDER_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffChargeCylinder, NULL);
+		//頂点バッファの生成
+		pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (CHARGESYLINDER_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffChargeCylinder, NULL);
+
+		//頂点情報の設定処理
+		SetChargeCylinderVertex(nCntCylinder);
+
+		//インデックスバッファの生成
+		pDevice->CreateIndexBuffer(sizeof(WORD) * (CHARGESYLINDER_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffChargeCylinder, NULL);
+
+		//インデックス番号の設定処理
+		SetChargeCylinderIndex();
+	}
+}
+
+//断面の頂点情報の設定処理
+void SetChargeCylinderVertex(int nCntCylinder)
+{
+	//半径を設定
+	g_ChargeCylinder[nCntCylinder].fRadius = CHARGESYLINDER_WIDTH;
 
 	VERTEX_3D *pVtx;
 
 	//頂点バッファのロック
 	g_pVtxBuffChargeCylinder->Lock(0, 0, (void**)&pVtx, 0);
 
-	//頂点座標の設定
-	for (int nCntChargeCylinder = 0; nCntChargeCylinder < CHARGESYLINDER_SPLIT + 1; nCntChargeCylinder++)
+	float Rot = D3DX_PI;	//Y軸の角度
+
+							//頂点座標の設定
+	for (int nCntChargeCylinder = 0; nCntChargeCylinder <= CHARGESYLINDER_SPLIT; nCntChargeCylinder++)
 	{
-		pVtx[nCntChargeCylinder].pos = D3DXVECTOR3(
-			sinf(D3DX_PI * (1.0f - (2.0f / CHARGESYLINDER_SPLIT * nCntChargeCylinder))) * CHARGESYLINDER_WIDTH,
-			CHARGESYLINDER_HEIGHT,
-			cosf(D3DX_PI * (1.0f - (2.0f / CHARGESYLINDER_SPLIT * nCntChargeCylinder))) * CHARGESYLINDER_WIDTH);
+		float	VtxPos_X = sinf(Rot) * g_ChargeCylinder[nCntCylinder].fRadius,					//Ｘ座標
+			VtxPos_Z = cosf(Rot) * g_ChargeCylinder[nCntCylinder].fRadius;					//Ｚ座標
+		int		nNumBottomVtx = CHARGESYLINDER_SPLIT + nCntChargeCylinder + 1;	//対象の頂点の真下の頂点番号
 
-		pVtx[CHARGESYLINDER_SPLIT + nCntChargeCylinder + 1].pos = D3DXVECTOR3(
-			sinf(D3DX_PI * (1.0f - (2.0f / CHARGESYLINDER_SPLIT * nCntChargeCylinder))) *CHARGESYLINDER_WIDTH,
-			0.0f,
-			cosf(D3DX_PI * (1.0f - (2.0f / CHARGESYLINDER_SPLIT * nCntChargeCylinder))) * CHARGESYLINDER_WIDTH);
+																		//原点位置と同じ高さの頂点座標を設定
+		pVtx[nCntChargeCylinder].pos = D3DXVECTOR3(VtxPos_X, 0.0f, VtxPos_Z);
 
+		//上で設定した頂点座標の真下の頂点座標を設定
+		pVtx[nNumBottomVtx].pos = D3DXVECTOR3(VtxPos_X, CHARGESYLINDER_HEIGHT, VtxPos_Z);
+
+		//１周したときの頂点座標
 		if (nCntChargeCylinder == CHARGESYLINDER_SPLIT)
 		{
-			pVtx[nCntChargeCylinder].pos = D3DXVECTOR3(
-				sinf(D3DX_PI * 1.0f) *CHARGESYLINDER_WIDTH,
-				CHARGESYLINDER_HEIGHT,
-				cosf(D3DX_PI * 1.0f) * CHARGESYLINDER_WIDTH);
-
-			pVtx[CHARGESYLINDER_SPLIT + 1 + nCntChargeCylinder].pos = D3DXVECTOR3(
-				sinf(D3DX_PI * 1.0f) *CHARGESYLINDER_WIDTH,
-				0.0f,
-				cosf(D3DX_PI * 1.0f) * CHARGESYLINDER_WIDTH);
+			pVtx[nCntChargeCylinder].pos = pVtx[0].pos;						//最初の頂点座標を代入
+			pVtx[nNumBottomVtx].pos = pVtx[CHARGESYLINDER_SPLIT + 1].pos;	//最初の足元の頂点座標を代入
 		}
 
 		//法線ベクトルの設定
 		pVtx[nCntChargeCylinder].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[CHARGESYLINDER_SPLIT + 1 + nCntChargeCylinder].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nNumBottomVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[nCntChargeCylinder].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		pVtx[CHARGESYLINDER_SPLIT + 1 + nCntChargeCylinder].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		pVtx[nCntChargeCylinder].col = XCOL_WHITE;
+		pVtx[nNumBottomVtx].col = XCOL_WHITE;
 
 		//テクスチャ座標の設定
 		pVtx[nCntChargeCylinder].tex = D3DXVECTOR2(nCntChargeCylinder * (CHARGESYLINDER_TEX_RESOLUTION / CHARGESYLINDER_SPLIT), 0.0f);
-		pVtx[CHARGESYLINDER_SPLIT + 1 + nCntChargeCylinder].tex = D3DXVECTOR2(nCntChargeCylinder * (CHARGESYLINDER_TEX_RESOLUTION / CHARGESYLINDER_SPLIT), 1.0f);
+		pVtx[nNumBottomVtx].tex = D3DXVECTOR2(nCntChargeCylinder * (CHARGESYLINDER_TEX_RESOLUTION / CHARGESYLINDER_SPLIT), 1.0f);
+
+		//角度を　全体の角度÷分割数で割った答え分、引く
+		Rot -= ONE_LAP / CHARGESYLINDER_SPLIT;
 	}
 
 	//頂点バッファのアンロック
 	g_pVtxBuffChargeCylinder->Unlock();
+}
 
-	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * (CHARGESYLINDER_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffChargeCylinder, NULL);
-
+//断面のインデックス番号の設定処理
+void SetChargeCylinderIndex(void)
+{
 	WORD*pIdx;
 
 	//インデックスバッファをロックし、頂点番号へのポインタを取得
@@ -100,6 +133,7 @@ void InitChargeCylinder(void)
 			pIdx[nCntChargeCylinder] = (nCntChargeCylinder / EVENPARITY) + ODDPARITY + CHARGESYLINDER_SPLIT;
 		}
 	}
+
 	//インデックスバッファのアンロック
 	g_pIdxBuffChargeCylinder->Unlock();
 }
@@ -150,28 +184,31 @@ void DrawChargeCylinder(void)
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&g_mtxWorldChargeCylinder);
 
-	//向きを反映
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_rotChargeCylinder.y, g_rotChargeCylinder.x, g_rotChargeCylinder.z);
-	D3DXMatrixMultiply(&g_mtxWorldChargeCylinder, &g_mtxWorldChargeCylinder, &mtxRot);
+	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++)
+	{
+		//向きを反映
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_ChargeCylinder[nCntCylinder].rot.y, g_ChargeCylinder[nCntCylinder].rot.x, g_ChargeCylinder[nCntCylinder].rot.z);
+		D3DXMatrixMultiply(&g_mtxWorldChargeCylinder, &g_mtxWorldChargeCylinder, &mtxRot);
 
-	//位置を反映
-	D3DXMatrixTranslation(&mtxTrans, g_posChargeCylinder.x, g_posChargeCylinder.y, g_posChargeCylinder.z);
-	D3DXMatrixMultiply(&g_mtxWorldChargeCylinder, &g_mtxWorldChargeCylinder, &mtxTrans);
+		//位置を反映
+		D3DXMatrixTranslation(&mtxTrans, g_ChargeCylinder[nCntCylinder].pos.x, g_ChargeCylinder[nCntCylinder].pos.y, g_ChargeCylinder[nCntCylinder].pos.z);
+		D3DXMatrixMultiply(&g_mtxWorldChargeCylinder, &g_mtxWorldChargeCylinder, &mtxTrans);
 
-	//ワールドマトリックスの設定
-	pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldChargeCylinder);
+		//ワールドマトリックスの設定
+		pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldChargeCylinder);
 
-	//頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffChargeCylinder, 0, sizeof(VERTEX_3D));
+		//頂点バッファをデータストリームに設定
+		pDevice->SetStreamSource(0, g_pVtxBuffChargeCylinder, 0, sizeof(VERTEX_3D));
 
-	//インデックスバッファをデータストリームに設定
-	pDevice->SetIndices(g_pIdxBuffChargeCylinder);
+		//インデックスバッファをデータストリームに設定
+		pDevice->SetIndices(g_pIdxBuffChargeCylinder);
 
-	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_3D);
+		//頂点フォーマットの設定
+		pDevice->SetFVF(FVF_VERTEX_3D);
 
-	//テクスチャの設定
-	pDevice->SetTexture(0, g_pTextureChargeCylinder);
+		//テクスチャの設定
+		pDevice->SetTexture(0, g_pTextureChargeCylinder);
 
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (CHARGESYLINDER_SPLIT * 2 + 2), 0, (CHARGESYLINDER_SPLIT * 2 + 2));
+		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (CHARGESYLINDER_SPLIT * 2 + 2), 0, (CHARGESYLINDER_SPLIT * 2 + 2));
+	}
 }
