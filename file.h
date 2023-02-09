@@ -10,6 +10,7 @@
 #include "main.h"
 #include "model.h"
 #include "meshfield.h"
+#include "meshfault.h"
 
 //マクロ
 #define MAX_NUM_TEXTURE	(32)	//最大テクスチャ数
@@ -80,10 +81,16 @@
 #define CODE_KEY				"KEY"				//キー設定開始
 #define CODE_END_KEY			"END_KEY"			//キー設定終了
 
+//モデルオリジナル用
+//断面図
+#define CODE_FAULTSET			"FAULTSET"			//断面図設定開始
+#define CODE_END_FAULTSET		"END_FAULTSET"		//断面図設定終了
+
 //パラメータ類
-//モデル・モーション共通
+//モデル・モーション・オリジナル共通
 #define CODE_POS				"POS"				//位置
 #define CODE_ROT				"ROT"				//向き
+#define CODE_RADIUS				"RADIUS"			//半径
 //モデルビューワー用
 #define CODE_REF				"REF"				//注視点
 #define CODE_DIRECTION			"DIRECTION"			//方向
@@ -102,7 +109,6 @@
 //モーションビューワー用
 #define CODE_MOVE				"MOVE"				//移動量
 #define CODE_JUMP				"JUMP"				//ジャンプ量
-#define CODE_RADIUS				"RADIUS"			//半径
 #define CODE_NUM_PARTS			"NUM_PARTS"			//パーツ数
 #define CODE_INDEX				"INDEX"				//番号
 #define CODE_PARENT				"PARENT"			//親モデルの番号
@@ -194,7 +200,9 @@ void UninitFile(void);
 void UpdateFile(void);
 void LoadModelViewerFile(const char *path);	//モデルビューワーの設定ファイル読み込み（引数は設定ファイルのパス指定）
 void LoadMotionViewerFile(const char *path, Model *pModel);
+void LoadModelOriginalFile(const char *path);
 void GetMotionInfo(MOTION_INFO *pMotionInfo);
+Fault GetFaultData(void);
 char *GetTextureFilePath(int nTexNum);
 char *GetModelFilePath(int nModNum);
 char *GetMotionFilePath(int animal);

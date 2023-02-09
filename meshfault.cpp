@@ -1,22 +1,14 @@
 //--------------------------------------------------------------------------------------------------------
 //
 //メッシュの断面図[meshfault.h]
-//Author:菊地陽人	平澤詩苑
+//Author:菊地陽人　平澤詩苑　石原颯馬
 //
 //--------------------------------------------------------------------------------------------------------
 #include "main.h"
 #include "meshfault.h"
 #include "meshfield.h"
 #include "color.h"
-
-//断面情報の構造体
-typedef struct
-{
-	D3DXVECTOR3		pos;		//位置
-	D3DXVECTOR3		rot;		//向き
-	D3DXMATRIX		mtxWorld;	//ワールドマトリックス
-	float			fRadius;	//半径の大きさ
-}Fault;
+#include "file.h"
 
 //グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureMeshFault = NULL;
@@ -38,6 +30,9 @@ void InitMeshFault(void)
 	//断面情報初期化の初期化
 	g_Fault.pos = ZERO_SET;
 	g_Fault.rot = ZERO_SET;
+
+	//断面情報の取得（モデルオリジナルファイル読み込み後に行うこと）
+	g_Fault = GetFaultData();
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (MESHFAULT_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshFault, NULL);
