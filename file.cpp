@@ -9,6 +9,7 @@
 #include "camera.h"
 #include "light.h"
 #include "model.h"
+#include "meshfault.h"
 #include <stdio.h>
 #include <assert.h>
 
@@ -52,6 +53,10 @@ typedef enum
 	READSTAT_KEYSET,
 	READSTAT_KEY,
 	//----------------------------------------
+
+	//-オリジナル-----------------------------
+	READSTAT_FAULTSET,
+	//----------------------------------------
 	READSTAT_MAX
 } READSTAT;
 
@@ -77,6 +82,7 @@ ReadModel g_readmodel;
 ReadBillBoard g_readbillboard;
 MOTION_INFO g_motionInfo[MOTIONTYPE_MAX];
 Parts g_readParts;
+Fault g_readFault;
 
 //↑に使うもの
 int g_counterMotionInfo;
@@ -1038,6 +1044,134 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 }
 
 //========================
+//オリジナルモデル配置情報読み込み処理
+//引数1:オリジナルモデル配置情報の設定ファイルのパス
+//========================
+void LoadModelOriginalFile(const char *path)
+{
+	FILE *pFile;
+	char aCode[CODE_LENGTH];
+	char *pSprit;
+	bool bRead = false;
+
+	//変数初期化
+	g_counterReadModel = 0;
+
+	//モーション情報
+	//読み込みファイル設定
+	pFile = fopen(path, "r");
+
+	//敵配置情報を取得
+	if (pFile != NULL)
+	{
+		while (1)
+		{
+			fgets(&aCode[0], CODE_LENGTH, pFile);
+
+			//コメントアウトチェック
+			char *pCharPos = strchr(&aCode[0], '#');
+			if (pCharPos != nullptr)
+			{//strchrの返り値がぬるぽではない
+				*pCharPos = '\0';
+			}
+
+			//タブ消去
+			while (aCode[0] == '\t')
+			{
+				char aCodeBackup[CODE_LENGTH];
+				strcpy(&aCodeBackup[0], &aCode[0]);
+				strcpy(&aCode[0], &aCodeBackup[1]);
+			}
+
+			//文字列チェック
+			if (strncmp(&aCode[0], CODE_SCRIPT, sizeof CODE_SCRIPT / sizeof(char) - 1) == 0)
+			{//読み取り開始
+				bRead = true;
+			}
+			else if (strncmp(&aCode[0], CODE_END_SCRIPT, sizeof CODE_END_SCRIPT / sizeof(char) - 1) == 0)
+			{//読み取り終了
+				bRead = false;
+				break;
+			}
+			else if (aCode[0] == EOF)
+			{//EOFかもしれない
+				if (feof(pFile))
+				{//いや、これはEOFだ
+					bRead = false;
+					break;
+				}
+			}
+			else if (bRead == true)
+			{//読み取り
+				switch (g_readStat)
+				{
+				case READSTAT_NONE:	//処理取得
+					if (strncmp(&aCode[0], CODE_FAULTSET, sizeof CODE_FAULTSET / sizeof(char) - 1) == 0)
+					{
+						g_readStat = READSTAT_FAULTSET;
+					}
+					break;
+				case READSTAT_FAULTSET:		//モデル情報取得
+					if (strncmp(&aCode[0], CODE_END_FAULTSET, sizeof CODE_END_FAULTSET / sizeof(char) - 1) == 0)
+					{
+
+						g_readStat = READSTAT_NONE;
+					}
+					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
+					{
+						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
+
+						//X座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readFault.pos.x = fatof(pSprit);
+
+						//Y座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readFault.pos.y = fatof(pSprit);
+
+						//Z座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readFault.pos.z = fatof(pSprit);
+					}
+					else if (strncmp(&aCode[0], CODE_ROT, sizeof CODE_ROT / sizeof(char) - 1) == 0)
+					{
+						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
+
+						//X座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readFault.rot.x = (fatof(pSprit) / 180) * D3DX_PI;
+
+						//Y座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readFault.rot.y = (fatof(pSprit) / 180) * D3DX_PI;
+
+						//Z座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readFault.rot.z = (fatof(pSprit) / 180) * D3DX_PI;
+					}
+					else if (strncmp(&aCode[0], CODE_RADIUS, sizeof CODE_RADIUS / sizeof(char) - 1) == 0)
+					{
+						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
+
+						//半径取得
+						pSprit = strtok(NULL, " =\n");
+						g_readFault.fRadius = fatof(pSprit);
+					}
+					break;
+				}
+			}
+		}
+
+		//ファイル閉じる
+		fclose(pFile);
+	}
+	else
+	{
+		assert(pFile != NULL);
+	}
+}
+
+//========================
 //テクスチャパス取得処理
 //========================
 char *GetTextureFilePath(int nTexNum)
@@ -1070,4 +1204,12 @@ void GetMotionInfo(MOTION_INFO *pMotionInfo)
 	{
 		*(pMotionInfo + nCntMotion) = g_motionInfo[nCntMotion];
 	}
+}
+
+//========================
+//断面図情報取得処理
+//========================
+Fault GetFaultData(void)
+{
+	return g_readFault;
 }
