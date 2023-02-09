@@ -126,7 +126,10 @@ void UpdateChargeEffect(void)
 	//エフェクトのサイズ更新  (頂点座標の更新もするので、このUpdate関数の最後が望ましい)
 	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++)
 	{
-		UpdateChargeEffectSize(nCntEffect);
+		if (g_ChargeEffect[nCntEffect].bUse)
+		{
+			UpdateChargeEffectSize(nCntEffect);
+		}
 	}
 }
 
