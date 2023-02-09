@@ -184,17 +184,38 @@ void UpdateGame(void)
 
 	else
 	{
-		//フォトモードOFF
-		if (g_bPhotoMode == false)
-		{
-			//ポーズ画面の更新処理
-			UpdatePause();
-		}
+		//ポーズ画面の更新処理
+		UpdatePause();
 
-		//カメラだけは動かせる
-		else
+		//フォトモードON
+		if (g_bPhotoMode)
 		{
 			UpdateCamera();
+
+			//1フレームだけ更新する
+			if (GetKeyboardTrigger(DIK_RIGHT))
+			{
+				UpdateBg();				// 背景の更新処理
+				UpdateLight();			// ライトの更新処理
+				UpdateMeshfield();		// ステージ更新処理
+				UpdateMeshCylinder();	// メッシュシリンダー更新処理
+				UpdateMeshDome();		// メッシュドーム更新処理
+				UpdateMeshFault();		// メッシュの断面更新処理
+				UpdatePlayer();			// プレイヤーの更新処理
+				UpdateBonus();			// ボーナスの更新処理
+				UpdateItem();			// アイテムの更新処理
+				UpdateWall();			// 壁の更新処理
+				UpdateGauge();			// ゲージの更新処理
+				{// エフェクトの更新処理
+					UpdateChargeEffect();	//チャージエフェクト
+					UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
+					UpdateAttackEffect();	//攻撃エフェクト
+					UpdateTremorEffect();	//ヒップドロップエフェクト
+				}
+				UpdateParticle();	// パーティクルの更新処理
+				UpdateScore();		//スコアの更新処理
+				UpdateTime();		//タイマーの更新処理
+			}
 		}
 	}
 
@@ -202,7 +223,7 @@ void UpdateGame(void)
 	CheckUseController(CHECKMODE_DISCONPAUSE);
 
 	//フォトモード切替
-	if (GetKeyboardTrigger(DIK_F9) && g_bPause)
+	if (GetKeyboardTrigger(DIK_F9))
 	{
 		g_bPhotoMode = g_bPhotoMode ? false : true;
 	}
