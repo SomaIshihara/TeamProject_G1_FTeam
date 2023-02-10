@@ -38,7 +38,7 @@ int g_nCountFPS;			//FPSカウンタ
 #ifdef _DEBUG
 MODE			g_mode = MODE_GAME;		// 現在のモード
 #else
-MODE			g_mode = MODE_TITLE;		// 現在のモード
+MODE			g_mode = MODE_GAME;		// 現在のモード
 #endif
 
 bool g_bShowCursor = true;

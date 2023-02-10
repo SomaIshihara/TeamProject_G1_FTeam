@@ -14,15 +14,15 @@
 #define CHARGECYLINDER_HEIGHT				(20.0f)						// シリンダーの高さ
 #define CHARGECYLINDER_SPLIT				(32)						// シリンダーの分割数
 #define CHARGECYLINDER_TEX_RESOLUTION		(3.0f)						// シリンダーのテクスチャの幅
-#define NUM_CHARGE_CYLINDER			(4)									// シリンダーの数
+#define NUM_CHARGE_CYLINDER					(4)							// シリンダーの数
 #define CHARGECYLINDER_ALL_VTX		(CHARGECYLINDER_SPLIT * 2 + 2)		// シリンダーの最大頂点・インデックス数
-#define CHARGE_MAX_RADIUS			(40.0f)								// 最大半径
-#define CHARGE_SPREAD_SPEED			(3.5f)								// 半径増加量　　SPREAD　＝　広がる
-#define CHARGE_TOPPART_SPREAD		(1.3f)								// 上部の部分だけの広がり倍率
-#define CHARGE_HEIGHT_EXTEND		(2.0f)								// 高さが伸び縮みするスピード
+#define CHARGE_MAX_RADIUS					(40.0f)						// 最大半径
+#define CHARGE_SPREAD_SPEED					(3.5f)						// 半径増加量　　SPREAD　＝　広がる
+#define CHARGE_TOPPART_SPREAD				(1.3f)						// 上部の部分だけの広がり倍率
+#define CHARGE_HEIGHT_EXTEND				(2.0f)						// 高さが伸び縮みするスピード
 #define CHARGE_TEX_PASS				"data/TEXTURE/ChargeCylinder.png"	// チャージシリンダーのテクスチャパス
 
-//断面情報の構造体
+//チャージシリンダー情報の構造体
 typedef struct
 {
 	D3DXVECTOR3		pos;		// 位置
@@ -51,6 +51,12 @@ void InitChargeCylinder(void)
 	//テクスチャーの読み込み
 	D3DXCreateTextureFromFile(pDevice, CHARGE_TEX_PASS, &g_pTextureChargeCylinder);
 
+	//頂点バッファの生成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * CHARGECYLINDER_ALL_VTX * NUM_CHARGE_CYLINDER, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffChargeCylinder, NULL);
+
+	//インデックスバッファの生成
+	pDevice->CreateIndexBuffer(sizeof(WORD) * CHARGECYLINDER_ALL_VTX * NUM_CHARGE_CYLINDER, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffChargeCylinder, NULL);
+
 	//チャージシリンダーの情報の初期化
 	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++)
 	{
@@ -60,76 +66,68 @@ void InitChargeCylinder(void)
 		g_ChargeCylinder[nCntCylinder].fHeight = 0.0f;
 		g_ChargeCylinder[nCntCylinder].bUse = false;
 		g_ChargeCylinder[nCntCylinder].bExtend = true;
+
+		//頂点情報の設定処理
+		SetChargeCylinderVertex(nCntCylinder);
+
+		//インデックス番号の設定処理
+		SetChargeCylinderIndex(nCntCylinder);
 	}
-
-	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * CHARGECYLINDER_ALL_VTX * NUM_CHARGE_CYLINDER, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffChargeCylinder, NULL);
-	
-	//頂点情報の設定処理
-	SetChargeCylinderVertex();
-
-	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * CHARGECYLINDER_ALL_VTX * NUM_CHARGE_CYLINDER, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffChargeCylinder, NULL);
-
-	//インデックス番号の設定処理
-	SetChargeCylinderIndex();
 }
 
 //断面の頂点情報の設定処理
-void SetChargeCylinderVertex(void)
+void SetChargeCylinderVertex(int nCntCylinder)
 {
 	VERTEX_3D *pVtx;
 
 	//頂点バッファのロック
 	g_pVtxBuffChargeCylinder->Lock(0, 0, (void**)&pVtx, 0);
 
-	Player *pPlayer = GetPlayer();
+	//対象のプレイヤー情報取得
+	Player *pPlayer = &GetPlayer()[nCntCylinder];
 
-	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++, pPlayer++)
+	//ポインターをずらす
+	pVtx += CHARGECYLINDER_ALL_VTX * nCntCylinder;
+
+	//Y軸の角度
+	float Rot = D3DX_PI;
+
+	D3DXCOLOR col = D3DXCOLOR(1.0f * pPlayer->moveGauge, 1.0f - pPlayer->moveGauge *0.3f, 1.0f - pPlayer->moveGauge *1.0f, 1.0f);
+
+	//頂点座標の設定
+	for (int nCntVtx = 0; nCntVtx <= CHARGECYLINDER_SPLIT; nCntVtx++)
 	{
-		//Y軸の角度
-		float Rot = D3DX_PI;
+		float	VtxPos_X = sinf(Rot) * g_ChargeCylinder[nCntCylinder].fRadius,	//Ｘ座標
+				VtxPos_Z = cosf(Rot) * g_ChargeCylinder[nCntCylinder].fRadius;	//Ｚ座標
+		int		nNumTopVtx = CHARGECYLINDER_SPLIT + nCntVtx + 1;		//対象の頂点の上部の頂点番号
 
-		D3DXCOLOR col = D3DXCOLOR(1.0f * pPlayer->moveGauge, 1.0f - pPlayer->moveGauge *0.3f, 1.0f - pPlayer->moveGauge *1.0f, 1.0f);
+		//原点位置と同じ高さの頂点座標を設定
+		pVtx[nCntVtx].pos = D3DXVECTOR3(VtxPos_X, 0.0f, VtxPos_Z);
 
-		//頂点座標の設定
-		for (int nCntVtx = 0; nCntVtx <= CHARGECYLINDER_SPLIT; nCntVtx++)
+		//上で設定した頂点座標の真上の頂点座標を設定
+		pVtx[nNumTopVtx].pos = D3DXVECTOR3(VtxPos_X * CHARGE_TOPPART_SPREAD, g_ChargeCylinder[nCntCylinder].fHeight, VtxPos_Z * CHARGE_TOPPART_SPREAD);
+
+		//１周したときの頂点座標
+		if (nCntVtx == CHARGECYLINDER_SPLIT)
 		{
-			float	VtxPos_X = sinf(Rot) * g_ChargeCylinder[nCntCylinder].fRadius,	//Ｘ座標
-					VtxPos_Z = cosf(Rot) * g_ChargeCylinder[nCntCylinder].fRadius;	//Ｚ座標
-			int		nNumTopVtx = CHARGECYLINDER_SPLIT + nCntVtx + 1;		//対象の頂点の上部の頂点番号
-
-			//原点位置と同じ高さの頂点座標を設定
-			pVtx[nCntVtx].pos = D3DXVECTOR3(VtxPos_X, 0.0f, VtxPos_Z);
-
-			//上で設定した頂点座標の真上の頂点座標を設定
-			pVtx[nNumTopVtx].pos = D3DXVECTOR3(VtxPos_X * CHARGE_TOPPART_SPREAD, g_ChargeCylinder[nCntCylinder].fHeight, VtxPos_Z * CHARGE_TOPPART_SPREAD);
-
-			//１周したときの頂点座標
-			if (nCntVtx == CHARGECYLINDER_SPLIT)
-			{
-				pVtx[nCntVtx].pos = pVtx[0].pos;							//最初の頂点座標を代入
-				pVtx[nNumTopVtx].pos = pVtx[CHARGECYLINDER_SPLIT + 1].pos;	//最初の上部の頂点座標を代入
-			}
-
-			//法線ベクトルの設定
-			pVtx[nCntVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pVtx[nNumTopVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-
-			//頂点カラーの設定
-			pVtx[nCntVtx].col = col;
-			pVtx[nNumTopVtx].col = col;
-
-			//テクスチャ座標の設定
-			pVtx[nCntVtx].tex = D3DXVECTOR2(nCntVtx * (CHARGECYLINDER_TEX_RESOLUTION / CHARGECYLINDER_SPLIT), 1.0f);
-			pVtx[nNumTopVtx].tex = D3DXVECTOR2(nCntVtx * (CHARGECYLINDER_TEX_RESOLUTION / CHARGECYLINDER_SPLIT), 0.0f);
-
-			//角度を　全体の角度÷分割数で割った答え分、引く
-			Rot -= ONE_LAP / CHARGECYLINDER_SPLIT;
+			pVtx[nCntVtx].pos = pVtx[0].pos;							//最初の頂点座標を代入
+			pVtx[nNumTopVtx].pos = pVtx[CHARGECYLINDER_SPLIT + 1].pos;	//最初の上部の頂点座標を代入
 		}
 
-		//1つのシリンダーの頂点数分、ポインターをずらす
-		pVtx += CHARGECYLINDER_ALL_VTX;
+		//法線ベクトルの設定
+		pVtx[nCntVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nNumTopVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+		//頂点カラーの設定
+		pVtx[nCntVtx].col = col;
+		pVtx[nNumTopVtx].col = col;
+
+		//テクスチャ座標の設定
+		pVtx[nCntVtx].tex = D3DXVECTOR2(nCntVtx * (CHARGECYLINDER_TEX_RESOLUTION / CHARGECYLINDER_SPLIT), 1.0f);
+		pVtx[nNumTopVtx].tex = D3DXVECTOR2(nCntVtx * (CHARGECYLINDER_TEX_RESOLUTION / CHARGECYLINDER_SPLIT), 0.0f);
+
+		//角度を　全体の角度÷分割数で割った答え分、引く
+		Rot -= ONE_LAP / CHARGECYLINDER_SPLIT;
 	}
 
 	//頂点バッファのアンロック
@@ -137,31 +135,30 @@ void SetChargeCylinderVertex(void)
 }
 
 //断面のインデックス番号の設定処理
-void SetChargeCylinderIndex(void)
+void SetChargeCylinderIndex(int nCntCylinder)
 {
 	WORD *pIdx;
-
 	//インデックスバッファをロックし、頂点番号へのポインタを取得
 	g_pIdxBuffChargeCylinder->Lock(0, 0, (void**)&pIdx, 0);
 
-	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++)
-	{
-		//インデックス番号データの設定
-		for (int nCntIdx = 0; nCntIdx < CHARGECYLINDER_ALL_VTX; nCntIdx++)
-		{
-			//カウンターが偶数の時
-			if (nCntIdx % EVENPARITY == NOPARITY)
-			{
-				//シリンダー上部の頂点番号を記憶
-				pIdx[nCntIdx] = nCntIdx / EVENPARITY;
-			}
+	//ポインターをずらす
+	pIdx += CHARGECYLINDER_ALL_VTX * nCntCylinder;
 
-			//カウンターが奇数の時
-			if (nCntIdx % EVENPARITY == ODDPARITY)
-			{
-				//シリンダー下部の頂点番号を記憶
-				pIdx[nCntIdx] = (nCntIdx / EVENPARITY) + ODDPARITY + CHARGECYLINDER_SPLIT;
-			}
+	//インデックス番号データの設定
+	for (int nCntIdx = 0; nCntIdx < CHARGECYLINDER_ALL_VTX; nCntIdx++)
+	{
+		//カウンターが偶数の時
+		if (nCntIdx % EVENPARITY == NOPARITY)
+		{
+			//シリンダー上部の頂点番号を記憶
+			pIdx[nCntIdx] = nCntIdx / EVENPARITY;
+		}
+
+		//カウンターが奇数の時
+		if (nCntIdx % EVENPARITY == ODDPARITY)
+		{
+			//シリンダー下部の頂点番号を記憶
+			pIdx[nCntIdx] = (nCntIdx / EVENPARITY) + ODDPARITY + CHARGECYLINDER_SPLIT;
 		}
 	}
 
@@ -204,7 +201,7 @@ void UpdateChargeCylinder(void)
 	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++)
 	{
 		//チャージシリンダーが使われている
-		if (g_ChargeCylinder[nCntCylinder].bUse)
+		if (g_ChargeCylinder[nCntCylinder].bUse == true)
 		{
 			//プレイヤーの位置に置く
 			SetChargeCylinderPos(nCntCylinder);
@@ -214,11 +211,11 @@ void UpdateChargeCylinder(void)
 
 			//シリンダーを伸び縮みさせる処理
 			ExtendChargeCylinder(nCntCylinder);
+
+			//シリンダーの頂点情報の設定処理
+			SetChargeCylinderVertex(nCntCylinder);
 		}
 	}
-
-	//シリンダーの頂点情報の設定処理
-	SetChargeCylinderVertex();
 }
 
 // プレイヤーの位置に設定する
@@ -328,7 +325,7 @@ void DrawChargeCylinder(void)
 		}
 	}
 
-	//両面カリングをON
+	//通常カリングにする
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 	//アルファテストを無効にする

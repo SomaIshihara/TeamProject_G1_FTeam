@@ -8,9 +8,9 @@
 #define _CHARGECYLINDER_H_	//2重インクルード防止のマクロを定義する
 
 //プロトタイプ宣言
-void InitChargeCylinder(void);		// 初期化処理
-void SetChargeCylinderVertex(void);	// 頂点情報の設定処理
-void SetChargeCylinderIndex(void);	// インデックス番号の設定処理
+void InitChargeCylinder(void);					// 初期化処理
+void SetChargeCylinderVertex(int nCntCylinder);	// 頂点情報の設定処理
+void SetChargeCylinderIndex(int nCntCylinder);	// インデックス番号の設定処理
 
 void UninitChargeCylinder(void);			// 終了処理
 

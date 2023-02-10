@@ -67,18 +67,20 @@ void InitGame(void)
 	InitItem();					// アイテムの初期化処理
 	InitCameraFrame();			// 画面分割の枠初期化処理
 	InitCamera(g_NumCamera);	// カメラの初期化処理
-	InitGauge();				// ゲージの初期化処理
 	InitWall();					// 壁の初期化処理
 	InitPause();				// ポーズ画面の初期化処理
 	InitParticle();				// パーティクルの初期化処理
 	{// エフェクトの初期化処理
-		InitChargeEffect();//チャージエフェクト
-		InitChargeCylinder();//チャージエフェクト(しりんだー)
+		//InitChargeEffect();//チャージエフェクト
+		//InitChargeCylinder();//チャージエフェクト(しりんだー)
 		InitAttackEffect();//攻撃エフェクト
 		InitTremorEffect();//ヒップドロップエフェクト
 	}	
 	InitScore();				// スコアの初期化
 	InitTime();					// タイマーの初期化処理
+	InitGauge();				// ゲージの初期化処理
+
+
 	SetTime(LIMIT_TIMER);		// タイマーの設定処理
 
 	SetScore(0,4);				// スコアの設定処理
@@ -112,12 +114,12 @@ void UninitGame(void)
 	UninitBonus();			// ボーナスの終了処理
 	UninitItem();			// アイテムの終了処理
 	UninitPause();			// ポーズ画面の終了処理
-	UninitGauge();			// ゲージの終了処理
+	//UninitGauge();			// ゲージの終了処理
 	UninitModel();			// モデルの終了処理
 	UninitParticle();		// パーティクルの終了処理
 	{	// エフェクトの終了処理
-		UninitChargeEffect();	//チャージエフェクト
-		UninitChargeCylinder();	//チャージエフェクト(しりんだー)
+		//UninitChargeEffect();	//チャージエフェクト
+		//UninitChargeCylinder();	//チャージエフェクト(しりんだー)
 		UninitAttackEffect();	//攻撃エフェクト
 		UninitTremorEffect();	//ヒップドロップエフェクト
 	}
@@ -151,10 +153,10 @@ void UpdateGame(void)
 		UpdateItem();			// アイテムの更新処理
 		UpdateCamera();			// カメラの更新処理
 		UpdateWall();			// 壁の更新処理
-		UpdateGauge();			// ゲージの更新処理
+		//UpdateGauge();			// ゲージの更新処理
 		{// エフェクトの更新処理
-			UpdateChargeEffect();	//チャージエフェクト
-			UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
+			//UpdateChargeEffect();	//チャージエフェクト
+			//UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
 			UpdateAttackEffect();	//攻撃エフェクト
 			UpdateTremorEffect();	//ヒップドロップエフェクト
 		}
@@ -248,8 +250,8 @@ void DrawGame(void)
 		DrawMeshFault();			// メッシュの断面描画処理
 		DrawWall();					// 壁の描画処理
 		{// エフェクトの描画処理
-			DrawChargeEffect();		//チャージエフェクト
-			DrawChargeCylinder();	//チャージエフェクト(しりんだー)
+			//DrawChargeEffect();		//チャージエフェクト
+			//DrawChargeCylinder();	//チャージエフェクト(しりんだー)
 			DrawAttackEffect();		//攻撃エフェクト
 			DrawTremorEffect();		//ヒップドロップエフェクト
 		}	
@@ -257,7 +259,7 @@ void DrawGame(void)
 		DrawPlayer();				// プレイヤーの描画処理
 		DrawBonus();				// ボーナスの描画処理
 		DrawItem();					// アイテムの描画処理
-		DrawGauge();				// ゲージの描画処理
+		//DrawGauge();				// ゲージの描画処理
 		DrawScore();				// スコアの描画処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
 		DrawTime();					//タイマーの描画処理
