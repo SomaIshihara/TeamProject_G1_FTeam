@@ -197,7 +197,7 @@ void DrawParticle(void)
 //======================================================================
 //パーティクルのセット処理
 //======================================================================
-void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PARTICLE_OBJECT nObject, int AmoChan)
+void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PARTICLE_OBJECT nObject)
 {
 	VERTEX_3D *pVtx;
 	int ParticleCount = 0;
@@ -224,18 +224,15 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PART
 			//オブジェクト種類の設定
 			g_aParticle[nCntParticle].nObject = nObject;
 
-			//変化量の設定
-			g_aParticle[nCntParticle].AmoChan = AmoChan;
-
 			switch (nType)
 			{
 				//通常のパーティクル
 			case PARTICLE_NORMAL:
 
 				//移動量の設定
-				g_aParticle[nCntParticle].move.x = sinf((float)(rand() % 629 - 314) / 100.0f) * (float)(rand() % AmoChan - (AmoChan *0.5)) * 1.0f;
-				g_aParticle[nCntParticle].move.y = cosf((float)(rand() % 629 - 314) / 100.0f) * (float)(rand() % AmoChan - (AmoChan *0.5)) * 1.0f;
-				g_aParticle[nCntParticle].move.z = cosf((float)(rand() % 629 - 314) / 100.0f) * (float)(rand() % AmoChan - (AmoChan *0.5)) * 1.0f;
+				g_aParticle[nCntParticle].move.x = sinf((float)(rand() % 629 - 314) / 100.0f) * (float)(rand() % 8 - 4) * 1.0f;
+				g_aParticle[nCntParticle].move.y = cosf((float)(rand() % 629 - 314) / 100.0f) * (float)(rand() % 8 - 4) * 1.0f;
+				g_aParticle[nCntParticle].move.z = cosf((float)(rand() % 629 - 314) / 100.0f) * (float)(rand() % 8 - 4) * 1.0f;
 
 				//寿命の設定
 				g_aParticle[nCntParticle].nLife = (rand() % 30 - 15) + nLife;
@@ -247,9 +244,9 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PART
 				//吸収のパーティクル
 			case PARTICLE_ACSORPTION:
 
-				g_aParticle[nCntParticle].pos.x = g_aParticle[nCntParticle].pos.x + sinf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % AmoChan * 0.1f + AmoChan) * (AmoChan * 0.15f);
-				g_aParticle[nCntParticle].pos.y = g_aParticle[nCntParticle].pos.y + cosf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % AmoChan * 0.1f + AmoChan) * (AmoChan * 0.15f);
-				g_aParticle[nCntParticle].pos.z = g_aParticle[nCntParticle].pos.z + cosf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % AmoChan * 0.1f + AmoChan) * (AmoChan * 0.15f);
+				g_aParticle[nCntParticle].pos.x = g_aParticle[nCntParticle].pos.x + sinf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % 2 + 20) *3.0f;
+				g_aParticle[nCntParticle].pos.y = g_aParticle[nCntParticle].pos.y + cosf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % 2 + 20) *3.0f;
+				g_aParticle[nCntParticle].pos.z = g_aParticle[nCntParticle].pos.z + cosf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % 2 + 20) *3.0f;
 
 				//パーティクルの移動方向設定
 				DirectionParticle(nCntParticle);
@@ -386,9 +383,9 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 		//******************//
 	case PARTICLE_ACSORPTION:
 
-		g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.3f;
-		g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.3f;
-		g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.3f;
+		g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.2f;
+		g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.2f;
+		g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.2f;
 
 		//**********************//
 		//パーティクルの種類処理//
@@ -499,63 +496,63 @@ void DirectionParticle(int nCount)
 
 	if (posTemp.x > g_aParticle[nCount].pos.x)
 	{
-		g_aParticle[nCount].move.x = g_aParticle[nCount].AmoChan * 0.5f;
+		g_aParticle[nCount].move.x = 10;
 
 		if (posTemp.z > g_aParticle[nCount].pos.z)
 		{
-			g_aParticle[nCount].move.z = g_aParticle[nCount].AmoChan * 0.5f;
+			g_aParticle[nCount].move.z = 10;
 
 			if (posTemp.y > g_aParticle[nCount].pos.y)
 			{
-				g_aParticle[nCount].move.y = g_aParticle[nCount].AmoChan * 0.5f;
+				g_aParticle[nCount].move.y = 10;
 			}
 			else if (posTemp.y < g_aParticle[nCount].pos.y)
 			{
-				g_aParticle[nCount].move.y = -(g_aParticle[nCount].AmoChan * 0.5f);
+				g_aParticle[nCount].move.y = -10;
 			}
 		}
 		else if (posTemp.z < g_aParticle[nCount].pos.z)
 		{
-			g_aParticle[nCount].move.z = -(g_aParticle[nCount].AmoChan * 0.5f);
+			g_aParticle[nCount].move.z = -10;
 
 			if (posTemp.y > g_aParticle[nCount].pos.y)
 			{
-				g_aParticle[nCount].move.y = g_aParticle[nCount].AmoChan * 0.5f;
+				g_aParticle[nCount].move.y = 10;
 			}
 			else if (posTemp.y < g_aParticle[nCount].pos.y)
 			{
-				g_aParticle[nCount].move.y = -(g_aParticle[nCount].AmoChan * 0.5f);
+				g_aParticle[nCount].move.y = -10;
 			}
 		}
 	}
 	else if (posTemp.x < g_aParticle[nCount].pos.x)
 	{
-		g_aParticle[nCount].move.x = -(g_aParticle[nCount].AmoChan * 0.5f);
+		g_aParticle[nCount].move.x = -10;
 
 		if (posTemp.z > g_aParticle[nCount].pos.z)
 		{
-			g_aParticle[nCount].move.z = g_aParticle[nCount].AmoChan * 0.5f;
+			g_aParticle[nCount].move.z = 10;
 
 			if (posTemp.y > g_aParticle[nCount].pos.y)
 			{
-				g_aParticle[nCount].move.y = g_aParticle[nCount].AmoChan * 0.5f;
+				g_aParticle[nCount].move.y = 10;
 			}
 			else if (posTemp.y < g_aParticle[nCount].pos.y)
 			{
-				g_aParticle[nCount].move.y = -(g_aParticle[nCount].AmoChan * 0.5f);
+				g_aParticle[nCount].move.y = -10;
 			}
 		}
 		else if (posTemp.z < g_aParticle[nCount].pos.z)
 		{
-			g_aParticle[nCount].move.z = -g_aParticle[nCount].AmoChan * 0.5f;
+			g_aParticle[nCount].move.z = -10;
 
 			if (posTemp.y > g_aParticle[nCount].pos.y)
 			{
-				g_aParticle[nCount].move.y = g_aParticle[nCount].AmoChan * 0.5f;
+				g_aParticle[nCount].move.y = 10;
 			}
 			else if (posTemp.y < g_aParticle[nCount].pos.y)
 			{
-				g_aParticle[nCount].move.y = -(g_aParticle[nCount].AmoChan * 0.5f);
+				g_aParticle[nCount].move.y = -10;
 			}
 		}
 	}

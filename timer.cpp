@@ -129,7 +129,7 @@ void UninitTime(void)
 void UpdateTime(void)
 {
 	//ボーナスの出現処理
-	if (g_aTime.nTime <= 90)
+	if (g_aTime.nTime <= 40)
 	{
 		BonusLimit--;
 

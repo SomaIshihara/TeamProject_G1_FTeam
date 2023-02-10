@@ -15,7 +15,7 @@
 //****************************//
 //		　 マクロ定義		  //
 //****************************//
-#define INIT_POS_Y			(50.0f)	//初期のY位置
+#define INIT_POS_Y			(200.0f)	//初期のY位置
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
 #define RATIO_MOVE			(100.0f)	//移動量の割合
 #define COLLISION_SIZE_XZ	(60.0f)	//縦横の当たり判定サイズ
@@ -138,8 +138,8 @@ void UpdateBonus(void)
 		{//0になったとき
 		
 			//パーティクルのセット
-			SetParticle(g_Bonus.pos, 12.0f, 15, PARTICLE_NORMAL,OBJECT_BONUS,8);
-			SetParticle(g_Bonus.pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_BONUS,20);
+			SetParticle(g_Bonus.pos, 12.0f, 15, PARTICLE_NORMAL,OBJECT_BONUS);
+			SetParticle(g_Bonus.pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_BONUS);
 
 			//リミットの再設定
 			g_ParticleCounter = PARTICLE_LIMIT_BONUS;
