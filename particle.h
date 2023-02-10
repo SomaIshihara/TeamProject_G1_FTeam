@@ -6,7 +6,7 @@
 
 #define MAX_PARTICLE			(8192)	//パーティクルの最大数
 #define NORMAL_PARTICLE			(16)	//通常パーティクルの発生数
-#define ACSORPTION_PARTICLE		(4)	//吸収パーティクルの発生数
+#define ACSORPTION_PARTICLE		(16)	//吸収パーティクルの発生数
 
 //パーティクルの種類
 typedef enum
@@ -35,6 +35,7 @@ typedef struct
 	D3DXVECTOR3 move;	//移動量
 	int nLife;
 	int nLifeTemp;
+	int AmoChan;
 	float fRadius;
 	PARTICLE nType;
 	PARTICLE_OBJECT nObject;
@@ -47,7 +48,7 @@ void InitParticle(void);
 void UninitParticle(void);
 void UpdateParticle(void);
 void DrawParticle(void);
-void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PARTICLE_OBJECT nObject);
+void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PARTICLE_OBJECT nObject,int AmoChan);
 void StateParticle(int nCount,VERTEX_3D *pVtx);
 void DirectionParticle(int nCount);
 
