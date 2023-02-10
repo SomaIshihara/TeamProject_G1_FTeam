@@ -51,15 +51,9 @@ void InitChargeCylinder(void)
 	//テクスチャーの読み込み
 	D3DXCreateTextureFromFile(pDevice, CHARGE_TEX_PASS, &g_pTextureChargeCylinder);
 
-	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * CHARGECYLINDER_ALL_VTX * NUM_CHARGE_CYLINDER, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffChargeCylinder, NULL);
-
-	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * CHARGECYLINDER_ALL_VTX * NUM_CHARGE_CYLINDER, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffChargeCylinder, NULL);
-
+	//チャージシリンダーの情報の初期化
 	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++)
 	{
-		//チャージシリンダーの情報の初期化
 		g_ChargeCylinder[nCntCylinder].pos = ZERO_SET;
 		g_ChargeCylinder[nCntCylinder].rot = ZERO_SET;
 		g_ChargeCylinder[nCntCylinder].fRadius = 0.0f;
@@ -68,8 +62,14 @@ void InitChargeCylinder(void)
 		g_ChargeCylinder[nCntCylinder].bExtend = true;
 	}
 
+	//頂点バッファの生成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * CHARGECYLINDER_ALL_VTX * NUM_CHARGE_CYLINDER, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffChargeCylinder, NULL);
+	
 	//頂点情報の設定処理
 	SetChargeCylinderVertex();
+
+	//インデックスバッファの生成
+	pDevice->CreateIndexBuffer(sizeof(WORD) * CHARGECYLINDER_ALL_VTX * NUM_CHARGE_CYLINDER, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffChargeCylinder, NULL);
 
 	//インデックス番号の設定処理
 	SetChargeCylinderIndex();
@@ -174,13 +174,6 @@ void SetChargeCylinderIndex(void)
 //--------------------------------------------------------------------------------------------------------
 void UninitChargeCylinder(void)
 {
-	//インデックスの破棄
-	if (g_pIdxBuffChargeCylinder != NULL)
-	{
-		g_pIdxBuffChargeCylinder->Release();
-		g_pIdxBuffChargeCylinder = NULL;
-	}
-
 	//テクスチャの破棄
 	if (g_pTextureChargeCylinder != NULL)
 	{
@@ -193,6 +186,13 @@ void UninitChargeCylinder(void)
 	{
 		g_pVtxBuffChargeCylinder->Release();
 		g_pVtxBuffChargeCylinder = NULL;
+	}
+
+	//インデックスの破棄
+	if (g_pIdxBuffChargeCylinder != NULL)
+	{
+		g_pIdxBuffChargeCylinder->Release();
+		g_pIdxBuffChargeCylinder = NULL;
 	}
 }
 
@@ -214,11 +214,11 @@ void UpdateChargeCylinder(void)
 
 			//シリンダーを伸び縮みさせる処理
 			ExtendChargeCylinder(nCntCylinder);
-
-			//シリンダーの頂点情報の設定処理
-			SetChargeCylinderVertex();
 		}
 	}
+
+	//シリンダーの頂点情報の設定処理
+	SetChargeCylinderVertex();
 }
 
 // プレイヤーの位置に設定する
