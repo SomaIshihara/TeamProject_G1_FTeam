@@ -18,7 +18,7 @@
 #define INIT_POS_Y			(200.0f)	//初期のY位置
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
 #define RATIO_MOVE			(100.0f)	//移動量の割合
-#define COLLISION_SIZE_XZ	(200.0f)	//縦横の当たり判定サイズ
+#define COLLISION_SIZE_XZ	(60.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(15.0f)		//高さの当たり判定サイズ
 
 #define DESPAWN_LIMIT_BONUS (1200)		//ボーナスが消えるまでのリミット
