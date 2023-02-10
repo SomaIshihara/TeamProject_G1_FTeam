@@ -12,6 +12,15 @@
 #define MESHFAULT_SPLIT				(32)		//背景の頂点数
 #define MESHFAULT_TEX_RESOLUTION	(4.0f)		//背景の解像度
 
+//断面情報の構造体
+typedef struct
+{
+	D3DXVECTOR3		pos;		//位置
+	D3DXVECTOR3		rot;		//向き
+	D3DXMATRIX		mtxWorld;	//ワールドマトリックス
+	float			fRadius;	//半径の大きさ
+}Fault;
+
 //プロトタイプ宣言
 void InitMeshFault(void);
 void SetMeshFaultVertex(void);

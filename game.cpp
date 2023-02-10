@@ -52,6 +52,7 @@ void InitGame(void)
 	g_nUseContNum = SetUseController();		// コントローラーの使用設定
 	InitFile();								// ファイルの初期化処理（モデルビューワーファイル読み込み前に行うこと！）
 	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
+	LoadModelOriginalFile("data\\originalmodel.txt");	// モデルオリジナルファイル読み込み
 	g_NumCamera = NumCamera_ONLY;			// 初期カメラの設定（現在はPlayer0を注視点としたカメラ　　画面分割ナシ）
 
 	InitBg();					// 背景の初期化処理
@@ -183,17 +184,38 @@ void UpdateGame(void)
 
 	else
 	{
-		//フォトモードOFF
-		if (g_bPhotoMode == false)
-		{
-			//ポーズ画面の更新処理
-			UpdatePause();
-		}
+		//ポーズ画面の更新処理
+		UpdatePause();
 
-		//カメラだけは動かせる
-		else
+		//フォトモードON
+		if (g_bPhotoMode)
 		{
 			UpdateCamera();
+
+			//1フレームだけ更新する
+			if (GetKeyboardTrigger(DIK_RIGHT))
+			{
+				UpdateBg();				// 背景の更新処理
+				UpdateLight();			// ライトの更新処理
+				UpdateMeshfield();		// ステージ更新処理
+				UpdateMeshCylinder();	// メッシュシリンダー更新処理
+				UpdateMeshDome();		// メッシュドーム更新処理
+				UpdateMeshFault();		// メッシュの断面更新処理
+				UpdatePlayer();			// プレイヤーの更新処理
+				UpdateBonus();			// ボーナスの更新処理
+				UpdateItem();			// アイテムの更新処理
+				UpdateWall();			// 壁の更新処理
+				UpdateGauge();			// ゲージの更新処理
+				{// エフェクトの更新処理
+					UpdateChargeEffect();	//チャージエフェクト
+					UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
+					UpdateAttackEffect();	//攻撃エフェクト
+					UpdateTremorEffect();	//ヒップドロップエフェクト
+				}
+				UpdateParticle();	// パーティクルの更新処理
+				UpdateScore();		//スコアの更新処理
+				UpdateTime();		//タイマーの更新処理
+			}
 		}
 	}
 
@@ -201,7 +223,7 @@ void UpdateGame(void)
 	CheckUseController(CHECKMODE_DISCONPAUSE);
 
 	//フォトモード切替
-	if (GetKeyboardTrigger(DIK_F9) && g_bPause)
+	if (GetKeyboardTrigger(DIK_F9))
 	{
 		g_bPhotoMode = g_bPhotoMode ? false : true;
 	}
