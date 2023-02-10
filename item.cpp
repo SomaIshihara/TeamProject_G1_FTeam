@@ -76,7 +76,7 @@ void InitItem(void)
 		g_Item[nCntItem].move = ZERO_SET;
 		g_Item[nCntItem].DespawnLimit = 0;
 		g_Item[nCntItem].fWidth = COLLISION_SIZE_XZ;
-		g_Item[nCntItem].fAlpha = 1.0f;					//透明度の設定
+		g_Item[nCntItem].fAlpha = 0.2f;					//透明度の設定
 		g_Item[nCntItem].buse = false;
 	}
 
@@ -116,7 +116,8 @@ void UpdateItem(void)
 	{
 		if (g_Item[nCntItem].buse == true)
 		{
-		
+			g_Item[nCntItem].rot.y += 0.01f;
+			g_Item[nCntItem].rot.x += 0.001f;
 		}
 	}
 }
@@ -159,6 +160,8 @@ void DrawItem(void)
 
 			for (int nCntMat = 0; nCntMat < (int)g_dwNumMatItem; nCntMat++)
 			{
+				pMat[nCntMat].MatD3D.Emissive;
+
 				//マテリアルの色設定
 				pMat[nCntMat].MatD3D.Diffuse.a = g_Item[nCntItem].fAlpha;
 
@@ -303,7 +306,7 @@ void CollisionIP(int nPlayerNum)
 		
 				//使われていない状態にする
 				g_Item[nCntItem].RespawnDelay = 3;
-				g_Item[nCntItem].fAlpha = 1.0f;
+				g_Item[nCntItem].fAlpha = 0.2f;
 				g_Item[nCntItem].buse = false;
 			}
 		}
