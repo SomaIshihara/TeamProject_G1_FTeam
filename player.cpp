@@ -17,6 +17,7 @@
 #include "color.h"
 #include "Gauge.h"
 #include "sound.h"
+#include "charge_cylinder.h"
 #include "charge_effect.h"
 #include "attack_effect.h"
 #include "tremor_effect.h"
@@ -610,6 +611,7 @@ void ChargePlayer(int nChargePlayer)
 	}
 
 	SetChargeEffect(g_aPlayer[nChargePlayer].pos, nChargePlayer);
+	SetChargeCylinder(g_aPlayer[nChargePlayer].pos, nChargePlayer);
 }
 
 //========================
