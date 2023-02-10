@@ -7,17 +7,21 @@
 #include "main.h"
 #include "charge_cylinder.h"
 #include "color.h"
+#include "player.h"
+#include "input.h"
 
 //マクロ定義
-#define NUM_CHARGE_CYLINDER			(4)		//シリンダー数
+#define NUM_CHARGE_CYLINDER				(4)		//シリンダー数
+#define CHARGE_CYLINDER_MOVE			(3.0f)		//エフェクトのアタックタイプの変化量
+#define CHARGE_CYLINDER_CLEAACCEL		(0.1f)		//エフェクトの透明加速度
 
 //断面情報の構造体
 typedef struct
 {
 	D3DXVECTOR3		pos;		//位置
 	D3DXVECTOR3		rot;		//向き
-	D3DXMATRIX		mtxWorld;	//ワールドマトリックス
 	float			fRadius;	//半径の大きさ
+	float			fAlpha;		//透明度	
 	bool			bUse;		//使われているかどうか
 }ChargeCylinder;
 
@@ -170,7 +174,68 @@ void UninitChargeCylinder(void)
 //--------------------------------------------------------------------------------------------------------
 void UpdateChargeCylinder(void)
 {
+	if (GetKeyboardPress(DIK_F) == true)
+	{
+		for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_CYLINDER; nCntEffect++)
+		{
+			SetChargeCylinder(g_ChargeCylinder[nCntEffect].pos, nCntEffect);
+		}
+	}
 
+	SetChargeCylinderPos();
+
+	//エフェクトのサイズ更新  (頂点座標の更新もするので、このUpdate関数の最後が望ましい)
+	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_CYLINDER; nCntEffect++)
+	{
+		UpdateChargeCylinderSize(nCntEffect);
+	}
+}
+
+//エフェクトのサイズ更新処理
+void UpdateChargeCylinderSize(int nEffect)
+{
+	if (g_ChargeCylinder[nEffect].fRadius <= CHARGESYLINDER_WIDTH_MAX)
+	{
+		//エフェクトの大きさを拡大
+		g_ChargeCylinder[nEffect].fRadius += CHARGE_CYLINDER_MOVE;
+
+	}
+
+	//エフェクトの大きさが規定値になった
+	if (g_ChargeCylinder[nEffect].fRadius >= CHARGESYLINDER_WIDTH)
+	{
+		g_ChargeCylinder[nEffect].fAlpha -= CHARGE_CYLINDER_CLEAACCEL;
+
+		if (g_ChargeCylinder[nEffect].fAlpha <= 0.0f)
+		{
+			//エフェクト本来の大きさに直す
+			g_ChargeCylinder[nEffect].fRadius = CHARGESYLINDER_WIDTH;
+			g_ChargeCylinder[nEffect].bUse = false;
+		}
+
+	}
+
+	VERTEX_3D *pVtx;							//頂点情報へのポインタ
+
+												//頂点バッファをロックし頂点情報へのポインタを取得
+	g_pVtxBuffChargeCylinder->Lock(0, 0, (void**)&pVtx, 0);
+
+	//ポインターを合わせる
+	pVtx += VTX_MAX * nEffect;
+
+	//頂点座標の設定
+	pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_ChargeCylinder[nEffect].fRadius, 0.0f, +g_ChargeCylinder[nEffect].fRadius);
+	pVtx[VTX_RI_UP].pos = D3DXVECTOR3(+g_ChargeCylinder[nEffect].fRadius, 0.0f, +g_ChargeCylinder[nEffect].fRadius);
+	pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_ChargeCylinder[nEffect].fRadius, 0.0f, -g_ChargeCylinder[nEffect].fRadius);
+	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_ChargeCylinder[nEffect].fRadius, 0.0f, -g_ChargeCylinder[nEffect].fRadius);
+
+	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_ChargeCylinder[nEffect].fAlpha);
+	pVtx[VTX_RI_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_ChargeCylinder[nEffect].fAlpha);
+	pVtx[VTX_LE_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_ChargeCylinder[nEffect].fAlpha);
+	pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_ChargeCylinder[nEffect].fAlpha);
+
+	//頂点バッファをアンロックする
+	g_pVtxBuffChargeCylinder->Unlock();
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -180,6 +245,9 @@ void DrawChargeCylinder(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	D3DXMATRIX mtxRot, mtxTrans;
+
+	//両面カリングをON
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&g_mtxWorldChargeCylinder);
@@ -210,5 +278,39 @@ void DrawChargeCylinder(void)
 		pDevice->SetTexture(0, g_pTextureChargeCylinder);
 
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (CHARGESYLINDER_SPLIT * 2 + 2), 0, (CHARGESYLINDER_SPLIT * 2 + 2));
+	}
+}
+
+//エフェクトの位置設定
+void SetChargeCylinderPos()
+{
+	Player *pPlayer = GetPlayer();
+
+	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_CYLINDER; nCntEffect++, pPlayer++)
+	{
+		//対象のエフェクトが使われている
+		if (g_ChargeCylinder[nCntEffect].bUse == true)
+		{
+			//エフェクトの位置をプレイヤーの位置にする
+			g_ChargeCylinder[nCntEffect].pos = pPlayer->pos;
+		}
+
+	}
+}
+
+//エフェクトの設定処理
+void SetChargeCylinder(D3DXVECTOR3 pos, int nCntType)
+{
+	for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_CYLINDER; nCntEffect++)
+	{
+		//対象のエフェクトが使われていない
+		if (g_ChargeCylinder[nCntType].bUse == false)
+		{
+			g_ChargeCylinder[nCntType].fRadius = CHARGESYLINDER_WIDTH;		//サイズを初期化
+
+			g_ChargeCylinder[nCntType].fAlpha = 1.0f;		//透明度
+			g_ChargeCylinder[nCntType].bUse = true;		//使われている状態に
+			break;
+		}
 	}
 }
