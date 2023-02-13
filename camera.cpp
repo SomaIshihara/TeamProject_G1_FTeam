@@ -19,8 +19,8 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 //視点情報
 #define POSV_ROTSPEED	(0.05f)		//視点の回転速度
 #define POSV_SPEED		(10.0f)		//視点の移動速度
-#define POSV_ADD		(100)		//視点の上下移動
-#define POSV_DISTANCE	(100)		//視点の距離
+#define POSR_ADD		(3.0f)		//注視点の上下移動
+#define POSV_DISTANCE	(100.0f)	//視点の距離
 #define POSV_WIDTH		(0.0f)		//視点の幅
 #define POSV_HEIGHT		(1050.0f)	//視点の高さ
 #define POSV_DEPTH		(1000.0f)	//視点の奥行き
@@ -111,6 +111,16 @@ void UpdateCamera(void)
 	if (GetKeyboardTrigger(DIK_F4))
 	{
 		g_bChase = g_bChase ? false : true;
+
+		//追従がOFF
+		if (g_bChase == false)
+		{
+			//注視点を０にする
+			for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
+			{
+				g_Camera[nCntCamera].posR = ZERO_SET;
+			}
+		}
 	}
 
 	//３人称　ON / OFF 切り替え
@@ -292,6 +302,9 @@ void Set_NumCamera(NumCamera type)
 void MoveCamera(int nCntCamera)
 {
 #ifdef _DEBUG
+	//----------------------
+	//		視点の移動	
+	//----------------------
 	//視点の上下
 	if (GetKeyboardPress(DIK_T) == true)
 	{
@@ -320,6 +333,19 @@ void MoveCamera(int nCntCamera)
 	if (GetKeyboardPress(DIK_C) == true)
 	{
 		g_Camera[nCntCamera].rot.y += POSV_ROTSPEED;
+	}
+
+	//------------------------
+	//		注視点の移動	
+	//------------------------
+	//注視点の上下
+	if (GetKeyboardPress(DIK_I) == true)
+	{
+		g_Camera[nCntCamera].posR.y += POSR_ADD;
+	}
+	if (GetKeyboardPress(DIK_K) == true)
+	{
+		g_Camera[nCntCamera].posR.y -= POSR_ADD;
 	}
 #endif // _DEBUG
 
@@ -376,13 +402,6 @@ void SetPosRCamera(int nCntCamera)
 			//3人称視点設定
 			TPS_ChaseCamera(nCntCamera, pPlayer[nCntCamera].rot);
 		}
-	}
-
-	//追従OFF
-	else
-	{
-		//原点を見る
-		g_Camera[nCntCamera].posR = ZERO_SET;
 	}
 }
 
