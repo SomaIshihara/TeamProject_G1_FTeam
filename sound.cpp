@@ -20,6 +20,7 @@ typedef struct
 	char *pFilename;	// ファイル名
 	int nCntLoop;		// ループカウント
 	float Volume;		// ボリューム
+	bool bPlay;			//再生するかどうか
 } SOUNDINFO;
 
 //*****************************************************************************
@@ -40,13 +41,25 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 // サウンドの情報
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 {
-	{ "data/SE/Uribou.wav",			SOUND_ONCE, 1.0f },		// コントローラー接続SE
-	{ "data/SE/Title_Decide.wav",	SOUND_ONCE, 0.6f },		// タイトルの決定SE
-	{ "data/SE/Collision.wav",		SOUND_ONCE, 0.6f },		// プレイヤー同士の衝突音SE
-	{ "data/SE/Energy.wav",			SOUND_ONCE, 0.6f },		// プレイヤー1のゲージ充填音
-	{ "data/SE/Energy.wav",			SOUND_ONCE, 0.6f },		// プレイヤー2のゲージ充填音
-	{ "data/SE/Energy.wav",			SOUND_ONCE, 0.6f },		// プレイヤー3のゲージ充填音
-	{ "data/SE/Energy.wav",			SOUND_ONCE, 0.6f },		// プレイヤー4のゲージ充填音
+	{ "data/SOUND/BGM/Title.wav",				SOUND_LOOP, 0.5f,true },		// タイトル音
+	{ "data/SOUND/BGM/Tutorial.wav",			SOUND_LOOP, 0.5f,true },		// チュートリアル音
+	{ "data/SOUND/BGM/Game000.wav",				SOUND_LOOP, 0.5f,true },		// ゲーム音
+	{ "data/SOUND/BGM/Result.wav",				SOUND_LOOP, 0.5f,true },		// リザルト音
+	{ "data/SOUND/SE/Uribou.wav",				SOUND_ONCE, 0.5f,true },		// コントローラー接続SE
+	{ "data/SOUND/SE/Title_Decide.wav",			SOUND_ONCE, 0.6f,true },		// タイトルの決定SE
+	{ "data/SOUND/SE/Collision.wav",			SOUND_ONCE, 0.6f,true },		// プレイヤー同士の衝突音SE
+	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー1のゲージ充填音
+	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー2のゲージ充填音
+	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー3のゲージ充填音
+	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー4のゲージ充填音
+	{ "data/SOUND/SE/Drop000.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤーの落下音
+	{ "data/SOUND/SE/GrassDash000.wav",			SOUND_ONCE, 0.6f,true },		// プレイヤーのダッシュ音
+	{ "data/SOUND/SE/HipDrop_Attack_2.wav",		SOUND_ONCE, 0.6f,true },		// プレイヤーのヒップドロップ音
+	{ "data/SOUND/SE/Jamp001.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤーのジャンプ音
+	{ "data/SOUND/SE/PauseDecision000.wav",		SOUND_ONCE, 0.6f,true },		// ポーズの決定音
+	{ "data/SOUND/SE/PauseSelection000.wav",	SOUND_ONCE, 0.6f,true },		// ポーズの選択音
+	{ "data/SOUND/SE/PauseTransition000.wav",	SOUND_ONCE, 0.6f,true },		// ポーズの遷移音
+	{ "data/SOUND/SE/Roar000.wav",				SOUND_ONCE, 0.6f,true },		// ポーズの咆哮音
 };
 
 //=============================================================================
@@ -233,36 +246,39 @@ void UninitSound(void)
 //=============================================================================
 HRESULT PlaySound(SOUND_LABEL label)
 {
-	XAUDIO2_VOICE_STATE xa2state;
-	XAUDIO2_BUFFER buffer;
+	if (g_aSoundInfo[label].bPlay == true)
+	{
+		XAUDIO2_VOICE_STATE xa2state;
+		XAUDIO2_BUFFER buffer;
 
-	// バッファの値設定
-	memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
-	buffer.AudioBytes = g_aSizeAudio[label];
-	buffer.pAudioData = g_apDataAudio[label];
-	buffer.Flags = XAUDIO2_END_OF_STREAM;
-	buffer.LoopCount = g_aSoundInfo[label].nCntLoop;
+		// バッファの値設定
+		memset(&buffer, 0, sizeof(XAUDIO2_BUFFER));
+		buffer.AudioBytes = g_aSizeAudio[label];
+		buffer.pAudioData = g_apDataAudio[label];
+		buffer.Flags = XAUDIO2_END_OF_STREAM;
+		buffer.LoopCount = g_aSoundInfo[label].nCntLoop;
 
-	// 状態取得
-	g_apSourceVoice[label]->GetState(&xa2state);
+		// 状態取得
+		g_apSourceVoice[label]->GetState(&xa2state);
 
-	//音量調整
-	g_apSourceVoice[label]->SetVolume(g_aSoundInfo[label].Volume);
+		//音量調整
+		g_apSourceVoice[label]->SetVolume(g_aSoundInfo[label].Volume);
 
-	if (xa2state.BuffersQueued != 0)
-	{// 再生中
-	 // 一時停止
-		g_apSourceVoice[label]->Stop(0);
+		if (xa2state.BuffersQueued != 0)
+		{// 再生中
+		 // 一時停止
+			g_apSourceVoice[label]->Stop(0);
 
-		// オーディオバッファの削除
-		g_apSourceVoice[label]->FlushSourceBuffers();
+			// オーディオバッファの削除
+			g_apSourceVoice[label]->FlushSourceBuffers();
+		}
+
+		// オーディオバッファの登録
+		g_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
+
+		// 再生
+		g_apSourceVoice[label]->Start(0);
 	}
-
-	// オーディオバッファの登録
-	g_apSourceVoice[label]->SubmitSourceBuffer(&buffer);
-
-	// 再生
-	g_apSourceVoice[label]->Start(0);
 
 	return S_OK;
 }
