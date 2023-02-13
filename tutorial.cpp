@@ -9,6 +9,7 @@ Author:平澤詩苑
 #include "fade.h"
 #include "input.h"
 #include "color.h"
+#include "sound.h"
 //#include "sound.h"
 
 //マクロ定義
@@ -23,6 +24,8 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTutorial = NULL;	//頂点バッファへのポインタ
 //------------------------------------------------
 void InitTutorial(void)
 {
+	PlaySound(SOUND_LABEL_BGM_TUTORIAL);
+
 	//デバイス取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
@@ -88,7 +91,7 @@ void UninitTutorial(void)
 	}
 
 	//タイトルBGM停止
-	//StopSound(SOUND_LABEL_TITLEBGM);
+	StopSound(SOUND_LABEL_BGM_TUTORIAL);
 }
 
 //------------------------------------------------

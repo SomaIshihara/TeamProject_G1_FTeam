@@ -32,6 +32,7 @@ Author:•½àV‰‘
 #include "tremor_effect.h"
 #include "meshfault.h"
 #include "charge_cylinder.h"
+#include "sound.h"
 //#include "sound.h"
 
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
@@ -49,6 +50,8 @@ bool		g_bPhotoMode;			// ƒtƒHƒgƒ‚[ƒhØ‘Ö		true:ƒ|[ƒY‰æ–Ê”ñ•\¦	false:ƒ{[ƒY‰æ–
 //------------------------------------------------
 void InitGame(void)
 {
+	PlaySound(SOUND_LABEL_BGM_GAME);
+
 	g_nUseContNum = SetUseController();		// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
 	InitFile();								// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
 	LoadModelViewerFile("data\\model.txt");	// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
@@ -127,8 +130,8 @@ void UninitGame(void)
 	UninitCameraFrame();// ‰æ–Ê•ªŠ„‚Ì˜gI—¹ˆ—
 	UninitTime();		//ƒ^ƒCƒ}[‚ÌI—¹ˆ—i‚±‚±‚Í‡”Ô‚Í–â‚í‚È‚¢j
 
-						//ƒQ[ƒ€BGM’â~
-						//StopSound(SOUND_LABEL_GAMEBGM);
+	//ƒQ[ƒ€BGM’â~
+	StopSound(SOUND_LABEL_BGM_GAME);
 }
 
 //------------------------------------------------
@@ -174,6 +177,8 @@ void UpdateGame(void)
 			{
 				//‰½”Ô–Ú‚ÌƒQ[ƒ€ƒpƒbƒh‚©•Û‘¶‚·‚é
 				g_numGamePad = nCntPause;
+
+				PlaySound(SOUND_LABEL_SE_PAUSE_DECISION);
 
 				//ƒ|[ƒYó‘Ô‚É‚·‚é
 				g_bPause = true;

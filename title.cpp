@@ -43,6 +43,8 @@ const char *c_apTitleTexName[NUM_TITLE_TEX] = {
 //------------------------------------------------
 void InitTitle(void)
 {
+	PlaySound(SOUND_LABEL_BGM_TITLE);
+
 	//デバイスへのポインタ + 取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
@@ -149,6 +151,8 @@ void UninitTitle(void)
 		g_pVtxBuffTitle->Release();
 		g_pVtxBuffTitle = NULL;
 	}
+
+	StopSound(SOUND_LABEL_BGM_TITLE);
 }
 
 //------------------------------------------------

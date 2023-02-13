@@ -263,6 +263,7 @@ void UpdatePlayer(void)
 					{//Xボタンが離された
 						//プレイヤーのダッシュ処理
 						DashPlayer(nCntPlayer);
+					
 					}
 				}
 				else
@@ -619,6 +620,8 @@ void ChargePlayer(int nChargePlayer)
 //========================
 void DashPlayer(int nDashPlayer)
 {
+	PlaySound(SOUND_LABEL_SE_GRASSDASH);
+
 	//進行方向の設定
 	g_aPlayer[nDashPlayer].move.x = -sinf(g_aPlayer[nDashPlayer].rot.y) * g_aPlayer[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
 	g_aPlayer[nDashPlayer].move.z = -cosf(g_aPlayer[nDashPlayer].rot.y) * g_aPlayer[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
@@ -631,6 +634,8 @@ void DashPlayer(int nDashPlayer)
 //========================
 void HipDropPlayer(int nHipDropPlayer)
 {
+	PlaySound(SOUND_LABEL_SE_HIPDROP);
+
 	g_aPlayer[nHipDropPlayer].moveV0.y = PLAYER_HIPDROP_POWER;		//ヒップドロップの降下速度を代入
 	g_aPlayer[nHipDropPlayer].move.x = 0.0f;						//X・Zの移動量消す
 	g_aPlayer[nHipDropPlayer].move.z = 0.0f;
@@ -644,6 +649,8 @@ void HipDropPlayer(int nHipDropPlayer)
 //========================
 void JumpPlayer(int nJumpPlayer)
 {
+	PlaySound(SOUND_LABEL_SE_JUMP);
+
 	g_aPlayer[nJumpPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 	g_aPlayer[nJumpPlayer].jumpTime = 0;	//ジャンプ時間リセット
 	g_aPlayer[nJumpPlayer].bJump = true;
@@ -1209,6 +1216,8 @@ void DownPlayer(int nDownPlayerNum)
 			}
 		}
 	}
+
+	PlaySound(SOUND_LABEL_SE_DROP);
 
 	RespawnPlayer(nDownPlayerNum);
 }

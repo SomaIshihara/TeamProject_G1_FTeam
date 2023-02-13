@@ -14,13 +14,25 @@
 //*****************************************************************************
 typedef enum
 {
-	SOUND_LABEL_SE_CONNECT = 0,		// コントローラー接続時の効果音
+	SOUND_LABEL_BGM_TITLE = 0,		// タイトル音
+	SOUND_LABEL_BGM_TUTORIAL,		// チュートリアル音
+	SOUND_LABEL_BGM_GAME,			// ゲーム音
+	SOUND_LABEL_BGM_RESULT,			// リザルト音
+	SOUND_LABEL_SE_CONNECT,			// コントローラー接続時の効果音
 	SOUND_LABEL_SE_TITLE_DECIDE,	// タイトル画面の決定音
 	SOUND_LABEL_SE_COLLISION,		// プレイヤー同士の衝突音
 	SOUND_LABEL_SE_ENERGY_00,		// プレイヤー1のゲージ充填音
 	SOUND_LABEL_SE_ENERGY_01,		// プレイヤー2のゲージ充填音
 	SOUND_LABEL_SE_ENERGY_02,		// プレイヤー3のゲージ充填音
 	SOUND_LABEL_SE_ENERGY_03,		// プレイヤー4のゲージ充填音
+	SOUND_LABEL_SE_DROP,			// プレイヤーの落下音
+	SOUND_LABEL_SE_GRASSDASH,		// プレイヤーのダッシュ音
+	SOUND_LABEL_SE_HIPDROP,			// プレイヤーのヒップドロップ音
+	SOUND_LABEL_SE_JUMP,			// プレイヤーのジャンプ音
+	SOUND_LABEL_SE_PAUSE_DECISION,	// ポーズの決定音
+	SOUND_LABEL_SE_PAUSE_SELECTION,	// ポーズの選択音
+	SOUND_LABEL_SE_PAUSE_TRANSITION,// ポーズの遷移音
+	SOUND_LABEL_SE_ROAR,			// ポーズの咆哮音
 	SOUND_LABEL_MAX,
 } SOUND_LABEL;
 
