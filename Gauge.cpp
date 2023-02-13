@@ -4,16 +4,15 @@
 Author:大宮愛羅
 
 ============================================================================================================================================================*/
-
 #include "main.h"
-#include "Gauge.h"
+#include "gauge.h"
 #include "player.h"
 #include "input.h"
 #include "color.h"
 #include "sound.h"
 
 //マクロ定義 
-#define NUM_GAUGE		(GAUGETYPE_MAX * (MAX_USE_GAMEPAD + 1))	//ゲージ４人分の全体数
+#define NUM_GAUGE		(GAUGETYPE_MAX * MAX_USE_GAMEPAD)	//ゲージ４人分の全体数
 
 //初期化関連
 #define MIN_COL			(0.0f)		//色の初期値
@@ -78,7 +77,7 @@ void InitGauge(void)
 		"data\\TEXTURE\\GaugeFrame.png",		//ゲージの枠
 		&g_pTextureGauge[GAUGETYPE_FRAME]);		//===========
 
-	//頂点バッファの生成
+												//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * VTX_MAX * NUM_GAUGE, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffGauge, NULL);
 
 	//ポインタを設定
@@ -95,7 +94,7 @@ void InitGauge(void)
 
 		for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++, pVtx += VTX_MAX)
 		{//ゲージ分
-			//頂点座標の設定
+		 //頂点座標の設定
 			switch (nCntGauge)
 			{
 			case GAUGETYPE_NORMAL:
@@ -141,13 +140,13 @@ void UninitGauge(void)
 {
 	for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++)
 	{//ゲージ分
-		//テクスチャの破棄
+	 //テクスチャの破棄
 		if (g_pTextureGauge[nCntGauge] != NULL)
 		{
 			g_pTextureGauge[nCntGauge]->Release();
 			g_pTextureGauge[nCntGauge] = NULL;
 		}
-	}	
+	}
 
 	//頂点バッファの破棄
 	if (g_pVtxBuffGauge != NULL)
@@ -162,7 +161,7 @@ void UpdateGauge(void)
 {
 	Player *pPlayer = GetPlayer();		//プレイヤー情報の取得	
 
-	//ポインタを設定
+										//ポインタを設定
 	VERTEX_2D *pVtx;
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
@@ -173,9 +172,9 @@ void UpdateGauge(void)
 
 	for (int nCntGauge = 0; nCntGauge < MAX_USE_GAMEPAD; nCntGauge++, pPlayer++, pVtx += NUM_GAUGE)
 	{//ゲージ分
-		//計算(今のゲージ量　/　最大ゲージ量)
+	 //計算(今のゲージ量　/　最大ゲージ量)
 		float Parcent = pPlayer->moveGauge / PLAYER_POWER_MAX;
-		
+
 		if (Parcent > UNQUAR_NUM)
 		{//赤色
 		 //頂点カラー設定
@@ -220,7 +219,7 @@ void UpdateGauge(void)
 			pVtx[VTX_LE_DO].col = RGBA_WHITE;
 			pVtx[VTX_RI_DO].col = RGBA_WHITE;
 		}
-		
+
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos.x = g_Gauge[nCntGauge].pos.x + 0.0f;					//左上
 		pVtx[VTX_RI_UP].pos.x = g_Gauge[nCntGauge].pos.x + GAUGE_WIDTH * Parcent;	//右上
@@ -246,7 +245,7 @@ void DrawGauge(void)
 
 	for (int nCntGauge = 0; nCntGauge < NUM_GAUGE; nCntGauge++)
 	{//ゲージ分
-		//テクスチャの設定
+	 //テクスチャの設定
 		pDevice->SetTexture(0, g_pTextureGauge[nCntGauge % GAUGETYPE_MAX]);
 
 		//ポリゴンの描画	

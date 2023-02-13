@@ -10,6 +10,7 @@
 
 //マクロ定義
 #define MAX_ITEM			(3)			//最大数
+#define MAX_ITEM_TEX		(10)		//テクスチャの最大数
 #define MAX_POS				(5)			//リスポーン位置最大数
 #define INIT_POS_Y			(200.0f)	//初期のY位置
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
@@ -27,13 +28,13 @@ const D3DXVECTOR3 g_ItemRespawnPos[MAX_POS] =
 };
 
 //グローバル変数宣言     
-LPDIRECT3DTEXTURE9		g_pTextureItem[10] = {};	//テクスチャへにポインタ
-LPD3DXMESH				g_pMeshItem = NULL;	//メッシュ(頂点情報)へのポインタ
-LPD3DXBUFFER			g_pBuffMatItem = NULL;	//マテリアルへのポインタ
-DWORD					g_dwNumMatItem = 0;	//マテリアルの数
-D3DXMATRIX				g_mtxWorldItem;			//ワールドマトリックス
-Item					g_Item[MAX_ITEM];		//アイテムの情報
-bool					bposuse[MAX_POS];		//その座標を使用しているかどうか
+LPDIRECT3DTEXTURE9		g_pTextureItem[MAX_ITEM_TEX] = {};	//テクスチャへにポインタ
+LPD3DXMESH				g_pMeshItem = NULL;					//メッシュ(頂点情報)へのポインタ
+LPD3DXBUFFER			g_pBuffMatItem = NULL;				//マテリアルへのポインタ
+DWORD					g_dwNumMatItem = 0;					//マテリアルの数
+D3DXMATRIX				g_mtxWorldItem;						//ワールドマトリックス
+Item					g_Item[MAX_ITEM];					//アイテムの情報
+bool					bposuse[MAX_POS];					//その座標を使用しているかどうか
 
 //========================
 //初期化処理
@@ -83,8 +84,7 @@ void InitItem(void)
 	for (int nCntPos = 0; nCntPos < MAX_POS; nCntPos++)
 	{
 		bposuse[nCntPos] = false;
-	}
-	
+	}	
 }
 
 //========================
@@ -104,6 +104,16 @@ void UninitItem(void)
 	{
 		g_pBuffMatItem->Release();
 		g_pBuffMatItem = NULL;
+	}
+
+	//マテリアルの破棄
+	for (int nCntTex = 0; nCntTex < MAX_ITEM_TEX; nCntTex++)
+	{
+		if (g_pTextureItem[nCntTex] != NULL)
+		{
+			g_pTextureItem[nCntTex]->Release();
+			g_pTextureItem[nCntTex] = NULL;
+		}
 	}
 }
 

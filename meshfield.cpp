@@ -35,7 +35,7 @@ void InitMeshfield(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
 
 	// 保存しておいた情報を代入
-	g_MeshField[0] = g_MeshFieldTemp;
+	//g_MeshField[0] = g_MeshFieldTemp;
 
 	//設定類は外部ファイルに移動
 #if 0
@@ -241,7 +241,7 @@ void SetMeshField(int nTexNum, MESHFIELD mf)
 		GetTextureFilePath(nTexNum),
 		&g_pTextureMeshfield);
 
-	g_MeshFieldTemp = mf;
+	g_MeshField[0] = mf;
 }
 
 //====================================================================

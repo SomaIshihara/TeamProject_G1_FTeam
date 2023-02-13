@@ -15,7 +15,7 @@
 #include "camera.h"
 #include <assert.h>
 #include "color.h"
-#include "Gauge.h"
+#include "gauge.h"
 #include "sound.h"
 #include "charge_cylinder.h"
 #include "charge_effect.h"

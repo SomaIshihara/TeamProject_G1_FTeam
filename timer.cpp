@@ -24,7 +24,6 @@ LPDIRECT3DTEXTURE9 g_pTextureTime = NULL;			//テクスチャのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTime = NULL;		//頂点バッファへのポインタ
 TIME g_aTime;
 
-
 D3DXMATRIX mtxWorldTime;
 
 int BonusLimit;
