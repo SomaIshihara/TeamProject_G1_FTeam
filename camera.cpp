@@ -19,7 +19,7 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 //視点情報
 #define POSV_ROTSPEED	(0.05f)		//視点の回転速度
 #define POSV_SPEED		(10.0f)		//視点の移動速度
-#define POSR_ADD		(3.0f)		//注視点の上下移動
+#define POSR_ADD		(8.0f)		//注視点の上下移動
 #define POSV_DISTANCE	(100.0f)	//視点の距離
 #define POSV_WIDTH		(0.0f)		//視点の幅
 #define POSV_HEIGHT		(1050.0f)	//視点の高さ

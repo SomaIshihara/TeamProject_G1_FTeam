@@ -97,7 +97,7 @@ void SetMeshDomeVertexBuffer(void)
 	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, MESHDOME_RADIS, 0.0f);
 	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	pVtx[nNumVtx].col = XCOL_WHITE;
-	pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 0.0f);
 	nNumVtx++;
 	
 	//２番目の頂点から、横の分割数　‐　底面の出っ張りの１頂点　回数分 for文を回す
@@ -115,9 +115,6 @@ void SetMeshDomeVertexBuffer(void)
 		for (int nCntDevideX = 0; nCntDevideX < MESHDOME_SPLIT; nCntDevideX++)
 		{//横１周分の頂点座標を設定
 			
-			float aTexU = 0.125f * nCntDevideX;
-			float aTexV = 0.125f * nCntDevideY;
-
 			pVtx[nNumVtx].pos = 
 				D3DXVECTOR3(
 				sinf(rot_Y) * TempLen,		//Xの位置
@@ -126,8 +123,11 @@ void SetMeshDomeVertexBuffer(void)
 
 			pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pVtx[nNumVtx].col = XCOL_WHITE;
-			pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, 1.0f - aTexV);
-			nNumVtx++;
+
+			float aTexU = (1.0f / MESHDOME_SPLIT) * nCntDevideX;			//テクスチャの幅
+			float aTexV = (1.0f / (MESHDOME_SEPALATE + 2)) * nCntDevideY;	//テクスチャの高さ
+
+			pVtx[nNumVtx++].tex = D3DXVECTOR2(aTexU, aTexV);
 			
 			//角度を　全体の角度÷分割数で割った答え分、引く
 			rot_Y -= ONE_LAP / MESHDOME_SPLIT;
@@ -138,7 +138,7 @@ void SetMeshDomeVertexBuffer(void)
 	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, -MESHDOME_RADIS, 0.0f);
 	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	pVtx[nNumVtx].col = XCOL_WHITE;
-	pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 1.0f);
 
 	//頂点バッファのアンロック
 	g_pVtxBuffMeshDome->Unlock();
@@ -152,62 +152,61 @@ void SetMeshDomeIndexBuffer(void)
 	//			／＼
 	//		  ／天面＼		//「- 1」は天面の出っ張りを除くこと
 	//		／番号設定＼	天井のでっぱりを除いた分カウンターを回す
-	{
 		//フタのインデックスバッファをロックし、頂点番号へのポインタを取得
-		g_pIdxBuffCoverMeshDome->Lock(0, 0, (void**)&pIdx, 0);
+	g_pIdxBuffCoverMeshDome->Lock(0, 0, (void**)&pIdx, 0);
 
-		//インデックス番号
-		int nNumIdx = 0;
+	//インデックス番号
+	int nNumIdx = 0;
 
-		for (nNumIdx = 0; nNumIdx <= MESHDOME_COVER_INDEX - 1; nNumIdx++)
-		{
-			//下の計算式では、　ちょうど1周するときに答えが1になる　　それ以外では、カウンター÷分割数　の余りが番号として設定される
-			pIdx[nNumIdx] = (nNumIdx / (MESHDOME_COVER_INDEX - 1)) + (nNumIdx % (MESHDOME_COVER_INDEX - 1));
-		}
-
-		//天面のインデックスバッファのアンロック
-		g_pIdxBuffCoverMeshDome->Unlock();
+	for (nNumIdx = 0; nNumIdx <= MESHDOME_COVER_INDEX - 1; nNumIdx++)
+	{
+		//下の計算式では、　ちょうど1周するときに答えが1になる　　それ以外では、カウンター÷分割数　の余りが番号として設定される
+		pIdx[nNumIdx] = (nNumIdx / (MESHDOME_COVER_INDEX - 1)) + (nNumIdx % (MESHDOME_COVER_INDEX - 1));
 	}
+
+	//天面のインデックスバッファのアンロック
+	g_pIdxBuffCoverMeshDome->Unlock();
 
 	//	／----------------＼
 	// <	側面番号設定	>
 	//	＼----------------／
+	//インデックス番号初期化
+	nNumIdx = 0;
+
+	//側面のインデックスバッファをロックし、頂点番号へのポインタを取得
+	g_pIdxBuffSideMeshDome->Lock(0, 0, (void**)&pIdx, 0);
+
+	for (int nCntHeight = 1; nCntHeight < MESHDOME_SEPALATE - 1; nCntHeight++)
 	{
-		//インデックス番号
-		int nNumIdx = 0;
-
-		//側面のインデックスバッファをロックし、頂点番号へのポインタを取得
-		g_pIdxBuffSideMeshDome->Lock(0, 0, (void**)&pIdx, 0);
-
-		for (int nCntHeight = 1; nCntHeight < MESHDOME_SEPALATE - 1; nCntHeight++)
+		for (int nCntWidth = 0; nCntWidth < MESHDOME_SPLIT + 1; nCntWidth++)
 		{
-			for (int nCntWidth = 0; nCntWidth < MESHDOME_SPLIT + 1; nCntWidth++)
-			{
-				pIdx[nNumIdx++] = ((nCntHeight - 1) * 8 + 1) + (nCntWidth % MESHDOME_SPLIT);
-				pIdx[nNumIdx++] = ((nCntHeight - 0) * 8 + 1) + (nCntWidth % MESHDOME_SPLIT);
-			}
+			pIdx[nNumIdx++] = ((nCntHeight - 1) * MESHDOME_SEPALATE + 1) + (nCntWidth % MESHDOME_SPLIT);
+			pIdx[nNumIdx++] = ((nCntHeight - 0) * MESHDOME_SEPALATE + 1) + (nCntWidth % MESHDOME_SPLIT);
 		}
-
-		//側面のインデックスバッファのアンロック
-		g_pIdxBuffSideMeshDome->Unlock();
 	}
+
+	//側面のインデックスバッファのアンロック
+	g_pIdxBuffSideMeshDome->Unlock();
 
 	//		＼底面番号／
 	//		  ＼設定／
 	//			＼／
 	//フタのインデックスバッファをロックし、頂点番号へのポインタを取得
 	g_pIdxBuffBottomMeshDome->Lock(0, 0, (void**)&pIdx, 0);
-
-	int nNumIdx = 0;
+	
+	nNumIdx = 0;							//インデックス番号初期化
+	int LastVtx = MESHDOME_ALL_VERTEX - 1;	//底面番号
 
 	for (int nCntIdx = 0; nCntIdx <= MESHDOME_COVER_INDEX; nCntIdx++)
 	{
 		//--------------------------------------------------
 		//全体の頂点数から逆算して番号を割り出す
+		//
+		//MEMO : カウンターがゼロの場合		=>	底面の頂点番号が代入される
+		//		 カウンターが１・最後の場合	=>	同じ番号が代入される
+		//		 それ以外の場合				=>	底面の番号 - (カウンター ÷ 底面番号  の余り)  で算出された番号が代入される
 		//--------------------------------------------------
-		int nTest = (MESHDOME_ALL_VERTEX - 1) - ((nCntIdx / (MESHDOME_COVER_INDEX - 1)) + (nCntIdx % (MESHDOME_COVER_INDEX - 1)));
-
-		pIdx[nNumIdx++] = nTest;
+		pIdx[nNumIdx++] = LastVtx - ((nCntIdx / LastVtx) + (nCntIdx % LastVtx));
 	}
 
 	//底面のインデックスバッファのアンロック
