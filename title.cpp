@@ -163,8 +163,8 @@ void UpdateTitle(void)
 	//Enterが押された　もしくは　ゲームパッドのSTART or A ボタンが押された
 	if ((GetKeyboardTrigger(DIK_RETURN) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
 	{
-		//チュートリアル画面に遷移
-		SetFade(MODE_TUTORIAL);
+		//ゲーム選択画面に遷移
+		SetFade(MODE_SELECTGAME);
 
 		//タイトル決定音再生
 		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE);

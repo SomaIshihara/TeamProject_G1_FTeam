@@ -9,6 +9,7 @@
 #include "camera.h"
 #include "debugproc.h"
 #include "fade.h"
+#include "select_game.h"
 #include "game.h"
 #include "title.h"
 #include "color.h"
@@ -36,7 +37,7 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_GAME;		// 現在のモード
+MODE			g_mode = MODE_SELECTGAME;		// 現在のモード
 #else
 MODE			g_mode = MODE_GAME;		// 現在のモード
 #endif
@@ -355,6 +356,7 @@ void Uninit(void)
 	//終了処理（自分が作ったものを捨てる）
 	UninitTitle();		// タイトルの終了処理
 	UninitTutorial();	// チュートリアルの終了処理
+	UninitSelectGame();	// ゲーム選択の終了処理
 	UninitGame();		// ゲームの終了処理
 
 	//フェード終了
@@ -419,6 +421,10 @@ void Update(void)
 			UpdateTitle();
 			break;
 
+		case MODE_SELECTGAME:	//ゲーム選択の更新処理
+			UpdateSelectGame();
+			break;
+
 		case MODE_TUTORIAL:		//チュートリアル画面の更新
 			UpdateTutorial();
 			break;
@@ -461,6 +467,10 @@ void Draw(void)
 		{
 		case MODE_TITLE:		//タイトル画面描画
 			DrawTitle();
+			break;
+
+		case MODE_SELECTGAME:	//ゲーム選択画面描画処理
+			DrawSelectGame();
 			break;
 
 		case MODE_TUTORIAL:		//チュートリアル画面描画
@@ -509,6 +519,10 @@ void SetMode(MODE mode)
 		UninitTitle();
 		break;
 
+	case MODE_SELECTGAME:	//ゲーム選択画面終了
+		UninitSelectGame();
+		break;
+
 	case MODE_TUTORIAL:		//チュートリアル画面終了
 		UninitTutorial();
 		break;
@@ -523,6 +537,10 @@ void SetMode(MODE mode)
 	{
 	case MODE_TITLE:		//タイトル画面初期化
 		InitTitle();
+		break;
+
+	case MODE_SELECTGAME:	//ゲーム選択画面初期化
+		InitSelectGame();
 		break;
 
 	case MODE_TUTORIAL:		//チュートリアル画面初期化

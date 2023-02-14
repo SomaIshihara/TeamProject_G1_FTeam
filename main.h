@@ -29,10 +29,11 @@
 typedef enum
 {
 	MODE_NONE = 0,
-	MODE_TITLE,
-	MODE_TUTORIAL,
-	MODE_GAME,
-	MODE_GAMERESULT,
+	MODE_TITLE,			//タイトル画面
+	MODE_SELECTGAME,	//ゲーム選択
+	MODE_TUTORIAL,		//チュートリアル
+	MODE_GAME,			//ゲーム画面
+	MODE_GAMERESULT,	//リザルト画面
 	MODE_MAX
 } MODE;
 

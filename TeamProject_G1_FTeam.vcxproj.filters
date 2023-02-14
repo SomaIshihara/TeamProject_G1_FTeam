@@ -67,6 +67,12 @@
     <Filter Include="ヘッダー ファイル\Game\Effect">
       <UniqueIdentifier>{8b5f2fe8-b784-48ff-805d-f55b3225ede9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\SelectGame">
+      <UniqueIdentifier>{99f49d7f-1548-4747-a6b7-c05ef781d087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\SelectGame">
+      <UniqueIdentifier>{40a1d3ed-691e-44ff-a4f2-b7361d4f80e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -168,6 +174,9 @@
     <ClCompile Include="gauge.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="select_game.cpp">
+      <Filter>ソース ファイル\SelectGame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -268,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="gauge.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="select_game.h">
+      <Filter>ヘッダー ファイル\SelectGame</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
