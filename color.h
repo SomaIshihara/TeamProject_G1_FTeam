@@ -29,6 +29,7 @@ Author:平澤詩苑 石原颯馬
 #define XCOL_BLACKSHADOW	D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.85f)	// 黒影
 #define XCOL_YELLOW			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)	// 黄色
 #define XCOL_RED			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)	// 赤色
+#define XCOL_NO_SELECT		D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.4f)	// 選択されていない時の色
 
 //HSB用色構造体
 typedef struct
