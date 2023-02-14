@@ -50,8 +50,6 @@ bool		g_bPhotoMode;			// ƒtƒHƒgƒ‚[ƒhØ‘Ö		true:ƒ|[ƒY‰æ–Ê”ñ•\¦	false:ƒ{[ƒY‰æ–
 //------------------------------------------------
 void InitGame(void)
 {
-	PlaySound(SOUND_LABEL_BGM_GAME);
-
 	g_nUseContNum = SetUseController();		// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
 	InitFile();								// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
 	LoadModelViewerFile("data\\model.txt");	// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
@@ -88,11 +86,12 @@ void InitGame(void)
 
 	SetScore(0,4);				// ƒXƒRƒA‚Ìİ’èˆ—
 
-	g_bPause = false;			// ƒ|[ƒY‚Ì‰Šú‰»
+	g_bPause = false;				// ƒ|[ƒY‚Ì‰Šú‰»
 	g_bDisconnectPlayer = false;	//³í‚ÉƒRƒ“ƒgƒ[ƒ‰[‚ªÚ‘±‚³‚ê‚Ä‚¢‚éó‘Ô‚Æ‚·‚é
-	g_bPhotoMode = false;		// ƒtƒHƒgƒ‚[ƒh‰Šú‰»
-									//ƒQ[ƒ€BGMŠJn
-									//PlaySound(SOUND_LABEL_GAMEBGM);
+	g_bPhotoMode = false;			// ƒtƒHƒgƒ‚[ƒh‰Šú‰»
+	
+	//ƒQ[ƒ€BGMŠJn
+	PlaySound(SOUND_LABEL_BGM_GAME);
 }
 
 //------------------------------------------------
@@ -126,9 +125,9 @@ void UninitGame(void)
 		UninitAttackEffect();	//UŒ‚ƒGƒtƒFƒNƒg
 		UninitTremorEffect();	//ƒqƒbƒvƒhƒƒbƒvƒGƒtƒFƒNƒg
 	}
-	UninitScore();		// ƒXƒRƒA‚ÌI—¹ˆ—
-	UninitCameraFrame();// ‰æ–Ê•ªŠ„‚Ì˜gI—¹ˆ—
-	UninitTime();		//ƒ^ƒCƒ}[‚ÌI—¹ˆ—i‚±‚±‚Í‡”Ô‚Í–â‚í‚È‚¢j
+	UninitScore();			// ƒXƒRƒA‚ÌI—¹ˆ—
+	UninitCameraFrame();	// ‰æ–Ê•ªŠ„‚Ì˜gI—¹ˆ—
+	UninitTime();			// ƒ^ƒCƒ}[‚ÌI—¹ˆ—i‚±‚±‚Í‡”Ô‚Í–â‚í‚È‚¢j
 
 	//ƒQ[ƒ€BGM’â~
 	StopSound(SOUND_LABEL_BGM_GAME);

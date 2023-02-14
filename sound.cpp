@@ -37,6 +37,7 @@ IXAudio2MasteringVoice *g_pMasteringVoice = NULL;			// マスターボイス
 IXAudio2SourceVoice *g_apSourceVoice[SOUND_LABEL_MAX] = {};	// ソースボイス
 BYTE *g_apDataAudio[SOUND_LABEL_MAX] = {};					// オーディオデータ
 DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
+bool g_bPlay = true;										// 再生するかどうか
 
 // サウンドの情報
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
@@ -246,7 +247,8 @@ void UninitSound(void)
 //=============================================================================
 HRESULT PlaySound(SOUND_LABEL label)
 {
-	if (g_aSoundInfo[label].bPlay == true)
+	//ラベルの再生がON		かつ		再生がON
+	if (g_aSoundInfo[label].bPlay == true && g_bPlay == true)
 	{
 		XAUDIO2_VOICE_STATE xa2state;
 		XAUDIO2_BUFFER buffer;
