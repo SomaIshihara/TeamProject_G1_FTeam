@@ -51,6 +51,7 @@ struct Player
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 	bool bJump;				//ジャンプしているかどうか
 	bool bHipDrop;			//ヒップドロップしているかどうか
+	bool bHipDropSpin;		//ヒップドロップのスピンしたかどうか
 	int nHipDropWait;		//ヒップドロップの「開始・着地」硬直カウンター
 	bool bNotMove;			//移動していない
 	int nRespawnPosNum;		//復活した位置番号

@@ -31,6 +31,8 @@
 #define PLAYER_BLOWING_POWER	(5.0f)		//ヒップドロップされた方の移動量
 #define PLAYER_HIPDROP_POWER	(-15.0f)	//ヒップドロップするときの移動量
 #define PLAYER_ROTATE_SPEED		(0.02f * D3DX_PI)	//回転速度
+#define PLAYER_HIPSPIN_SPEED	(-0.5f)		//ヒップドロップスピンの回転値
+#define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 
 //移動量関係
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -41,7 +43,6 @@
 #define DUMP_COEF				(0.04f)		//減衰係数
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
-#define BF_RADIUS				(353.5f)	//バトルフィールドの半径
 #define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
 
 //アイテム関係
@@ -122,6 +123,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].jumpTime = 0;
 		g_aPlayer[nCntPlayer].bJump = false;
 		g_aPlayer[nCntPlayer].bHipDrop = false;
+		g_aPlayer[nCntPlayer].bHipDropSpin = false;
 		g_aPlayer[nCntPlayer].nHipDropWait = 0;
 		g_aPlayer[nCntPlayer].bNotMove = true;
 		g_aPlayer[nCntPlayer].nRespawnPosNum = nCntPlayer;
@@ -301,7 +303,25 @@ void UpdatePlayer(void)
 				//ヒップドロップ硬直時間がある
 				if (g_aPlayer[nCntPlayer].nHipDropWait > 0)
 				{
-					g_aPlayer[nCntPlayer].nHipDropWait--;		//硬直時間を減らしていく
+					//ヒップスピン中
+					if (g_aPlayer[nCntPlayer].bHipDropSpin == true)
+					{
+						g_aPlayer[nCntPlayer].rot.x += PLAYER_HIPSPIN_SPEED;
+
+						//1周したら
+						if (g_aPlayer[nCntPlayer].rot.x <= PLAYER_HIPSPIN_LAP)
+						{
+							
+							g_aPlayer[nCntPlayer].rot.x = 0.0f;			//元の向きに直す
+							g_aPlayer[nCntPlayer].bHipDropSpin = false;	//ヒップスピン終了
+						}
+					}
+
+					//ヒップスピン終了後
+					else
+					{
+						g_aPlayer[nCntPlayer].nHipDropWait--;		//硬直時間を減らしていく
+					}
 				}
 				else
 				{
@@ -642,6 +662,7 @@ void HipDropPlayer(int nHipDropPlayer)
 	g_aPlayer[nHipDropPlayer].moveGauge = 0.0f;
 	g_aPlayer[nHipDropPlayer].jumpTime = 0;							//ジャンプ時間リセット
 	g_aPlayer[nHipDropPlayer].bHipDrop = true;						//ヒップドロップしている
+	g_aPlayer[nHipDropPlayer].bHipDropSpin = true;					//スピンしている
 }
 
 //========================
@@ -1263,6 +1284,7 @@ void RespawnPlayer(int nRespawnPlayer)
 	g_aPlayer[nRespawnPlayer].nHipDropWait = 0;
 	g_aPlayer[nRespawnPlayer].bJump = true;
 	g_aPlayer[nRespawnPlayer].bHipDrop = false;
+	g_aPlayer[nRespawnPlayer].bHipDropSpin = false;
 
 	g_aPlayer[nRespawnPlayer].lastAtkPlayer = -1;
 	g_aPlayer[nRespawnPlayer].nNumHitPlayer = -1;
