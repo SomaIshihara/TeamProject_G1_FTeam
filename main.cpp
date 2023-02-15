@@ -37,9 +37,9 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_GAME;		// 現在のモード
+MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #else
-MODE			g_mode = MODE_GAME;		// 現在のモード
+MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #endif
 
 bool g_bShowCursor = true;
@@ -429,7 +429,7 @@ void Update(void)
 			UpdateTutorial();
 			break;
 
-		case MODE_GAME:			//ゲーム画面の更新
+		case MODE_PvPGAME:			//ゲーム画面の更新
 			UpdatePvPGame();
 			break;
 		}
@@ -477,7 +477,7 @@ void Draw(void)
 			DrawTutorial();
 			break;
 
-		case MODE_GAME:			//ゲーム画面描画
+		case MODE_PvPGAME:			//ゲーム画面描画
 			DrawPvPGame();
 			break;
 		}
@@ -527,7 +527,7 @@ void SetMode(MODE mode)
 		UninitTutorial();
 		break;
 
-	case MODE_GAME:			//ゲーム画面終了
+	case MODE_PvPGAME:			//ゲーム画面終了
 		UninitPvPGame();
 		break;
 	}
@@ -547,7 +547,7 @@ void SetMode(MODE mode)
 		InitTutorial();
 		break;
 
-	case MODE_GAME:			//ゲーム画面初期化
+	case MODE_PvPGAME:			//ゲーム画面初期化
 		InitPvPGame();
 		break;
 	}

@@ -103,7 +103,7 @@ void UpdateTutorial(void)
 	if ((GetKeyboardTrigger(DIK_RETURN) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
 	{
 		//モード設定（ゲーム画面に遷移)
-		SetFade(MODE_GAME);
+		SetFade(MODE_PvPGAME);
 	}
 }
 
