@@ -1,11 +1,11 @@
 /*==========================================================================================================================================================
 
-ƒQ[ƒ€‰æ–Êˆ—[game.cpp]
+ƒQ[ƒ€‰æ–Êˆ—[pvp_game.cpp]
 Author:•½àV‰‘
 
 ============================================================================================================================================================*/
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "input.h"
 #include "file.h"
 #include "color.h"
@@ -48,9 +48,9 @@ bool		g_bPhotoMode;			// ƒtƒHƒgƒ‚[ƒhØ‘Ö		true:ƒ|[ƒY‰æ–Ê”ñ•\¦	false:ƒ{[ƒY‰æ–
 //------------------------------------------------
 //				ƒQ[ƒ€‚Ì‰Šú‰»ˆ—
 //------------------------------------------------
-void InitGame(void)
+void InitPvPGame(void)
 {
-	g_nUseContNum = SetUseController();		// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
+	g_nUseContNum = SetUseController_PvP();		// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
 	InitFile();								// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
 	LoadModelViewerFile("data\\model.txt");	// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
 	LoadModelOriginalFile("data\\originalmodel.txt");	// ƒ‚ƒfƒ‹ƒIƒŠƒWƒiƒ‹ƒtƒ@ƒCƒ‹“Ç‚İ‚İ
@@ -98,7 +98,7 @@ void InitGame(void)
 //------------------------------------------------
 //				ƒQ[ƒ€‚ÌI—¹ˆ—
 //------------------------------------------------
-void UninitGame(void)
+void UninitPvPGame(void)
 {
 	/*======================================================================
 	ŠeíƒIƒuƒWƒFƒNƒg‚ÌI—¹ˆ—
@@ -138,7 +138,7 @@ void UninitGame(void)
 //------------------------------------------------
 //				ƒQ[ƒ€‚ÌXVˆ—
 //------------------------------------------------
-void UpdateGame(void)
+void UpdatePvPGame(void)
 {
 	FADE fadeState = GetFade();
 	Player *pPlayer = GetPlayer();	
@@ -169,7 +169,7 @@ void UpdateGame(void)
 		UpdateScore();		//ƒXƒRƒA‚ÌXVˆ—
 		UpdateTime();		//ƒ^ƒCƒ}[‚ÌXVˆ—
 
-		ChangeNumCamera();	//ƒJƒƒ‰‚Ì”•ÏXˆ—
+		ChangeNumCamera_PvP();	//ƒJƒƒ‰‚Ì”•ÏXˆ—
 
 		//ƒ|[ƒYæ“¾
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
@@ -229,7 +229,7 @@ void UpdateGame(void)
 	}
 
 	//ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pƒ`ƒFƒbƒN‚Íƒ|[ƒYó‘ÔŠÖŒW‚È‚­ŒÄ‚Ño‚µ
-	CheckUseController(CHECKMODE_DISCONPAUSE);
+	CheckUseController_PvP(CHECKMODE_DISCONPAUSE);
 
 	//ƒtƒHƒgƒ‚[ƒhØ‘Ö
 	if (GetKeyboardTrigger(DIK_F9))
@@ -241,7 +241,7 @@ void UpdateGame(void)
 //------------------------------------------------
 //				ƒQ[ƒ€‚Ì•`‰æˆ—
 //------------------------------------------------
-void DrawGame(void)
+void DrawPvPGame(void)
 {
 	/*======================================================================
 	ŠeíƒIƒuƒWƒFƒNƒg‚Ì•`‰æˆ—
@@ -286,7 +286,7 @@ void DrawGame(void)
 //		•Ô‚è’l:g—p‚³‚ê‚Ä‚¢‚éiÚ‘±‚³‚ê‚Ä‚¢‚éjƒRƒ“ƒgƒ[ƒ‰[‚Ì”
 //		Memo:InitGame‚ÅŒÄ‚Ño‚µiGetUseController‚ªŒÄ‚Ño‚³‚ê‚é‘O‚ÉŒÄ‚Ño‚µ‚·‚é‚±‚Æj
 //------------------------------------------------
-int SetUseController(void)
+int SetUseController_PvP(void)
 {
 	int nUseController = 0;
 	for (int nCntController = 0; nCntController < MAX_USE_GAMEPAD; nCntController++)
@@ -312,7 +312,7 @@ int SetUseController(void)
 //		CHECKMODE_REMOVE	:Ø’f‚³‚ê‚Ä‚¢‚éê‡‚»‚ÌƒRƒ“ƒgƒ[ƒ‰[‚ğg—p‚µ‚Ä‚¢‚È‚¢ó‘Ô‚É‚·‚é
 //		Memo:UpdateGame“à‚Åƒ|[ƒY’†‚Å‚àŒÄ‚Ño‚µ‚·‚é‚±‚Æ
 //------------------------------------------------
-bool CheckUseController(CHECKMODE mode)
+bool CheckUseController_PvP(CHECKMODE mode)
 {
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{//‘Î‰ƒRƒ“ƒgƒ[ƒ‰[•ªŒJ‚è•Ô‚·
@@ -348,7 +348,7 @@ bool CheckUseController(CHECKMODE mode)
 //		Author:ÎŒ´éD”n
 //		ˆø”1:’²‚×‚éƒpƒbƒh‚Ì”Ô†
 //------------------------------------------------
-bool GetUseController(int nPadNum)
+bool GetUseController_PvP(int nPadNum)
 {
 	return g_abUsePlayer[nPadNum];
 }
@@ -357,7 +357,7 @@ bool GetUseController(int nPadNum)
 //		ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pŒÂ”æ“¾ˆ—
 //		Author:ÎŒ´éD”n
 //------------------------------------------------
-int GetUseControllerNum(void)
+int GetUseControllerNum_PvP(void)
 {
 	return g_nUseContNum;
 }
@@ -366,7 +366,7 @@ int GetUseControllerNum(void)
 //		ƒ|[ƒYó‘Ô‚Ìİ’èˆ—
 //		Author:ÎŒ´éD”n
 //------------------------------------------------
-void SetEnablePause(bool pause)
+void SetEnablePause_PvP(bool pause)
 {
 	g_bPause = pause;
 }
@@ -375,7 +375,7 @@ void SetEnablePause(bool pause)
 //		ƒJƒƒ‰‚Ì”•ÏXˆ—
 //		Author:•½àV‰‘
 //------------------------------------------------
-void ChangeNumCamera(void)
+void ChangeNumCamera_PvP(void)
 {
 	if (GetKeyboardTrigger(DIK_F7))
 	{

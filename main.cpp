@@ -10,7 +10,7 @@
 #include "debugproc.h"
 #include "fade.h"
 #include "select_game.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "title.h"
 #include "color.h"
 #include "tutorial.h"
@@ -357,7 +357,7 @@ void Uninit(void)
 	UninitTitle();		// タイトルの終了処理
 	UninitTutorial();	// チュートリアルの終了処理
 	UninitSelectGame();	// ゲーム選択の終了処理
-	UninitGame();		// ゲームの終了処理
+	UninitPvPGame();		// ゲームの終了処理
 
 	//フェード終了
 	UninitFade();	
@@ -430,7 +430,7 @@ void Update(void)
 			break;
 
 		case MODE_GAME:			//ゲーム画面の更新
-			UpdateGame();
+			UpdatePvPGame();
 			break;
 		}
 	}
@@ -478,7 +478,7 @@ void Draw(void)
 			break;
 
 		case MODE_GAME:			//ゲーム画面描画
-			DrawGame();
+			DrawPvPGame();
 			break;
 		}
 
@@ -528,7 +528,7 @@ void SetMode(MODE mode)
 		break;
 
 	case MODE_GAME:			//ゲーム画面終了
-		UninitGame();
+		UninitPvPGame();
 		break;
 	}
 
@@ -548,7 +548,7 @@ void SetMode(MODE mode)
 		break;
 
 	case MODE_GAME:			//ゲーム画面初期化
-		InitGame();
+		InitPvPGame();
 		break;
 	}
 
