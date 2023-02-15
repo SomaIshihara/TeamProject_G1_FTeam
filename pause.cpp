@@ -530,7 +530,7 @@ void SwitchPause(void)
 		PlaySound(SOUND_LABEL_SE_PAUSE_TRANSITION);
 
 		//モード設定（ゲーム画面に遷移)
-		SetFade(MODE_GAME);
+		SetFade(MODE_PvPGAME);
 		break;
 
 	case PAUSE_QUIT:

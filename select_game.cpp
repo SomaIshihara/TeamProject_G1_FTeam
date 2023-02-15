@@ -226,7 +226,7 @@ void DecideGameMode(void)
 	if ((GetKeyboardTrigger(DIK_RETURN) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
 	{
 		//チュートリアル画面に遷移
-		SetFade(MODE_GAME);
+		SetFade(MODE_PvPGAME);
 
 		//タイトル決定音再生
 		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE);
