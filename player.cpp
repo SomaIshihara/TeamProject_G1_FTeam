@@ -5,7 +5,7 @@
 //
 //==========================================
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "player.h"
 #include "model.h"
 #include "input.h"
@@ -144,13 +144,13 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].nMUTEKITime = 0;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
-		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
+		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 
 		g_pNotMove[nCntPlayer] = &g_aPlayer[nCntPlayer];
 	}
 
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
-	if (GetUseControllerNum() == 0) 
+	if (GetUseControllerNum_PvP() == 0) 
 	{
 		g_aPlayer[0].bUsePlayer = true;
 	}
@@ -206,9 +206,9 @@ void UpdatePlayer(void)
 		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
 		{//使用時のみ行う
 			//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
-			if (GetUseControllerNum() != 0)
+			if (GetUseControllerNum_PvP() != 0)
 			{
-				g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
+				g_aPlayer[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 			}
 
 			//ヒップドロップ中でなければ操作できる
@@ -332,7 +332,7 @@ void UpdatePlayer(void)
 
 
 			//向きを変える処理
-			if (GetUseController(nCntPlayer))
+			if (GetUseController_PvP(nCntPlayer))
 			{//ゲームパッド使用
 				if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == false)
 				{//Xボタンが押されていない

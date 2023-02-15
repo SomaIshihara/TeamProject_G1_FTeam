@@ -6,7 +6,7 @@
 //==========================================
 
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "timer.h"
 #include "player.h"
 #include "camera.h"

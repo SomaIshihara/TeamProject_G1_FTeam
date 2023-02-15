@@ -23,15 +23,15 @@ typedef enum
 } CHECKMODE;
 
 //ÉvÉçÉg
-void InitGame(void);
-void UninitGame(void);
-void UpdateGame(void);
-void DrawGame(void);
-int SetUseController(void);
-bool GetUseController(int nPadNum);
-int GetUseControllerNum(void);
-void SetEnablePause(bool pause);
-bool CheckUseController(CHECKMODE mode);
-void ChangeNumCamera(void);
+void InitPvPGame(void);
+void UninitPvPGame(void);
+void UpdatePvPGame(void);
+void DrawPvPGame(void);
+int SetUseController_PvP(void);
+bool GetUseController_PvP(int nPadNum);
+int GetUseControllerNum_PvP(void);
+void SetEnablePause_PvP(bool pause);
+bool CheckUseController_PvP(CHECKMODE mode);
+void ChangeNumCamera_PvP(void);
 
 #endif

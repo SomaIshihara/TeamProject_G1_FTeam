@@ -5,7 +5,7 @@
 //
 //==========================================
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "player.h"
 #include "pause.h"
 #include "fade.h"
@@ -513,7 +513,7 @@ void SwitchPause(void)
 		PlaySound(SOUND_LABEL_SE_PAUSE_DECISION);
 
 		//再確認したけどコントローラーの数合ってない
-		if (CheckUseController(CHECKMODE_DISCONNOPAUSE) == true)
+		if (CheckUseController_PvP(CHECKMODE_DISCONNOPAUSE) == true)
 		{
 			//警告メッセージ
 
@@ -522,8 +522,8 @@ void SwitchPause(void)
 				break;
 			}
 		}
-		CheckUseController(CHECKMODE_REMOVE);
-		SetEnablePause(false);
+		CheckUseController_PvP(CHECKMODE_REMOVE);
+		SetEnablePause_PvP(false);
 		break;
 
 	case PAUSE_RETRY:

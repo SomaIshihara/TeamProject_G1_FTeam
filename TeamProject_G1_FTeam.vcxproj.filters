@@ -90,9 +90,6 @@
     <ClCompile Include="title.cpp">
       <Filter>ソース ファイル\Title</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
     <ClCompile Include="fade.cpp">
       <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
@@ -180,6 +177,9 @@
     <ClCompile Include="eff_shock-wave_00.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="pvp_game.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -219,9 +219,6 @@
       <Filter>ヘッダー ファイル\Game\Stage</Filter>
     </ClInclude>
     <ClInclude Include="bg.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
       <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
     <ClInclude Include="light.h">
@@ -286,6 +283,9 @@
     </ClInclude>
     <ClInclude Include="eff_shock-wave_00.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="pvp_game.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -112,7 +112,7 @@ void InitTitle(void)
 		g_Title[nCntTitle].type = (TITLE)nCntTitle;
 	}
 
-	g_select = TITLE_EXIT;
+	g_select = TITLE_START;
 
 	//頂点バッファをロックする
 	g_pVtxBuffTitle->Unlock();

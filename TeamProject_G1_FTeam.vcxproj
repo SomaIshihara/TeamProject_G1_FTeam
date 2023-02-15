@@ -171,7 +171,7 @@
     <ClCompile Include="eff_shock-wave_00.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="file.cpp" />
-    <ClCompile Include="game.cpp" />
+    <ClCompile Include="pvp_game.cpp" />
     <ClCompile Include="gauge.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="item.cpp" />
@@ -208,7 +208,7 @@
     <ClInclude Include="eff_shock-wave_00.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="file.h" />
-    <ClInclude Include="game.h" />
+    <ClInclude Include="pvp_game.h" />
     <ClInclude Include="gauge.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="item.h" />
