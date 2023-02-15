@@ -36,25 +36,25 @@ Author:平澤詩苑
 #include "bg.h"
 
 //グローバル変数宣言
-bool g_bPause = false;				// ポーズ
-int  g_nUseContNum;					// 使用しているコントローラーの数
-bool g_abUsePlayer[MAX_USE_GAMEPAD];// 使用しているプレイヤー（接続チェックに使用）
-bool g_bDisconnectPlayer;			// 接続が切れたことを確認する
-int  g_numGamePad;
-CHECKMODE	g_CheckMode;
-NumCamera	g_NumCamera;
-bool		g_bPhotoMode;			// フォトモード切替		true:ポーズ画面非表示	false:ボーズ画面表示
+bool g_bPause_PvP = false;				// ポーズ
+int  g_nUseContNum_PvP;					// 使用しているコントローラーの数
+bool g_abUsePlayer_PvP[MAX_USE_GAMEPAD];// 使用しているプレイヤー（接続チェックに使用）
+bool g_bDisconnectPlayer_PvP;			// 接続が切れたことを確認する
+int  g_numGamePad_PvP;
+CHECKMODE	g_CheckMode_PvP;
+NumCamera	g_NumCamera_PvP;
+bool		g_bPhotoMode_PvP;			// フォトモード切替		true:ポーズ画面非表示	false:ボーズ画面表示
 
 //------------------------------------------------
 //				ゲームの初期化処理
 //------------------------------------------------
 void InitPvPGame(void)
 {
-	g_nUseContNum = SetUseController_PvP();		// コントローラーの使用設定
+	g_nUseContNum_PvP = SetUseController_PvP();		// コントローラーの使用設定
 	InitFile();								// ファイルの初期化処理（モデルビューワーファイル読み込み前に行うこと！）
 	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
 	LoadModelOriginalFile("data\\originalmodel.txt");	// モデルオリジナルファイル読み込み
-	g_NumCamera = NumCamera_ONLY;			// 初期カメラの設定（現在はPlayer0を注視点としたカメラ　　画面分割ナシ）
+	g_NumCamera_PvP = NumCamera_ONLY;			// 初期カメラの設定（現在はPlayer0を注視点としたカメラ　　画面分割ナシ）
 
 	InitBg();					// 背景の初期化処理
 	InitLight();				// ライト初期化処理
@@ -67,7 +67,7 @@ void InitPvPGame(void)
 	InitBonus();				// ボーナスの初期化処理
 	InitItem();					// アイテムの初期化処理
 	InitCameraFrame();			// 画面分割の枠初期化処理
-	InitCamera(g_NumCamera);	// カメラの初期化処理
+	InitCamera(g_NumCamera_PvP);	// カメラの初期化処理
 	InitWall();					// 壁の初期化処理
 	InitPause();				// ポーズ画面の初期化処理
 	InitParticle();				// パーティクルの初期化処理
@@ -87,9 +87,9 @@ void InitPvPGame(void)
 
 	SetScore(0,4);				// スコアの設定処理
 
-	g_bPause = false;				// ポーズの初期化
-	g_bDisconnectPlayer = false;	//正常にコントローラーが接続されている状態とする
-	g_bPhotoMode = false;			// フォトモード初期化
+	g_bPause_PvP = false;				// ポーズの初期化
+	g_bDisconnectPlayer_PvP = false;	//正常にコントローラーが接続されている状態とする
+	g_bPhotoMode_PvP = false;			// フォトモード初期化
 	
 	//ゲームBGM開始
 	PlaySound(SOUND_LABEL_BGM_GAME);
@@ -144,7 +144,7 @@ void UpdatePvPGame(void)
 	Player *pPlayer = GetPlayer();	
 
 	//ポーズがOFF
-	if (g_bPause == false)
+	if (g_bPause_PvP == false)
 	{
 		UpdateBg();				// 背景の更新処理
 		UpdateLight();			// ライトの更新処理
@@ -178,12 +178,12 @@ void UpdatePvPGame(void)
 			if (GetKeyboardTrigger(DIK_P) == true || GetGamepadTrigger(nCntPause, XINPUT_GAMEPAD_START) == true)
 			{
 				//何番目のゲームパッドか保存する
-				g_numGamePad = nCntPause;
+				g_numGamePad_PvP = nCntPause;
 
 				PlaySound(SOUND_LABEL_SE_PAUSE_DECISION);
 
 				//ポーズ状態にする
-				g_bPause = true;
+				g_bPause_PvP = true;
 
 				//ポーズしたコントローラーをpause.cppに渡す
 				SetPadPause(false, nCntPause);
@@ -197,7 +197,7 @@ void UpdatePvPGame(void)
 		UpdatePause();
 
 		//フォトモードON
-		if (g_bPhotoMode)
+		if (g_bPhotoMode_PvP)
 		{
 			UpdateCamera();
 
@@ -234,7 +234,7 @@ void UpdatePvPGame(void)
 	//フォトモード切替
 	if (GetKeyboardTrigger(DIK_F9))
 	{
-		g_bPhotoMode = g_bPhotoMode ? false : true;
+		g_bPhotoMode_PvP = g_bPhotoMode_PvP ? false : true;
 	}
 }
 
@@ -273,7 +273,7 @@ void DrawPvPGame(void)
 		DrawTime();					//タイマーの描画処理
 
 									//ポーズがON
-		if (g_bPause == true && g_bPhotoMode == false)
+		if (g_bPause_PvP == true && g_bPhotoMode_PvP == false)
 		{
 			DrawPause();		//ポーズ画面描画処理
 		}
@@ -293,12 +293,12 @@ int SetUseController_PvP(void)
 	{
 		if (GetUseGamepad(nCntController) == true)
 		{//使用されている
-			g_abUsePlayer[nCntController] = true;
+			g_abUsePlayer_PvP[nCntController] = true;
 			nUseController++;	//コントローラーの数追加
 		}
 		else
 		{//使用されていない
-			g_abUsePlayer[nCntController] = false;
+			g_abUsePlayer_PvP[nCntController] = false;
 		}
 	}
 	return nUseController;	//使用されているコントローラーの数を返す
@@ -316,30 +316,30 @@ bool CheckUseController_PvP(CHECKMODE mode)
 {
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{//対応コントローラー分繰り返す
-		if (g_abUsePlayer[nCntPlayer] == true && g_abUsePlayer[nCntPlayer] != GetUseGamepad(nCntPlayer))
+		if (g_abUsePlayer_PvP[nCntPlayer] == true && g_abUsePlayer_PvP[nCntPlayer] != GetUseGamepad(nCntPlayer))
 		{//切断を検知
 			switch (mode)
 			{
 			case CHECKMODE_DISCONPAUSE:
-				g_bPause = true;				//強制的にポーズ状態にする
-				g_bDisconnectPlayer = true;		//切断されたことにする
+				g_bPause_PvP = true;				//強制的にポーズ状態にする
+				g_bDisconnectPlayer_PvP = true;		//切断されたことにする
 				SetPadPause(true);
 				return true;	//関数終了
 				break;
 			case CHECKMODE_DISCONNOPAUSE:
-				g_bDisconnectPlayer = true;		//切断されたことにする
+				g_bDisconnectPlayer_PvP = true;		//切断されたことにする
 				return true;	//関数終了
 				break;
 			case CHECKMODE_REMOVE:
-				g_abUsePlayer[nCntPlayer] = false;
-				g_nUseContNum--;	//コントローラー使用数減らす
+				g_abUsePlayer_PvP[nCntPlayer] = false;
+				g_nUseContNum_PvP--;	//コントローラー使用数減らす
 				break;
 			default:
 				break;
 			}
 		}
 	}
-	g_bDisconnectPlayer = false;	//for文が正常に終了したら問題ない
+	g_bDisconnectPlayer_PvP = false;	//for文が正常に終了したら問題ない
 	return false;
 }
 
@@ -350,7 +350,7 @@ bool CheckUseController_PvP(CHECKMODE mode)
 //------------------------------------------------
 bool GetUseController_PvP(int nPadNum)
 {
-	return g_abUsePlayer[nPadNum];
+	return g_abUsePlayer_PvP[nPadNum];
 }
 
 //------------------------------------------------
@@ -359,7 +359,7 @@ bool GetUseController_PvP(int nPadNum)
 //------------------------------------------------
 int GetUseControllerNum_PvP(void)
 {
-	return g_nUseContNum;
+	return g_nUseContNum_PvP;
 }
 
 //------------------------------------------------
@@ -368,7 +368,7 @@ int GetUseControllerNum_PvP(void)
 //------------------------------------------------
 void SetEnablePause_PvP(bool pause)
 {
-	g_bPause = pause;
+	g_bPause_PvP = pause;
 }
 
 //------------------------------------------------
@@ -380,7 +380,7 @@ void ChangeNumCamera_PvP(void)
 	if (GetKeyboardTrigger(DIK_F7))
 	{
 		//現在のカメラの種類を保存
-		int nType = g_NumCamera;
+		int nType = g_NumCamera_PvP;
 
 		//次の種類に変更
 		nType++;
@@ -389,9 +389,9 @@ void ChangeNumCamera_PvP(void)
 		nType %= NumCamera_MAX;
 
 		//変更したものを入れる
-		g_NumCamera = (NumCamera)nType;
+		g_NumCamera_PvP = (NumCamera)nType;
 
 		//カメラの種類を設定
-		Set_NumCamera(g_NumCamera);
+		Set_NumCamera(g_NumCamera_PvP);
 	}
 }
