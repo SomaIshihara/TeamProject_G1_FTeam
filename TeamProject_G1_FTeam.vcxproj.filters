@@ -70,20 +70,20 @@
     <Filter Include="ヘッダー ファイル\SelectGame">
       <UniqueIdentifier>{40a1d3ed-691e-44ff-a4f2-b7361d4f80e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\Game\Game_HDG">
-      <UniqueIdentifier>{0cfb08cb-c655-4313-b5de-bd55abf28c60}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Game\Game_PvP">
       <UniqueIdentifier>{1b53f35d-1fdf-47a4-b6e7-7be463d4791d}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\Game\Game_PvP">
       <UniqueIdentifier>{b136443d-d0cb-443c-8a4a-87d5b2257cc0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Game_HDG">
-      <UniqueIdentifier>{d3a6b7b7-db43-4bca-8de0-30c341ff3a78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Main">
       <UniqueIdentifier>{861df397-f254-4364-b05f-d4ac38d87004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Game_HDR">
+      <UniqueIdentifier>{0cfb08cb-c655-4313-b5de-bd55abf28c60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Game_HDR">
+      <UniqueIdentifier>{d3a6b7b7-db43-4bca-8de0-30c341ff3a78}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -190,7 +190,7 @@
       <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
     <ClCompile Include="HDRgame.cpp">
-      <Filter>ソース ファイル\Game\Game_HDG</Filter>
+      <Filter>ソース ファイル\Game\Game_HDR</Filter>
     </ClCompile>
     <ClCompile Include="pvp_game.cpp">
       <Filter>ソース ファイル\Game\Game_PvP</Filter>
@@ -303,7 +303,7 @@
       <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
     <ClInclude Include="HDRgame.h">
-      <Filter>ヘッダー ファイル\Game\Game_HDG</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
