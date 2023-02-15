@@ -242,6 +242,8 @@ void UpdateTitle(void)
 
 		case TITLE_EXIT:
 
+			EndProject();
+
 			break;
 		}
 		

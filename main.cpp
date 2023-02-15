@@ -31,6 +31,7 @@ void Update(void);
 void Draw(void);
 void UpdateShowCursor(void);
 
+
 //グローバル変数
 LPDIRECT3D9 g_pD3D = NULL;	//Direct3Dオブジェクトへのポインタ
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
@@ -42,6 +43,7 @@ MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #endif
 
+HWND g_hWnd;
 bool g_bShowCursor = true;
 bool g_bDebug = true;
 
@@ -214,7 +216,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			if (nID == IDYES)
 			{
-				DestroyWindow(hWnd);	//Destroyメッセージを送る
+				EndProject();
 			}
 			SetShowCursor(false);
 			break;
@@ -299,6 +301,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 			}
 		}
 	}
+
+	//ウインドウの情報を格納
+	g_hWnd = hWnd;
 
 	//オブジェクトの初期化処理
 	//レンダーステートの設定
@@ -598,4 +603,11 @@ void UpdateShowCursor(void)
 MODE GetMode(void)
 {
 	return g_mode;
+}
+//
+//
+//
+void EndProject(void)
+{
+	DestroyWindow(g_hWnd);	//Destroyメッセージを送る
 }

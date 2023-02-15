@@ -103,5 +103,6 @@ LPDIRECT3DDEVICE9 GetDevice(void);
 void SetShowCursor(bool bDisp);		//カーソル表示・非表示切り替え（trueで表示・falseで非表示）
 void SetMode(MODE mode); //画面のモード設定
 MODE GetMode(void); //画面モードの取得
+void EndProject(void);
 
 #endif // !_MAIN_H_
