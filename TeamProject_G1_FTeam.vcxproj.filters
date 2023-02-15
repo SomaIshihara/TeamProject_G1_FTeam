@@ -174,9 +174,6 @@
     <ClCompile Include="eff_shock-wave_00.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="pvp_game.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="bonus.cpp">
       <Filter>ソース ファイル\Game\Game_PvP</Filter>
     </ClCompile>
@@ -194,6 +191,9 @@
     </ClCompile>
     <ClCompile Include="HDRgame.cpp">
       <Filter>ソース ファイル\Game\Game_HDG</Filter>
+    </ClCompile>
+    <ClCompile Include="pvp_game.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
