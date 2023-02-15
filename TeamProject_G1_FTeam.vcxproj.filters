@@ -82,25 +82,25 @@
     <Filter Include="ソース ファイル\Game\Game_HDG">
       <UniqueIdentifier>{d3a6b7b7-db43-4bca-8de0-30c341ff3a78}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Game_HDG\Main">
+    <Filter Include="ソース ファイル\Main">
       <UniqueIdentifier>{861df397-f254-4364-b05f-d4ac38d87004}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
-      <Filter>ソース ファイル\Game\Game_HDG\Main</Filter>
+      <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル\Game\Game_HDG\Main</Filter>
+      <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="input.cpp">
-      <Filter>ソース ファイル\Game\Game_HDG\Main</Filter>
+      <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="title.cpp">
       <Filter>ソース ファイル\Title</Filter>
     </ClCompile>
     <ClCompile Include="fade.cpp">
-      <Filter>ソース ファイル\Game\Game_HDG\Main</Filter>
+      <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="tutorial.cpp">
       <Filter>ソース ファイル\Tutorial</Filter>
@@ -163,7 +163,7 @@
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
     <ClCompile Include="color.cpp">
-      <Filter>ソース ファイル\Game\Game_HDG\Main</Filter>
+      <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="gauge.cpp">
       <Filter>ソース ファイル</Filter>
@@ -173,9 +173,6 @@
     </ClCompile>
     <ClCompile Include="eff_shock-wave_00.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="HDRgame.cpp">
-      <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
     <ClCompile Include="pvp_game.cpp">
       <Filter>ソース ファイル</Filter>
@@ -194,6 +191,9 @@
     </ClCompile>
     <ClCompile Include="camera.cpp">
       <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="HDRgame.cpp">
+      <Filter>ソース ファイル\Game\Game_HDG</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
