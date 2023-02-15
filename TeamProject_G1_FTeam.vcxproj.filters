@@ -177,6 +177,9 @@
     <ClCompile Include="select_game.cpp">
       <Filter>ソース ファイル\SelectGame</Filter>
     </ClCompile>
+    <ClCompile Include="eff_shock-wave_00.cpp">
+      <Filter>ソース ファイル\Game\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -280,6 +283,9 @@
     </ClInclude>
     <ClInclude Include="select_game.h">
       <Filter>ヘッダー ファイル\SelectGame</Filter>
+    </ClInclude>
+    <ClInclude Include="eff_shock-wave_00.h">
+      <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

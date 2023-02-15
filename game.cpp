@@ -5,35 +5,35 @@ Author:平澤詩苑
 
 ============================================================================================================================================================*/
 #include "main.h"
+#include "game.h"
 #include "input.h"
 #include "file.h"
-#include "camera.h"
 #include "color.h"
+#include "fade.h"
+#include "camera.h"
+#include "camera_frame.h"
+#include "pause.h"
 #include "player.h"
 #include "model.h"
-#include "wall.h"
-#include "game.h"
-#include "fade.h"
-#include "bg.h"
-#include "meshfield.h"
 #include "light.h"
-#include "meshcylinder.h"
-#include "pause.h"
+#include "wall.h"
 #include "meshdome.h"
+#include "meshfield.h"
+#include "meshfault.h"
+#include "meshcylinder.h"
 #include "gauge.h"
-#include "charge_effect.h"
 #include "score.h"
 #include "bonus.h"
 #include "item.h"
-#include "camera_frame.h"
 #include "timer.h"
 #include "particle.h"
+#include "charge_effect.h"
 #include "attack_effect.h"
 #include "tremor_effect.h"
-#include "meshfault.h"
 #include "charge_cylinder.h"
+#include "eff_shock-wave_00.h"
 #include "sound.h"
-//#include "sound.h"
+#include "bg.h"
 
 //グローバル変数宣言
 bool g_bPause = false;				// ポーズ
@@ -58,10 +58,10 @@ void InitGame(void)
 
 	InitBg();					// 背景の初期化処理
 	InitLight();				// ライト初期化処理
-	InitMeshfield();			// ステージ初期化処理
-	InitMeshCylinder();			// メッシュシリンダー初期化処理
 	InitMeshDome();				// メッシュドーム初期化処理
+	InitMeshfield();			// ステージ初期化処理
 	InitMeshFault();			// メッシュの断面初期化処理
+	InitMeshCylinder();			// メッシュシリンダー初期化処理
 	InitModel();				// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer();				// プレイヤーの初期化処理
 	InitBonus();				// ボーナスの初期化処理
@@ -72,10 +72,11 @@ void InitGame(void)
 	InitPause();				// ポーズ画面の初期化処理
 	InitParticle();				// パーティクルの初期化処理
 	{// エフェクトの初期化処理
-		InitChargeEffect();//チャージエフェクト
-		InitChargeCylinder();//チャージエフェクト(しりんだー)
-		InitAttackEffect();//攻撃エフェクト
-		InitTremorEffect();//ヒップドロップエフェクト
+		InitChargeEffect();		//チャージエフェクト
+		InitChargeCylinder();	//チャージエフェクト(しりんだー)
+		InitAttackEffect();		//攻撃エフェクト
+		InitTremorEffect();		//ヒップドロップエフェクト
+		InitEff_shockWave_00(); //ダッシュ衝撃波エフェクト
 	}	
 	InitScore();				// スコアの初期化
 	InitTime();					// タイマーの初期化処理
@@ -120,10 +121,11 @@ void UninitGame(void)
 	UninitModel();			// モデルの終了処理
 	UninitParticle();		// パーティクルの終了処理
 	{	// エフェクトの終了処理
-		UninitChargeEffect();	//チャージエフェクト
-		UninitChargeCylinder();	//チャージエフェクト(しりんだー)
-		UninitAttackEffect();	//攻撃エフェクト
-		UninitTremorEffect();	//ヒップドロップエフェクト
+		UninitChargeEffect();		//チャージエフェクト
+		UninitChargeCylinder();		//チャージエフェクト(しりんだー)
+		UninitAttackEffect();		//攻撃エフェクト
+		UninitTremorEffect();		//ヒップドロップエフェクト
+		UninitEff_shockWave_00();	//ダッシュ衝撃波エフェクト
 	}
 	UninitScore();			// スコアの終了処理
 	UninitCameraFrame();	// 画面分割の枠終了処理
@@ -157,10 +159,11 @@ void UpdateGame(void)
 		UpdateWall();			// 壁の更新処理
 		UpdateGauge();			// ゲージの更新処理
 		{// エフェクトの更新処理
-			UpdateChargeEffect();	//チャージエフェクト
-			UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
-			UpdateAttackEffect();	//攻撃エフェクト
-			UpdateTremorEffect();	//ヒップドロップエフェクト
+			UpdateChargeEffect();		//チャージエフェクト
+			UpdateChargeCylinder();		//チャージエフェクト(しりんだー)
+			UpdateAttackEffect();		//攻撃エフェクト
+			UpdateTremorEffect();		//ヒップドロップエフェクト
+			UpdateEff_shockWave_00();	//ダッシュ衝撃波エフェクト
 		}
 		UpdateParticle();	// パーティクルの更新処理
 		UpdateScore();		//スコアの更新処理
@@ -258,6 +261,7 @@ void DrawGame(void)
 			DrawChargeCylinder();	//チャージエフェクト(しりんだー)
 			DrawAttackEffect();		//攻撃エフェクト
 			DrawTremorEffect();		//ヒップドロップエフェクト
+			DrawEff_shockWave_00();	//ダッシュ衝撃波エフェクト
 		}	
 		DrawParticle();				// パーティクルの描画処理
 		DrawPlayer();				// プレイヤーの描画処理

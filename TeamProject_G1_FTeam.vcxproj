@@ -168,6 +168,7 @@
     <ClCompile Include="color.cpp" />
     <ClCompile Include="debucproc.cpp" />
     <ClCompile Include="effect.cpp" />
+    <ClCompile Include="eff_shock-wave_00.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="game.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="effect.h" />
+    <ClInclude Include="eff_shock-wave_00.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="game.h" />
