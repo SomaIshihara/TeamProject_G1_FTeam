@@ -10,6 +10,8 @@
 #include "main.h"
 #include "model.h"
 #include "item.h"
+#include "input.h"
+#include "ai.h"
 
 //マクロ
 #define PLAYER_POWER_LEVEL	(3)			//パワーレベル
@@ -22,6 +24,8 @@ typedef enum
 	PLAYERSTAT_CHARGE,
 	PLAYERSTAT_DASH,
 	PLAYERSTAT_PUSHED,
+	PLAYERSTAT_JUMP,
+	PLAYERSTAT_HIPDROP,
 	PLAYERSTAT_FALL,
 	PLAYERSTAT_MAX
 } PLAYERSTAT;
@@ -72,6 +76,9 @@ struct Player
 	int nGhostItemTime;		//ゴースト化アイテムの持続時間
 	bool bMUTEKI;			//無敵状態かどうか（変数名は仮ですいい変数名考えてくれ）
 	int nMUTEKITime;		//無敵の持続時間
+
+	//AIの操作（AIVerにて追加）
+	ComAIBrain *pAI;		//AIポインタ
 
 	//描画類
 	Model model;			//使用モデル

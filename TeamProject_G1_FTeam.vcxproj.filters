@@ -85,6 +85,12 @@
     <Filter Include="ソース ファイル\Game\Game_PvP\Player\Stage">
       <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\AI">
+      <UniqueIdentifier>{729a71f1-ce92-46a1-b210-d95f879a6033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\AI">
+      <UniqueIdentifier>{ed71f278-6db2-4f43-9f57-09432e037c96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -196,7 +202,7 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="comai.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -308,11 +314,11 @@
     <ClInclude Include="particle.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="comai.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="ai.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="comai.h">
+      <Filter>ヘッダー ファイル\AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

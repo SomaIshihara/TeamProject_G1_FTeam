@@ -49,6 +49,7 @@ typedef enum
 #define fatof(x)			(float)atof(x)	//通常のatofだとdouble型で返してくるのでfloatキャストも行うようにしたもの
 #define TASUKIGAKE(ax,az,bx,bz)	((az * bx) - (ax * bz))
 #define MAX_PATH_STR		(512)	//最大パス文字列
+#define PYTHAGORAS(a,b)		sqrtf(powf(a,2) + powf(b,2))
 
 #define RHW			(1.0f)
 
