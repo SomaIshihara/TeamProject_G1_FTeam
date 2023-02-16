@@ -13,14 +13,13 @@
 
 //テクスチャの情報
 #define NUM_ATTACK_EFFECT				(4)			//テクスチャの最大表示数
-
 #define ATTACK_EFFECT_SIZE				(50.0f)		//エフェクトのサイズ
 #define ATTACK_EFFECT_MAX_SIZE			(150.0f)	//エフェクトの最大サイズ
 #define EFFECT_ATTACK_MOVE				(3.0f)		//エフェクトのアタックタイプの変化量
 #define EFFECT_CLEAR_ACCEL				(0.1f)		//エフェクトの透明加速度
 
-//マクロ定義
-#define	CHARGE_EFFECT_TEX_PASS		"data\\TEXTURE\\AttackEffect.png"
+//テクスチャファイルパス
+#define	ATTACK_EFFECT_TEX_PASS			"data\\TEXTURE\\AttackEffect.png"
 
 //グローバル変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffAttackEffect = NULL;		//頂点バッファのポインタ
@@ -36,10 +35,7 @@ void InitAttackEffect(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, CHARGE_EFFECT_TEX_PASS, &g_pTextureAttackEffect);
-
-	//エフェクトの位置を設定
-	SetAttackEffectPos();
+	D3DXCreateTextureFromFile(pDevice, ATTACK_EFFECT_TEX_PASS, &g_pTextureAttackEffect);
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * VTX_MAX * NUM_ATTACK_EFFECT,	//頂点数
@@ -49,15 +45,16 @@ void InitAttackEffect(void)
 	VERTEX_3D *pVtx;
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
-	g_pVtxBuffAttackEffect->Lock(0, 0, (void**)&pVtx, 0);
+	g_pVtxBuffAttackEffect->Lock(0, 0, (void* *)&pVtx, 0);
 
 	for (int nCntEffect = 0; nCntEffect < NUM_ATTACK_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
+		g_AttackEffect[nCntEffect].pos = ZERO_SET;				//位置初期化
 		g_AttackEffect[nCntEffect].nCntLoop = 0;				//ループ回数初期化
 		g_AttackEffect[nCntEffect].fSize = ATTACK_EFFECT_SIZE;	//サイズ初期化
 		g_AttackEffect[nCntEffect].fAlpha = 1.0f;				//透明度初期化
 		g_AttackEffect[nCntEffect].fResize = 0.0f;				//サイズ変更値
-		g_AttackEffect[nCntEffect].bUse = false;				//使われていない状態に	
+		g_AttackEffect[nCntEffect].bUse = false;				//使われていない状態に
 
 		//頂点座標の設定
 		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(-g_AttackEffect[nCntEffect].fSize, 0.0f, +g_AttackEffect[nCntEffect].fSize);
@@ -162,7 +159,7 @@ void UpdateAttackEffectSize(int nEffect)
 	VERTEX_3D *pVtx;
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
-	g_pVtxBuffAttackEffect->Lock(0, 0, (void**)&pVtx, 0);
+	g_pVtxBuffAttackEffect->Lock(0, 0, (void* *)&pVtx, 0);
 
 	//ポインターを合わせる
 	pVtx += VTX_MAX * nEffect;
