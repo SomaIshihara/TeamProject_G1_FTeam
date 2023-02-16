@@ -6,7 +6,7 @@
 //==========================================
 #include "main.h"
 #include "item.h"
-#include "player.h"
+#include "PvP_player.h"
 
 //ƒ}ƒNƒ’è‹`
 #define MAX_ITEM			(3)			//Å‘å”

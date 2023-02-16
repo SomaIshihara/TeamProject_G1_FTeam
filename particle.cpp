@@ -1,7 +1,7 @@
 #include"main.h"
 #include"particle.h"
 #include"bonus.h"
-#include"Player.h"
+#include"PvP_Player.h"
 
 //**********************************************************************
 //ƒOƒ[ƒoƒ‹•Ï”

@@ -8,7 +8,7 @@
 #include "main.h"
 #include "pvp_game.h"
 #include "timer.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "camera.h"
 #include "fade.h"
 #include "color.h"

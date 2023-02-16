@@ -6,7 +6,7 @@
 //==========================================
 #include "main.h"
 #include "pvp_game.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "model.h"
 #include "input.h"
 #include "wall.h"
@@ -59,9 +59,9 @@
 #define GOAST_FLASHSTART	(240)			//点滅開始する残り時間
 #define GOAST_FLASHPULSE	(20)			//点滅の切り替え時間
 
-#define TEST_SIZE_WIDTH		(25.0f)
-#define TEST_SIZE_HEIGHT	(15.0f)
-#define TEST_SIZE_DEPTH		(40.0f)
+#define PLAYER_SIZE_WIDTH		(25.0f)
+#define PLAYER_SIZE_HEIGHT	(15.0f)
+#define PLAYER_SIZE_DEPTH		(40.0f)
 
 //向き
 #define ROT_WA	(-0.75f * D3DX_PI)	//左上
@@ -109,6 +109,9 @@ const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 	{ D3DXVECTOR3(50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
 };
 
+//[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
+const bool c_aAIMove[MAX_USE_GAMEPAD] = { false,true,true,true };
+
 //========================
 //初期化処理
 //========================
@@ -119,6 +122,7 @@ void InitPlayer(void)
 	//変数初期化
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
+		//変数初期化
 		g_aPlayer[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
 		g_aPlayer[nCntPlayer].move = ZERO_SET;
@@ -133,8 +137,8 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].bNotMove = true;
 		g_aPlayer[nCntPlayer].nRespawnPosNum = nCntPlayer;
 
-		g_aPlayer[nCntPlayer].faceCollider[0] = D3DXVECTOR3(15.0f, 0.0f, 15.0f);
-		g_aPlayer[nCntPlayer].faceCollider[1] = D3DXVECTOR3(-15.0f, 0.0f, 15.0f);
+		g_aPlayer[nCntPlayer].faceCollider[0] = D3DXVECTOR3(PLAYER_SIZE_WIDTH, 0.0f, PLAYER_SIZE_WIDTH);
+		g_aPlayer[nCntPlayer].faceCollider[1] = D3DXVECTOR3(-PLAYER_SIZE_WIDTH, 0.0f, PLAYER_SIZE_WIDTH);
 
 		g_aPlayer[nCntPlayer].animal = ANIMAL_WILDBOAR;
 		g_aPlayer[nCntPlayer].nScore = 0;
@@ -154,6 +158,17 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 
 		g_pNotMove[nCntPlayer] = &g_aPlayer[nCntPlayer];
+
+		//プレイヤー・AI設定
+		if (GetUseController_PvP(nCntPlayer) == true)
+		{//プレイヤーは普通に使用していることにする
+			g_aPlayer[nCntPlayer].bUsePlayer = true;
+		}
+		else if (c_aAIMove[nCntPlayer] == true)
+		{//AIは脳みそポインタもらって使用していることにする
+			g_aPlayer[nCntPlayer].pAI = GetAI();
+			g_aPlayer[nCntPlayer].bUsePlayer = true;
+		}
 	}
 
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
@@ -164,8 +179,6 @@ void InitPlayer(void)
 
 	//その他変数
 	g_bDebugMove = false;
-	//g_aPlayer[1].bUsePlayer = true;
-	//g_aPlayer[1].pAI = GetAI();
 }
 
 //========================
@@ -618,8 +631,8 @@ void CollisionPP(int nPlayerNum)
 
 			//-pos0---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - TEST_SIZE_DEPTH);
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - PLAYER_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - PLAYER_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -634,8 +647,8 @@ void CollisionPP(int nPlayerNum)
 
 			//-pos1---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - TEST_SIZE_DEPTH);
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + PLAYER_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - PLAYER_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -650,8 +663,8 @@ void CollisionPP(int nPlayerNum)
 
 			//-pos2---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_DEPTH);
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + PLAYER_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + PLAYER_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -666,8 +679,8 @@ void CollisionPP(int nPlayerNum)
 
 			//-pos3---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_DEPTH);
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - PLAYER_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + PLAYER_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -723,7 +736,7 @@ void CollisionPP(int nPlayerNum)
 				{
 					if (fAreaARight[nCntCollision] / fAreaBRight[nCntCollision] >= 0.0f && fAreaARight[nCntCollision] / fAreaBRight[nCntCollision] <= 1.0f)
 					{
-						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + PLAYER_SIZE_HEIGHT)
 						{
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//動いてる
@@ -744,7 +757,7 @@ void CollisionPP(int nPlayerNum)
 				{
 					if (fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision] >= 0.0f && fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision] <= 1.0f)
 					{
-						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + PLAYER_SIZE_HEIGHT)
 						{
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//動いてる
@@ -773,7 +786,7 @@ void CollisionPP(int nPlayerNum)
 				{
 					if (fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision] >= 0.0f && fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision] <= 1.0f)
 					{
-						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + PLAYER_SIZE_HEIGHT)
 						{
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//動いてる
@@ -793,7 +806,7 @@ void CollisionPP(int nPlayerNum)
 				{
 					if (fAreaADown[nCntCollision] / fAreaBDown[nCntCollision] >= 0.0f && fAreaADown[nCntCollision] / fAreaBDown[nCntCollision] <= 1.0f)
 					{
-						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + TEST_SIZE_HEIGHT)
+						if (posTemp.y >= g_aPlayer[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayer[nCntOtherPlayer].pos.y + PLAYER_SIZE_HEIGHT)
 						{
 							if (fabsf(g_aPlayer[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayer[nPlayerNum].move.z) > 0.0f)
 							{//動いてる
@@ -854,8 +867,8 @@ void CollisionHipDropPP(int nPlayerNum)
 
 			//-pos0---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_DEPTH);
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x + PLAYER_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + PLAYER_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -870,8 +883,8 @@ void CollisionHipDropPP(int nPlayerNum)
 
 			//-pos1---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + TEST_SIZE_DEPTH);
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - PLAYER_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z + PLAYER_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
@@ -886,8 +899,8 @@ void CollisionHipDropPP(int nPlayerNum)
 
 			//-pos2---------------------------------------------------------------------------------------------------------------------------
 			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - TEST_SIZE_WIDTH);
-			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - TEST_SIZE_DEPTH);
+			fLengthX = g_aPlayer[nCntOtherPlayer].pos.x - (g_aPlayer[nCntOtherPlayer].pos.x - PLAYER_SIZE_WIDTH);
+			fLengthZ = g_aPlayer[nCntOtherPlayer].pos.z - (g_aPlayer[nCntOtherPlayer].pos.z - PLAYER_SIZE_DEPTH);
 
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める

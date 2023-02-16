@@ -6,7 +6,7 @@ Author:‘å‹{ˆ¤—…
 ============================================================================================================================================================*/
 #include "main.h"
 #include "gauge.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "input.h"
 #include "color.h"
 #include "sound.h"

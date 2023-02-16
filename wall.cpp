@@ -7,7 +7,7 @@ Author:‘å‹{ˆ¤—…
 
 #include "main.h"
 #include "wall.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "input.h"
 
 //ƒ}ƒNƒ’è‹`

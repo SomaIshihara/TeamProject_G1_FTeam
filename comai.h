@@ -8,13 +8,12 @@
 #define _COMAI_H_
 
 #include "main.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "ai.h"
 
 //プロトタイプ宣言
 void InitComAI(void);
 void UninitComAI(void);
-void UpdateComAI(void);
 void SelectAIMove(Player *pCom);
 ComAIBrain *GetAI(void);
 

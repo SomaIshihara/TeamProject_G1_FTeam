@@ -186,7 +186,7 @@
     <ClCompile Include="meshfield.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="pause.cpp" />
-    <ClCompile Include="player.cpp" />
+    <ClCompile Include="PvP_player.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="select_game.cpp" />
     <ClCompile Include="sound.cpp" />
@@ -226,7 +226,7 @@
     <ClInclude Include="meshfield.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="pause.h" />
-    <ClInclude Include="player.h" />
+    <ClInclude Include="PvP_player.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="select_game.h" />
     <ClInclude Include="sound.h" />
