@@ -268,18 +268,20 @@ void UpdatePlayer(void)
 		//ジャンプ量設定
 		g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
 
-		//移動後がy<0なら落ちるか移動量消す
-		if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f)
+		//移動後がy<0であり、現在の位置が、フィールド以上の高さにいるなら移動量消す
+		if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f && g_aPlayer[nCntPlayer].pos.y >= 0.0f)
 		{
-			float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) + 
+			//原点位置からのプレイヤーの距離を計算
+			float fLength = sqrtf(powf((g_aPlayer[nCntPlayer].pos.x + g_aPlayer[nCntPlayer].move.x), 2) +
 				powf((g_aPlayer[nCntPlayer].pos.z + g_aPlayer[nCntPlayer].move.z), 2));
 
+			//原点位置からの距離が、フィールドの半径以下　　なら、フィールドに乗っている
 			if (fLength <= GetMeshField()->fRadius)
 			{
 				if (g_aPlayer[nCntPlayer].bHipDrop == true)
 				{//ヒップドロップしてたならエフェクト出す
 					SetTremorEffect(g_aPlayer[nCntPlayer].pos);
-					g_aPlayer[nCntPlayer].bHipDrop = false;	//ヒップドロップしてない
+					g_aPlayer[nCntPlayer].bHipDrop = false;    //ヒップドロップしてない
 				}
 				g_aPlayer[nCntPlayer].bJump = false;
 				g_aPlayer[nCntPlayer].moveV0.y = 0.0f;
@@ -287,7 +289,6 @@ void UpdatePlayer(void)
 				g_aPlayer[nCntPlayer].jumpTime = 0;
 				g_aPlayer[nCntPlayer].pos.y = 0.0f;
 				g_aPlayer[nCntPlayer].nHipDropWait = 0;
-				g_aPlayer[nCntPlayer].stat = PLAYERSTAT_WAIT;
 			}
 			else
 			{
