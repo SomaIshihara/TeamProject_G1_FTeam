@@ -73,9 +73,6 @@
     <Filter Include="ソース ファイル\Game\Game_PvP\Player">
       <UniqueIdentifier>{a83b5e00-39ce-4811-b994-a550c578b67a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Game_PvP\Stage">
-      <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Game\Game_PvP\Stage">
       <UniqueIdentifier>{bb7ecd1c-3945-4f33-979f-fce88bed5d03}</UniqueIdentifier>
     </Filter>
@@ -84,6 +81,9 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\Game\Game_HDR">
       <UniqueIdentifier>{0cfb08cb-c655-4313-b5de-bd55abf28c60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Game_PvP\Player\Stage">
+      <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -112,22 +112,22 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="meshcylinder.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
     </ClCompile>
     <ClCompile Include="meshfield.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
     </ClCompile>
     <ClCompile Include="model.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
     <ClCompile Include="wall.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
     </ClCompile>
     <ClCompile Include="light.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
     </ClCompile>
     <ClCompile Include="meshdome.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
     </ClCompile>
     <ClCompile Include="sound.cpp">
       <Filter>ソース ファイル</Filter>
@@ -187,12 +187,15 @@
       <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
     <ClCompile Include="meshfault.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
     </ClCompile>
     <ClCompile Include="timer.cpp">
       <Filter>ソース ファイル\Game\Game_PvP</Filter>
     </ClCompile>
     <ClCompile Include="bg.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="comai.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -304,6 +307,12 @@
     </ClInclude>
     <ClInclude Include="particle.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="comai.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ai.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

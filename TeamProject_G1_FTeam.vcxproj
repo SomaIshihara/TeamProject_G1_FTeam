@@ -166,6 +166,7 @@
     <ClCompile Include="charge_cylinder.cpp" />
     <ClCompile Include="charge_effect.cpp" />
     <ClCompile Include="color.cpp" />
+    <ClCompile Include="comai.cpp" />
     <ClCompile Include="debucproc.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="eff_shock-wave_00.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ai.h" />
     <ClInclude Include="attack_effect.h" />
     <ClInclude Include="bg.h" />
     <ClInclude Include="bonus.h" />
@@ -204,6 +206,7 @@
     <ClInclude Include="charge_effect.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="comai.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="eff_shock-wave_00.h" />
