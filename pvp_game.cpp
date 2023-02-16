@@ -34,6 +34,7 @@ Author:平澤詩苑
 #include "eff_shock-wave_00.h"
 #include "sound.h"
 #include "bg.h"
+#include "comai.h"
 
 //グローバル変数宣言
 bool g_bPause_PvP = false;				// ポーズ
@@ -63,6 +64,7 @@ void InitPvPGame(void)
 	InitMeshFault();			// メッシュの断面初期化処理
 	InitMeshCylinder();			// メッシュシリンダー初期化処理
 	InitModel();				// モデルの初期化処理（プレイヤーの前に行うこと！）
+	InitComAI();				// コンピューターAIの初期化処理（プレイヤーの前に行うこと）
 	InitPlayer();				// プレイヤーの初期化処理
 	InitBonus();				// ボーナスの初期化処理
 	InitItem();					// アイテムの初期化処理
@@ -113,6 +115,7 @@ void UninitPvPGame(void)
 	UninitMeshFault();		// メッシュの断面終了処理
 	UninitWall();			// 壁の終了処理
 	UninitCamera();			// カメラの終了処理
+	UninitComAI();			// コンピューターAIの終了処理
 	UninitPlayer();			// プレイヤーの終了処理
 	UninitBonus();			// ボーナスの終了処理
 	UninitItem();			// アイテムの終了処理
