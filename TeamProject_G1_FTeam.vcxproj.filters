@@ -195,9 +195,6 @@
     <ClCompile Include="bg.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="..\comaiver\TeamProject_G1_FTeam\comai.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="comai.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -310,12 +307,6 @@
     </ClInclude>
     <ClInclude Include="particle.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\comaiver\TeamProject_G1_FTeam\comai.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="..\comaiver\TeamProject_G1_FTeam\ai.h">
-      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="comai.h">
       <Filter>ヘッダー ファイル</Filter>
