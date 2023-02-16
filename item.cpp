@@ -231,7 +231,6 @@ void CollisionIP(int nPlayerNum)
 	D3DXVECTOR3 vecMove;
 	D3DXVECTOR3 vecLine;
 	D3DXVECTOR3 vecToPos, vecToPosOld;
-	float fAreaA, fAreaB;
 
 	Player *pPlayer = GetPlayer();//ƒvƒŒƒCƒ„[î•ñæ“¾
 

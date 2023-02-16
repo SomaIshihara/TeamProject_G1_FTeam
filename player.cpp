@@ -25,6 +25,7 @@
 #include "meshfield.h"
 #include "bonus.h"
 #include "particle.h"
+#include "comai.h"
 
 //マクロ
 #define PLAYER_HIPDROP_WAIT		(15)		//ヒップドロップの「開始・着地」硬直時間
@@ -58,9 +59,9 @@
 #define GOAST_FLASHSTART	(240)			//点滅開始する残り時間
 #define GOAST_FLASHPULSE	(20)			//点滅の切り替え時間
 
-#define TEST_SIZE_WIDTH		(30.0f)
+#define TEST_SIZE_WIDTH		(25.0f)
 #define TEST_SIZE_HEIGHT	(15.0f)
-#define TEST_SIZE_DEPTH		(30.0f)
+#define TEST_SIZE_DEPTH		(40.0f)
 
 //向き
 #define ROT_WA	(-0.75f * D3DX_PI)	//左上
@@ -73,6 +74,10 @@
 #define ROT_D	(0.5f * D3DX_PI)	//右
 
 //プロト
+void ControllKeyboardPlayer(int nPlayerNum);
+void ControllGPadPlayer(int nPlayerNum);
+void ControllAI(int nPlayerNum);
+
 void MovePlayer(int nPadNum);
 void RotatePlayer(int nPadNum);		//MovePlayer のrot.y の計算式だけを残しています
 
@@ -143,6 +148,8 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].bMUTEKI = false;
 		g_aPlayer[nCntPlayer].nMUTEKITime = 0;
 
+		g_aPlayer[nCntPlayer].pAI = NULL;
+
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
 		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 
@@ -157,6 +164,8 @@ void InitPlayer(void)
 
 	//その他変数
 	g_bDebugMove = false;
+	//g_aPlayer[1].bUsePlayer = true;
+	//g_aPlayer[1].pAI = GetAI();
 }
 
 //========================
@@ -205,143 +214,28 @@ void UpdatePlayer(void)
 
 		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
 		{//使用時のみ行う
-			//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
-			if (GetUseControllerNum_PvP() != 0)
-			{
-				g_aPlayer[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
-			}
-
-			//ヒップドロップ中でなければ操作できる
-			if (g_aPlayer[nCntPlayer].bHipDrop == false)
-			{
-				//キーボード操作時の動作
-#if 1
-				//移動方法（ダッシュ）押して離す
-				if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
-					&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
-				{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-					if (GetKeyboardPress(DIK_SPACE) == true)
-					{//スペースキーは押された
-
-						//プレイヤーのチャージ処理
-						ChargePlayer(nCntPlayer);
-					}
-					else if (GetKeyboardRelease(DIK_SPACE) == true)
-					{//SPACEキーが離された
-						//プレイヤーのダッシュ処理
-						DashPlayer(nCntPlayer);
-					}
+			if (g_aPlayer[nCntPlayer].pAI == NULL)
+			{//プレイヤー
+				//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
+				if (GetUseControllerNum_PvP() != 0)
+				{
+					g_aPlayer[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 				}
 				else
 				{
-					g_aPlayer[nCntPlayer].moveGauge = 0;
+					ControllKeyboardPlayer(nCntPlayer);
 				}
 
-				//ジャンプ・ヒップドロップ
-				if (GetKeyboardTrigger(DIK_RETURN) == true && g_aPlayer[nCntPlayer].bHipDrop == false)
-				{
-					if (g_aPlayer[nCntPlayer].bJump)
-					{
-						HipDropPlayer(nCntPlayer);									//プレイヤーのヒップドロップ処理
-						g_aPlayer[nCntPlayer].nHipDropWait = PLAYER_HIPDROP_WAIT;	//ヒップドロップの開始硬直を設定
-					}
-					else
-					{
-						JumpPlayer(nCntPlayer);			//プレイヤーのジャンプ処理
-					}
-				}
-#endif
-				//ゲームパッドの操作
-				//移動方法（ダッシュ）押して離す
-				if ((int)(g_aPlayer[nCntPlayer].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
-					&& (int)(g_aPlayer[nCntPlayer].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
-				{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-					if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == true)
-					{//Xボタンが押された					 
-						//プレイヤーのチャージ処理
-						ChargePlayer(nCntPlayer);
-					}
-					else if (GetGamepadRelease(nCntPlayer, XINPUT_GAMEPAD_X) == true)
-					{//Xボタンが離された
-						//プレイヤーのダッシュ処理
-						DashPlayer(nCntPlayer);
-					
-					}
-				}
-				else
-				{
-					g_aPlayer[nCntPlayer].moveGauge = 0;
-				}
-
-				//ジャンプ・ヒップドロップ
-				if (GetGamepadTrigger(nCntPlayer, XINPUT_GAMEPAD_A) == true && g_aPlayer[nCntPlayer].bHipDrop == false)
-				{
-					if (g_aPlayer[nCntPlayer].bJump)
-					{
-						HipDropPlayer(nCntPlayer);									//プレイヤーのヒップドロップ処理
-						g_aPlayer[nCntPlayer].nHipDropWait = PLAYER_HIPDROP_WAIT;	//ヒップドロップの開始硬直を設定
-					}
-					else
-					{
-						JumpPlayer(nCntPlayer);			//プレイヤーのジャンプ処理
-					}
-				}
-
-				//[デバッグ用]普通に移動する処理
-#ifdef _DEBUG
-				if (g_bDebugMove)
-				{
-					MovePlayer(nCntPlayer);
-					RotatePlayer(nCntPlayer);
-				}
-#endif
+				//各プレイヤーの操作
+				ControllGPadPlayer(nCntPlayer);
 			}
-
-			//ヒップドロップ中
 			else
-			{
-				//ヒップドロップ硬直時間がある
-				if (g_aPlayer[nCntPlayer].nHipDropWait > 0)
-				{
-					//ヒップスピン中
-					if (g_aPlayer[nCntPlayer].bHipDropSpin == true)
-					{
-						g_aPlayer[nCntPlayer].rot.x += PLAYER_HIPSPIN_SPEED;
+			{//AI
+				//AIがコントローラー操作
+				SelectAIMove(&g_aPlayer[nCntPlayer]);
 
-						//1周したら
-						if (g_aPlayer[nCntPlayer].rot.x <= PLAYER_HIPSPIN_LAP)
-						{
-							
-							g_aPlayer[nCntPlayer].rot.x = 0.0f;			//元の向きに直す
-							g_aPlayer[nCntPlayer].bHipDropSpin = false;	//ヒップスピン終了
-						}
-					}
-
-					//ヒップスピン終了後
-					else
-					{
-						g_aPlayer[nCntPlayer].nHipDropWait--;		//硬直時間を減らしていく
-					}
-				}
-				else
-				{
-					//落下させる
-					g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].moveV0.y;
-				}
-			}
-
-
-			//向きを変える処理
-			if (GetUseController_PvP(nCntPlayer))
-			{//ゲームパッド使用
-				if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == false)
-				{//Xボタンが押されていない
-					RotatePlayer(nCntPlayer);
-				}
-			}
-			else if (GetKeyboardPress(DIK_SPACE) == false)
-			{//未使用かつチャージ中ではない
-				RotatePlayer(nCntPlayer);
+				//AI移動
+				ControllAI(nCntPlayer);
 			}
 
 			//当たり判定類
@@ -350,7 +244,7 @@ void UpdatePlayer(void)
 				CollisionPP(nCntPlayer);
 				CollisionIP(nCntPlayer);
 
-				if (g_aPlayer[nCntPlayer].bHipDrop)
+				if (g_aPlayer[nCntPlayer].stat == PLAYERSTAT_HIPDROP)
 				{//ヒップドロップ中なら
 					CollisionHipDropPP(nCntPlayer);
 				}
@@ -380,6 +274,11 @@ void UpdatePlayer(void)
 				g_aPlayer[nCntPlayer].jumpTime = 0;
 				g_aPlayer[nCntPlayer].pos.y = 0.0f;
 				g_aPlayer[nCntPlayer].nHipDropWait = 0;
+				g_aPlayer[nCntPlayer].stat = PLAYERSTAT_WAIT;
+			}
+			else
+			{
+				g_aPlayer[nCntPlayer].stat = PLAYERSTAT_FALL;
 			}
 		}
 
@@ -410,9 +309,7 @@ void UpdatePlayer(void)
 			if (g_aPlayer[nCntPlayer].bHipDrop == false && g_aPlayer[nCntPlayer].nHipDropWait <= 0)
 			{
 				//普通に移動
-				g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
-				g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
-				g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
+				g_aPlayer[nCntPlayer].pos += g_aPlayer[nCntPlayer].move;
 			}
 		}
 		else
@@ -450,9 +347,7 @@ void UpdatePlayer(void)
 			g_aPlayer[g_aPlayer[nCntPlayer].lastAtkPlayer].lastAtkPlayer = -1;
 
 			//普通に移動
-			g_aPlayer[nCntPlayer].pos.x += g_aPlayer[nCntPlayer].move.x;
-			g_aPlayer[nCntPlayer].pos.y += g_aPlayer[nCntPlayer].move.y;
-			g_aPlayer[nCntPlayer].pos.z += g_aPlayer[nCntPlayer].move.z;
+			g_aPlayer[nCntPlayer].pos += g_aPlayer[nCntPlayer].move;
 		}
 
 		//移動量減衰
@@ -631,6 +526,7 @@ void ChargePlayer(int nChargePlayer)
 		PlaySound(SOUND_LABEL_SE_ENERGY_00);
 	}
 
+	g_aPlayer[nChargePlayer].stat = PLAYERSTAT_CHARGE;
 	SetChargeEffect(g_aPlayer[nChargePlayer].pos, nChargePlayer);
 	SetChargeCylinder(g_aPlayer[nChargePlayer].pos, nChargePlayer);
 }
@@ -646,6 +542,7 @@ void DashPlayer(int nDashPlayer)
 	g_aPlayer[nDashPlayer].move.x = -sinf(g_aPlayer[nDashPlayer].rot.y) * g_aPlayer[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
 	g_aPlayer[nDashPlayer].move.z = -cosf(g_aPlayer[nDashPlayer].rot.y) * g_aPlayer[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
 
+	g_aPlayer[nDashPlayer].stat = PLAYERSTAT_DASH;
 	g_aPlayer[nDashPlayer].moveGauge = 0;
 }
 
@@ -663,6 +560,7 @@ void HipDropPlayer(int nHipDropPlayer)
 	g_aPlayer[nHipDropPlayer].jumpTime = 0;							//ジャンプ時間リセット
 	g_aPlayer[nHipDropPlayer].bHipDrop = true;						//ヒップドロップしている
 	g_aPlayer[nHipDropPlayer].bHipDropSpin = true;					//スピンしている
+	g_aPlayer[nHipDropPlayer].stat = PLAYERSTAT_HIPDROP;
 }
 
 //========================
@@ -675,6 +573,7 @@ void JumpPlayer(int nJumpPlayer)
 	g_aPlayer[nJumpPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 	g_aPlayer[nJumpPlayer].jumpTime = 0;	//ジャンプ時間リセット
 	g_aPlayer[nJumpPlayer].bJump = true;
+	g_aPlayer[nJumpPlayer].stat = PLAYERSTAT_JUMP;
 }
 
 //========================
@@ -709,7 +608,7 @@ void CollisionPP(int nPlayerNum)
 
 	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++)
 	{
-		if (nCntOtherPlayer != nPlayerNum)// && g_aPlayer[nCntOtherPlayer].bUsePlayer == true
+		if (nCntOtherPlayer != nPlayerNum)
 		{
 			//各頂点求める
 			float fLengthX, fLengthZ;
@@ -1049,6 +948,212 @@ void CollisionHipDropPP(int nPlayerNum)
 }
 
 //========================
+//[デバッグ用]プレイヤーの処理（キーボード）
+//========================
+void ControllKeyboardPlayer(int nPlayerNum)
+{
+	//ヒップドロップ中でなければ操作できる
+	if (g_aPlayer[nPlayerNum].bHipDrop == false)
+	{
+		//キーボード操作時の動作
+		//移動方法（ダッシュ）押して離す
+		if ((int)(g_aPlayer[nPlayerNum].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
+			&& (int)(g_aPlayer[nPlayerNum].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
+		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
+			if (GetKeyboardPress(DIK_SPACE) == true)
+			{//スペースキーは押された
+			 //プレイヤーのチャージ処理
+				ChargePlayer(nPlayerNum);
+			}
+			else
+			{
+				g_aPlayer[nPlayerNum].stat = PLAYERSTAT_WAIT;
+			}
+			if (GetKeyboardRelease(DIK_SPACE) == true)
+			{//SPACEキーが離された
+			 //プレイヤーのダッシュ処理
+				DashPlayer(nPlayerNum);
+			}
+		}
+		else
+		{
+			g_aPlayer[nPlayerNum].moveGauge = 0;
+		}
+
+		//ジャンプ・ヒップドロップ
+		if (GetKeyboardTrigger(DIK_RETURN) == true && g_aPlayer[nPlayerNum].bHipDrop == false)
+		{
+			if (g_aPlayer[nPlayerNum].bJump)
+			{
+				HipDropPlayer(nPlayerNum);									//プレイヤーのヒップドロップ処理
+				g_aPlayer[nPlayerNum].nHipDropWait = PLAYER_HIPDROP_WAIT;	//ヒップドロップの開始硬直を設定
+			}
+			else
+			{
+				JumpPlayer(nPlayerNum);			//プレイヤーのジャンプ処理
+			}
+
+			MovePlayer(nPlayerNum);
+		}
+
+		//回転
+		if (GetKeyboardPress(DIK_SPACE) == false)
+		{//チャージ中ではない
+			RotatePlayer(nPlayerNum);
+		}
+	}
+	//ヒップドロップ中
+	else
+	{
+		//ヒップドロップ硬直時間がある
+		if (g_aPlayer[nPlayerNum].nHipDropWait > 0)
+		{
+			g_aPlayer[nPlayerNum].nHipDropWait--;		//硬直時間を減らしていく
+		}
+		else
+		{
+			//落下させる
+			g_aPlayer[nPlayerNum].pos.y += g_aPlayer[nPlayerNum].moveV0.y;
+		}
+	}
+}
+
+//========================
+//プレイヤーの処理（ゲームパッド）
+//========================
+void ControllGPadPlayer(int nPlayerNum)
+{
+	//ヒップドロップ中でなければ操作できる
+	if (g_aPlayer[nPlayerNum].bHipDrop == false)
+	{
+		if ((int)(g_aPlayer[nPlayerNum].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
+			&& (int)(g_aPlayer[nPlayerNum].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
+		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
+			if (GetGamepadPress(nPlayerNum, XINPUT_GAMEPAD_X) == true)
+			{//Xボタンが押された					 
+			 //プレイヤーのチャージ処理
+				ChargePlayer(nPlayerNum);
+			}
+			else
+			{
+				g_aPlayer[nPlayerNum].stat = PLAYERSTAT_WAIT;
+			}
+
+			if (GetGamepadRelease(nPlayerNum, XINPUT_GAMEPAD_X) == true)
+			{//Xボタンが離された
+			 //プレイヤーのダッシュ処理
+				DashPlayer(nPlayerNum);
+			}
+		}
+		else
+		{
+			g_aPlayer[nPlayerNum].moveGauge = 0;
+		}
+
+		//ジャンプ・ヒップドロップ
+		if (GetGamepadTrigger(nPlayerNum, XINPUT_GAMEPAD_A) == true && g_aPlayer[nPlayerNum].bHipDrop == false)
+		{
+			if (g_aPlayer[nPlayerNum].bJump)
+			{
+				HipDropPlayer(nPlayerNum);									//プレイヤーのヒップドロップ処理
+				g_aPlayer[nPlayerNum].nHipDropWait = PLAYER_HIPDROP_WAIT;	//ヒップドロップの開始硬直を設定
+			}
+			else
+			{
+				JumpPlayer(nPlayerNum);			//プレイヤーのジャンプ処理
+			}
+
+			MovePlayer(nPlayerNum);
+		}
+
+		//回転
+		if (GetGamepadPress(nPlayerNum, XINPUT_GAMEPAD_X) == false)
+		{//Xボタンが押されていない
+			RotatePlayer(nPlayerNum);
+		}
+	}
+	//ヒップドロップ中
+	else
+	{
+		//ヒップドロップ硬直時間がある
+		if (g_aPlayer[nPlayerNum].nHipDropWait > 0)
+		{
+			g_aPlayer[nPlayerNum].nHipDropWait--;		//硬直時間を減らしていく
+		}
+		else
+		{
+			//落下させる
+			g_aPlayer[nPlayerNum].pos.y += g_aPlayer[nPlayerNum].moveV0.y;
+		}
+	}
+}
+
+//========================
+//AIの処理
+//========================
+void ControllAI(int nPlayerNum)
+{
+	//ヒップドロップ中でなければ操作できる
+	if (g_aPlayer[nPlayerNum].bHipDrop == false)
+	{
+		if ((int)(g_aPlayer[nPlayerNum].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
+			&& (int)(g_aPlayer[nPlayerNum].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
+		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
+			if (g_aPlayer[nPlayerNum].pAI->controll.bPushX)
+			{//Xボタンが押された					 
+			 //プレイヤーのチャージ処理
+				ChargePlayer(nPlayerNum);
+			}
+			else if (g_aPlayer[nPlayerNum].pAI->controll.bPushXRele)
+			{//Xボタンが離された
+			 //プレイヤーのダッシュ処理
+				DashPlayer(nPlayerNum);
+			}
+		}
+		else
+		{
+			g_aPlayer[nPlayerNum].moveGauge = 0;
+		}
+
+		//ジャンプ・ヒップドロップ
+		if (g_aPlayer[nPlayerNum].pAI->controll.bPushA == true && g_aPlayer[nPlayerNum].bHipDrop == false)
+		{
+			if (g_aPlayer[nPlayerNum].bJump)
+			{
+				HipDropPlayer(nPlayerNum);									//プレイヤーのヒップドロップ処理
+				g_aPlayer[nPlayerNum].nHipDropWait = PLAYER_HIPDROP_WAIT;	//ヒップドロップの開始硬直を設定
+			}
+			else
+			{
+				JumpPlayer(nPlayerNum);			//プレイヤーのジャンプ処理
+			}
+
+			MovePlayer(nPlayerNum);
+		}
+
+		//回転
+		if (g_aPlayer[nPlayerNum].pAI->controll.bPushX == false)
+		{//仮
+			RotatePlayer(nPlayerNum);
+		}
+	}
+	//ヒップドロップ中
+	else
+	{
+		//ヒップドロップ硬直時間がある
+		if (g_aPlayer[nPlayerNum].nHipDropWait > 0)
+		{
+			g_aPlayer[nPlayerNum].nHipDropWait--;		//硬直時間を減らしていく
+		}
+		else
+		{
+			//落下させる
+			g_aPlayer[nPlayerNum].pos.y += g_aPlayer[nPlayerNum].moveV0.y;
+		}
+	}
+}
+
+//========================
 //[デバッグ用]プレイヤーの移動処理
 //========================
 void MovePlayer(int nPadNum)
@@ -1140,22 +1245,39 @@ void RotatePlayer(int nPadNum)
 	if (!g_bDebugMove)
 	{//リリース用
 	 //ゲームパッド部
-		if (GetLStickX(nPadNum) > 0)
-		{
-			g_aPlayer[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
+		if (g_aPlayer[nPadNum].pAI == NULL)
+		{//プレイヤー
+			if (GetLStickX(nPadNum) > 0)
+			{
+				g_aPlayer[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
+			}
+			else if (GetLStickX(nPadNum) < 0)
+			{
+				g_aPlayer[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
+			}
+			//キーボード部
+			else if (GetKeyboardPress(DIK_A) == true)
+			{
+				g_aPlayer[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
+			}
+			else if (GetKeyboardPress(DIK_D) == true)
+			{
+				g_aPlayer[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
+			}
 		}
-		else if (GetLStickX(nPadNum) < 0)
-		{
-			g_aPlayer[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
-		}
-		//キーボード部
-		else if (GetKeyboardPress(DIK_A) == true)
-		{
-			g_aPlayer[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
-		}
-		else if (GetKeyboardPress(DIK_D) == true)
-		{
-			g_aPlayer[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
+		else
+		{//AI
+			switch (g_aPlayer[nPadNum].pAI->controll.stick)
+			{
+			case AISTICK_LEFT:
+				g_aPlayer[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
+				break;
+			case AISTICK_RIGHT:
+				g_aPlayer[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
+				break;
+			case AISTICK_NEUTRAL:
+				break;
+			}
 		}
 	}
 	else
