@@ -10,9 +10,10 @@
 //アイテム種類列挙型
 typedef enum
 {
-	ITEMTYPE_ATK = 0,
-	ITEMTYPE_DEF,
-	ITEMTYPE_GHOST,
+	ITEMTYPE_ATK = 0,		//はじき強化
+	ITEMTYPE_DEF,			//押し合い強化
+	ITEMTYPE_GHOST,			//ゴースト
+	ITEMTYPE_INVINCIBLE,	//無敵
 	ITEMTYPE_MAX
 }ITEMTYPE;
 

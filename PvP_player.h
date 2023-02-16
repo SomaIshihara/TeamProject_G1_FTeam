@@ -74,8 +74,8 @@ struct Player
 	int nATKItemTime;		//はじき強化アイテムの持続時間
 	int nDEFItemTime;		//押し合い強化アイテムの持続時間
 	int nGhostItemTime;		//ゴースト化アイテムの持続時間
-	bool bMUTEKI;			//無敵状態かどうか（変数名は仮ですいい変数名考えてくれ）
-	int nMUTEKITime;		//無敵の持続時間
+	bool bInvincible;		//無敵状態かどうか（変数名は仮ですいい変数名考えてくれ）
+	int nInvincibleTime;	//無敵の持続時間
 
 	//AIの操作（AIVerにて追加）
 	ComAIBrain *pAI;		//AIポインタ
