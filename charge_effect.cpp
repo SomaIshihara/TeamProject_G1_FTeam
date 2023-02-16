@@ -8,7 +8,7 @@
 #include "pvp_game.h"
 #include "charge_effect.h"
 #include "color.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "input.h"
 
 //テクスチャの情報

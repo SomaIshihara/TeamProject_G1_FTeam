@@ -11,6 +11,7 @@
 #include "fade.h"
 #include "select_game.h"
 #include "pvp_game.h"
+#include "HDRgame.h"
 #include "title.h"
 #include "color.h"
 #include "tutorial.h"
@@ -437,6 +438,9 @@ void Update(void)
 		case MODE_PvPGAME:			//ゲーム画面の更新
 			UpdatePvPGame();
 			break;
+		case MODE_RaceGAME:			//ゲーム画面の更新
+			UpdateHDRGame();
+			break;
 		}
 	}
 
@@ -484,6 +488,9 @@ void Draw(void)
 
 		case MODE_PvPGAME:			//ゲーム画面描画
 			DrawPvPGame();
+			break;
+		case MODE_RaceGAME:			//ゲーム画面の更新
+			DrawHDRGame();
 			break;
 		}
 
@@ -535,6 +542,9 @@ void SetMode(MODE mode)
 	case MODE_PvPGAME:			//ゲーム画面終了
 		UninitPvPGame();
 		break;
+	case MODE_RaceGAME:			//ゲーム画面の更新
+		UninitHDRGame();
+		break;
 	}
 
 	//新しい画面（モード）の初期化処理
@@ -554,6 +564,9 @@ void SetMode(MODE mode)
 
 	case MODE_PvPGAME:			//ゲーム画面初期化
 		InitPvPGame();
+		break;
+	case MODE_RaceGAME:			//ゲーム画面の更新
+		InitHDRGame();
 		break;
 	}
 

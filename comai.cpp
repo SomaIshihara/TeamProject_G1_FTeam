@@ -6,7 +6,7 @@
 //==========================================
 #include "main.h"
 #include "comai.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "input.h"
 #include "meshfield.h"
 #include <time.h>

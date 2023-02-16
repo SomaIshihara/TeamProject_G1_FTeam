@@ -6,7 +6,7 @@
 //==========================================
 #include "main.h"
 #include "pvp_game.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "model.h"
 #include "input.h"
 #include "wall.h"
