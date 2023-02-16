@@ -198,6 +198,9 @@
     <ClCompile Include="PvP_player.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
+    <ClCompile Include="HDR_camera.cpp">
+      <Filter>ソース ファイル\Game\Game_HDR</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -313,6 +316,9 @@
     </ClInclude>
     <ClInclude Include="PvP_player.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="HDR_camera.h">
+      <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
