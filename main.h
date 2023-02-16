@@ -38,6 +38,15 @@ typedef enum
 	MODE_MAX
 } MODE;
 
+//コントローラーチェックモード列挙
+typedef enum
+{
+	CHECKMODE_DISCONPAUSE = 0,	//切断されたら強制ポーズするモード
+	CHECKMODE_DISCONNOPAUSE,	//切断されたかだけ確認するモード
+	CHECKMODE_REMOVE,			//使用コントローラー削除モード
+	CHECKMODE_MAX
+} CHECKMODE;
+
 //マクロ定義
 #define CLASS_NAME			"WindowClass"
 #define SCREEN_WIDTH		(1280)		//クライアント領域の幅
@@ -50,6 +59,9 @@ typedef enum
 #define TASUKIGAKE(ax,az,bx,bz)	((az * bx) - (ax * bz))
 #define MAX_PATH_STR		(512)	//最大パス文字列
 #define PYTHAGORAS(a,b)		sqrtf(powf(a,2) + powf(b,2))
+
+//フェードマクロ
+#define END_FADE	(60)		//終了余韻
 
 #define RHW			(1.0f)
 

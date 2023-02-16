@@ -5,7 +5,7 @@
 //
 //==========================================
 #include "main.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "meshfield.h"
 #include "file.h"
 #include "color.h"

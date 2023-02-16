@@ -225,8 +225,24 @@ void DecideGameMode(void)
 	//Enterが押された　もしくは　ゲームパッドのSTART or A ボタンが押された
 	if ((GetKeyboardTrigger(DIK_RETURN) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
 	{
-		//チュートリアル画面に遷移
-		SetFade(MODE_PvPGAME);
+		switch (g_SelectGameMenu)
+		{
+			//PVPが選択されている場合  もしくはバグで、何にも選択されていなかった場合
+		case SelectGameMenu_PVP:
+
+			//チュートリアル画面に遷移
+			SetFade(MODE_PvPGAME);
+
+			break;
+
+			//ヒップドロップレースが選択されている場合
+		case SelectGameMenu_HipDropRace:
+
+			//チュートリアル画面に遷移
+			SetFade(MODE_RaceGAME);
+
+			break;
+		}
 
 		//タイトル決定音再生
 		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE);

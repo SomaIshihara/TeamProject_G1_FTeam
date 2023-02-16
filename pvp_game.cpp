@@ -13,7 +13,7 @@ Author:ïΩ‡Véçâë
 #include "camera.h"
 #include "camera_frame.h"
 #include "pause.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "model.h"
 #include "light.h"
 #include "wall.h"

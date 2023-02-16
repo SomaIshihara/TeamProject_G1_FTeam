@@ -6,7 +6,7 @@
 //==========================================
 #include "main.h"
 #include "comai.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "input.h"
 #include "meshfield.h"
 #include <time.h>
@@ -51,22 +51,6 @@ void InitComAI(void)
 }
 
 //========================
-//終了処理
-//========================
-void UninitComAI(void)
-{
-	
-}
-
-//========================
-//更新処理
-//========================
-void UpdateComAI(void)
-{
-	
-}
-
-//========================
 //選択処理
 //========================
 void SelectAIMove(Player *pCom)
@@ -86,20 +70,20 @@ void SelectAIMove(Player *pCom)
 			if ((pPlayer + nCntPlayer) != pCom)
 			{//自分でなければ
 			 //距離計算
-				float fLength = sqrtf((pPlayer->pos.x - pCom->pos.x) + (pPlayer->pos.z - pCom->pos.z));
+				float fLength = PYTHAGORAS(((pPlayer + nCntPlayer)->pos.x - pCom->pos.x), ((pPlayer + nCntPlayer)->pos.z - pCom->pos.z));
 
-				if (fMinLength == -1.0f || fMinLength >= fLength)
+				if (pNearPlayer == NULL || fMinLength >= fLength)
 				{//何も入っていない または もっと近いプレイヤー見つけた
-				 //距離と近いプレイヤーのポインタ代入
+					//距離と近いプレイヤーのポインタ代入
 					fMinLength = fLength;
-					pNearPlayer = pPlayer;
+					pNearPlayer = (pPlayer + nCntPlayer);
 				}
 			}
 		}
 
 		//角度を変える（2DSTGのホーミング技術使用）
 		float fRotMove = pCom->rot.y;
-		float fRotDest = atan2f(pPlayer->pos.x - pCom->pos.x, pPlayer->pos.z - pCom->pos.z);
+		float fRotDest = atan2f(pNearPlayer->pos.x - pCom->pos.x, pNearPlayer->pos.z - pCom->pos.z);
 		float fRotDiff = FIX_ROT(fRotDest - fRotMove + D3DX_PI);
 		if ((int)(fabsf(fRotDiff) * 10) == 0)//10にしないと厳しすぎてプルプルする
 		{
