@@ -51,6 +51,17 @@ void InitComAI(void)
 }
 
 //========================
+//èIóπèàóù
+//========================
+void UninitComAI(void)
+{
+	for (int nCntAI = 0; nCntAI < MAX_USE_GAMEPAD; nCntAI++)
+	{//AIÇégÇ¡ÇƒÇ¢Ç»Ç¢Ç±Ç∆Ç…Ç∑ÇÈ
+		g_bUseAIPointer[nCntAI] = false;
+	}
+}
+
+//========================
 //ëIëèàóù
 //========================
 void SelectAIMove(Player *pCom)
