@@ -221,7 +221,7 @@ void DrawPlayer_HDR(void)
 //========================
 //æ“¾ˆ—
 //========================
-Player_HDR *GetPlayer(void)
+Player_HDR *GetPlayer_HDR(void)
 {
 	return &g_aPlayer[0];
 }
