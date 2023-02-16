@@ -13,8 +13,6 @@
 
 //プロトタイプ宣言
 void InitComAI(void);
-void UninitComAI(void);
-void UpdateComAI(void);
 void SelectAIMove(Player *pCom);
 ComAIBrain *GetAI(void);
 
