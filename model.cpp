@@ -8,59 +8,76 @@
 #include "model.h"
 #include "file.h"
 
+//プロト
+void InitAnimalModel(void);
+void InitObjectModel(void);
+
 //グローバル変数
-Model g_aModel[ANIMAL_MAX];	//モデル構造体
+Model g_aAnimalModel[ANIMAL_MAX];	//動物モデル構造体
+Model g_aObjModel[OBJECTTYPE_MAX];	//オブジェクトモデル構造体
 
 //========================
 //初期化処理
 //========================
 void InitModel(void)
 {
+	//動物モデルの初期化
+	InitAnimalModel();
+
+	//オブジェクトモデルの初期化
+	InitObjectModel();
+}
+
+//========================
+//動物モデル初期化処理
+//========================
+void InitAnimalModel(void)
+{
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
-	
+
 	//変数初期化
 	for (int nCntModel = 0; nCntModel < ANIMAL_MAX; nCntModel++)
 	{
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
-			g_aModel[nCntModel].aParts[nCntParts] = {};
-			g_aModel[nCntModel].aParts[nCntParts].bUse = false;
+			g_aAnimalModel[nCntModel].aParts[nCntParts] = {};
+			g_aAnimalModel[nCntModel].aParts[nCntParts].bUse = false;
 		}
-		
+
 		//使用するモーション類読み込み
-		LoadMotionViewerFile(GetMotionFilePath(nCntModel), &g_aModel[nCntModel]);
+		LoadMotionViewerFile(GetMotionFilePath(nCntModel), &g_aAnimalModel[nCntModel]);
 
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
 			if (SUCCEEDED(D3DXLoadMeshFromX(
-				&g_aModel[nCntModel].aModelFileName[nCntParts][0],
+				&g_aAnimalModel[nCntModel].aModelFileName[nCntParts][0],
 				D3DXMESH_SYSTEMMEM,
 				pDevice,
 				NULL,
-				&g_aModel[nCntModel].aParts[nCntParts].pBuffMat,
+				&g_aAnimalModel[nCntModel].aParts[nCntParts].pBuffMat,
 				NULL,
-				&g_aModel[nCntModel].aParts[nCntParts].dwNumMatModel,
-				&g_aModel[nCntModel].aParts[nCntParts].pMesh)))
+				&g_aAnimalModel[nCntModel].aParts[nCntParts].dwNumMatModel,
+				&g_aAnimalModel[nCntModel].aParts[nCntParts].pMesh)))
 			{//読み込み成功したら
-			 //テクスチャ読み込み
+				//テクスチャ読み込み
 				D3DXMATERIAL *pMat;	//マテリアルポインタ
 
-									//マテリアル情報に対するポインタ取得
-				pMat = (D3DXMATERIAL *)g_aModel[nCntModel].aParts[nCntParts].pBuffMat->GetBufferPointer();
+				//マテリアル情報に対するポインタ取得
+				pMat = (D3DXMATERIAL *)g_aAnimalModel[nCntModel].aParts[nCntParts].pBuffMat->GetBufferPointer();
 
-				for (int nCntTex = 0; nCntTex < (int)g_aModel[nCntModel].aParts[nCntParts].dwNumMatModel; nCntTex++)
+				for (int nCntTex = 0; nCntTex < (int)g_aAnimalModel[nCntModel].aParts[nCntParts].dwNumMatModel; nCntTex++)
 				{
 					if (pMat[nCntTex].pTextureFilename != NULL)
 					{
 						//テクスチャ読み込み
 						D3DXCreateTextureFromFile(pDevice,
 							pMat[nCntTex].pTextureFilename,
-							&g_aModel[nCntModel].aParts[nCntParts].apTexture[nCntTex]);
+							&g_aAnimalModel[nCntModel].aParts[nCntParts].apTexture[nCntTex]);
 					}
 				}
 
 				//使用している状態にする
-				g_aModel[nCntModel].aParts[nCntParts].bUse = true;
+				g_aAnimalModel[nCntModel].aParts[nCntParts].bUse = true;
 			}
 			else
 			{//失敗したら1モデル分終了
@@ -68,6 +85,14 @@ void InitModel(void)
 			}
 		}
 	}
+}
+
+//========================
+//オブジェクト初期化処理
+//========================
+void InitObjectModel(void)
+{
+
 }
 
 //========================
@@ -80,17 +105,17 @@ void UninitModel(void)
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
 			//メッシュの破棄
-			if (g_aModel[nCntModel].aParts[nCntParts].pMesh != NULL)
+			if (g_aAnimalModel[nCntModel].aParts[nCntParts].pMesh != NULL)
 			{
-				g_aModel[nCntModel].aParts[nCntParts].pMesh->Release();
-				g_aModel[nCntModel].aParts[nCntParts].pMesh = NULL;
+				g_aAnimalModel[nCntModel].aParts[nCntParts].pMesh->Release();
+				g_aAnimalModel[nCntModel].aParts[nCntParts].pMesh = NULL;
 			}
 
 			//マテリアルの破棄
-			if (g_aModel[nCntModel].aParts[nCntParts].pBuffMat != NULL)
+			if (g_aAnimalModel[nCntModel].aParts[nCntParts].pBuffMat != NULL)
 			{
-				g_aModel[nCntModel].aParts[nCntParts].pBuffMat->Release();
-				g_aModel[nCntModel].aParts[nCntParts].pBuffMat = NULL;
+				g_aAnimalModel[nCntModel].aParts[nCntParts].pBuffMat->Release();
+				g_aAnimalModel[nCntModel].aParts[nCntParts].pBuffMat = NULL;
 			}
 		}
 	}
@@ -105,5 +130,5 @@ void UninitModel(void)
 //========================
 Model GetModel(ANIMAL animal)
 {
-	return g_aModel[animal];
+	return g_aAnimalModel[animal];
 }

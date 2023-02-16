@@ -10,6 +10,13 @@
 //マクロ
 #define MAX_PARTS	(10)	//パーツ使用最大数
 
+//配置モデル列挙
+typedef enum
+{
+	OBJECTTYPE_FENCE = 0,
+	OBJECTTYPE_MAX
+} OBJECTTYPE;
+
 //動物種類列挙（一旦いのししのみ）
 typedef enum
 {
@@ -22,9 +29,9 @@ typedef enum
 {
 	MOTIONTYPE_NEUTRAL = 0,	//ニュートラル
 	MOTIONTYPE_MOVE,		//移動
-	MOTIONTYPE_ACTION,		//アクション（EC未使用・ピクトさん未実装）
-	MOTIONTYPE_JUMP,		//ジャンプ（EC未使用・ピクトさん未実装）
-	MOTIONTYPE_LANDING,		//着地（EC未使用・ピクトさん未実装）
+	MOTIONTYPE_ACTION,		//アクション
+	MOTIONTYPE_JUMP,		//ジャンプ
+	MOTIONTYPE_LANDING,		//着地
 	MOTIONTYPE_MAX
 } MOTIONTYPE;
 
