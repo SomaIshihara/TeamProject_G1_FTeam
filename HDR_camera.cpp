@@ -6,7 +6,7 @@ Author:飯田洲暉 (大宮愛羅  平澤詩苑  石原颯馬)
 ============================================================================================================================================================*/
 #include "HDR_camera.h"
 #include "input.h"
-#include "PvP_player.h"
+#include "HDR_player.h"
 #include "camera_frame.h"
 #include "input.h"
 
@@ -179,7 +179,7 @@ void SetHDRCamera(int nIdx)
 void Set_NumHDRCamera(NumHDRCamera type)
 {
 	int nCntHDRCamera = 0;				//カウンター初期化
-	Player *pPlayer = GetPlayer();	//プレイヤーの情報取得
+	Player_HDR *pPlayer_HDR = GetPlayer_HDR();		//プレイヤーの情報取得
 	g_NumHDRCameraType = type;			//カメラの分割情報格納
 
 	switch (type)
@@ -391,16 +391,16 @@ void SetPosRHDRCamera(int nCntHDRCamera)
 	if (g_bChase_HDR == true || g_bTPS_HDR == true)
 	{
 		//プレイヤー情報取得
-		Player *pPlayer = GetPlayer();
+		Player_HDR *pPlayer_HDR = GetPlayer_HDR();
 
 		//対象のプレイヤーに注視点を合わせる
-		g_HDRCamera[nCntHDRCamera].posR = pPlayer[nCntHDRCamera].pos;
+		g_HDRCamera[nCntHDRCamera].posR = pPlayer_HDR[nCntHDRCamera].pos;
 
 		//３人称視点
 		if (g_bTPS_HDR)
 		{
 			//3人称視点設定
-			TPS_ChaseHDRCamera(nCntHDRCamera, pPlayer[nCntHDRCamera].rot);
+			TPS_ChaseHDRCamera(nCntHDRCamera, pPlayer_HDR[nCntHDRCamera].rot);
 		}
 	}
 }
