@@ -4,7 +4,6 @@
 Author:大宮愛羅
 
 ============================================================================================================================================================*/
-
 #ifndef _GAUGE_H_
 #define _GAUGE_H_
 
@@ -15,7 +14,7 @@ typedef struct
 {
 	D3DXVECTOR3 pos;		//位置
 	bool bUse;				//使用しているかどうか
-} Gauge;
+}Gauge;
 
 //ゲージの列挙
 typedef enum
@@ -24,7 +23,7 @@ typedef enum
 	GAUGETYPE_NORMAL,
 	GAUGETYPE_FRAME,
 	GAUGETYPE_MAX
-}	GAUGETYPE;
+}GAUGETYPE;
 
 void InitGauge(void);		//初期化処理
 void UninitGauge(void);		//終了処理

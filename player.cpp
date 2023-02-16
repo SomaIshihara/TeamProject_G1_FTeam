@@ -1,11 +1,11 @@
 //==========================================
 //
 //プレイヤープログラム[player.cpp]
-//Author:石原颯馬
+//Author:石原颯馬  平澤詩苑
 //
 //==========================================
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "player.h"
 #include "model.h"
 #include "input.h"
@@ -15,7 +15,7 @@
 #include "camera.h"
 #include <assert.h>
 #include "color.h"
-#include "Gauge.h"
+#include "gauge.h"
 #include "sound.h"
 #include "charge_cylinder.h"
 #include "charge_effect.h"
@@ -31,6 +31,8 @@
 #define PLAYER_BLOWING_POWER	(5.0f)		//ヒップドロップされた方の移動量
 #define PLAYER_HIPDROP_POWER	(-15.0f)	//ヒップドロップするときの移動量
 #define PLAYER_ROTATE_SPEED		(0.02f * D3DX_PI)	//回転速度
+#define PLAYER_HIPSPIN_SPEED	(-0.5f)		//ヒップドロップスピンの回転値
+#define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 
 //移動量関係
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -41,7 +43,6 @@
 #define DUMP_COEF				(0.04f)		//減衰係数
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
-#define BF_RADIUS				(353.5f)	//バトルフィールドの半径
 #define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
 
 //アイテム関係
@@ -122,6 +123,7 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].jumpTime = 0;
 		g_aPlayer[nCntPlayer].bJump = false;
 		g_aPlayer[nCntPlayer].bHipDrop = false;
+		g_aPlayer[nCntPlayer].bHipDropSpin = false;
 		g_aPlayer[nCntPlayer].nHipDropWait = 0;
 		g_aPlayer[nCntPlayer].bNotMove = true;
 		g_aPlayer[nCntPlayer].nRespawnPosNum = nCntPlayer;
@@ -142,13 +144,13 @@ void InitPlayer(void)
 		g_aPlayer[nCntPlayer].nMUTEKITime = 0;
 
 		g_aPlayer[nCntPlayer].model = GetModel(g_aPlayer[nCntPlayer].animal);
-		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
+		g_aPlayer[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 
 		g_pNotMove[nCntPlayer] = &g_aPlayer[nCntPlayer];
 	}
 
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
-	if (GetUseControllerNum() == 0) 
+	if (GetUseControllerNum_PvP() == 0) 
 	{
 		g_aPlayer[0].bUsePlayer = true;
 	}
@@ -204,9 +206,9 @@ void UpdatePlayer(void)
 		if (g_aPlayer[nCntPlayer].bUsePlayer == true)
 		{//使用時のみ行う
 			//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
-			if (GetUseControllerNum() != 0)
+			if (GetUseControllerNum_PvP() != 0)
 			{
-				g_aPlayer[nCntPlayer].bUsePlayer = GetUseController(nCntPlayer);
+				g_aPlayer[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 			}
 
 			//ヒップドロップ中でなければ操作できる
@@ -263,6 +265,7 @@ void UpdatePlayer(void)
 					{//Xボタンが離された
 						//プレイヤーのダッシュ処理
 						DashPlayer(nCntPlayer);
+					
 					}
 				}
 				else
@@ -300,7 +303,25 @@ void UpdatePlayer(void)
 				//ヒップドロップ硬直時間がある
 				if (g_aPlayer[nCntPlayer].nHipDropWait > 0)
 				{
-					g_aPlayer[nCntPlayer].nHipDropWait--;		//硬直時間を減らしていく
+					//ヒップスピン中
+					if (g_aPlayer[nCntPlayer].bHipDropSpin == true)
+					{
+						g_aPlayer[nCntPlayer].rot.x += PLAYER_HIPSPIN_SPEED;
+
+						//1周したら
+						if (g_aPlayer[nCntPlayer].rot.x <= PLAYER_HIPSPIN_LAP)
+						{
+							
+							g_aPlayer[nCntPlayer].rot.x = 0.0f;			//元の向きに直す
+							g_aPlayer[nCntPlayer].bHipDropSpin = false;	//ヒップスピン終了
+						}
+					}
+
+					//ヒップスピン終了後
+					else
+					{
+						g_aPlayer[nCntPlayer].nHipDropWait--;		//硬直時間を減らしていく
+					}
 				}
 				else
 				{
@@ -311,7 +332,7 @@ void UpdatePlayer(void)
 
 
 			//向きを変える処理
-			if (GetUseController(nCntPlayer))
+			if (GetUseController_PvP(nCntPlayer))
 			{//ゲームパッド使用
 				if (GetGamepadPress(nCntPlayer, XINPUT_GAMEPAD_X) == false)
 				{//Xボタンが押されていない
@@ -619,6 +640,8 @@ void ChargePlayer(int nChargePlayer)
 //========================
 void DashPlayer(int nDashPlayer)
 {
+	PlaySound(SOUND_LABEL_SE_GRASSDASH);
+
 	//進行方向の設定
 	g_aPlayer[nDashPlayer].move.x = -sinf(g_aPlayer[nDashPlayer].rot.y) * g_aPlayer[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
 	g_aPlayer[nDashPlayer].move.z = -cosf(g_aPlayer[nDashPlayer].rot.y) * g_aPlayer[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
@@ -631,12 +654,15 @@ void DashPlayer(int nDashPlayer)
 //========================
 void HipDropPlayer(int nHipDropPlayer)
 {
+	PlaySound(SOUND_LABEL_SE_HIPDROP);
+
 	g_aPlayer[nHipDropPlayer].moveV0.y = PLAYER_HIPDROP_POWER;		//ヒップドロップの降下速度を代入
 	g_aPlayer[nHipDropPlayer].move.x = 0.0f;						//X・Zの移動量消す
 	g_aPlayer[nHipDropPlayer].move.z = 0.0f;
 	g_aPlayer[nHipDropPlayer].moveGauge = 0.0f;
 	g_aPlayer[nHipDropPlayer].jumpTime = 0;							//ジャンプ時間リセット
 	g_aPlayer[nHipDropPlayer].bHipDrop = true;						//ヒップドロップしている
+	g_aPlayer[nHipDropPlayer].bHipDropSpin = true;					//スピンしている
 }
 
 //========================
@@ -644,6 +670,8 @@ void HipDropPlayer(int nHipDropPlayer)
 //========================
 void JumpPlayer(int nJumpPlayer)
 {
+	PlaySound(SOUND_LABEL_SE_JUMP);
+
 	g_aPlayer[nJumpPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 	g_aPlayer[nJumpPlayer].jumpTime = 0;	//ジャンプ時間リセット
 	g_aPlayer[nJumpPlayer].bJump = true;
@@ -1210,6 +1238,8 @@ void DownPlayer(int nDownPlayerNum)
 		}
 	}
 
+	PlaySound(SOUND_LABEL_SE_DROP);
+
 	RespawnPlayer(nDownPlayerNum);
 }
 
@@ -1254,6 +1284,7 @@ void RespawnPlayer(int nRespawnPlayer)
 	g_aPlayer[nRespawnPlayer].nHipDropWait = 0;
 	g_aPlayer[nRespawnPlayer].bJump = true;
 	g_aPlayer[nRespawnPlayer].bHipDrop = false;
+	g_aPlayer[nRespawnPlayer].bHipDropSpin = false;
 
 	g_aPlayer[nRespawnPlayer].lastAtkPlayer = -1;
 	g_aPlayer[nRespawnPlayer].nNumHitPlayer = -1;

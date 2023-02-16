@@ -5,13 +5,13 @@
 //
 //==========================================
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "player.h"
 #include "pause.h"
 #include "fade.h"
 #include "input.h"
 #include "color.h"
-
+#include "sound.h"
 //****************************//
 //		　 マクロ定義		  //
 //****************************//
@@ -294,6 +294,8 @@ void SelectUpPause(int nPadNum)
 	//キーボードの上方向キー　か　ゲームパッドの　十字上ボタン　が押された
 	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(nPadNum,XINPUT_GAMEPAD_DPAD_UP) == true)
 	{
+		PlaySound(SOUND_LABEL_SE_PAUSE_SELECTION);
+
 		//ボタンを使用している状態にする
 		g_ButtonPush[0] = true;
 
@@ -350,6 +352,8 @@ void SelectDownPause(int nPadNum)
 	//キーボードの下方向キー　か　ゲームパッドの　十字下ボタン　が押された
 	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(nPadNum, XINPUT_GAMEPAD_DPAD_DOWN) == true)
 	{
+		PlaySound(SOUND_LABEL_SE_PAUSE_SELECTION);
+
 		//ボタンを使用している状態にする
 		g_ButtonPush[1] = true;
 
@@ -506,8 +510,10 @@ void SwitchPause(void)
 	switch (g_Pause)
 	{
 	case PAUSE_CONTINUE:
+		PlaySound(SOUND_LABEL_SE_PAUSE_DECISION);
+
 		//再確認したけどコントローラーの数合ってない
-		if (CheckUseController(CHECKMODE_DISCONNOPAUSE) == true)
+		if (CheckUseController_PvP(CHECKMODE_DISCONNOPAUSE) == true)
 		{
 			//警告メッセージ
 
@@ -516,16 +522,20 @@ void SwitchPause(void)
 				break;
 			}
 		}
-		CheckUseController(CHECKMODE_REMOVE);
-		SetEnablePause(false);
+		CheckUseController_PvP(CHECKMODE_REMOVE);
+		SetEnablePause_PvP(false);
 		break;
 
 	case PAUSE_RETRY:
+		PlaySound(SOUND_LABEL_SE_PAUSE_TRANSITION);
+
 		//モード設定（ゲーム画面に遷移)
-		SetFade(MODE_GAME);
+		SetFade(MODE_PvPGAME);
 		break;
 
 	case PAUSE_QUIT:
+		PlaySound(SOUND_LABEL_SE_PAUSE_TRANSITION);
+
 		//タイトル画面に遷移
 		SetFade(MODE_TITLE);
 		break;

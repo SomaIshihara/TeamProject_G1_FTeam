@@ -9,6 +9,7 @@ Author:平澤詩苑
 #include "fade.h"
 #include "input.h"
 #include "color.h"
+#include "sound.h"
 //#include "sound.h"
 
 //マクロ定義
@@ -23,6 +24,8 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTutorial = NULL;	//頂点バッファへのポインタ
 //------------------------------------------------
 void InitTutorial(void)
 {
+	PlaySound(SOUND_LABEL_BGM_TUTORIAL);
+
 	//デバイス取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
@@ -88,7 +91,7 @@ void UninitTutorial(void)
 	}
 
 	//タイトルBGM停止
-	//StopSound(SOUND_LABEL_TITLEBGM);
+	StopSound(SOUND_LABEL_BGM_TUTORIAL);
 }
 
 //------------------------------------------------
@@ -100,7 +103,7 @@ void UpdateTutorial(void)
 	if ((GetKeyboardTrigger(DIK_RETURN) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
 	{
 		//モード設定（ゲーム画面に遷移)
-		SetFade(MODE_GAME);
+		SetFade(MODE_PvPGAME);
 	}
 }
 

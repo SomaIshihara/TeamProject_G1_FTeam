@@ -6,7 +6,7 @@
 //==========================================
 
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "timer.h"
 #include "player.h"
 #include "camera.h"
@@ -23,7 +23,6 @@
 LPDIRECT3DTEXTURE9 g_pTextureTime = NULL;			//テクスチャのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTime = NULL;		//頂点バッファへのポインタ
 TIME g_aTime;
-
 
 D3DXMATRIX mtxWorldTime;
 
@@ -129,7 +128,7 @@ void UninitTime(void)
 void UpdateTime(void)
 {
 	//ボーナスの出現処理
-	if (g_aTime.nTime <= 40)
+	if (g_aTime.nTime <= 90)
 	{
 		BonusLimit--;
 

@@ -5,7 +5,7 @@
 //
 //==========================================
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "tremor_effect.h"
 #include "color.h"
 #include "player.h"

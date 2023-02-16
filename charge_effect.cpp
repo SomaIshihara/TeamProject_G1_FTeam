@@ -5,7 +5,7 @@
 //
 //==========================================
 #include "main.h"
-#include "game.h"
+#include "pvp_game.h"
 #include "charge_effect.h"
 #include "color.h"
 #include "player.h"
@@ -149,7 +149,7 @@ void UpdateChargeEffectSize(int nEffect)
 		g_ChargeEffect[nEffect].bUse = false;
 	}
 
-	VERTEX_3D *pVtx;							//頂点情報へのポインタ
+	VERTEX_3D *pVtx;	//頂点情報へのポインタ
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffChargeEffect->Lock(0, 0, (void**)&pVtx, 0);

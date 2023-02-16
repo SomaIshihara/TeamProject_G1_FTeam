@@ -10,17 +10,17 @@
 #include "input.h"
 
 //マクロ
-#define NUM_MESHDOME				(1)					//メッシュドームの数
-#define MESHDOME_RADIS				(2000.0f)			//背景の半径
-#define MESHDOME_TEX_RESOLUTION		(3.0f)				//背景の解像度
-#define MESHDOME_SPLIT				(8)					//背景の横の分割数　　線は垂直に引いて、左右に分ける
-#define MESHDOME_SEPALATE			(8)					//背景の縦の分割数	　線は水平に引いて、上下に分ける
-#define MESHDOME_NUM_OVERLAP		(2)					//最初と最後の頂点が重なる数
-#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * (MESHDOME_SEPALATE - 1) + MESHDOME_NUM_OVERLAP)	//全体の頂点数
-#define CREATE_SQUARE_NEED_TRIANGLE	(2)					//四角形を作るのに必要な三角形の数
-#define TRIANGLE					(3)					//３角形に必要な頂点
-#define SQUARE_NUM_VERTEX			(6)					//四角形の中に含まれる頂点の数(重複も含む)
-#define MESHDOME_COVER_INDEX		(10)				//フタのインデックス数
+#define NUM_MESHDOME				(1)						//メッシュドームの数
+#define MESHDOME_RADIS				(2000.0f)				//背景の半径
+#define MESHDOME_TEX_WIDTH			(1.0f)					//背景の解像度
+#define MESHDOME_TEX_HEIGHT			(1.0f)					//背景の解像度
+#define MESHDOME_SPLIT				(16)					//背景の横の分割数		線は垂直に引いて、左右に分ける
+#define MESHDOME_SEPALATE			(16)					//背景の縦の分割数		線は水平に引いて、上下に分ける
+#define MESHDOME_NUM_OVERLAP		(2)						//最初と最後の頂点が重なる数
+
+//頂点・インデックスの数　マクロ
+#define MESHDOME_ALL_VERTEX			(MESHDOME_SPLIT * (MESHDOME_SEPALATE - 1) + MESHDOME_NUM_OVERLAP + (MESHDOME_SEPALATE - 1))	//全体の頂点数
+#define MESHDOME_COVER_INDEX		(MESHDOME_SPLIT + MESHDOME_NUM_OVERLAP)					//フタのインデックス数
 #define MESHDOME_SIDE_INDEX			((MESHDOME_SPLIT + 1) * (MESHDOME_SEPALATE - 2) * 2)	//側面のインデックス数  1周するのに必要な数 × 側面だけのインデックス × ペアでインデックスを設定する数（２）
 
 //メッシュドームの構造体
@@ -49,7 +49,7 @@ void InitMeshDome(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshDome);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky000.png", &g_pTextureMeshDome);
 
 	//ドーム情報の初期化
 	g_MeshDome.pos = ZERO_SET;
@@ -97,7 +97,7 @@ void SetMeshDomeVertexBuffer(void)
 	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, MESHDOME_RADIS, 0.0f);
 	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	pVtx[nNumVtx].col = XCOL_WHITE;
-	pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 0.0f);
 	nNumVtx++;
 	
 	//２番目の頂点から、横の分割数　‐　底面の出っ張りの１頂点　回数分 for文を回す
@@ -111,13 +111,13 @@ void SetMeshDomeVertexBuffer(void)
 		float TempLen = fabsf(sinf(yRadian) * g_MeshDome.fRadius);	//X・Zの半径
 		float rot_Y = D3DX_PI;										//Y軸の角度
 		float Height_Y = cosf(yRadian) * g_MeshDome.fRadius;		//Yの高さ
+		float aTexV = (MESHDOME_TEX_HEIGHT / (MESHDOME_SEPALATE + 2)) * nCntDevideY;	//テクスチャの高さ
+
+		int nStrageVtx = nNumVtx;									//１周するときに使用するため、１周の開始番号を格納
 
 		for (int nCntDevideX = 0; nCntDevideX < MESHDOME_SPLIT; nCntDevideX++)
 		{//横１周分の頂点座標を設定
 			
-			float aTexU = 0.125f * nCntDevideX;
-			float aTexV = 0.125f * nCntDevideY;
-
 			pVtx[nNumVtx].pos = 
 				D3DXVECTOR3(
 				sinf(rot_Y) * TempLen,		//Xの位置
@@ -126,19 +126,27 @@ void SetMeshDomeVertexBuffer(void)
 
 			pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pVtx[nNumVtx].col = XCOL_WHITE;
-			pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, 1.0f - aTexV);
-			nNumVtx++;
+
+			float aTexU = (MESHDOME_TEX_WIDTH / (MESHDOME_SPLIT + 1)) * nCntDevideX;		//テクスチャの幅
+
+			pVtx[nNumVtx++].tex = D3DXVECTOR2(aTexU, aTexV);
 			
 			//角度を　全体の角度÷分割数で割った答え分、引く
 			rot_Y -= ONE_LAP / MESHDOME_SPLIT;
 		}
+
+		//１周させるため、１周の開始頂点情報を代入
+		pVtx[nNumVtx].pos = pVtx[nStrageVtx].pos;
+		pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nNumVtx].col = XCOL_WHITE;
+		pVtx[nNumVtx++].tex = D3DXVECTOR2(1.0f, aTexV);
 	}
 
 	//底面の出っ張り頂点の設定
 	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, -MESHDOME_RADIS, 0.0f);
 	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	pVtx[nNumVtx].col = XCOL_WHITE;
-	pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 1.0f);
 
 	//頂点バッファのアンロック
 	g_pVtxBuffMeshDome->Unlock();
@@ -152,45 +160,45 @@ void SetMeshDomeIndexBuffer(void)
 	//			／＼
 	//		  ／天面＼		//「- 1」は天面の出っ張りを除くこと
 	//		／番号設定＼	天井のでっぱりを除いた分カウンターを回す
-	{
 		//フタのインデックスバッファをロックし、頂点番号へのポインタを取得
-		g_pIdxBuffCoverMeshDome->Lock(0, 0, (void**)&pIdx, 0);
+	g_pIdxBuffCoverMeshDome->Lock(0, 0, (void**)&pIdx, 0);
 
-		//インデックス番号
-		int nNumIdx = 0;
+	//インデックス番号
+	int nNumIdx = 0;
 
-		for (nNumIdx = 0; nNumIdx <= MESHDOME_COVER_INDEX - 1; nNumIdx++)
-		{
-			//下の計算式では、　ちょうど1周するときに答えが1になる　　それ以外では、カウンター÷分割数　の余りが番号として設定される
-			pIdx[nNumIdx] = (nNumIdx / (MESHDOME_COVER_INDEX - 1)) + (nNumIdx % (MESHDOME_COVER_INDEX - 1));
-		}
-
-		//天面のインデックスバッファのアンロック
-		g_pIdxBuffCoverMeshDome->Unlock();
+	for (nNumIdx = 0; nNumIdx <= MESHDOME_COVER_INDEX - 1; nNumIdx++)
+	{
+		//下の計算式では、　ちょうど1周するときに答えが1になる　　それ以外では、カウンター÷分割数　の余りが番号として設定される
+		//pIdx[nNumIdx] = (nNumIdx / (MESHDOME_COVER_INDEX - 1)) + (nNumIdx % (MESHDOME_COVER_INDEX - 1));
+		pIdx[nNumIdx] = nNumIdx;
 	}
+
+	//天面のインデックスバッファのアンロック
+	g_pIdxBuffCoverMeshDome->Unlock();
 
 	//	／----------------＼
 	// <	側面番号設定	>
 	//	＼----------------／
+	//インデックス番号初期化
+	nNumIdx = 0;
+
+	//側面のインデックスバッファをロックし、頂点番号へのポインタを取得
+	g_pIdxBuffSideMeshDome->Lock(0, 0, (void**)&pIdx, 0);
+
+	for (int nCntHeight = 1; nCntHeight < MESHDOME_SEPALATE - 1; nCntHeight++)
 	{
-		//インデックス番号
-		int nNumIdx = 0;
-
-		//側面のインデックスバッファをロックし、頂点番号へのポインタを取得
-		g_pIdxBuffSideMeshDome->Lock(0, 0, (void**)&pIdx, 0);
-
-		for (int nCntHeight = 1; nCntHeight < MESHDOME_SEPALATE - 1; nCntHeight++)
+		for (int nCntWidth = 0; nCntWidth < MESHDOME_SPLIT + 1; nCntWidth++)
 		{
-			for (int nCntWidth = 0; nCntWidth < MESHDOME_SPLIT + 1; nCntWidth++)
-			{
-				pIdx[nNumIdx++] = ((nCntHeight - 1) * 8 + 1) + (nCntWidth % MESHDOME_SPLIT);
-				pIdx[nNumIdx++] = ((nCntHeight - 0) * 8 + 1) + (nCntWidth % MESHDOME_SPLIT);
-			}
-		}
+			int  Over = (nCntWidth + 1) + ((nCntHeight - 1) * (MESHDOME_SPLIT + 1)),
+				Under = (nCntWidth + 1) + ((nCntHeight - 0) * (MESHDOME_SPLIT + 1));
 
-		//側面のインデックスバッファのアンロック
-		g_pIdxBuffSideMeshDome->Unlock();
+			pIdx[nNumIdx++] = (nCntWidth + 1) + ((nCntHeight - 1) * (MESHDOME_SPLIT + 1));
+			pIdx[nNumIdx++] = (nCntWidth + 1) + ((nCntHeight - 0) * (MESHDOME_SPLIT + 1));
+		}
 	}
+
+	//側面のインデックスバッファのアンロック
+	g_pIdxBuffSideMeshDome->Unlock();
 
 	//		＼底面番号／
 	//		  ＼設定／
@@ -198,16 +206,20 @@ void SetMeshDomeIndexBuffer(void)
 	//フタのインデックスバッファをロックし、頂点番号へのポインタを取得
 	g_pIdxBuffBottomMeshDome->Lock(0, 0, (void**)&pIdx, 0);
 
-	int nNumIdx = 0;
+	nNumIdx = 0;								//インデックス番号初期化
+	int nBottomLap = MESHDOME_COVER_INDEX - 1;	//底面の１周分の数
+	int BottomVtx = MESHDOME_ALL_VERTEX - 1;	//底面番号
 
 	for (int nCntIdx = 0; nCntIdx <= MESHDOME_COVER_INDEX; nCntIdx++)
 	{
 		//--------------------------------------------------
 		//全体の頂点数から逆算して番号を割り出す
+		//
+		//MEMO : カウンターがゼロの場合		=>	底面番号が代入される
+		//		 カウンターが１・最後の場合	=>	同じ番号が代入される (理由は、最後の場合　計算式の答えが　「１ あまり ０」 になるため
+		//		 それ以外の場合				=>	「底面の番号 - (カウンター ÷ 底面の１周分の数  の余り)」  で算出された番号が代入される
 		//--------------------------------------------------
-		int nTest = (MESHDOME_ALL_VERTEX - 1) - ((nCntIdx / (MESHDOME_COVER_INDEX - 1)) + (nCntIdx % (MESHDOME_COVER_INDEX - 1)));
-
-		pIdx[nNumIdx++] = nTest;
+		pIdx[nNumIdx++] = BottomVtx - nCntIdx;
 	}
 
 	//底面のインデックスバッファのアンロック
@@ -260,7 +272,21 @@ void UninitMeshDome(void)
 //--------------------------------------------------------------------------------------------------------
 void UpdateMeshDome(void)
 {
+	if (GetKeyboardTrigger(DIK_RIGHT))
+	{
+		if (false)
+		{
 
+		}
+	}
+
+	if (GetKeyboardTrigger(DIK_LEFT))
+	{
+		if (false)
+		{
+
+		}
+	}
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -290,6 +316,7 @@ void DrawMeshDome(void)
 
 	//両面カリングをON
 	//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 
 	//-----------------------------------------------------------
 	//フタのインデックスを設定し、描画する
@@ -305,7 +332,7 @@ void DrawMeshDome(void)
 
 	//ポリゴン描画
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN, 0, 0, MESHDOME_COVER_INDEX, 0, MESHDOME_SPLIT);
-	
+
 	//-----------------------------------------------------------
 	//側面のインデックスを設定し、描画する
 	//-----------------------------------------------------------
@@ -319,7 +346,7 @@ void DrawMeshDome(void)
 	pDevice->SetTexture(0, g_pTextureMeshDome);
 
 	//ポリゴン描画
-	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MESHDOME_SIDE_INDEX, 0, MESHDOME_SPLIT * 2 * (MESHDOME_SEPALATE-2)+10);
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, MESHDOME_SIDE_INDEX, 0, MESHDOME_SPLIT * 2 * (MESHDOME_SEPALATE - 1) - 6);
 
 	//-----------------------------------------------------------
 	//底面のインデックスを設定し、描画する
@@ -338,4 +365,5 @@ void DrawMeshDome(void)
 
 	//普通のカリングモードにする
 	//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	//pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 }

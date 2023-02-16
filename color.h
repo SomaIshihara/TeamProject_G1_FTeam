@@ -1,7 +1,7 @@
 /*==========================================================================================================================================================
 
 色のマクロ定義[color.h]
-Author:平澤詩苑
+Author:平澤詩苑 石原颯馬
 
 ============================================================================================================================================================*/
 #ifndef _COLOR_H_
@@ -25,9 +25,43 @@ Author:平澤詩苑
 //D3DXCOLOR のマクロ
 #define XCOL_NONE			D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f)	// 無色透明
 #define XCOL_WHITE			D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f)	// 白色
-#define XCOL_BLACK			D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f)	// 黒
+#define XCOL_BLACK			D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f)	// 黒色
 #define XCOL_BLACKSHADOW	D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.85f)	// 黒影
 #define XCOL_YELLOW			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)	// 黄色
 #define XCOL_RED			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)	// 赤色
+#define XCOL_NO_SELECT		D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.4f)	// 選択されていない時の色
+
+//自作の色構造体のマクロ
+#define SELF_MADE_COLOR_WHITE		{255,255,255,255}	// 白
+#define SELF_MADE_COLOR_BLACK		{000,000,000,255}	// 黒
+#define SELF_MADE_COLOR_RED			{255,000,000,255}	// 赤
+#define SELF_MADE_COLOR_GREEN		{000,255,000,255}	// 緑
+#define SELF_MADE_COLOR_BLUE		{000,000,255,255}	// 青
+#define SELF_MADE_COLOR_YELLOW		{255,255,000,255}	// 黄
+#define SELF_MADE_COLOR_BLUE		{000,000,255,255}	// 緑
+#define SELF_MADE_COLOR_SEMI_CLEAR	{255,255,255,100}	// 半透明
+
+//HSB用色構造体
+typedef struct
+{
+	int h;	//0～360
+	int s;	//0～255
+	int b;	//0～255
+} HSBCOLOR;
+
+//*****************************************
+// 構造体の定義
+//*****************************************
+// 色構造体		
+typedef struct
+{
+	int r;
+	int g;
+	int b;
+	int a;
+}Color;
+
+//プロト
+D3DXCOLOR HSBToRGB(HSBCOLOR hsb);
 
 #endif

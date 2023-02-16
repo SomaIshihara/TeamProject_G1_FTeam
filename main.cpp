@@ -9,7 +9,8 @@
 #include "camera.h"
 #include "debugproc.h"
 #include "fade.h"
-#include "game.h"
+#include "select_game.h"
+#include "pvp_game.h"
 #include "title.h"
 #include "color.h"
 #include "tutorial.h"
@@ -30,17 +31,19 @@ void Update(void);
 void Draw(void);
 void UpdateShowCursor(void);
 
+
 //グローバル変数
 LPDIRECT3D9 g_pD3D = NULL;	//Direct3Dオブジェクトへのポインタ
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_GAME;		// 現在のモード
+MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #else
-MODE			g_mode = MODE_TITLE;		// 現在のモード
+MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #endif
 
+HWND g_hWnd;
 bool g_bShowCursor = true;
 bool g_bDebug = true;
 
@@ -213,7 +216,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			if (nID == IDYES)
 			{
-				DestroyWindow(hWnd);	//Destroyメッセージを送る
+				EndProject();
 			}
 			SetShowCursor(false);
 			break;
@@ -299,6 +302,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 		}
 	}
 
+	//ウインドウの情報を格納
+	g_hWnd = hWnd;
+
 	//オブジェクトの初期化処理
 	//レンダーステートの設定
 	g_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -355,7 +361,8 @@ void Uninit(void)
 	//終了処理（自分が作ったものを捨てる）
 	UninitTitle();		// タイトルの終了処理
 	UninitTutorial();	// チュートリアルの終了処理
-	UninitGame();		// ゲームの終了処理
+	UninitSelectGame();	// ゲーム選択の終了処理
+	UninitPvPGame();		// ゲームの終了処理
 
 	//フェード終了
 	UninitFade();	
@@ -419,12 +426,16 @@ void Update(void)
 			UpdateTitle();
 			break;
 
+		case MODE_SELECTGAME:	//ゲーム選択の更新処理
+			UpdateSelectGame();
+			break;
+
 		case MODE_TUTORIAL:		//チュートリアル画面の更新
 			UpdateTutorial();
 			break;
 
-		case MODE_GAME:			//ゲーム画面の更新
-			UpdateGame();
+		case MODE_PvPGAME:			//ゲーム画面の更新
+			UpdatePvPGame();
 			break;
 		}
 	}
@@ -463,12 +474,16 @@ void Draw(void)
 			DrawTitle();
 			break;
 
+		case MODE_SELECTGAME:	//ゲーム選択画面描画処理
+			DrawSelectGame();
+			break;
+
 		case MODE_TUTORIAL:		//チュートリアル画面描画
 			DrawTutorial();
 			break;
 
-		case MODE_GAME:			//ゲーム画面描画
-			DrawGame();
+		case MODE_PvPGAME:			//ゲーム画面描画
+			DrawPvPGame();
 			break;
 		}
 
@@ -509,12 +524,16 @@ void SetMode(MODE mode)
 		UninitTitle();
 		break;
 
+	case MODE_SELECTGAME:	//ゲーム選択画面終了
+		UninitSelectGame();
+		break;
+
 	case MODE_TUTORIAL:		//チュートリアル画面終了
 		UninitTutorial();
 		break;
 
-	case MODE_GAME:			//ゲーム画面終了
-		UninitGame();
+	case MODE_PvPGAME:			//ゲーム画面終了
+		UninitPvPGame();
 		break;
 	}
 
@@ -525,12 +544,16 @@ void SetMode(MODE mode)
 		InitTitle();
 		break;
 
+	case MODE_SELECTGAME:	//ゲーム選択画面初期化
+		InitSelectGame();
+		break;
+
 	case MODE_TUTORIAL:		//チュートリアル画面初期化
 		InitTutorial();
 		break;
 
-	case MODE_GAME:			//ゲーム画面初期化
-		InitGame();
+	case MODE_PvPGAME:			//ゲーム画面初期化
+		InitPvPGame();
 		break;
 	}
 
@@ -580,4 +603,11 @@ void UpdateShowCursor(void)
 MODE GetMode(void)
 {
 	return g_mode;
+}
+//
+//
+//
+void EndProject(void)
+{
+	DestroyWindow(g_hWnd);	//Destroyメッセージを送る
 }

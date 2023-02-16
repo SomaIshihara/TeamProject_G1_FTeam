@@ -24,6 +24,7 @@ LPDIRECT3DTEXTURE9		g_pTextureMeshfield = NULL;		//テクスチャのポインタ
 LPDIRECT3DINDEXBUFFER9	g_pIdxBuffMeshField = NULL;		//インデックスバッファへのポインタ
 D3DXMATRIX				g_mtxWorldMeshfield;			//ワールドマトリックス
 
+MESHFIELD				g_MeshFieldTemp;
 MESHFIELD				g_MeshField[NUM_MESHFIELD];
 
 //====================================================================
@@ -32,6 +33,9 @@ MESHFIELD				g_MeshField[NUM_MESHFIELD];
 void InitMeshfield(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
+
+	// 保存しておいた情報を代入
+	//g_MeshField[0] = g_MeshFieldTemp;
 
 	//設定類は外部ファイルに移動
 #if 0

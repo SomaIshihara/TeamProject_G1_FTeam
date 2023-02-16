@@ -29,10 +29,12 @@
 typedef enum
 {
 	MODE_NONE = 0,
-	MODE_TITLE,
-	MODE_TUTORIAL,
-	MODE_GAME,
-	MODE_GAMERESULT,
+	MODE_TITLE,			//タイトル画面
+	MODE_SELECTGAME,	//ゲーム選択
+	MODE_TUTORIAL,		//チュートリアル
+	MODE_PvPGAME,		//PvPゲーム画面
+	MODE_RaceGAME,		//レース画面
+	MODE_GAMERESULT,	//リザルト画面
 	MODE_MAX
 } MODE;
 
@@ -101,5 +103,6 @@ LPDIRECT3DDEVICE9 GetDevice(void);
 void SetShowCursor(bool bDisp);		//カーソル表示・非表示切り替え（trueで表示・falseで非表示）
 void SetMode(MODE mode); //画面のモード設定
 MODE GetMode(void); //画面モードの取得
+void EndProject(void);
 
 #endif // !_MAIN_H_

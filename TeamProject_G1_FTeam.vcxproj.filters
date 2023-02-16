@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ソース ファイル\Main">
-      <UniqueIdentifier>{861df397-f254-4364-b05f-d4ac38d87004}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Game">
       <UniqueIdentifier>{936e406d-5ed9-4e5d-a698-d2c39ad1ee44}</UniqueIdentifier>
     </Filter>
@@ -43,20 +40,8 @@
     <Filter Include="ヘッダー ファイル\Main">
       <UniqueIdentifier>{7ed007b9-9381-480e-9b69-59ebd123101a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Stage">
-      <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\Game\Player">
-      <UniqueIdentifier>{a83b5e00-39ce-4811-b994-a550c578b67a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Game\Pause">
       <UniqueIdentifier>{168799d7-bff0-485d-9b69-f008c49e11bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Game\Stage">
-      <UniqueIdentifier>{bb7ecd1c-3945-4f33-979f-fce88bed5d03}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\Game\Player">
-      <UniqueIdentifier>{06a22181-9386-4d8b-8a89-8237b65499bf}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\Game\Pause">
       <UniqueIdentifier>{796dc22e-93b6-46fa-8484-4e0792b167a5}</UniqueIdentifier>
@@ -67,6 +52,39 @@
     <Filter Include="ヘッダー ファイル\Game\Effect">
       <UniqueIdentifier>{8b5f2fe8-b784-48ff-805d-f55b3225ede9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\SelectGame">
+      <UniqueIdentifier>{99f49d7f-1548-4747-a6b7-c05ef781d087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\SelectGame">
+      <UniqueIdentifier>{40a1d3ed-691e-44ff-a4f2-b7361d4f80e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Game_PvP">
+      <UniqueIdentifier>{1b53f35d-1fdf-47a4-b6e7-7be463d4791d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Game_PvP">
+      <UniqueIdentifier>{b136443d-d0cb-443c-8a4a-87d5b2257cc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Main">
+      <UniqueIdentifier>{861df397-f254-4364-b05f-d4ac38d87004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Game_HDR">
+      <UniqueIdentifier>{d3a6b7b7-db43-4bca-8de0-30c341ff3a78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Game_PvP\Player">
+      <UniqueIdentifier>{a83b5e00-39ce-4811-b994-a550c578b67a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Game_PvP\Stage">
+      <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Game_PvP\Stage">
+      <UniqueIdentifier>{bb7ecd1c-3945-4f33-979f-fce88bed5d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Game_PvP\Player">
+      <UniqueIdentifier>{06a22181-9386-4d8b-8a89-8237b65499bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Game_HDR">
+      <UniqueIdentifier>{0cfb08cb-c655-4313-b5de-bd55abf28c60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -75,26 +93,17 @@
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
-    <ClCompile Include="camera.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
     <ClCompile Include="input.cpp">
       <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="title.cpp">
       <Filter>ソース ファイル\Title</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
     <ClCompile Include="fade.cpp">
       <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="tutorial.cpp">
       <Filter>ソース ファイル\Tutorial</Filter>
-    </ClCompile>
-    <ClCompile Include="bg.cpp">
-      <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
     <ClCompile Include="pause.cpp">
       <Filter>ソース ファイル\Game\Pause</Filter>
@@ -103,43 +112,25 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="meshcylinder.cpp">
-      <Filter>ソース ファイル\Game\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="meshfield.cpp">
-      <Filter>ソース ファイル\Game\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="model.cpp">
-      <Filter>ソース ファイル\Game\Player</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
     <ClCompile Include="wall.cpp">
-      <Filter>ソース ファイル\Game\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="light.cpp">
-      <Filter>ソース ファイル\Game\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="meshdome.cpp">
-      <Filter>ソース ファイル\Game\Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="Gauge.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="sound.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="score.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="bonus.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="camera_frame.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="timer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="particle.cpp">
-      <Filter>ソース ファイル\Game</Filter>
     </ClCompile>
     <ClCompile Include="charge_effect.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
@@ -153,17 +144,56 @@
     <ClCompile Include="tremor_effect.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="item.cpp">
-      <Filter>ソース ファイル\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="meshfault.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="player.cpp">
-      <Filter>ソース ファイル\Game\Player</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
     <ClCompile Include="charge_cylinder.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="color.cpp">
+      <Filter>ソース ファイル\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="select_game.cpp">
+      <Filter>ソース ファイル\SelectGame</Filter>
+    </ClCompile>
+    <ClCompile Include="eff_shock-wave_00.cpp">
+      <Filter>ソース ファイル\Game\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="bonus.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
+    </ClCompile>
+    <ClCompile Include="item.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
+    </ClCompile>
+    <ClCompile Include="score.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
+    </ClCompile>
+    <ClCompile Include="HDRgame.cpp">
+      <Filter>ソース ファイル\Game\Game_HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="pvp_game.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
+    </ClCompile>
+    <ClCompile Include="particle.cpp">
+      <Filter>ソース ファイル\Game\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
+    </ClCompile>
+    <ClCompile Include="camera_frame.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
+    </ClCompile>
+    <ClCompile Include="gauge.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="meshfault.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
+    </ClCompile>
+    <ClCompile Include="bg.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,9 +209,6 @@
     <ClInclude Include="main.h">
       <Filter>ヘッダー ファイル\Main</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
     <ClInclude Include="title.h">
       <Filter>ヘッダー ファイル\Title</Filter>
     </ClInclude>
@@ -192,28 +219,22 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="meshcylinder.h">
-      <Filter>ヘッダー ファイル\Game\Stage</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
     </ClInclude>
     <ClInclude Include="meshfield.h">
-      <Filter>ヘッダー ファイル\Game\Stage</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
     </ClInclude>
     <ClInclude Include="player.h">
-      <Filter>ヘッダー ファイル\Game\Player</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
     </ClInclude>
     <ClInclude Include="wall.h">
-      <Filter>ヘッダー ファイル\Game\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="bg.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
     </ClInclude>
     <ClInclude Include="light.h">
-      <Filter>ヘッダー ファイル\Game\Stage</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
     </ClInclude>
     <ClInclude Include="model.h">
-      <Filter>ヘッダー ファイル\Game\Player</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
     </ClInclude>
     <ClInclude Include="tutorial.h">
       <Filter>ヘッダー ファイル\Tutorial</Filter>
@@ -222,28 +243,10 @@
       <Filter>ヘッダー ファイル\Main</Filter>
     </ClInclude>
     <ClInclude Include="meshdome.h">
-      <Filter>ヘッダー ファイル\Game\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="Gauge.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
     </ClInclude>
     <ClInclude Include="sound.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="score.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="bonus.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="camera_frame.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="timer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="particle.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
     <ClInclude Include="charge_effect.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
@@ -257,13 +260,49 @@
     <ClInclude Include="tremor_effect.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="charge_cylinder.h">
+      <Filter>ヘッダー ファイル\Game\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="select_game.h">
+      <Filter>ヘッダー ファイル\SelectGame</Filter>
+    </ClInclude>
+    <ClInclude Include="eff_shock-wave_00.h">
+      <Filter>ヘッダー ファイル\Game\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="bonus.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
+    </ClInclude>
     <ClInclude Include="item.h">
-      <Filter>ヘッダー ファイル\Game</Filter>
+      <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
+    </ClInclude>
+    <ClInclude Include="score.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
+    </ClInclude>
+    <ClInclude Include="pvp_game.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
+    </ClInclude>
+    <ClInclude Include="HDRgame.h">
+      <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="camera_frame.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
     </ClInclude>
     <ClInclude Include="meshfault.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
+    </ClInclude>
+    <ClInclude Include="gauge.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="bg.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="charge_cylinder.h">
+    <ClInclude Include="particle.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
   </ItemGroup>
