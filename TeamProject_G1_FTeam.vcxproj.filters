@@ -85,6 +85,12 @@
     <Filter Include="ソース ファイル\Game\Game_PvP\Player\Stage">
       <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Game_HDR\Player">
+      <UniqueIdentifier>{7ca0e2f4-9928-451e-90e9-32c1b0cbe418}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Game_HDR\Player">
+      <UniqueIdentifier>{3a5b9716-a72f-4661-90b7-3b16b98e613d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -197,6 +203,9 @@
     </ClCompile>
     <ClCompile Include="PvP_player.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="hdr_player.cpp">
+      <Filter>ソース ファイル\Game\Game_HDR\Player</Filter>
     </ClCompile>
     <ClCompile Include="HDR_camera.cpp">
       <Filter>ソース ファイル\Game\Game_HDR</Filter>
@@ -319,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="HDR_camera.h">
       <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="hdr_player.h">
+      <Filter>ヘッダー ファイル\Game\Game_HDR\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
