@@ -173,6 +173,7 @@
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="hdr_player.cpp" />
+    <ClCompile Include="HDR_camera.cpp" />
     <ClCompile Include="pvp_game.cpp" />
     <ClCompile Include="gauge.cpp" />
     <ClCompile Include="HDRgame.cpp" />
@@ -213,7 +214,6 @@
     <ClInclude Include="eff_shock-wave_00.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="file.h" />
-    <ClInclude Include="hdr_player.h" />
     <ClInclude Include="pvp_game.h" />
     <ClInclude Include="gauge.h" />
     <ClInclude Include="HDRgame.h" />
