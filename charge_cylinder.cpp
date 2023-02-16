@@ -7,7 +7,7 @@
 #include "main.h"
 #include "charge_cylinder.h"
 #include "color.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "input.h"
 
 //ƒ}ƒNƒ’è‹`

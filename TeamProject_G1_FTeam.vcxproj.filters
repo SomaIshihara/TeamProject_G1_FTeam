@@ -85,12 +85,6 @@
     <Filter Include="ソース ファイル\Game\Game_PvP\Player\Stage">
       <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\AI">
-      <UniqueIdentifier>{729a71f1-ce92-46a1-b210-d95f879a6033}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\AI">
-      <UniqueIdentifier>{ed71f278-6db2-4f43-9f57-09432e037c96}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -150,9 +144,6 @@
     <ClCompile Include="tremor_effect.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
-    </ClCompile>
     <ClCompile Include="charge_cylinder.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
@@ -202,7 +193,10 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="comai.cpp">
-      <Filter>ソース ファイル\AI</Filter>
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="PvP_player.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -232,9 +226,6 @@
     </ClInclude>
     <ClInclude Include="meshfield.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
     </ClInclude>
     <ClInclude Include="wall.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
@@ -314,11 +305,14 @@
     <ClInclude Include="particle.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="ai.h">
-      <Filter>ヘッダー ファイル\AI</Filter>
-    </ClInclude>
     <ClInclude Include="comai.h">
-      <Filter>ヘッダー ファイル\AI</Filter>
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ai.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="PvP_player.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

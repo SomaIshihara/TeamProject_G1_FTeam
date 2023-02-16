@@ -6,7 +6,7 @@ Author:‘å‹{ˆ¤—…  •½àV‰‘  ÎŒ´éD”n
 ============================================================================================================================================================*/
 #include "camera.h"
 #include "input.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "camera_frame.h"
 #include "input.h"
 

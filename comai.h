@@ -8,7 +8,7 @@
 #define _COMAI_H_
 
 #include "main.h"
-#include "player.h"
+#include "PvP_player.h"
 #include "ai.h"
 
 //プロトタイプ宣言
