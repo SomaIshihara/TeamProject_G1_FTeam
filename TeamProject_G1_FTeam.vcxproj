@@ -172,6 +172,8 @@
     <ClCompile Include="eff_shock-wave_00.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="file.cpp" />
+    <ClCompile Include="hdr_player.cpp" />
+    <ClCompile Include="HDR_camera.cpp" />
     <ClCompile Include="pvp_game.cpp" />
     <ClCompile Include="gauge.cpp" />
     <ClCompile Include="HDRgame.cpp" />
