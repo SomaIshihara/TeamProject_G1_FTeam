@@ -11,7 +11,7 @@
 #include "meshfield.h"
 
 //グローバル変数
-Player_HDR g_aPlayerHDRHDR[MAX_USE_GAMEPAD];
+Player_HDR g_aPlayerHDR[MAX_USE_GAMEPAD];
 int g_nIdxShadow_HDR = -1;
 
 //プロトタイプ宣言
