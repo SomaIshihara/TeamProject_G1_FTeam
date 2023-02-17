@@ -60,9 +60,9 @@
 #define GOAST_FLASHSTART		(240)		//点滅開始する残り時間
 #define GOAST_FLASHPULSE		(20)		//点滅の切り替え時間
 
-#define PLAYER_SIZE_WIDTH		(25.0f)
+#define PLAYER_SIZE_WIDTH		(12.5f)
 #define PLAYER_SIZE_HEIGHT		(15.0f)
-#define PLAYER_SIZE_DEPTH		(40.0f)
+#define PLAYER_SIZE_DEPTH		(20.0f)
 
 //向き
 #define ROT_WA	(-0.75f * D3DX_PI)	//左上
@@ -74,26 +74,34 @@
 #define ROT_S	(0.0f * D3DX_PI)	//下
 #define ROT_D	(0.5f * D3DX_PI)	//右
 
+//当たり判定範囲構造体
+typedef struct
+{
+	D3DXVECTOR3 pos0, pos1, pos2, pos3;
+} CollisionPos;
+
 //プロト
 void ControllKeyboardPlayer(int nPlayerNum);
 void ControllGPadPlayer(int nPlayerNum);
 void ControllAI(int nPlayerNum);
 
 void MovePlayer(int nPadNum);
-void RotatePlayer(int nPadNum);		//MovePlayer のrot.y の計算式だけを残しています
+void RotatePlayer(int nPadNum);				//MovePlayer のrot.y の計算式だけを残しています
 
-void ChargePlayer(int nChargePlayer);	//チャージ処理
-void DashPlayer(int nDashPlayer);		//ダッシュ処理
-void JumpPlayer(int nJumpPlayer);		//ジャンプ処理
-void HipDropPlayer(int nHipDropPlayer);	//ヒップドロップ処理
+void ChargePlayer(int nChargePlayer);		//チャージ処理
+void DashPlayer(int nDashPlayer);			//ダッシュ処理
+void JumpPlayer(int nJumpPlayer);			//ジャンプ処理
+void HipDropPlayer(int nHipDropPlayer);		//ヒップドロップ処理
 
-void CollisionPP(int nPlayerNum);	//プレイヤー同士の衝突判定
-void CollisionHipDropPP(int nPlayerNum);		//ヒップドロップ時の衝突判定
-void DownPlayer(int nDownPlayerNum);	//ダウンしたプレイヤーの処理
-void RespawnPlayer(int nRespawnPlayer);	//リスポーン処理
+void CollisionPP(int nPlayerNum);			//プレイヤー同士の衝突判定
+void CollisionHipDropPP(int nPlayerNum);	//ヒップドロップ時の衝突判定
+void GenerateCollision(int nPlayerNum, CollisionPos *pCollision);
 
-void DecrementItemTime(int nPlayerNum);	//アイテムカウントをすべて減らす
-void ItemStateParticle(int nPlayerNum);	//アイテムパーティクル表示処理
+void DownPlayer(int nDownPlayerNum);		//ダウンしたプレイヤーの処理
+void RespawnPlayer(int nRespawnPlayer);		//リスポーン処理
+
+void DecrementItemTime(int nPlayerNum);		//アイテムカウントをすべて減らす
+void ItemStateParticle(int nPlayerNum);		//アイテムパーティクル表示処理
 
 //グローバル変数
 Player g_aPlayerPvP[MAX_USE_GAMEPAD];
@@ -167,7 +175,7 @@ void InitPlayer(void)
 		}
 		else if (c_aAIMove[nCntPlayer] == true)
 		{//AIは脳みそポインタもらって使用していることにする
-			g_aPlayerPvP[nCntPlayer].pAI = GetAI();
+			//g_aPlayerPvP[nCntPlayer].pAI = GetAI();
 			g_aPlayerPvP[nCntPlayer].bUsePlayer = true;
 		}
 	}
@@ -613,7 +621,8 @@ void CollisionPP(int nPlayerNum)
 	// pos0		pos1
 	//==================================
 
-	D3DXVECTOR3 pos0, pos1, pos2, pos3;
+	//頂点
+	CollisionPos collPos;
 
 	D3DXVECTOR3 vecLineRight, vecToPosRight, vecToPosOldRight;
 	D3DXVECTOR3 vecLineLeft, vecToPosLeft, vecToPosOldLeft;
@@ -632,75 +641,8 @@ void CollisionPP(int nPlayerNum)
 	{
 		if (nCntOtherPlayer != nPlayerNum)
 		{
-			//各頂点求める
-			float fLengthX, fLengthZ;
-			float fLength;
-			float fAngle;
-			float rot;
-
-			//-pos0---------------------------------------------------------------------------------------------------------------------------
-			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayerPvP[nCntOtherPlayer].pos.x - (g_aPlayerPvP[nCntOtherPlayer].pos.x - PLAYER_SIZE_WIDTH);
-			fLengthZ = g_aPlayerPvP[nCntOtherPlayer].pos.z - (g_aPlayerPvP[nCntOtherPlayer].pos.z - PLAYER_SIZE_DEPTH);
-
-			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
-			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
-																	//0 - 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
-			rot = FIX_ROT(-fAngle - g_aPlayerPvP[nCntOtherPlayer].rot.y);
-
-			//角度に応じて頂点の位置をずらす
-			pos0.x = g_aPlayerPvP[nCntOtherPlayer].pos.x + sinf(rot) * fLength;
-			pos0.y = 0.0f;
-			pos0.z = g_aPlayerPvP[nCntOtherPlayer].pos.z - cosf(rot) * fLength;
-			//-pos0---------------------------------------------------------------------------------------------------------------------------
-
-			//-pos1---------------------------------------------------------------------------------------------------------------------------
-			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayerPvP[nCntOtherPlayer].pos.x - (g_aPlayerPvP[nCntOtherPlayer].pos.x + PLAYER_SIZE_WIDTH);
-			fLengthZ = g_aPlayerPvP[nCntOtherPlayer].pos.z - (g_aPlayerPvP[nCntOtherPlayer].pos.z - PLAYER_SIZE_DEPTH);
-
-			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
-			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
-																	//0 + 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
-			rot = FIX_ROT(-fAngle - g_aPlayerPvP[nCntOtherPlayer].rot.y);
-
-			//角度に応じて頂点の位置をずらす
-			pos1.x = g_aPlayerPvP[nCntOtherPlayer].pos.x + sinf(rot) * fLength;
-			pos1.y = 0.0f;
-			pos1.z = g_aPlayerPvP[nCntOtherPlayer].pos.z - cosf(rot) * fLength;
-			//-pos1---------------------------------------------------------------------------------------------------------------------------
-
-			//-pos2---------------------------------------------------------------------------------------------------------------------------
-			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayerPvP[nCntOtherPlayer].pos.x - (g_aPlayerPvP[nCntOtherPlayer].pos.x + PLAYER_SIZE_WIDTH);
-			fLengthZ = g_aPlayerPvP[nCntOtherPlayer].pos.z - (g_aPlayerPvP[nCntOtherPlayer].pos.z + PLAYER_SIZE_DEPTH);
-
-			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
-			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
-																	//PI - 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
-			rot = FIX_ROT(D3DX_PI - fAngle - g_aPlayerPvP[nCntOtherPlayer].rot.y);
-
-			//角度に応じて頂点の位置をずらす
-			pos2.x = g_aPlayerPvP[nCntOtherPlayer].pos.x - sinf(rot) * fLength;
-			pos2.y = 0.0f;
-			pos2.z = g_aPlayerPvP[nCntOtherPlayer].pos.z + cosf(rot) * fLength;
-			//-pos2---------------------------------------------------------------------------------------------------------------------------
-
-			//-pos3---------------------------------------------------------------------------------------------------------------------------
-			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayerPvP[nCntOtherPlayer].pos.x - (g_aPlayerPvP[nCntOtherPlayer].pos.x - PLAYER_SIZE_WIDTH);
-			fLengthZ = g_aPlayerPvP[nCntOtherPlayer].pos.z - (g_aPlayerPvP[nCntOtherPlayer].pos.z + PLAYER_SIZE_DEPTH);
-
-			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
-			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
-																	//-PI + 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
-			rot = FIX_ROT(-D3DX_PI - fAngle - g_aPlayerPvP[nCntOtherPlayer].rot.y);
-
-			//角度に応じて頂点の位置をずらす
-			pos3.x = g_aPlayerPvP[nCntOtherPlayer].pos.x - sinf(rot) * fLength;
-			pos3.y = 0.0f;
-			pos3.z = g_aPlayerPvP[nCntOtherPlayer].pos.z + cosf(rot) * fLength;
-			//-pos3---------------------------------------------------------------------------------------------------------------------------
+			//頂点設定
+			GenerateCollision(nCntOtherPlayer, &collPos);
 
 			//ベクトル求める
 			//move
@@ -711,24 +653,24 @@ void CollisionPP(int nPlayerNum)
 
 			//X
 			//右方向の計算
-			vecLineRight = pos1 - pos0;
-			vecToPosRight = posTemp - pos0;
-			vecToPosOldRight = g_aPlayerPvP[nPlayerNum].posOld - pos0;
+			vecLineRight = collPos.pos1 - collPos.pos0;
+			vecToPosRight = posTemp - collPos.pos0;
+			vecToPosOldRight = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos0;
 
 			//左方向の計算
-			vecLineLeft = pos3 - pos2;
-			vecToPosLeft = posTemp - pos2;
-			vecToPosOldLeft = g_aPlayerPvP[nPlayerNum].posOld - pos2;
+			vecLineLeft = collPos.pos3 - collPos.pos2;
+			vecToPosLeft = posTemp - collPos.pos2;
+			vecToPosOldLeft = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos2;
 
 			//Z
 			//上方向の計算
-			vecLineUp = pos2 - pos1;
-			vecToPosUp = posTemp - pos1;
-			vecToPosOldUp = g_aPlayerPvP[nPlayerNum].posOld - pos1;
+			vecLineUp = collPos.pos2 - collPos.pos1;
+			vecToPosUp = posTemp - collPos.pos1;
+			vecToPosOldUp = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos1;
 			//下方向の計算
-			vecLineDown = pos0 - pos3;
-			vecToPosDown = posTemp - pos3;
-			vecToPosOldDown = g_aPlayerPvP[nPlayerNum].posOld - pos3;
+			vecLineDown = collPos.pos0 - collPos.pos3;
+			vecToPosDown = posTemp - collPos.pos3;
+			vecToPosOldDown = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos3;
 
 			//当たり判定本番
 			for (int nCntCollision = 0; nCntCollision < 2; nCntCollision++)
@@ -756,8 +698,8 @@ void CollisionPP(int nPlayerNum)
 							}
 							//1.0f = pushback
 							float fRate = fAreaARight[nCntCollision] / fAreaBRight[nCntCollision];
-							g_aPlayerPvP[nPlayerNum].pos.x = pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							g_aPlayerPvP[nPlayerNum].pos.z = pos0.z + (vecLineRight.z * fRate) - cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayerPvP[nPlayerNum].pos.x = collPos.pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayerPvP[nPlayerNum].pos.z = collPos.pos0.z + (vecLineRight.z * fRate) - cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 							break;
 						}
 					}
@@ -776,8 +718,8 @@ void CollisionPP(int nPlayerNum)
 								SetAttackEffect(g_aPlayerPvP[nCntOtherPlayer].pos, nCntOtherPlayer);
 							}
 							float fRate = fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision];
-							g_aPlayerPvP[nPlayerNum].pos.x = pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							g_aPlayerPvP[nPlayerNum].pos.z = pos2.z + (vecLineLeft.z * fRate) + cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayerPvP[nPlayerNum].pos.x = collPos.pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayerPvP[nPlayerNum].pos.z = collPos.pos2.z + (vecLineLeft.z * fRate) + cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 							break;
 						}
 					}
@@ -805,8 +747,8 @@ void CollisionPP(int nPlayerNum)
 								SetAttackEffect(g_aPlayerPvP[nCntOtherPlayer].pos, nCntOtherPlayer);
 							}
 							float fRate = fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision];
-							g_aPlayerPvP[nPlayerNum].pos.x = pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							g_aPlayerPvP[nPlayerNum].pos.z = pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayerPvP[nPlayerNum].pos.x = collPos.pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayerPvP[nPlayerNum].pos.z = collPos.pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 							break;
 						}
 					}
@@ -825,8 +767,8 @@ void CollisionPP(int nPlayerNum)
 								SetAttackEffect(g_aPlayerPvP[nCntOtherPlayer].pos, nCntOtherPlayer);
 							}
 							float fRate = fAreaADown[nCntCollision] / fAreaBDown[nCntCollision];
-							g_aPlayerPvP[nPlayerNum].pos.x = pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							g_aPlayerPvP[nPlayerNum].pos.z = pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayerPvP[nPlayerNum].pos.x = collPos.pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
+							g_aPlayerPvP[nPlayerNum].pos.z = collPos.pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
 							break;
 						}
 					}
@@ -855,7 +797,9 @@ void CollisionHipDropPP(int nPlayerNum)
 	// pos2
 	//==================================
 
-	D3DXVECTOR3 pos0, pos1, pos2;
+	//頂点
+	CollisionPos collPos;
+
 	D3DXVECTOR3 vecLineX, vecToPosX, vecToPosOldX;
 	D3DXVECTOR3 vecLineZ, vecToPosZ, vecToPosOldZ;
 	D3DXVECTOR3 vecMove;
@@ -866,75 +810,24 @@ void CollisionHipDropPP(int nPlayerNum)
 
 	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++)
 	{
-		if (nCntOtherPlayer != nPlayerNum)// && g_aPlayer[nCntOtherPlayer].bUsePlayer == true
+		if (nCntOtherPlayer != nPlayerNum)
 		{
-			//各頂点求める
-			float fLengthX, fLengthZ;
-			float fLength;
-			float fAngle;
-			float rot;
-
-			//-pos0---------------------------------------------------------------------------------------------------------------------------
-			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayerPvP[nCntOtherPlayer].pos.x - (g_aPlayerPvP[nCntOtherPlayer].pos.x + PLAYER_SIZE_WIDTH);
-			fLengthZ = g_aPlayerPvP[nCntOtherPlayer].pos.z - (g_aPlayerPvP[nCntOtherPlayer].pos.z + PLAYER_SIZE_DEPTH);
-
-			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
-			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
-																	//0 - 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
-			rot = FIX_ROT(-fAngle - g_aPlayerPvP[nCntOtherPlayer].rot.y);
-
-			//角度に応じて頂点の位置をずらす
-			pos0.x = g_aPlayerPvP[nCntOtherPlayer].pos.x + sinf(rot) * fLength;
-			pos0.y = 0.0f;
-			pos0.z = g_aPlayerPvP[nCntOtherPlayer].pos.z - cosf(rot) * fLength;
-			//-pos0---------------------------------------------------------------------------------------------------------------------------
-
-			//-pos1---------------------------------------------------------------------------------------------------------------------------
-			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayerPvP[nCntOtherPlayer].pos.x - (g_aPlayerPvP[nCntOtherPlayer].pos.x - PLAYER_SIZE_WIDTH);
-			fLengthZ = g_aPlayerPvP[nCntOtherPlayer].pos.z - (g_aPlayerPvP[nCntOtherPlayer].pos.z + PLAYER_SIZE_DEPTH);
-
-			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
-			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
-																	//0 + 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
-			rot = FIX_ROT(-fAngle - g_aPlayerPvP[nCntOtherPlayer].rot.y);
-
-			//角度に応じて頂点の位置をずらす
-			pos1.x = g_aPlayerPvP[nCntOtherPlayer].pos.x + sinf(rot) * fLength;
-			pos1.y = 0.0f;
-			pos1.z = g_aPlayerPvP[nCntOtherPlayer].pos.z - cosf(rot) * fLength;
-			//-pos1---------------------------------------------------------------------------------------------------------------------------
-
-			//-pos2---------------------------------------------------------------------------------------------------------------------------
-			//頂点と中心の距離をXとZ別々で計算する
-			fLengthX = g_aPlayerPvP[nCntOtherPlayer].pos.x - (g_aPlayerPvP[nCntOtherPlayer].pos.x - PLAYER_SIZE_WIDTH);
-			fLengthZ = g_aPlayerPvP[nCntOtherPlayer].pos.z - (g_aPlayerPvP[nCntOtherPlayer].pos.z - PLAYER_SIZE_DEPTH);
-
-			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
-			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
-																	//0 + 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
-			rot = FIX_ROT(D3DX_PI - fAngle - g_aPlayerPvP[nCntOtherPlayer].rot.y);
-
-			//角度に応じて頂点の位置をずらす
-			pos2.x = g_aPlayerPvP[nCntOtherPlayer].pos.x - sinf(rot) * fLength;
-			pos2.y = 0.0f;
-			pos2.z = g_aPlayerPvP[nCntOtherPlayer].pos.z + cosf(rot) * fLength;
-			//-pos2---------------------------------------------------------------------------------------------------------------------------
+			//頂点設定
+			GenerateCollision(nCntOtherPlayer, &collPos);
 
 			//ベクトル求める
 			//move
 			vecMove = posTemp - g_aPlayerPvP[nPlayerNum].posOld;
 
 			//X
-			vecLineX = pos1 - pos0;
-			vecToPosX = posTemp - pos0;
-			vecToPosOldX = g_aPlayerPvP[nPlayerNum].posOld - pos0;
+			vecLineX = collPos.pos1 - collPos.pos0;
+			vecToPosX = posTemp - collPos.pos0;
+			vecToPosOldX = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos0;
 
 			//Z
-			vecLineZ = pos2 - pos1;
-			vecToPosZ = posTemp - pos1;
-			vecToPosOldZ = g_aPlayerPvP[nPlayerNum].posOld - pos1;
+			vecLineZ = collPos.pos2 - collPos.pos1;
+			vecToPosZ = posTemp - collPos.pos1;
+			vecToPosOldZ = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos1;
 
 			//当たり判定本番
 			//X
@@ -970,6 +863,93 @@ void CollisionHipDropPP(int nPlayerNum)
 			}
 		}
 	}
+}
+
+//========================
+//当たり判定生成
+//========================
+void GenerateCollision(int nPlayerNum, CollisionPos *pCollision)
+{
+	//各頂点を求めるのに必要な変数
+	D3DXMATRIX mtxRot;		//回転行列
+	D3DXMATRIX mtxTrans;	//変換後の行列
+	D3DXVECTOR4 vtxTrans;	//変換後の点
+
+	//-mtx----------------------------------------------------------------------------------------------------------------------------
+	//回転行列を作る
+	D3DXMatrixRotationY(&mtxRot, g_aPlayerPvP[nPlayerNum].rot.y);
+
+	D3DXMatrixIdentity(&mtxTrans);
+
+	D3DXMatrixMultiply(&mtxTrans, &mtxRot, &mtxTrans);
+	//-mtx----------------------------------------------------------------------------------------------------------------------------
+	
+	//-pos0---------------------------------------------------------------------------------------------------------------------------
+	//回転行列をもとに頂点を回転する
+	//0度のときの点を置く
+	D3DXVECTOR3 vtxPos = D3DXVECTOR3(
+		g_aPlayerPvP[nPlayerNum].pos.x - PLAYER_SIZE_WIDTH,
+		0.0f,
+		g_aPlayerPvP[nPlayerNum].pos.z - PLAYER_SIZE_DEPTH);
+
+	//回転行列とかけ合わせる
+	D3DXVec3Transform(&vtxTrans, &vtxPos, &mtxTrans);
+
+	pCollision->pos0.x = vtxTrans.x;
+	pCollision->pos0.y = vtxTrans.y;
+	pCollision->pos0.z = vtxTrans.z;
+	//-pos0---------------------------------------------------------------------------------------------------------------------------
+
+	//-pos1---------------------------------------------------------------------------------------------------------------------------
+	//回転行列をもとに頂点を回転する
+	//0度のときの点を置く
+	vtxPos = D3DXVECTOR3(
+		g_aPlayerPvP[nPlayerNum].pos.x + PLAYER_SIZE_WIDTH,
+		0.0f,
+		g_aPlayerPvP[nPlayerNum].pos.z - PLAYER_SIZE_DEPTH);
+
+	//回転行列とかけ合わせる
+	D3DXVec3Transform(&vtxTrans, &vtxPos, &mtxTrans);
+
+	//変換後の点の場所を代入
+	pCollision->pos1.x = vtxTrans.x;
+	pCollision->pos1.y = vtxTrans.y;
+	pCollision->pos1.z = vtxTrans.z;
+	//-pos1---------------------------------------------------------------------------------------------------------------------------
+
+	//-pos2---------------------------------------------------------------------------------------------------------------------------
+	//回転行列をもとに頂点を回転する
+	//0度のときの点を置く
+	vtxPos = D3DXVECTOR3(
+		g_aPlayerPvP[nPlayerNum].pos.x + PLAYER_SIZE_WIDTH,
+		0.0f,
+		g_aPlayerPvP[nPlayerNum].pos.z + PLAYER_SIZE_DEPTH);
+
+	//回転行列とかけ合わせる
+	D3DXVec3Transform(&vtxTrans, &vtxPos, &mtxTrans);
+
+	//変換後の点の場所を代入
+	pCollision->pos2.x = vtxTrans.x;
+	pCollision->pos2.y = vtxTrans.y;
+	pCollision->pos2.z = vtxTrans.z;
+	//-pos2---------------------------------------------------------------------------------------------------------------------------
+
+	//-pos3---------------------------------------------------------------------------------------------------------------------------
+	//回転行列をもとに頂点を回転する
+	//0度のときの点を置く
+	vtxPos = D3DXVECTOR3(
+		g_aPlayerPvP[nPlayerNum].pos.x - PLAYER_SIZE_WIDTH,
+		0.0f,
+		g_aPlayerPvP[nPlayerNum].pos.z + PLAYER_SIZE_DEPTH);
+
+	//回転行列とかけ合わせる
+	D3DXVec3Transform(&vtxTrans, &vtxPos, &mtxTrans);
+
+	//変換後の点の場所を代入
+	pCollision->pos3.x = vtxTrans.x;
+	pCollision->pos3.y = vtxTrans.y;
+	pCollision->pos3.z = vtxTrans.z;
+	//-pos3---------------------------------------------------------------------------------------------------------------------------
 }
 
 //========================
