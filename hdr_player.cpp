@@ -43,27 +43,27 @@ void InitPlayer_HDR(void)
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
 		//変数初期化
-		g_aPlayerHDRHDR[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
-		g_aPlayerHDRHDR[nCntPlayer].posOld = g_aPlayerHDRHDR[nCntPlayer].pos;
-		g_aPlayerHDRHDR[nCntPlayer].move = ZERO_SET;
-		g_aPlayerHDRHDR[nCntPlayer].moveV0 = ZERO_SET;
-		g_aPlayerHDRHDR[nCntPlayer].rot = ZERO_SET;
-		g_aPlayerHDRHDR[nCntPlayer].jumpTime = 0;
-		g_aPlayerHDRHDR[nCntPlayer].bJump = false;
-		g_aPlayerHDRHDR[nCntPlayer].bHipDrop = false;
-		g_aPlayerHDRHDR[nCntPlayer].bHipDropSpin = false;
-		g_aPlayerHDRHDR[nCntPlayer].nHipDropWait = 0;
+		g_aPlayerHDR[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
+		g_aPlayerHDR[nCntPlayer].posOld = g_aPlayerHDR[nCntPlayer].pos;
+		g_aPlayerHDR[nCntPlayer].move = ZERO_SET;
+		g_aPlayerHDR[nCntPlayer].moveV0 = ZERO_SET;
+		g_aPlayerHDR[nCntPlayer].rot = ZERO_SET;
+		g_aPlayerHDR[nCntPlayer].jumpTime = 0;
+		g_aPlayerHDR[nCntPlayer].bJump = false;
+		g_aPlayerHDR[nCntPlayer].bHipDrop = false;
+		g_aPlayerHDR[nCntPlayer].bHipDropSpin = false;
+		g_aPlayerHDR[nCntPlayer].nHipDropWait = 0;
 
-		g_aPlayerHDRHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
+		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 
-		g_aPlayerHDRHDR[nCntPlayer].model = GetModel(g_aPlayerHDRHDR[nCntPlayer].animal);
-		g_aPlayerHDRHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
+		g_aPlayerHDR[nCntPlayer].model = GetModel(g_aPlayerHDR[nCntPlayer].animal);
+		g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
 	}
 
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
 	if (GetUseControllerNum_HDR() == 0)
 	{
-		g_aPlayerHDRHDR[0].bUsePlayer = true;
+		g_aPlayerHDR[0].bUsePlayer = true;
 	}
 }
 //========================
@@ -75,8 +75,8 @@ void UninitPlayer_HDR(void)
 	{//プレイヤーの数だけ処理する
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{//取得した方なのでNULL入れるだけでOK
-			g_aPlayerHDRHDR[nCntPlayer].model.aParts[nCntParts].pMesh = NULL;
-			g_aPlayerHDRHDR[nCntPlayer].model.aParts[nCntParts].pBuffMat = NULL;
+			g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pMesh = NULL;
+			g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pBuffMat = NULL;
 		}
 	}
 }
@@ -89,12 +89,12 @@ void UpdatePlayer_HDR(void)
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
 		//現在の位置を前回の位置にする
-		g_aPlayerHDRHDR[nCntPlayer].posOld = g_aPlayerHDRHDR[nCntPlayer].pos;
+		g_aPlayerHDR[nCntPlayer].posOld = g_aPlayerHDR[nCntPlayer].pos;
 
 		//ジャンプ時間を増やす
-		g_aPlayerHDRHDR[nCntPlayer].jumpTime++;
+		g_aPlayerHDR[nCntPlayer].jumpTime++;
 
-		if (g_aPlayerHDRHDR[nCntPlayer].bUsePlayer == true)
+		if (g_aPlayerHDR[nCntPlayer].bUsePlayer == true)
 		{//使用時のみ行う
 
 			//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
