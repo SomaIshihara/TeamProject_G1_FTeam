@@ -91,15 +91,24 @@
     <Filter Include="ヘッダー ファイル\Game\Game_HDR\Player">
       <UniqueIdentifier>{3a5b9716-a72f-4661-90b7-3b16b98e613d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\AI">
+      <UniqueIdentifier>{6207018b-2f5b-4f2f-96b5-7583fa991a1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\AI">
+      <UniqueIdentifier>{2841437a-6dc0-4d96-b084-c826c26f6679}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Main\Input">
+      <UniqueIdentifier>{af8236cd-b015-4bb8-bc0c-76778f0d567e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Main\Input">
+      <UniqueIdentifier>{e4c1fa2e-e89f-422f-ae6e-c21e8fa69023}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
       <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル\Main</Filter>
-    </ClCompile>
-    <ClCompile Include="input.cpp">
       <Filter>ソース ファイル\Main</Filter>
     </ClCompile>
     <ClCompile Include="title.cpp">
@@ -198,9 +207,6 @@
     <ClCompile Include="bg.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="comai.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="PvP_player.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
@@ -210,8 +216,14 @@
     <ClCompile Include="HDR_camera.cpp">
       <Filter>ソース ファイル\Game\Game_HDR</Filter>
     </ClCompile>
+    <ClCompile Include="comai.cpp">
+      <Filter>ソース ファイル\AI</Filter>
+    </ClCompile>
     <ClCompile Include="conversioninput.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Main\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>ソース ファイル\Main\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -219,9 +231,6 @@
       <Filter>ヘッダー ファイル\Main</Filter>
     </ClInclude>
     <ClInclude Include="debugproc.h">
-      <Filter>ヘッダー ファイル\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="input.h">
       <Filter>ヘッダー ファイル\Main</Filter>
     </ClInclude>
     <ClInclude Include="main.h">
@@ -320,12 +329,6 @@
     <ClInclude Include="particle.h">
       <Filter>ヘッダー ファイル\Game\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="comai.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ai.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="PvP_player.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
     </ClInclude>
@@ -335,8 +338,17 @@
     <ClInclude Include="hdr_player.h">
       <Filter>ヘッダー ファイル\Game\Game_HDR\Player</Filter>
     </ClInclude>
+    <ClInclude Include="comai.h">
+      <Filter>ヘッダー ファイル\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="ai.h">
+      <Filter>ヘッダー ファイル\AI</Filter>
+    </ClInclude>
     <ClInclude Include="conversioninput.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Main\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>ヘッダー ファイル\Main\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
