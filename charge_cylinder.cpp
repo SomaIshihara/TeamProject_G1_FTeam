@@ -113,11 +113,11 @@ void SetChargeCylinderVertex(int nCntCylinder)
 		}
 
 		//法線ベクトルの設定
-		pVtx[nCntVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nCntVtx].nor = 
 		pVtx[nNumTopVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[nCntVtx].col = col;
+		pVtx[nCntVtx].col = 
 		pVtx[nNumTopVtx].col = col;
 
 		//テクスチャ座標の設定
@@ -266,6 +266,18 @@ void DrawChargeCylinder(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	D3DXMATRIX mtxRot, mtxTrans;
 
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffChargeCylinder, 0, sizeof(VERTEX_3D));
+
+	//インデックスバッファをデータストリームに設定
+	pDevice->SetIndices(g_pIdxBuffChargeCylinder);
+
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
+
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_pTextureChargeCylinder);
+
 	//両面カリングをON
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
@@ -293,30 +305,18 @@ void DrawChargeCylinder(void)
 			//ワールドマトリックスの設定
 			pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldChargeCylinder);
 
-			//頂点バッファをデータストリームに設定
-			pDevice->SetStreamSource(0, g_pVtxBuffChargeCylinder, 0, sizeof(VERTEX_3D));
-
-			//インデックスバッファをデータストリームに設定
-			pDevice->SetIndices(g_pIdxBuffChargeCylinder);
-
-			//頂点フォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_3D);
-
-			//テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureChargeCylinder);
-
 			//ポリゴンの描画
 			pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, CHARGECYLINDER_ALL_VTX, 0, CHARGECYLINDER_ALL_VTX);
 		}
 	}
 
-	//通常カリングにする
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
 	//アルファテストを無効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	//通常カリングにする
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
 // シリンダーの設定処理

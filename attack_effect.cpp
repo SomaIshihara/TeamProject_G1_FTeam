@@ -63,16 +63,12 @@ void InitAttackEffect(void)
 		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_AttackEffect[nCntEffect].fSize, 0.0f, -g_AttackEffect[nCntEffect].fSize);
 
 		//nor(法線)の設定
-		pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[VTX_RI_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[VTX_LE_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[VTX_LE_UP].nor = pVtx[VTX_RI_UP].nor = 
+		pVtx[VTX_LE_DO].nor = pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[VTX_LE_UP].col = RGBA_RED;
-		pVtx[VTX_RI_UP].col = RGBA_RED;
-		pVtx[VTX_LE_DO].col = RGBA_RED;
-		pVtx[VTX_RI_DO].col = RGBA_RED;
+		pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col = 
+		pVtx[VTX_LE_DO].col = pVtx[VTX_RI_DO].col = RGBA_RED;
 
 		//テクスチャ頂点座標の設定
 		pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -124,6 +120,7 @@ void UpdateAttackEffect(void)
 	//エフェクトのサイズ更新  (頂点座標の更新もするので、このUpdate関数の最後が望ましい)
 	for (int nCntEffect = 0; nCntEffect < NUM_ATTACK_EFFECT; nCntEffect++)
 	{
+		//エフェクトのサイズ更新
 		UpdateAttackEffectSize(nCntEffect);
 	}
 }
@@ -171,9 +168,7 @@ void UpdateAttackEffectSize(int nEffect)
 	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_AttackEffect[nEffect].fSize, 0.0f, -g_AttackEffect[nEffect].fSize);
 
 	//頂点カラーの設定		エフェクトのサイズが規定量を超えていれば、徐々に透明になっていく
-	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_AttackEffect[nEffect].fAlpha);
-	pVtx[VTX_RI_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_AttackEffect[nEffect].fAlpha);
-	pVtx[VTX_LE_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_AttackEffect[nEffect].fAlpha);
+	pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col = pVtx[VTX_LE_DO].col = 
 	pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_AttackEffect[nEffect].fAlpha);
 
 	//頂点バッファをアンロックする
@@ -186,7 +181,16 @@ void UpdateAttackEffectSize(int nEffect)
 void DrawAttackEffect(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();//デバイスの取得
-	D3DXMATRIX  mtxTrans, mtxView;			//計算用マトリックス
+	D3DXMATRIX  mtxTrans;					//計算用マトリックス
+	
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffAttackEffect, 0, sizeof(VERTEX_3D));
+
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
+
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_pTextureAttackEffect);
 	
 	//Zテストを無効にする
 	pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
@@ -205,25 +209,12 @@ void DrawAttackEffect(void)
 			//ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&mtxWorldAttackEffect);
 
-			//ビューマトリックスの取得
-			pDevice->GetTransform(D3DTS_VIEW, &mtxView);
-
 			//位置を反映
 			D3DXMatrixTranslation(&mtxTrans, g_AttackEffect[nCntEffect].pos.x, g_AttackEffect[nCntEffect].pos.y, g_AttackEffect[nCntEffect].pos.z);
-
 			D3DXMatrixMultiply(&mtxWorldAttackEffect, &mtxWorldAttackEffect, &mtxTrans);
 
 			//ワールドマトリックスの設定
 			pDevice->SetTransform(D3DTS_WORLD, &mtxWorldAttackEffect);
-
-			//頂点バッファをデータストリームに設定
-			pDevice->SetStreamSource(0, g_pVtxBuffAttackEffect, 0, sizeof(VERTEX_3D));
-
-			//頂点フォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_3D);
-
-			//テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureAttackEffect);
 
 			//描画
 			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, VTX_MAX * nCntEffect, 2);
@@ -243,16 +234,13 @@ void DrawAttackEffect(void)
 //エフェクトの位置設定
 void SetAttackEffectPos()
 {
-	//プレイヤーの情報取得
-	Player *pPlayer = GetPlayer();
-
-	for (int nCntEffect = 0; nCntEffect < NUM_ATTACK_EFFECT; nCntEffect++, pPlayer++)
+	for (int nCntEffect = 0; nCntEffect < NUM_ATTACK_EFFECT; nCntEffect++)
 	{
 		//対象のエフェクトが使われている
 		if (g_AttackEffect[nCntEffect].bUse == true)
 		{
 			//エフェクトの位置をプレイヤーの位置にする
-			g_AttackEffect[nCntEffect].pos = pPlayer->pos;
+			g_AttackEffect[nCntEffect].pos = GetPlayer()[nCntEffect].pos;
 		}
 	}
 }
