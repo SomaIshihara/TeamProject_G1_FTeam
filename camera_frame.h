@@ -15,6 +15,8 @@ typedef enum
 {
 	UseFrame_WIDTH = 0,	//‰¡ü
 	UseFrame_HEIGHT,	//cü
+	UseFrame_HEIGHT4_1,	//cü4•ª‚Ì1”Ô–Ú
+	UseFrame_HEIGHT4_3,	//cü4•ª‚Ì3”Ô–Ú
 	UseFrame_MAX,
 }UseFrame;
 
@@ -23,6 +25,5 @@ void InitCameraFrame(void);
 void UninitCameraFrame(void);
 void DrawCameraFrame(void);
 void SetUseFrame(NumCamera type);
-void SetUseHDRFrame(NumHDRCamera type);
 
 #endif

@@ -19,6 +19,7 @@ typedef enum
 	NumCamera_HALF_SIDE,		//横に分けた２つの視点
 	NumCamera_HALF_HIGH_row,	//縦に分けた２つの視点
 	NumCamera_FOUR_Separate,	//各プレイヤーを見られる４つの視点
+	NumCamera_FOUR_SIDE,
 	NumCamera_MAX,
 }NumCamera;
 

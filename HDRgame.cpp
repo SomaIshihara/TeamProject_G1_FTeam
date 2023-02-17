@@ -27,7 +27,7 @@ bool g_abUsePlayer_HDR[MAX_USE_GAMEPAD];// g—p‚µ‚Ä‚¢‚éƒvƒŒƒCƒ„[iÚ‘±ƒ`ƒFƒbƒN‚
 bool g_bDisconnectPlayer_HDR;			// Ú‘±‚ªØ‚ê‚½‚±‚Æ‚ğŠm”F‚·‚é
 int  g_numGamePad_HDR;
 CHECKMODE	g_CheckMode_HDR;
-NumHDRCamera	g_NumCamera_HDR;
+NumCamera	g_NumCamera_HDR;
 bool		g_bPhotoMode_HDR;			// ƒtƒHƒgƒ‚[ƒhØ‘Ö		true:ƒ|[ƒY‰æ–Ê”ñ•\¦	false:ƒ{[ƒY‰æ–Ê•\¦
 
 										//------------------------------------------------
@@ -39,14 +39,14 @@ void InitHDRGame(void)
 	InitFile();								// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
 	LoadModelViewerFile("data\\model.txt");	// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
 	LoadModelOriginalFile("data\\originalmodel.txt");	// ƒ‚ƒfƒ‹ƒIƒŠƒWƒiƒ‹ƒtƒ@ƒCƒ‹“Ç‚İ‚İ
-	g_NumCamera_HDR = NumHDRCamera_ONLY;			// ‰ŠúƒJƒƒ‰‚Ìİ’èiŒ»İ‚ÍPlayer0‚ğ’‹“_‚Æ‚µ‚½ƒJƒƒ‰@@‰æ–Ê•ªŠ„ƒiƒVj
+	g_NumCamera_HDR = NumCamera_ONLY;			// ‰ŠúƒJƒƒ‰‚Ìİ’èiŒ»İ‚ÍPlayer0‚ğ’‹“_‚Æ‚µ‚½ƒJƒƒ‰@@‰æ–Ê•ªŠ„ƒiƒVj
 
 	
 	InitLight();				// ƒ‰ƒCƒg‰Šú‰»ˆ—
 	InitModel();				// ƒ‚ƒfƒ‹‚Ì‰Šú‰»ˆ—iƒvƒŒƒCƒ„[‚Ì‘O‚És‚¤‚±‚ÆIj
 	InitPlayer_HDR();
 	InitCameraFrame();			// ‰æ–Ê•ªŠ„‚Ì˜g‰Šú‰»ˆ—
-	InitHDRCamera(g_NumCamera_HDR);	// ƒJƒƒ‰‚Ì‰Šú‰»ˆ—
+	InitCamera(g_NumCamera_HDR);	// ƒJƒƒ‰‚Ì‰Šú‰»ˆ—
 	InitPause();				// ƒ|[ƒY‰æ–Ê‚Ì‰Šú‰»ˆ—
 	
 	InitTime();					// ƒ^ƒCƒ}[‚Ì‰Šú‰»ˆ—
@@ -71,7 +71,7 @@ void UninitHDRGame(void)
 	========================================================================*/
 
 	UninitLight();			// ƒ‰ƒCƒgI—¹ˆ—
-	UninitHDRCamera();			// ƒJƒƒ‰‚ÌI—¹ˆ—
+	UninitCamera();			// ƒJƒƒ‰‚ÌI—¹ˆ—
 	UninitPause();			// ƒ|[ƒY‰æ–Ê‚ÌI—¹ˆ—
 	UninitPlayer_HDR();
 	UninitModel();			// ƒ‚ƒfƒ‹‚ÌI—¹ˆ—
@@ -94,7 +94,7 @@ void UpdateHDRGame(void)
 	if (g_bPause_HDR == false)
 	{
 		UpdateLight();			// ƒ‰ƒCƒg‚ÌXVˆ—
-		UpdateHDRCamera();			// ƒJƒƒ‰‚ÌXVˆ—
+		UpdateCamera();			// ƒJƒƒ‰‚ÌXVˆ—
 		UpdateTime();		//ƒ^ƒCƒ}[‚ÌXVˆ—
 		UpdatePlayer_HDR();
 
@@ -161,7 +161,7 @@ void DrawHDRGame(void)
 	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
 	{
 		//ƒQ[ƒ€“àƒIƒuƒWƒFƒNƒg‚Ì•`‰æˆ—
-		SetHDRCamera(nCntCamera);		// ƒJƒƒ‰‚Ìİ’èˆ—
+		SetCamera(nCntCamera);		// ƒJƒƒ‰‚Ìİ’èˆ—
 		DrawCameraFrame();			// ‰æ–Ê•ªŠ„‚Ì˜g•`‰æˆ—
 		DrawTime();					//ƒ^ƒCƒ}[‚Ì•`‰æˆ—
 		DrawPlayer_HDR();
@@ -283,9 +283,9 @@ void ChangeNumCamera_HDR(void)
 		nType %= NumCamera_MAX;
 
 		//•ÏX‚µ‚½‚à‚Ì‚ğ“ü‚ê‚é
-		g_NumCamera_HDR = (NumHDRCamera)nType;
+		g_NumCamera_HDR = (NumCamera)nType;
 
 		//ƒJƒƒ‰‚Ìí—Ş‚ğİ’è
-		Set_NumHDRCamera(g_NumCamera_HDR);
+		Set_NumCamera(g_NumCamera_HDR);
 	}
 }

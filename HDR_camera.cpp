@@ -5,6 +5,7 @@ Author:飯田洲暉 (大宮愛羅  平澤詩苑  石原颯馬)
 
 ============================================================================================================================================================*/
 #include "HDR_camera.h"
+#include "camera.h"
 #include "input.h"
 #include "HDR_player.h"
 #include "camera_frame.h"
@@ -48,7 +49,7 @@ Author:飯田洲暉 (大宮愛羅  平澤詩苑  石原颯馬)
 
 //グローバル変数
 HDRCamera		g_HDRCamera[NUM_HDRCAMERA];	//カメラの情報
-NumHDRCamera	g_NumHDRCameraType;		//カメラ分割の情報
+NumCamera	g_NumHDRCameraType;		//カメラ分割の情報
 bool		g_bChase_HDR = true;		//プレイヤーに注視点を置くかどうか				TRUE：追いかける　　false：原点を見る
 bool		g_bTPS_HDR = false;			//３人称か、定点カメラか ただし、４分割時のみ	TRUE：３人称		false：定点カメラ
 
@@ -81,7 +82,7 @@ void InitSetHDRCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumHDRCamera)
 //=========================================
 //カメラの初期化処理
 //=========================================
-void InitHDRCamera(NumHDRCamera type)
+void InitHDRCamera(NumCamera type)
 {
 	//基本情報の初期化処理
 	for (int nCntHDRCamera = 0; nCntHDRCamera < NUM_HDRCAMERA; nCntHDRCamera++)
@@ -176,7 +177,7 @@ void SetHDRCamera(int nIdx)
 //=========================================
 //カメラの台数別　設定処理
 //=========================================
-void Set_NumHDRCamera(NumHDRCamera type)
+void Set_NumHDRCamera(NumCamera type)
 {
 	int nCntHDRCamera = 0;				//カウンター初期化
 	Player_HDR *pPlayer_HDR = GetPlayer_HDR();		//プレイヤーの情報取得
@@ -201,6 +202,7 @@ void Set_NumHDRCamera(NumHDRCamera type)
 		g_HDRCamera[nCntHDRCamera].viewport.MinZ = 0.0f;
 		g_HDRCamera[nCntHDRCamera].viewport.MaxZ = 1.0f;
 		g_HDRCamera[nCntHDRCamera].bUse = true;
+		nCntHDRCamera++;
 	}
 	break;
 
@@ -209,13 +211,13 @@ void Set_NumHDRCamera(NumHDRCamera type)
 	----------------------------------------------------------------*/
 	case NumHDRCamera_HALF_SIDE:
 	{
-		for (nCntHDRCamera; nCntHDRCamera < NUM_HDRCAMERA_HALF; nCntHDRCamera++)
+		for (nCntHDRCamera; nCntHDRCamera < NUM_HDRCAMERA; nCntHDRCamera++)
 		{
 			g_HDRCamera[nCntHDRCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
-			g_HDRCamera[nCntHDRCamera].viewport.X = (SCREEN_WIDTH / 2) * (nCntHDRCamera % 2);	//原点Ⅹ位置代入
+			g_HDRCamera[nCntHDRCamera].viewport.X = (SCREEN_WIDTH / 4) * nCntHDRCamera;	//原点Ⅹ位置代入
 			g_HDRCamera[nCntHDRCamera].viewport.Y = NIL_F;									//原点Ｙ位置代入
-			g_HDRCamera[nCntHDRCamera].viewport.Width = SCREEN_WIDTH / 2;						//画面幅初期化
+			g_HDRCamera[nCntHDRCamera].viewport.Width = SCREEN_WIDTH / 4;						//画面幅初期化
 			g_HDRCamera[nCntHDRCamera].viewport.Height = SCREEN_HEIGHT;						//画面高さ初期化
 			g_HDRCamera[nCntHDRCamera].viewport.MinZ = 0.0f;
 			g_HDRCamera[nCntHDRCamera].viewport.MaxZ = 1.0f;
@@ -275,13 +277,13 @@ void Set_NumHDRCamera(NumHDRCamera type)
 	}
 
 	//画面分割の枠を設定
-	SetUseHDRFrame(type);
+	SetUseFrame(type);
 
 	//各カメラの設定
 	for (int nCntUse = 0; nCntUse < NUM_HDRCAMERA; nCntUse++)
 	{
 		//上のスイッチ文で使われることになったカメラ
-		if (nCntUse <= nCntHDRCamera)
+		if (nCntUse < nCntHDRCamera)
 		{
 			//注視点の位置設定
 			SetPosRHDRCamera(nCntHDRCamera);
