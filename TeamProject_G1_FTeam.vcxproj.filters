@@ -210,6 +210,9 @@
     <ClCompile Include="HDR_camera.cpp">
       <Filter>ソース ファイル\Game\Game_HDR</Filter>
     </ClCompile>
+    <ClCompile Include="conversioninput.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -331,6 +334,9 @@
     </ClInclude>
     <ClInclude Include="hdr_player.h">
       <Filter>ヘッダー ファイル\Game\Game_HDR\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="conversioninput.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
