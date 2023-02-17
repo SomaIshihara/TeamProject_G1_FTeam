@@ -7,6 +7,7 @@
 #include "main.h"
 #include "file.h"
 #include "camera.h"
+#include "HDR_camera.h"
 #include "light.h"
 #include "model.h"
 #include "meshfault.h"
@@ -32,6 +33,7 @@ typedef enum
 
 	//-モデルビューワー-----------------------
 	READSTAT_CAMERASET,
+	READSTAT_HDR_CAMERASET,
 	READSTAT_LIGHTSET,
 	READSTAT_SKYSET,
 	READSTAT_MOUNTAINSET,
@@ -73,6 +75,7 @@ ReadPlayerModel g_readPlayermodel[ANIMAL_MAX];
 ReadTextureData g_readtexdata;
 ReadModelData g_readmodeldata;
 Camera g_readCamera;
+HDRCamera g_readHDRCamera;
 D3DLIGHT9 g_readLight;
 ReadSky g_readsky;
 int g_nMountainTexNum;
@@ -91,6 +94,7 @@ int g_counterKey;
 int g_counterReadTexture;
 int g_counterReadModel;		//モデルビューワー・モーションビューワー共通で使用可
 int g_counterReadCamera;	//カメラの数カウント
+int g_counterReadHDRCamera;	//レースゲームカメラの数カウント
 int g_counterReadLight;
 int g_counterReadAnimal;
 int g_nIdxParts;
@@ -105,6 +109,7 @@ void InitFile(void)
 	g_readtexdata = {};
 	g_readmodeldata = {};
 	g_readCamera = {};
+	g_readHDRCamera = {};
 	g_readLight = {};
 	g_readsky = {};
 	g_nMountainTexNum = 0;
@@ -125,6 +130,7 @@ void InitFile(void)
 	g_counterReadTexture = 0;
 	g_counterReadModel = 0;
 	g_counterReadCamera = 0;
+	g_counterReadHDRCamera = 0;
 	g_counterReadLight = 0;
 	g_counterReadAnimal = 0;
 	g_nIdxParts = -1;
@@ -215,6 +221,10 @@ void LoadModelViewerFile(const char *path)
 					{
 						g_readStat = READSTAT_CAMERASET;
 					}
+					else if (strncmp(&aCode[0], CODE_HDR_CAMERASET, sizeof CODE_HDR_CAMERASET / sizeof(char) - 1) == 0)
+					{
+						g_readStat = READSTAT_HDR_CAMERASET;
+					}
 					else if (strncmp(&aCode[0], CODE_LIGHTSET, sizeof CODE_LIGHTSET / sizeof(char) - 1) == 0)
 					{
 						g_readStat = READSTAT_LIGHTSET;
@@ -291,7 +301,7 @@ void LoadModelViewerFile(const char *path)
 						}
 					}
 					break;
-				case READSTAT_CAMERASET:	//カメラ情報取得
+				case READSTAT_CAMERASET:	//pvpカメラ情報取得
 					if (strncmp(&aCode[0], CODE_END_CAMERASET, sizeof CODE_END_CAMERASET / sizeof(char) - 1) == 0)
 					{
 						//カメラ設定
@@ -330,6 +340,47 @@ void LoadModelViewerFile(const char *path)
 						//Z座標読み取り
 						pSprit = strtok(NULL, " =\n");
 						g_readCamera.posR.z = fatof(pSprit);
+					}
+					break;
+				case READSTAT_HDR_CAMERASET:	//hdrカメラ情報取得
+					if (strncmp(&aCode[0], CODE_END_HDR_CAMERASET, sizeof CODE_END_HDR_CAMERASET / sizeof(char) - 1) == 0)
+					{
+						//カメラ設定
+						InitSetHDRCameraPos(g_readHDRCamera.posV, g_readHDRCamera.posR, g_counterReadHDRCamera);
+						g_readStat = READSTAT_NONE;
+						g_counterReadHDRCamera++;		//加算
+					}
+					else if (strncmp(&aCode[0], CODE_POS, sizeof CODE_POS / sizeof(char) - 1) == 0)
+					{
+						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
+
+															//X座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readHDRCamera.posV.x = fatof(pSprit);
+
+						//Y座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readHDRCamera.posV.y = fatof(pSprit);
+
+						//Z座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readHDRCamera.posV.z = fatof(pSprit);
+					}
+					else if (strncmp(&aCode[0], CODE_REF, sizeof CODE_REF / sizeof(char) - 1) == 0)
+					{
+						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
+
+															//X座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readHDRCamera.posR.x = fatof(pSprit);
+
+						//Y座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readHDRCamera.posR.y = fatof(pSprit);
+
+						//Z座標読み取り
+						pSprit = strtok(NULL, " =\n");
+						g_readHDRCamera.posR.z = fatof(pSprit);
 					}
 					break;
 				case READSTAT_LIGHTSET:		//ライト情報取得

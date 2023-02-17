@@ -33,8 +33,10 @@
 //モデルファイル名
 #define CODE_MODEL_FILENAME		"MODEL_FILENAME"	//モデルファイルパス読み取り
 //カメラ情報
-#define CODE_CAMERASET			"CAMERASET"			//カメラの設定開始
-#define CODE_END_CAMERASET		"END_CAMERASET"		//カメラの設定終了
+#define CODE_CAMERASET			"CAMERASET"			//pvpカメラの設定開始
+#define CODE_END_CAMERASET		"END_CAMERASET"		//pvpカメラの設定終了
+#define CODE_HDR_CAMERASET		"HDR_CAMERASET"		//hdrカメラの設定開始
+#define CODE_END_HDR_CAMERASET	"END_HDR_CAMERASET"	//hdrカメラの設定終了
 //ライト情報
 #define CODE_LIGHTSET			"LIGHTSET"			//ライト設定開始
 #define CODE_END_LIGHTSET		"END_LIGHTSET"		//ライト設定終了

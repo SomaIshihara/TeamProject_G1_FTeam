@@ -8,6 +8,7 @@ Author:•½àV‰‘
 #define _CAMERAFRAME_H_
 
 #include "camera.h"
+#include "HDR_camera.h"
 
 //g—p‚·‚é˜gü‚Ì—ñ‹“Œ^
 typedef enum
@@ -22,5 +23,6 @@ void InitCameraFrame(void);
 void UninitCameraFrame(void);
 void DrawCameraFrame(void);
 void SetUseFrame(NumCamera type);
+void SetUseHDRFrame(NumHDRCamera type);
 
 #endif

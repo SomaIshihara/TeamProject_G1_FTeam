@@ -275,7 +275,7 @@ void Set_NumHDRCamera(NumHDRCamera type)
 	}
 
 	//‰æ–Ê•ªŠ„‚Ì˜g‚ğİ’è
-	//SetUseFrame(type);
+	SetUseHDRFrame(type);
 
 	//ŠeƒJƒƒ‰‚Ìİ’è
 	for (int nCntUse = 0; nCntUse < NUM_HDRCAMERA; nCntUse++)

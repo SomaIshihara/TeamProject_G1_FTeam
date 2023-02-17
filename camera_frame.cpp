@@ -122,16 +122,16 @@ void SetUseFrame(NumCamera type)
 {
 	switch (type)
 	{
-	//=============================
-	//‚S•ªŠ„‚Ìê‡
-	//=============================
+		//=============================
+		//‚S•ªŠ„‚Ìê‡
+		//=============================
 	case NumCamera_FOUR_Separate:
 	{
 		g_bUseFrame[UseFrame_WIDTH] = true;		//‰¡ü˜g‚ğON
 		g_bUseFrame[UseFrame_HEIGHT] = true;	//cü˜g‚ğON
 	}
-		break;
-	
+	break;
+
 	//=============================
 	//‰¡‚É•ªŠ„‚Ìê‡
 	//=============================
@@ -141,7 +141,7 @@ void SetUseFrame(NumCamera type)
 		g_bUseFrame[UseFrame_HEIGHT] = true;	//cü˜g‚ğON
 	}
 	break;
-	
+
 	//=============================
 	//c‚É•ªŠ„‚Ìê‡
 	//=============================
@@ -158,6 +158,51 @@ void SetUseFrame(NumCamera type)
 		g_bUseFrame[UseFrame_WIDTH] = false;	//‰¡ü˜g‚ğOFF
 		g_bUseFrame[UseFrame_HEIGHT] = false;	//cü˜g‚ğOFF
 	}
-		break;
+	break;
+	}
+}
+
+//g—p‚·‚é˜g‚ğİ’è
+void SetUseHDRFrame(NumHDRCamera type)
+{
+	switch (type)
+	{
+		//=============================
+		//‚S•ªŠ„‚Ìê‡
+		//=============================
+	case NumCamera_FOUR_Separate:
+	{
+		g_bUseFrame[UseFrame_WIDTH] = true;		//‰¡ü˜g‚ğON
+		g_bUseFrame[UseFrame_HEIGHT] = true;	//cü˜g‚ğON
+	}
+	break;
+
+	//=============================
+	//‰¡‚É•ªŠ„‚Ìê‡
+	//=============================
+	case NumCamera_HALF_SIDE:
+	{
+		g_bUseFrame[UseFrame_WIDTH] = false;	//‰¡ü˜g‚ğOFF
+		g_bUseFrame[UseFrame_HEIGHT] = true;	//cü˜g‚ğON
+	}
+	break;
+
+	//=============================
+	//c‚É•ªŠ„‚Ìê‡
+	//=============================
+	case NumCamera_HALF_HIGH_row:
+	{
+		g_bUseFrame[UseFrame_WIDTH] = true;		//‰¡ü˜g‚ğON
+		g_bUseFrame[UseFrame_HEIGHT] = false;	//cü˜g‚ğOFF
+	}
+	break;
+
+	//‚»‚êˆÈŠO	===================
+	case NumCamera_ONLY:
+	{
+		g_bUseFrame[UseFrame_WIDTH] = false;	//‰¡ü˜g‚ğOFF
+		g_bUseFrame[UseFrame_HEIGHT] = false;	//cü˜g‚ğOFF
+	}
+	break;
 	}
 }
