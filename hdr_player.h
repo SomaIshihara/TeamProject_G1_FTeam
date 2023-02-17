@@ -30,6 +30,7 @@ struct Player_HDR
 	D3DXVECTOR3 pos;		//位置
 	D3DXVECTOR3 posOld;		//前回の位置
 	D3DXVECTOR3 move;		//移動量
+	D3DXVECTOR3 moveV0;		//初期移動量
 	D3DXVECTOR3 rot;		//向き
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 	bool bJump;				//ジャンプしているかどうか
