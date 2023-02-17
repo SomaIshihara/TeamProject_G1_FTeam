@@ -45,6 +45,7 @@
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
 #define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
+#define HIPDROP_RADIUS			(100.0f)	//ヒップドロップ判定範囲
 
 //アイテム関係
 #define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
@@ -55,12 +56,12 @@
 #define INVINCIBLE_DEF			(0.0f)		//無敵状態の相手の変換割合
 
 //ゴースト化状態
-#define GOAST_ALPHA			(0.25f)			//不透明度
-#define GOAST_FLASHSTART	(240)			//点滅開始する残り時間
-#define GOAST_FLASHPULSE	(20)			//点滅の切り替え時間
+#define GOAST_ALPHA				(0.25f)		//不透明度
+#define GOAST_FLASHSTART		(240)		//点滅開始する残り時間
+#define GOAST_FLASHPULSE		(20)		//点滅の切り替え時間
 
 #define PLAYER_SIZE_WIDTH		(25.0f)
-#define PLAYER_SIZE_HEIGHT	(15.0f)
+#define PLAYER_SIZE_HEIGHT		(15.0f)
 #define PLAYER_SIZE_DEPTH		(40.0f)
 
 //向き
@@ -125,9 +126,9 @@ void InitPlayer(void)
 		//変数初期化
 		g_aPlayer[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
-		g_aPlayer[nCntPlayer].move = ZERO_SET;
-		g_aPlayer[nCntPlayer].moveV0 = ZERO_SET;
-		g_aPlayer[nCntPlayer].rot = ZERO_SET;
+		g_aPlayer[nCntPlayer].move = D3DXVECTOR3(0.0f,0.0f,0.0f);
+		g_aPlayer[nCntPlayer].moveV0 = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_aPlayer[nCntPlayer].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aPlayer[nCntPlayer].moveGauge = 0;
 		g_aPlayer[nCntPlayer].jumpTime = 0;
 		g_aPlayer[nCntPlayer].bJump = false;
@@ -212,6 +213,7 @@ void UpdatePlayer(void)
 	{
 		//前回の情報初期化
 		g_aPlayer[nCntPlayer].lastAtkPlayer = -1;
+		g_aPlayer[nCntPlayer].move = ZERO_SET;
 
 		//現在の位置を前回の位置にする
 		g_aPlayer[nCntPlayer].posOld = g_aPlayer[nCntPlayer].pos;
@@ -265,8 +267,16 @@ void UpdatePlayer(void)
 		}
 
 		//使用されているかにかかわらず行う
+		g_aPlayer[nCntPlayer].move.y = PLAYER_HIPDROP_POWER;
 		//ジャンプ量設定
-		g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
+		if (g_aPlayer[nCntPlayer].bHipDrop == true)
+		{
+			
+		}
+		else
+		{
+			g_aPlayer[nCntPlayer].move.y = g_aPlayer[nCntPlayer].moveV0.y - (ACCELERATION_GRAVITY * g_aPlayer[nCntPlayer].jumpTime / MAX_FPS);
+		}
 
 		//移動後がy<0であり、現在の位置が、フィールド以上の高さにいるなら移動量消す
 		if (g_aPlayer[nCntPlayer].pos.y + g_aPlayer[nCntPlayer].move.y < 0.0f && g_aPlayer[nCntPlayer].pos.y >= 0.0f)
@@ -319,8 +329,8 @@ void UpdatePlayer(void)
 
 		if (g_aPlayer[nCntPlayer].lastAtkPlayer == -1)
 		{//ぶつかってないまたは移動量交換済み		
-			//ヒップドロップしておらず、ヒップドロップの硬直中でもない
-			if (g_aPlayer[nCntPlayer].bHipDrop == false && g_aPlayer[nCntPlayer].nHipDropWait <= 0)
+			//ヒップドロップの硬直中ではない
+			if (g_aPlayer[nCntPlayer].nHipDropWait <= 0)
 			{
 				//普通に移動
 				g_aPlayer[nCntPlayer].pos += g_aPlayer[nCntPlayer].move;
@@ -906,17 +916,17 @@ void CollisionHipDropPP(int nPlayerNum)
 			fLength = sqrtf(powf(fLengthX, 2) + powf(fLengthZ, 2));	//頂点と中心の距離を求める
 			fAngle = atan2f(fLengthX * 2, fLengthZ * 2);			//頂点と中心の角度を求める
 																	//0 + 計算で出した角度 + オブジェクトの角度を -PI ~ PIに修正
-			rot = FIX_ROT(-fAngle - g_aPlayer[nCntOtherPlayer].rot.y);
+			rot = FIX_ROT(D3DX_PI - fAngle - g_aPlayer[nCntOtherPlayer].rot.y);
 
 			//角度に応じて頂点の位置をずらす
-			pos2.x = g_aPlayer[nCntOtherPlayer].pos.x + sinf(rot) * fLength;
+			pos2.x = g_aPlayer[nCntOtherPlayer].pos.x - sinf(rot) * fLength;
 			pos2.y = 0.0f;
-			pos2.z = g_aPlayer[nCntOtherPlayer].pos.z - cosf(rot) * fLength;
+			pos2.z = g_aPlayer[nCntOtherPlayer].pos.z + cosf(rot) * fLength;
 			//-pos2---------------------------------------------------------------------------------------------------------------------------
 
 			//ベクトル求める
 			//move
-			vecMove = g_aPlayer[nPlayerNum].pos - g_aPlayer[nPlayerNum].posOld;
+			vecMove = posTemp - g_aPlayer[nPlayerNum].posOld;
 
 			//X
 			vecLineX = pos1 - pos0;
@@ -936,25 +946,28 @@ void CollisionHipDropPP(int nPlayerNum)
 			fAreaAZ = TASUKIGAKE(vecToPosZ.z, vecToPosZ.y, vecMove.z, vecMove.y);
 			fAreaBZ = TASUKIGAKE(vecLineZ.z, vecLineZ.y, vecMove.z, vecMove.y);
 			//左側AND範囲内
-			if ((vecLineX.y * vecToPosX.x) - (vecLineX.x * vecToPosX.y) <= 0.0f && (vecLineX.y * vecToPosOldX.x) - (vecLineX.x * vecToPosOldX.y) >= 0.0f)
+			/*if ((vecLineX.y * vecToPosX.x) - (vecLineX.x * vecToPosX.y) <= 0.0f && (vecLineX.y * vecToPosOldX.x) - (vecLineX.x * vecToPosOldX.y) >= 0.0f)
+			{*/
+			float fHeight = posTemp.y - g_aPlayer[nCntOtherPlayer].pos.y;
+			if (fHeight <= PLAYER_SIZE_HEIGHT)
 			{
-				if (fAreaAX / fAreaBX >= 0.0f && fAreaAX / fAreaBX <= 1.0f)
-				{//衝突
-					if (fAreaAZ / fAreaBZ >= 0.0f && fAreaAZ / fAreaBZ <= 1.0f)
-					{
-						//移動量計算
-						float fAngleHipDrop = atan2f(g_aPlayer[nCntOtherPlayer].pos.x - g_aPlayer[nPlayerNum].pos.x,
-							g_aPlayer[nCntOtherPlayer].pos.z - g_aPlayer[nPlayerNum].pos.z);
-						g_aPlayer[nCntOtherPlayer].move.x = sinf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
-						g_aPlayer[nCntOtherPlayer].move.z = -cosf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
+				float fRadius = PYTHAGORAS(g_aPlayer[nCntOtherPlayer].pos.x - posTemp.x,
+					g_aPlayer[nCntOtherPlayer].pos.z - posTemp.z);
 
-						//ちょっと飛ばす
-						g_aPlayer[nCntOtherPlayer].moveV0.y = PLAYER_BLOWING_POWER;
-						g_aPlayer[nCntOtherPlayer].jumpTime = 0;
+				if (fRadius <= HIPDROP_RADIUS)
+				{
+					//移動量計算
+					float fAngleHipDrop = atan2f(g_aPlayer[nCntOtherPlayer].pos.x - posTemp.x,
+						g_aPlayer[nCntOtherPlayer].pos.z - posTemp.z);
+					g_aPlayer[nCntOtherPlayer].move.x = sinf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
+					g_aPlayer[nCntOtherPlayer].move.z = -cosf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
 
-						//攻撃された扱いにする
-						g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
-					}
+					//ちょっと飛ばす
+					g_aPlayer[nCntOtherPlayer].moveV0.y = PLAYER_BLOWING_POWER;
+					g_aPlayer[nCntOtherPlayer].jumpTime = 0;
+
+					//攻撃された扱いにする
+					g_aPlayer[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
 				}
 			}
 		}
@@ -1027,7 +1040,7 @@ void ControllKeyboardPlayer(int nPlayerNum)
 		else
 		{
 			//落下させる
-			g_aPlayer[nPlayerNum].pos.y += g_aPlayer[nPlayerNum].moveV0.y;
+			g_aPlayer[nPlayerNum].move.y = g_aPlayer[nPlayerNum].moveV0.y;
 		}
 	}
 }
@@ -1097,7 +1110,7 @@ void ControllGPadPlayer(int nPlayerNum)
 		else
 		{
 			//落下させる
-			g_aPlayer[nPlayerNum].pos.y += g_aPlayer[nPlayerNum].moveV0.y;
+			g_aPlayer[nPlayerNum].move.y = g_aPlayer[nPlayerNum].moveV0.y;
 		}
 	}
 }
@@ -1162,7 +1175,7 @@ void ControllAI(int nPlayerNum)
 		else
 		{
 			//落下させる
-			g_aPlayer[nPlayerNum].pos.y += g_aPlayer[nPlayerNum].moveV0.y;
+			g_aPlayer[nPlayerNum].move.y = g_aPlayer[nPlayerNum].moveV0.y;
 		}
 	}
 }
@@ -1429,6 +1442,8 @@ void RespawnPlayer(int nRespawnPlayer)
 	g_aPlayer[nRespawnPlayer].nATKItemTime = 0;
 	g_aPlayer[nRespawnPlayer].nDEFItemTime = 0;
 	g_aPlayer[nRespawnPlayer].nGhostItemTime = 0;
+	g_aPlayer[nRespawnPlayer].bInvincible = false;
+	g_aPlayer[nRespawnPlayer].nInvincibleTime = 0;
 }
 
 //========================
