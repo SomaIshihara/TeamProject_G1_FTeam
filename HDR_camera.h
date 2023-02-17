@@ -7,6 +7,7 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 #ifndef _HDRCAMERA_H_
 #define _HDRCAMERA_H_
 
+#include "camera.h"
 #include "main.h"
 
 #define NUM_HDRCAMERA_HALF	(2)			//画面分割が、縦・横　どちらか２分割の場合のカメラの数
@@ -39,7 +40,7 @@ typedef struct
 
 //プロトタイプ宣言
 void InitSetHDRCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumHDRCamera);	//カメラの位置設定
-void InitHDRCamera(NumHDRCamera type);		//初期化処理
+void InitHDRCamera(NumCamera type);		//初期化処理
 void UninitHDRCamera(void);				//終了処理
 void UpdateHDRCamera(void);				//更新処理
 void SetHDRCamera(int nIdx);				//設定処理
@@ -52,7 +53,7 @@ HDRCamera *GetHDRCamera(void);				//カメラの取得
 										//=========================================
 										//カメラの台数別　設定処理
 										//=========================================
-void Set_NumHDRCamera(NumHDRCamera type);
+void Set_NumHDRCamera(NumCamera type);
 void TPS_ChaseHDRCamera(int nCntHDRCamera, D3DXVECTOR3 rot);
 
 #endif
