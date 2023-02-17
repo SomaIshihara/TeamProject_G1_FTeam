@@ -8,12 +8,15 @@ Author:•½àV‰‘
 #define _CAMERAFRAME_H_
 
 #include "camera.h"
+#include "HDR_camera.h"
 
 //g—p‚·‚é˜gü‚Ì—ñ‹“Œ^
 typedef enum
 {
 	UseFrame_WIDTH = 0,	//‰¡ü
 	UseFrame_HEIGHT,	//cü
+	UseFrame_HEIGHT4_1,	//cü4•ª‚Ì1”Ô–Ú
+	UseFrame_HEIGHT4_3,	//cü4•ª‚Ì3”Ô–Ú
 	UseFrame_MAX,
 }UseFrame;
 

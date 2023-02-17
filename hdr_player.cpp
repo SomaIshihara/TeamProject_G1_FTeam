@@ -8,10 +8,17 @@
 #include <assert.h>
 #include "color.h"
 #include "sound.h"
+#include "meshfield.h"
 
 //グローバル変数
-Player_HDR g_aPlayerHDR[MAX_USE_GAMEPAD];
+Player_HDR g_aPlayerHDRHDR[MAX_USE_GAMEPAD];
 int g_nIdxShadow_HDR = -1;
+
+//プロトタイプ宣言
+void ControllKeyboardPlayer_HDR(int nPlayerNum);
+void ControllGPadPlayer_HDR(int nPlayerNum);
+
+void JumpPlayer_HDR(int nJumpPlayer);
 
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
@@ -36,26 +43,27 @@ void InitPlayer_HDR(void)
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
 		//変数初期化
-		g_aPlayerHDR[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
-		g_aPlayerHDR[nCntPlayer].posOld = g_aPlayerHDR[nCntPlayer].pos;
-		g_aPlayerHDR[nCntPlayer].move = ZERO_SET;
-		g_aPlayerHDR[nCntPlayer].rot = ZERO_SET;
-		g_aPlayerHDR[nCntPlayer].jumpTime = 0;
-		g_aPlayerHDR[nCntPlayer].bJump = false;
-		g_aPlayerHDR[nCntPlayer].bHipDrop = false;
-		g_aPlayerHDR[nCntPlayer].bHipDropSpin = false;
-		g_aPlayerHDR[nCntPlayer].nHipDropWait = 0;
+		g_aPlayerHDRHDR[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
+		g_aPlayerHDRHDR[nCntPlayer].posOld = g_aPlayerHDRHDR[nCntPlayer].pos;
+		g_aPlayerHDRHDR[nCntPlayer].move = ZERO_SET;
+		g_aPlayerHDRHDR[nCntPlayer].moveV0 = ZERO_SET;
+		g_aPlayerHDRHDR[nCntPlayer].rot = ZERO_SET;
+		g_aPlayerHDRHDR[nCntPlayer].jumpTime = 0;
+		g_aPlayerHDRHDR[nCntPlayer].bJump = false;
+		g_aPlayerHDRHDR[nCntPlayer].bHipDrop = false;
+		g_aPlayerHDRHDR[nCntPlayer].bHipDropSpin = false;
+		g_aPlayerHDRHDR[nCntPlayer].nHipDropWait = 0;
 
-		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
+		g_aPlayerHDRHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 
-		g_aPlayerHDR[nCntPlayer].model = GetModel(g_aPlayerHDR[nCntPlayer].animal);
-		g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
+		g_aPlayerHDRHDR[nCntPlayer].model = GetModel(g_aPlayerHDRHDR[nCntPlayer].animal);
+		g_aPlayerHDRHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
 	}
 
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
 	if (GetUseControllerNum_HDR() == 0)
 	{
-		g_aPlayerHDR[0].bUsePlayer = true;
+		g_aPlayerHDRHDR[0].bUsePlayer = true;
 	}
 }
 //========================
@@ -67,8 +75,8 @@ void UninitPlayer_HDR(void)
 	{//プレイヤーの数だけ処理する
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{//取得した方なのでNULL入れるだけでOK
-			g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pMesh = NULL;
-			g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pBuffMat = NULL;
+			g_aPlayerHDRHDR[nCntPlayer].model.aParts[nCntParts].pMesh = NULL;
+			g_aPlayerHDRHDR[nCntPlayer].model.aParts[nCntParts].pBuffMat = NULL;
 		}
 	}
 }
@@ -77,6 +85,54 @@ void UninitPlayer_HDR(void)
 //========================
 void UpdatePlayer_HDR(void)
 {
+	//プレイヤー人数分繰り返す
+	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+	{
+		//現在の位置を前回の位置にする
+		g_aPlayerHDRHDR[nCntPlayer].posOld = g_aPlayerHDRHDR[nCntPlayer].pos;
+
+		//ジャンプ時間を増やす
+		g_aPlayerHDRHDR[nCntPlayer].jumpTime++;
+
+		if (g_aPlayerHDRHDR[nCntPlayer].bUsePlayer == true)
+		{//使用時のみ行う
+
+			//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
+			if (GetUseControllerNum_HDR() != 0)
+			{
+				g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
+			}
+			else
+			{
+				ControllKeyboardPlayer_HDR(nCntPlayer);
+			}
+
+			//各プレイヤーの操作
+			ControllGPadPlayer_HDR(nCntPlayer);
+		}
+
+		//使用されているかにかかわらず行う
+		g_aPlayerHDR[nCntPlayer].move.y = -15;
+
+		//ジャンプ量設定
+		if (g_aPlayerHDR[nCntPlayer].bHipDrop == true)
+		{
+
+		}
+		else
+		{
+			g_aPlayerHDR[nCntPlayer].move.y = g_aPlayerHDR[nCntPlayer].moveV0.y - (9.8f * g_aPlayerHDR[nCntPlayer].jumpTime / MAX_FPS);
+		}
+
+		//普通に移動
+		g_aPlayerHDR[nCntPlayer].pos += g_aPlayerHDR[nCntPlayer].move;
+	
+		if (g_aPlayerHDR[nCntPlayer].pos.y < 0)
+		{
+			g_aPlayerHDR[nCntPlayer].pos.y = 0;
+			g_aPlayerHDR[nCntPlayer].bJump = false;
+		}
+	}
 }
 //========================
 //描画処理
@@ -217,6 +273,62 @@ void DrawPlayer_HDR(void)
 
 	//マテリアルを戻す
 	pDevice->SetMaterial(&matDef);
+}
+//========================
+//プレイヤーのキーボード操作
+//========================
+void ControllKeyboardPlayer_HDR(int nPlayerNum)
+{
+	//ヒップドロップ中でなければ操作できる
+	if (g_aPlayerHDR[nPlayerNum].bHipDrop == false)
+	{
+		//ジャンプ・ヒップドロップ
+		if (GetKeyboardTrigger(DIK_RETURN) == true && g_aPlayerHDR[nPlayerNum].bHipDrop == false)
+		{
+			if (g_aPlayerHDR[nPlayerNum].bJump)
+			{
+				//HipDropPlayer(nPlayerNum);		//プレイヤーのヒップドロップ処理
+			}
+			else
+			{
+				JumpPlayer_HDR(nPlayerNum);			//プレイヤーのジャンプ処理
+			}
+		}
+	}
+}
+//========================
+//プレイヤーのゲームパッド操作
+//========================
+void ControllGPadPlayer_HDR(int nPlayerNum)
+{
+	//ヒップドロップ中でなければ操作できる
+	if (g_aPlayerHDR[nPlayerNum].bHipDrop == false)
+	{
+		//ジャンプ・ヒップドロップ
+		if (GetGamepadTrigger(nPlayerNum, XINPUT_GAMEPAD_A) == true && g_aPlayerHDR[nPlayerNum].bHipDrop == false)
+		{
+			if (g_aPlayerHDR[nPlayerNum].bJump)
+			{
+				//HipDropPlayer(nPlayerNum);		//プレイヤーのヒップドロップ処理
+			}
+			else
+			{
+				JumpPlayer_HDR(nPlayerNum);			//プレイヤーのジャンプ処理
+			}
+		}
+	}
+}
+//========================
+//ジャンプの処理
+//========================
+void JumpPlayer_HDR(int nJumpPlayer)
+{
+	PlaySound(SOUND_LABEL_SE_JUMP);
+
+	g_aPlayerHDR[nJumpPlayer].moveV0.y = 7.7f;//移動量設定
+	g_aPlayerHDR[nJumpPlayer].jumpTime = 0;	//ジャンプ時間リセット
+	g_aPlayerHDR[nJumpPlayer].bJump = true;
+	/*g_aPlayerHDR[nJumpPlayer].stat = PLAYERSTAT_JUMP;*/
 }
 //========================
 //取得処理
