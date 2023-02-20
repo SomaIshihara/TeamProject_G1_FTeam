@@ -596,7 +596,7 @@ void LoadModelViewerFile(const char *path)
 				case READSTAT_MODELSET:		//ƒ‚ƒfƒ‹î•ñæ“¾
 					if (strncmp(&aCode[0], CODE_END_MODELSET, sizeof CODE_END_MODELSET / sizeof(char) - 1) == 0)
 					{
-						//ƒ‚ƒfƒ‹İ’è‚µ‚Ä
+						SetObject(g_readmodel.modelType, g_readmodel.pos, g_readmodel.rot);
 						g_readStat = READSTAT_NONE;
 					}
 					else if (strncmp(&aCode[0], CODE_TYPE, sizeof CODE_TYPE / sizeof(char) - 1) == 0)

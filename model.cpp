@@ -8,13 +8,17 @@
 #include "model.h"
 #include "file.h"
 
+//マクロ
+#define MAX_PLACE_OBJ	(256)
+
 //プロト
 void InitAnimalModel(void);
 void InitObjectModel(void);
 
 //グローバル変数
-Model g_aAnimalModel[ANIMAL_MAX];	//動物モデル構造体
-Model g_aObjModel[OBJECTTYPE_MAX];	//オブジェクトモデル構造体
+Model g_aAnimalModel[ANIMAL_MAX];		//動物モデル構造体
+Model g_aObjModelBP[OBJECTTYPE_MAX];	//オブジェクトモデル設計図構造体
+Model g_aObjModelPlace[MAX_PLACE_OBJ];	//配置オブジェクトモデル構造体
 
 //========================
 //初期化処理
@@ -137,6 +141,7 @@ void InitObjectModel(void)
 //========================
 void UninitModel(void)
 {
+	//動物
 	for (int nCntModel = 0; nCntModel < ANIMAL_MAX; nCntModel++)
 	{
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
@@ -156,6 +161,32 @@ void UninitModel(void)
 			}
 		}
 	}
+
+	//オブジェクト
+	//設計図
+	for (int nCntObj = 0; nCntObj < OBJECTTYPE_MAX; nCntObj++)
+	{
+		//メッシュの破棄
+		if (g_aObjModelBP[nCntObj].aParts[0].pMesh != NULL)
+		{
+			g_aObjModelBP[nCntObj].aParts[0].pMesh->Release();
+			g_aObjModelBP[nCntObj].aParts[0].pMesh = NULL;
+		}
+
+		//マテリアルの破棄
+		if (g_aObjModelBP[nCntObj].aParts[0].pBuffMat != NULL)
+		{
+			g_aObjModelBP[nCntObj].aParts[0].pBuffMat->Release();
+			g_aObjModelBP[nCntObj].aParts[0].pBuffMat = NULL;
+		}
+	}
+
+	//配置したもの（NULL入れるだけでいい）
+	for (int nCntObj = 0; nCntObj < MAX_PLACE_OBJ; nCntObj++)
+	{
+		g_aObjModelPlace[nCntObj].aParts[0].pMesh = NULL;
+		g_aObjModelPlace[nCntObj].aParts[0].pBuffMat = NULL;
+	}
 }
 
 //========================
@@ -168,4 +199,22 @@ void UninitModel(void)
 Model GetModel(ANIMAL animal)
 {
 	return g_aAnimalModel[animal];
+}
+
+//========================
+//モデル配置処理
+//========================
+void SetObject(int nObjNum, D3DXVECTOR3 pos, D3DXVECTOR3 rot)
+{
+	for (int nCntObj = 0; nCntObj < MAX_PLACE_OBJ; nCntObj++)
+	{
+		if (g_aObjModelPlace[nCntObj].aParts[0].bUse == false)
+		{
+			//配置
+			g_aObjModelPlace[nCntObj].aParts[0] = g_aObjModelBP[nObjNum].aParts[0];
+			g_aObjModelPlace[nCntObj].aParts[0].pos = pos;
+			g_aObjModelPlace[nCntObj].aParts[0].rot = rot;
+			g_aObjModelPlace[nCntObj].aParts[0].bUse = true;
+		}
+	}
 }
