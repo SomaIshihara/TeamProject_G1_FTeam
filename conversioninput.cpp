@@ -42,30 +42,65 @@ void InitConvertionInput(void)
 //========================
 void UpdateConvertionInput(void)
 {
-	//ゲームパッドの入力を代入（すべて）[優先度：中]
+	
+	
 	for (int nCntController = 0; nCntController < MAX_USE_GAMEPAD; nCntController++)
 	{
-		for (int nCntButton = 0; nCntButton < BUTTON_MAX; nCntButton++)
-		{
-			g_aConvButton[nCntController].press[nCntButton] = GetGamepadPress(nCntButton, c_aGamePadInput[nCntButton]);
-			g_aConvButton[nCntController].trigger[nCntButton] = GetGamepadTrigger(nCntButton, c_aGamePadInput[nCntButton]);
-			g_aConvButton[nCntController].release[nCntButton] = GetGamepadRelease(nCntButton, c_aGamePadInput[nCntButton]);
-			g_aConvButton[nCntController].repeate[nCntButton] = GetGamepadRepeate(nCntButton, c_aGamePadInput[nCntButton]);
-		}
-	}
+		if (GetUseGamepad(nCntController) == true)
+		{//ゲームパッドの入力を代入（すべて）
+			//ボタン
+			for (int nCntButton = 0; nCntButton < BUTTON_MAX; nCntButton++)
+			{
+				g_aConvButton[nCntController].press[nCntButton] = GetGamepadPress(nCntController, c_aGamePadInput[nCntButton]);
+				g_aConvButton[nCntController].trigger[nCntButton] = GetGamepadTrigger(nCntController, c_aGamePadInput[nCntButton]);
+				g_aConvButton[nCntController].release[nCntButton] = GetGamepadRelease(nCntController, c_aGamePadInput[nCntButton]);
+				g_aConvButton[nCntController].repeate[nCntButton] = GetGamepadRepeate(nCntController, c_aGamePadInput[nCntButton]);
+			}
 
-	//キーボードの入力を代入（1Pのみ）[優先度：大]
-	for (int nCntButton = 0; nCntButton < BUTTON_MAX; nCntButton++)
-	{
-		g_aConvButton[0].press[nCntButton] = GetKeyboardPress(c_aKeyboardInput[nCntButton]);
-		g_aConvButton[0].trigger[nCntButton] = GetKeyboardTrigger(c_aKeyboardInput[nCntButton]);
-		g_aConvButton[0].release[nCntButton] = GetKeyboardRelease(c_aKeyboardInput[nCntButton]);
-		g_aConvButton[0].repeate[nCntButton] = GetKeyboardRepeate(c_aKeyboardInput[nCntButton]);
+			//スティック
+			if (GetLStickX(nCntController) < 0)
+			{//左に傾いている
+				g_aConvStick[nCntController] = CONVSTICK_LEFT;
+			}
+			else if (GetLStickX(nCntController) > 0)
+			{//右に傾いている
+				g_aConvStick[nCntController] = CONVSTICK_RIGHT;
+			}
+			else
+			{//傾いていない
+				g_aConvStick[nCntController] = CONVSTICK_NEUTRAL;
+			}
+		}
+		else if (nCntController == 0)
+		{//キーボードの入力を代入（1Pのみ）
+			for (int nCntButton = 0; nCntButton < BUTTON_MAX; nCntButton++)
+			{
+				//ボタン
+				g_aConvButton[0].press[nCntButton] = GetKeyboardPress(c_aKeyboardInput[nCntButton]);
+				g_aConvButton[0].trigger[nCntButton] = GetKeyboardTrigger(c_aKeyboardInput[nCntButton]);
+				g_aConvButton[0].release[nCntButton] = GetKeyboardRelease(c_aKeyboardInput[nCntButton]);
+				g_aConvButton[0].repeate[nCntButton] = GetKeyboardRepeate(c_aKeyboardInput[nCntButton]);
+			}
+
+			//（ゲームパッドで言う）スティック
+			if (GetKeyboardPress(DIK_A) == true)
+			{//左に傾いている
+				g_aConvStick[0] = CONVSTICK_LEFT;
+			}
+			else if (GetKeyboardPress(DIK_D) == true)
+			{//右に傾いている
+				g_aConvStick[0] = CONVSTICK_RIGHT;
+			}
+			else
+			{//傾いていない
+				g_aConvStick[0] = CONVSTICK_NEUTRAL;
+			}
+		}
 	}
 }
 
 //========================
-//入力設定処理
+//ボタン入力設定処理
 //========================
 void SetButton(int nPadNum, INPUTTYPE type, BUTTON button, bool stat)
 {
@@ -84,4 +119,43 @@ void SetButton(int nPadNum, INPUTTYPE type, BUTTON button, bool stat)
 		g_aConvButton[nPadNum].repeate[button] = stat;
 		break;
 	}
+}
+
+//========================
+//ボタン入力取得処理
+//========================
+bool GetButton(int nPadNum, INPUTTYPE type, BUTTON button)
+{
+	switch (type)
+	{
+	case INPUTTYPE_PRESS:
+		return g_aConvButton[nPadNum].press[button];
+		break;
+	case INPUTTYPE_TRIGGER:
+		return g_aConvButton[nPadNum].trigger[button];
+		break;
+	case INPUTTYPE_RELEASE:
+		return g_aConvButton[nPadNum].release[button];
+		break;
+	case INPUTTYPE_REPEATE:
+		return g_aConvButton[nPadNum].repeate[button];
+		break;
+	}
+	return false;
+}
+
+//========================
+//スティック入力設定処理
+//========================
+void SetStick(int nPadNum, CONVSTICK stick)
+{
+	g_aConvStick[nPadNum] = stick;
+}
+
+//========================
+//スティック入力取得処理
+//========================
+CONVSTICK GetStick(int nPadNum)
+{
+	return g_aConvStick[nPadNum];
 }

@@ -42,5 +42,8 @@ typedef enum
 void InitConvertionInput(void);
 void UpdateConvertionInput(void);
 void SetButton(int nPadNum, INPUTTYPE type, BUTTON button, bool stat);
+bool GetButton(int nPadNum, INPUTTYPE type, BUTTON button);
+void SetStick(int nPadNum, CONVSTICK stick);
+CONVSTICK GetStick(int nPadNum);
 
 #endif // !_CONVERSION_INPUT_H_

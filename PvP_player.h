@@ -69,6 +69,7 @@ struct Player
 	int nScore;				//得点
 	int nNumHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
 	PLAYERSTAT stat;		//状態
+	int nPlayerNum;			//プレイヤー番号
 
 	//アイテム類
 	int nATKItemTime;		//はじき強化アイテムの持続時間
