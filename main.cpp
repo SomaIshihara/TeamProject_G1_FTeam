@@ -17,6 +17,7 @@
 #include "tutorial.h"
 #include "light.h"
 #include "sound.h"
+#include "conversioninput.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -344,6 +345,9 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	InitGamePad();
 	UpdateGamePad();
 
+	//入力変換の初期化
+	InitConvertionInput();
+
 	//デバッグ表示の初期化
 	InitDebugProc();
 
@@ -409,12 +413,14 @@ void Update(void)
 	//入力系
 	//キーボードの更新
 	UpdateKeyboard();
-
 	//マウスの更新
 	UpdateMouse();
-
 	//ゲームパッドの更新
 	UpdateGamePad();
+	
+
+	//入力変換の更新
+	UpdateConvertionInput();
 
 	//デバッグ表示
 	UpdateDebugProc();

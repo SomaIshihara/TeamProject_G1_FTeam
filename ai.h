@@ -10,15 +10,6 @@
 #include "main.h"
 #include "input.h"
 
-//コンピューターAIのスティック操作
-typedef enum
-{
-	AISTICK_LEFT = -1,
-	AISTICK_NEUTRAL,
-	AISTICK_RIGHT,
-	AISTICK_MAX
-} AISTICK;
-
 //AIのパラメータ種類（もとい難易度）
 typedef enum
 {
@@ -27,14 +18,6 @@ typedef enum
 	AIDIFF_HARD,
 	AIDIFF_MAX
 } AIDIFF;
-
-//AIのコントローラー状態
-typedef struct
-{
-	bool bPushX, bPushXRele;//Xボタン
-	bool bPushA;			//Aボタン
-	AISTICK stick;			//スティック
-} AIControll;
 
 //AIのパラメータ
 typedef struct
@@ -48,9 +31,6 @@ typedef struct
 //コンピューターAIのパラメータ構造体
 typedef struct
 {
-	//コントローラー部
-	AIControll controll;	//AIが持つコントローラーの出力
-
 	//脳みそ部
 	AIDIFF difficulty;		//AIの難易度
 

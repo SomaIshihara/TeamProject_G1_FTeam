@@ -26,6 +26,7 @@
 #include "bonus.h"
 #include "particle.h"
 #include "comai.h"
+#include "conversioninput.h"
 
 //マクロ
 #define PLAYER_HIPDROP_WAIT		(15)		//ヒップドロップの「開始・着地」硬直時間
@@ -81,9 +82,7 @@ typedef struct
 } CollisionPos;
 
 //プロト
-void ControllKeyboardPlayer(int nPlayerNum);
-void ControllGPadPlayer(int nPlayerNum);
-void ControllAI(int nPlayerNum);
+void ControllPlayer(int nPlayerNum);
 
 void MovePlayer(int nPadNum);
 void RotatePlayer(int nPadNum);				//MovePlayer のrot.y の計算式だけを残しています
@@ -112,10 +111,10 @@ Player *g_pNotMove[MAX_USE_GAMEPAD];	//移動していないプレイヤー検知用ポインタ
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 {
-	{ D3DXVECTOR3(-50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
-	{ D3DXVECTOR3(50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
-	{ D3DXVECTOR3(-50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
-	{ D3DXVECTOR3(50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
+	{ D3DXVECTOR3(-50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,ROT_SA,0.0f) },
+	{ D3DXVECTOR3(50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,ROT_SD,0.0f) },
+	{ D3DXVECTOR3(-50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_WA,0.0f) },
+	{ D3DXVECTOR3(50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_WD,0.0f) },
 };
 
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
@@ -136,7 +135,7 @@ void InitPlayer(void)
 		g_aPlayerPvP[nCntPlayer].posOld = g_aPlayerPvP[nCntPlayer].pos;
 		g_aPlayerPvP[nCntPlayer].move = ZERO_SET;
 		g_aPlayerPvP[nCntPlayer].moveV0 = ZERO_SET;
-		g_aPlayerPvP[nCntPlayer].rot = ZERO_SET;
+		g_aPlayerPvP[nCntPlayer].rot = c_aPosRot[nCntPlayer][1];
 		g_aPlayerPvP[nCntPlayer].moveGauge = 0;
 		g_aPlayerPvP[nCntPlayer].jumpTime = 0;
 		g_aPlayerPvP[nCntPlayer].bJump = false;
@@ -154,6 +153,7 @@ void InitPlayer(void)
 		g_aPlayerPvP[nCntPlayer].lastAtkPlayer = -1;
 		g_aPlayerPvP[nCntPlayer].nNumHitPlayer = -1;
 		g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
+		g_aPlayerPvP[nCntPlayer].nPlayerNum = nCntPlayer;
 
 		g_aPlayerPvP[nCntPlayer].nATKItemTime = 0;
 		g_aPlayerPvP[nCntPlayer].nDEFItemTime = 0;
@@ -236,29 +236,23 @@ void UpdatePlayer(void)
 
 		if (g_aPlayerPvP[nCntPlayer].bUsePlayer == true)
 		{//使用時のみ行う
-			if (g_aPlayerPvP[nCntPlayer].pAI == NULL)
+			//AI処理
+			if (g_aPlayerPvP[nCntPlayer].pAI != NULL)
+			{//AI
+				//AIがコントローラー操作
+				SelectAIMove(&g_aPlayerPvP[nCntPlayer]);
+			}
+			else
 			{//プレイヤー
-				//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
+				//（下の部分ゲームパッドが一つも使用されていなければ無視）
 				if (GetUseControllerNum_PvP() != 0)
 				{
 					g_aPlayerPvP[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 				}
-				else
-				{
-					ControllKeyboardPlayer(nCntPlayer);
-				}
-
-				//各プレイヤーの操作
-				ControllGPadPlayer(nCntPlayer);
 			}
-			else
-			{//AI
-				//AIがコントローラー操作
-				SelectAIMove(&g_aPlayerPvP[nCntPlayer]);
 
-				//AI移動
-				ControllAI(nCntPlayer);
-			}
+			//操作処理
+			ControllPlayer(nCntPlayer);
 
 			//当たり判定類
 			if (g_aPlayerPvP[nCntPlayer].nGhostItemTime <= 0)
@@ -837,8 +831,6 @@ void CollisionHipDropPP(int nPlayerNum)
 			fAreaAZ = TASUKIGAKE(vecToPosZ.z, vecToPosZ.y, vecMove.z, vecMove.y);
 			fAreaBZ = TASUKIGAKE(vecLineZ.z, vecLineZ.y, vecMove.z, vecMove.y);
 			//左側AND範囲内
-			/*if ((vecLineX.y * vecToPosX.x) - (vecLineX.x * vecToPosX.y) <= 0.0f && (vecLineX.y * vecToPosOldX.x) - (vecLineX.x * vecToPosOldX.y) >= 0.0f)
-			{*/
 			float fHeight = posTemp.y - g_aPlayerPvP[nCntOtherPlayer].pos.y;
 			if (fHeight <= PLAYER_SIZE_HEIGHT)
 			{
@@ -871,29 +863,40 @@ void CollisionHipDropPP(int nPlayerNum)
 void GenerateCollision(int nPlayerNum, CollisionPos *pCollision)
 {
 	//各頂点を求めるのに必要な変数
+	D3DXMATRIX mtxWorld;	//回転のベースとなるワールドマトリ
 	D3DXMATRIX mtxRot;		//回転行列
-	D3DXMATRIX mtxTrans;	//変換後の行列
-	D3DXVECTOR4 vtxTrans;	//変換後の点
+	D3DXMATRIX mtxTrans;	//すべて変換後の行列
+	D3DXVECTOR3 vtxTrans;	//変換後の点
 
 	//-mtx----------------------------------------------------------------------------------------------------------------------------
 	//回転行列を作る
-	D3DXMatrixRotationY(&mtxRot, g_aPlayerPvP[nPlayerNum].rot.y);
+	D3DXMatrixIdentity(&mtxWorld);
 
-	D3DXMatrixIdentity(&mtxTrans);
+	//向き反映
+	D3DXMatrixRotationY(&mtxRot, FIX_ROT(g_aPlayerPvP[nPlayerNum].rot.y));
+	D3DXMatrixMultiply(&mtxWorld, &mtxRot, &mtxWorld);
 
-	D3DXMatrixMultiply(&mtxTrans, &mtxRot, &mtxTrans);
+	//位置反映
+	mtxWorld._41 = g_aPlayerPvP[nPlayerNum].pos.x;
+	mtxWorld._42 = 0.0f;
+	mtxWorld._43 = g_aPlayerPvP[nPlayerNum].pos.z;
+
 	//-mtx----------------------------------------------------------------------------------------------------------------------------
 	
 	//-pos0---------------------------------------------------------------------------------------------------------------------------
 	//回転行列をもとに頂点を回転する
+	//ベースをコピー
+	mtxTrans = mtxWorld;
+
 	//0度のときの点を置く
 	D3DXVECTOR3 vtxPos = D3DXVECTOR3(
-		g_aPlayerPvP[nPlayerNum].pos.x - PLAYER_SIZE_WIDTH,
+		- PLAYER_SIZE_WIDTH,
 		0.0f,
-		g_aPlayerPvP[nPlayerNum].pos.z - PLAYER_SIZE_DEPTH);
+		- PLAYER_SIZE_DEPTH);
+
 
 	//回転行列とかけ合わせる
-	D3DXVec3Transform(&vtxTrans, &vtxPos, &mtxTrans);
+	D3DXVec3TransformCoord(&vtxTrans, &vtxPos, &mtxTrans);
 
 	pCollision->pos0.x = vtxTrans.x;
 	pCollision->pos0.y = vtxTrans.y;
@@ -902,14 +905,17 @@ void GenerateCollision(int nPlayerNum, CollisionPos *pCollision)
 
 	//-pos1---------------------------------------------------------------------------------------------------------------------------
 	//回転行列をもとに頂点を回転する
+	//ベースをコピー
+	mtxTrans = mtxWorld;
+
 	//0度のときの点を置く
 	vtxPos = D3DXVECTOR3(
-		g_aPlayerPvP[nPlayerNum].pos.x + PLAYER_SIZE_WIDTH,
+		+ PLAYER_SIZE_WIDTH,
 		0.0f,
-		g_aPlayerPvP[nPlayerNum].pos.z - PLAYER_SIZE_DEPTH);
+		- PLAYER_SIZE_DEPTH);
 
 	//回転行列とかけ合わせる
-	D3DXVec3Transform(&vtxTrans, &vtxPos, &mtxTrans);
+	D3DXVec3TransformCoord(&vtxTrans, &vtxPos, &mtxTrans);
 
 	//変換後の点の場所を代入
 	pCollision->pos1.x = vtxTrans.x;
@@ -919,14 +925,17 @@ void GenerateCollision(int nPlayerNum, CollisionPos *pCollision)
 
 	//-pos2---------------------------------------------------------------------------------------------------------------------------
 	//回転行列をもとに頂点を回転する
+	//ベースをコピー
+	mtxTrans = mtxWorld;
+
 	//0度のときの点を置く
 	vtxPos = D3DXVECTOR3(
-		g_aPlayerPvP[nPlayerNum].pos.x + PLAYER_SIZE_WIDTH,
+		+ PLAYER_SIZE_WIDTH,
 		0.0f,
-		g_aPlayerPvP[nPlayerNum].pos.z + PLAYER_SIZE_DEPTH);
+		+ PLAYER_SIZE_DEPTH);
 
 	//回転行列とかけ合わせる
-	D3DXVec3Transform(&vtxTrans, &vtxPos, &mtxTrans);
+	D3DXVec3TransformCoord(&vtxTrans, &vtxPos, &mtxTrans);
 
 	//変換後の点の場所を代入
 	pCollision->pos2.x = vtxTrans.x;
@@ -936,14 +945,17 @@ void GenerateCollision(int nPlayerNum, CollisionPos *pCollision)
 
 	//-pos3---------------------------------------------------------------------------------------------------------------------------
 	//回転行列をもとに頂点を回転する
+	//ベースをコピー
+	mtxTrans = mtxWorld;
+
 	//0度のときの点を置く
 	vtxPos = D3DXVECTOR3(
-		g_aPlayerPvP[nPlayerNum].pos.x - PLAYER_SIZE_WIDTH,
+		- PLAYER_SIZE_WIDTH,
 		0.0f,
-		g_aPlayerPvP[nPlayerNum].pos.z + PLAYER_SIZE_DEPTH);
+		+ PLAYER_SIZE_DEPTH);
 
 	//回転行列とかけ合わせる
-	D3DXVec3Transform(&vtxTrans, &vtxPos, &mtxTrans);
+	D3DXVec3TransformCoord(&vtxTrans, &vtxPos, &mtxTrans);
 
 	//変換後の点の場所を代入
 	pCollision->pos3.x = vtxTrans.x;
@@ -953,75 +965,9 @@ void GenerateCollision(int nPlayerNum, CollisionPos *pCollision)
 }
 
 //========================
-//[デバッグ用]プレイヤーの処理（キーボード）
+//プレイヤーの処理
 //========================
-void ControllKeyboardPlayer(int nPlayerNum)
-{
-	//ヒップドロップ中でなければ操作できる
-	if (g_aPlayerPvP[nPlayerNum].bHipDrop == false)
-	{
-		//キーボード操作時の動作
-		//移動方法（ダッシュ）押して離す
-		if ((int)(g_aPlayerPvP[nPlayerNum].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
-			&& (int)(g_aPlayerPvP[nPlayerNum].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
-		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-			if (GetKeyboardPress(DIK_SPACE) == true)
-			{//スペースキーは押された
-			 //プレイヤーのチャージ処理
-				ChargePlayer(nPlayerNum);
-			}
-			else
-			{
-				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
-			}
-			if (GetKeyboardRelease(DIK_SPACE) == true)
-			{//SPACEキーが離された
-			 //プレイヤーのダッシュ処理
-				DashPlayer(nPlayerNum);
-			}
-		}
-		else
-		{
-			g_aPlayerPvP[nPlayerNum].moveGauge = 0;
-		}
-
-		//ジャンプ・ヒップドロップ
-		if (GetKeyboardTrigger(DIK_RETURN) == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
-		{
-			if (g_aPlayerPvP[nPlayerNum].bJump)
-			{
-				HipDropPlayer(nPlayerNum);									//プレイヤーのヒップドロップ処理
-				g_aPlayerPvP[nPlayerNum].nHipDropWait = PLAYER_HIPDROP_WAIT;	//ヒップドロップの開始硬直を設定
-			}
-			else
-			{
-				JumpPlayer(nPlayerNum);			//プレイヤーのジャンプ処理
-			}
-
-			MovePlayer(nPlayerNum);
-		}
-
-		//回転
-		if (GetKeyboardPress(DIK_SPACE) == false)
-		{//チャージ中ではない
-			RotatePlayer(nPlayerNum);
-		}
-	}
-	//ヒップドロップ中
-	else
-	{
-		//ヒップドロップ硬直時間がある
-		if (g_aPlayerPvP[nPlayerNum].nHipDropWait > 0)
-		{
-			g_aPlayerPvP[nPlayerNum].nHipDropWait--;		//硬直時間を減らしていく
-		}
-	}
-}
-
-//========================
-//プレイヤーの処理（ゲームパッド）
-//========================
-void ControllGPadPlayer(int nPlayerNum)
+void ControllPlayer(int nPlayerNum)
 {
 	//ヒップドロップ中でなければ操作できる
 	if (g_aPlayerPvP[nPlayerNum].bHipDrop == false)
@@ -1029,17 +975,18 @@ void ControllGPadPlayer(int nPlayerNum)
 		if ((int)(g_aPlayerPvP[nPlayerNum].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
 			&& (int)(g_aPlayerPvP[nPlayerNum].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
 		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-			if (GetGamepadPress(nPlayerNum, XINPUT_GAMEPAD_X) == true)
+			if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == true)
 			{//Xボタンが押された					 
 			 //プレイヤーのチャージ処理
 				ChargePlayer(nPlayerNum);
 			}
 			else
 			{
+				//RotatePlayer(nPlayerNum);
 				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 			}
 
-			if (GetGamepadRelease(nPlayerNum, XINPUT_GAMEPAD_X) == true)
+			if (GetButton(nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X) == true)
 			{//Xボタンが離された
 			 //プレイヤーのダッシュ処理
 				DashPlayer(nPlayerNum);
@@ -1051,7 +998,7 @@ void ControllGPadPlayer(int nPlayerNum)
 		}
 
 		//ジャンプ・ヒップドロップ
-		if (GetGamepadTrigger(nPlayerNum, XINPUT_GAMEPAD_A) == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
+		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
 		{
 			if (g_aPlayerPvP[nPlayerNum].bJump)
 			{
@@ -1067,68 +1014,8 @@ void ControllGPadPlayer(int nPlayerNum)
 		}
 
 		//回転
-		if (GetGamepadPress(nPlayerNum, XINPUT_GAMEPAD_X) == false)
+		if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == false)
 		{//Xボタンが押されていない
-			RotatePlayer(nPlayerNum);
-		}
-	}
-	//ヒップドロップ中
-	else
-	{
-		//ヒップドロップ硬直時間がある
-		if (g_aPlayerPvP[nPlayerNum].nHipDropWait > 0)
-		{
-			g_aPlayerPvP[nPlayerNum].nHipDropWait--;		//硬直時間を減らしていく
-		}
-	}
-}
-
-//========================
-//AIの処理
-//========================
-void ControllAI(int nPlayerNum)
-{
-	//ヒップドロップ中でなければ操作できる
-	if (g_aPlayerPvP[nPlayerNum].bHipDrop == false)
-	{
-		if ((int)(g_aPlayerPvP[nPlayerNum].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
-			&& (int)(g_aPlayerPvP[nPlayerNum].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
-		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-			if (g_aPlayerPvP[nPlayerNum].pAI->controll.bPushX)
-			{//Xボタンが押された					 
-			 //プレイヤーのチャージ処理
-				ChargePlayer(nPlayerNum);
-			}
-			else if (g_aPlayerPvP[nPlayerNum].pAI->controll.bPushXRele)
-			{//Xボタンが離された
-			 //プレイヤーのダッシュ処理
-				DashPlayer(nPlayerNum);
-			}
-		}
-		else
-		{
-			g_aPlayerPvP[nPlayerNum].moveGauge = 0;
-		}
-
-		//ジャンプ・ヒップドロップ
-		if (g_aPlayerPvP[nPlayerNum].pAI->controll.bPushA == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
-		{
-			if (g_aPlayerPvP[nPlayerNum].bJump)
-			{
-				HipDropPlayer(nPlayerNum);									//プレイヤーのヒップドロップ処理
-				g_aPlayerPvP[nPlayerNum].nHipDropWait = PLAYER_HIPDROP_WAIT;	//ヒップドロップの開始硬直を設定
-			}
-			else
-			{
-				JumpPlayer(nPlayerNum);			//プレイヤーのジャンプ処理
-			}
-
-			MovePlayer(nPlayerNum);
-		}
-
-		//回転
-		if (g_aPlayerPvP[nPlayerNum].pAI->controll.bPushX == false)
-		{//仮
 			RotatePlayer(nPlayerNum);
 		}
 	}
@@ -1235,39 +1122,13 @@ void RotatePlayer(int nPadNum)
 	if (!g_bDebugMove)
 	{//リリース用
 	 //ゲームパッド部
-		if (g_aPlayerPvP[nPadNum].pAI == NULL)
-		{//プレイヤー
-			if (GetLStickX(nPadNum) > 0)
-			{
-				g_aPlayerPvP[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
-			}
-			else if (GetLStickX(nPadNum) < 0)
-			{
-				g_aPlayerPvP[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
-			}
-			//キーボード部
-			else if (GetKeyboardPress(DIK_A) == true)
-			{
-				g_aPlayerPvP[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
-			}
-			else if (GetKeyboardPress(DIK_D) == true)
-			{
-				g_aPlayerPvP[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
-			}
+		if (GetStick(nPadNum) == CONVSTICK_LEFT)
+		{
+			g_aPlayerPvP[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
 		}
-		else
-		{//AI
-			switch (g_aPlayerPvP[nPadNum].pAI->controll.stick)
-			{
-			case AISTICK_LEFT:
-				g_aPlayerPvP[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
-				break;
-			case AISTICK_RIGHT:
-				g_aPlayerPvP[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
-				break;
-			case AISTICK_NEUTRAL:
-				break;
-			}
+		else if(GetStick(nPadNum) == CONVSTICK_RIGHT)
+		{
+			g_aPlayerPvP[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
 		}
 	}
 	else
