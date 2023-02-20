@@ -75,47 +75,50 @@ void SelectAIMove(Player *pCom)
 	{//落ちていない
 		SetButton(pCom->nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X, false);
 
-		//一番近いプレイヤーの方を向くようにする
-		//近いプレイヤーを探す
-		for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+		if (pCom->stat != PLAYERSTAT_DASH && pCom->stat != PLAYERSTAT_HIPDROP)
 		{
-			if ((pPlayer + nCntPlayer) != pCom)
-			{//自分でなければ
-			 //距離計算
-				float fLength = PYTHAGORAS(((pPlayer + nCntPlayer)->pos.x - pCom->pos.x), ((pPlayer + nCntPlayer)->pos.z - pCom->pos.z));
+			//一番近いプレイヤーの方を向くようにする
+			//近いプレイヤーを探す
+			for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+			{
+				if ((pPlayer + nCntPlayer) != pCom)
+				{//自分でなければ
+				 //距離計算
+					float fLength = PYTHAGORAS(((pPlayer + nCntPlayer)->pos.x - pCom->pos.x), ((pPlayer + nCntPlayer)->pos.z - pCom->pos.z));
 
-				if (pNearPlayer == NULL || fMinLength >= fLength)
-				{//何も入っていない または もっと近いプレイヤー見つけた
-					//距離と近いプレイヤーのポインタ代入
-					fMinLength = fLength;
-					pNearPlayer = (pPlayer + nCntPlayer);
+					if (pNearPlayer == NULL || fMinLength >= fLength)
+					{//何も入っていない または もっと近いプレイヤー見つけた
+					 //距離と近いプレイヤーのポインタ代入
+						fMinLength = fLength;
+						pNearPlayer = (pPlayer + nCntPlayer);
+					}
 				}
 			}
-		}
 
-		//角度を変える（2DSTGのホーミング技術使用）
-		float fRotMove = pCom->rot.y;
-		float fRotDest = atan2f(pNearPlayer->pos.x - pCom->pos.x, pNearPlayer->pos.z - pCom->pos.z);
-		float fRotDiff = FIX_ROT(fRotDest - fRotMove + D3DX_PI);
-		if ((int)(fabsf(fRotDiff) * 10) == 0)//10にしないと厳しすぎてプルプルする
-		{
-			SetStick(pCom->nPlayerNum, CONVSTICK_NEUTRAL);
-			pCom->pAI->nCounterWaitTime++;
-		}
-		else
-		{
-			//判断
-			if ((int)copysign(1, fRotDiff) < 0)
+			//角度を変える（2DSTGのホーミング技術使用）
+			float fRotMove = pCom->rot.y;
+			float fRotDest = atan2f(pNearPlayer->pos.x - pCom->pos.x, pNearPlayer->pos.z - pCom->pos.z);
+			float fRotDiff = FIX_ROT(fRotDest - fRotMove + D3DX_PI);
+			if ((int)(fabsf(fRotDiff) * 10) == 0)//10にしないと厳しすぎてプルプルする
 			{
-				SetStick(pCom->nPlayerNum, CONVSTICK_LEFT);
+				SetStick(pCom->nPlayerNum, CONVSTICK_NEUTRAL);
+				pCom->pAI->nCounterWaitTime++;
 			}
 			else
 			{
-				SetStick(pCom->nPlayerNum, CONVSTICK_RIGHT);
-			}
+				//判断
+				if ((int)copysign(1, fRotDiff) < 0)
+				{
+					SetStick(pCom->nPlayerNum, CONVSTICK_LEFT);
+				}
+				else
+				{
+					SetStick(pCom->nPlayerNum, CONVSTICK_RIGHT);
+				}
 
-			//待機時間リセット
-			pCom->pAI->nCounterWaitTime = 0;
+				//待機時間リセット
+				pCom->pAI->nCounterWaitTime = 0;
+			}
 		}
 
 		//スティック操作をしていないならチャージ

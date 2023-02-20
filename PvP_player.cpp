@@ -46,7 +46,8 @@
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
 #define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
-#define HIPDROP_RADIUS			(100.0f)		//ヒップドロップ判定範囲
+#define HIPDROP_RADIUS			(80.0f)		//ヒップドロップ判定範囲
+#define REBOUND_RATIO			(0.15f)		//当たった後の自分の分の移動量割合
 
 //アイテム関係
 #define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
@@ -363,8 +364,8 @@ void UpdatePlayer(void)
 					DEFANCE_CONS + (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
 			}
 
-			g_aPlayerPvP[nCntPlayer].move = moveTmp2 * fPowerConvertion1;
-			g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].move = moveTmp1 * fPowerConvertion2;
+			g_aPlayerPvP[nCntPlayer].move = (moveTmp2 * fPowerConvertion1) + (moveTmp1 * (1.0f - fPowerConvertion2) * REBOUND_RATIO);
+			g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].move = (moveTmp1 * fPowerConvertion2) + (moveTmp2 * (1.0f - fPowerConvertion1) * REBOUND_RATIO);
 
 			//移動量交換済み扱いにする
 			g_aPlayerPvP[nCntPlayer].lastAtkPlayer = -1;
@@ -982,7 +983,7 @@ void ControllPlayer(int nPlayerNum)
 			}
 			else
 			{
-				//RotatePlayer(nPlayerNum);
+				RotatePlayer(nPlayerNum);
 				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 			}
 
@@ -1013,11 +1014,11 @@ void ControllPlayer(int nPlayerNum)
 			MovePlayer(nPlayerNum);
 		}
 
-		//回転
-		if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == false)
-		{//Xボタンが押されていない
-			RotatePlayer(nPlayerNum);
-		}
+		////回転
+		//if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == false)
+		//{//Xボタンが押されていない
+		//	RotatePlayer(nPlayerNum);
+		//}
 	}
 	//ヒップドロップ中
 	else
