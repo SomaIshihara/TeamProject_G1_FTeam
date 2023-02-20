@@ -37,6 +37,7 @@ struct Player_HDR
 	bool bHipDrop;			//ヒップドロップしているかどうか
 	bool bHipDropSpin;		//ヒップドロップのスピンしたかどうか
 	int nHipDropWait;		//ヒップドロップの「開始・着地」硬直カウンター
+	int HipDropPower;
 
 	//パラメータ類
 	ANIMAL animal;			//使用している動物

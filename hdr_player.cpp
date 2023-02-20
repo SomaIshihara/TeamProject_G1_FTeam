@@ -19,6 +19,7 @@ void ControllKeyboardPlayer_HDR(int nPlayerNum);
 void ControllGPadPlayer_HDR(int nPlayerNum);
 
 void JumpPlayer_HDR(int nJumpPlayer);
+void HipDropPlayer_HDR(int nHipDropPlayer);		//ヒップドロップ処理
 
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
@@ -88,9 +89,6 @@ void UpdatePlayer_HDR(void)
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
-		//現在の位置を前回の位置にする
-		g_aPlayerHDR[nCntPlayer].posOld = g_aPlayerHDR[nCntPlayer].pos;
-
 		//ジャンプ時間を増やす
 		g_aPlayerHDR[nCntPlayer].jumpTime++;
 
@@ -127,10 +125,17 @@ void UpdatePlayer_HDR(void)
 		//普通に移動
 		g_aPlayerHDR[nCntPlayer].pos += g_aPlayerHDR[nCntPlayer].move;
 	
+		if (g_aPlayerHDR[nCntPlayer].HipDropPower < 0)
+		{
+			g_aPlayerHDR[nCntPlayer].bJump = false;
+			g_aPlayerHDR[nCntPlayer].bHipDrop = false;
+		}
+
 		if (g_aPlayerHDR[nCntPlayer].pos.y < 0)
 		{
 			g_aPlayerHDR[nCntPlayer].pos.y = 0;
 			g_aPlayerHDR[nCntPlayer].bJump = false;
+			g_aPlayerHDR[nCntPlayer].bHipDrop = false;
 		}
 	}
 }
@@ -287,7 +292,7 @@ void ControllKeyboardPlayer_HDR(int nPlayerNum)
 		{
 			if (g_aPlayerHDR[nPlayerNum].bJump)
 			{
-				//HipDropPlayer(nPlayerNum);		//プレイヤーのヒップドロップ処理
+				HipDropPlayer_HDR(nPlayerNum);		//プレイヤーのヒップドロップ処理
 			}
 			else
 			{
@@ -309,7 +314,7 @@ void ControllGPadPlayer_HDR(int nPlayerNum)
 		{
 			if (g_aPlayerHDR[nPlayerNum].bJump)
 			{
-				//HipDropPlayer(nPlayerNum);		//プレイヤーのヒップドロップ処理
+				HipDropPlayer_HDR(nPlayerNum);		//プレイヤーのヒップドロップ処理
 			}
 			else
 			{
@@ -325,10 +330,25 @@ void JumpPlayer_HDR(int nJumpPlayer)
 {
 	PlaySound(SOUND_LABEL_SE_JUMP);
 
+	g_aPlayerHDR[nJumpPlayer].posOld.y = g_aPlayerHDR[nJumpPlayer].pos.y;
 	g_aPlayerHDR[nJumpPlayer].moveV0.y = 7.7f;//移動量設定
 	g_aPlayerHDR[nJumpPlayer].jumpTime = 0;	//ジャンプ時間リセット
 	g_aPlayerHDR[nJumpPlayer].bJump = true;
 	/*g_aPlayerHDR[nJumpPlayer].stat = PLAYERSTAT_JUMP;*/
+}
+//========================
+//ヒップドロップの処理
+//========================
+void HipDropPlayer_HDR(int nHipDropPlayer)
+{
+	PlaySound(SOUND_LABEL_SE_HIPDROP);
+
+	g_aPlayerHDR[nHipDropPlayer].HipDropPower = g_aPlayerHDR[nHipDropPlayer].pos.y - g_aPlayerHDR[nHipDropPlayer].posOld.y;
+	g_aPlayerHDR[nHipDropPlayer].moveV0.y = -15.0f;		//ヒップドロップの降下速度を代入
+	g_aPlayerHDR[nHipDropPlayer].jumpTime = 0;							//ジャンプ時間リセット
+	g_aPlayerHDR[nHipDropPlayer].bHipDrop = true;						//ヒップドロップしている
+	g_aPlayerHDR[nHipDropPlayer].bHipDropSpin = true;					//スピンしている
+	//g_aPlayerHDR[nHipDropPlayer].stat = PLAYERSTAT_HIPDROP;
 }
 //========================
 //取得処理
