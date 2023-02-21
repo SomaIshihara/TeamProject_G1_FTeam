@@ -164,7 +164,10 @@ void InitPlayer(void)
 
 		g_aPlayerPvP[nCntPlayer].pAI = NULL;
 
-		g_aPlayerPvP[nCntPlayer].model = GetModel(g_aPlayerPvP[nCntPlayer].animal);
+		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
+		{
+			g_aPlayerPvP[nCntPlayer].animalInst[nCntParts] = {};
+		}
 		g_aPlayerPvP[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 
 		g_pNotMove[nCntPlayer] = &g_aPlayerPvP[nCntPlayer];
@@ -196,14 +199,7 @@ void InitPlayer(void)
 //========================
 void UninitPlayer(void)
 {
-	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
-	{//プレイヤーの数だけ処理する
-		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
-		{//取得した方なのでNULL入れるだけでOK
-			g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pMesh = NULL;
-			g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pBuffMat = NULL;
-		}
-	}
+	
 }
 
 //========================
@@ -397,6 +393,8 @@ void DrawPlayer(void)
 	//プレイヤーの数だけ繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
+		Model useAnimal = GetModel(g_aPlayerPvP[nCntPlayer].animal);
+
 		//"プレイヤーの"ワールドマトリックス初期化
 		D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].mtxWorld);
 
@@ -413,30 +411,31 @@ void DrawPlayer(void)
 
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
-			if (g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].bUse == true)
+			if (useAnimal.aParts[nCntParts].bUse == true)
 			{
 				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
 				D3DXMATRIX mtxParent;					//親のマトリ
 
+				//ここ新仕様
 				//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
-				g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pos = g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].posOffset;
-				g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rot = g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rotOffset;
+				g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos = useAnimal.aParts[nCntParts].posOffset;
+				g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot = useAnimal.aParts[nCntParts].rotOffset;
 
 				//"モデルの"ワールドマトリックス初期化
-				D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld);
+				D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
 				//向きを反映
-				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rot.y, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rot.x, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rot.z);
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxRotModel);
+				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.y, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.x, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.z);
+				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxRotModel);
 
 				//位置反映
-				D3DXMatrixTranslation(&mtxTransModel, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pos.x, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pos.y, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pos.z);
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxTransModel);
+				D3DXMatrixTranslation(&mtxTransModel, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.x, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.y, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.z);
+				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxTransModel);
 
 				//パーツの親マトリ設定
-				if (g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mIdxModelParent != -1)
+				if (useAnimal.aParts[nCntParts].mIdxModelParent != -1)
 				{
-					mtxParent = g_aPlayerPvP[nCntPlayer].model.aParts[g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mIdxModelParent].mtxWorld;
+					mtxParent = g_aPlayerPvP[nCntPlayer].animalInst[useAnimal.aParts[nCntParts].mIdxModelParent].mtxWorld;
 				}
 				else
 				{
@@ -444,15 +443,15 @@ void DrawPlayer(void)
 				}
 
 				//パーツのマトリと親マトリをかけ合わせる
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxParent);
+				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxParent);
 
-				//"プレイヤーの"ワールドマトリックス設定
-				pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld);
+				//"モデルの"ワールドマトリックス設定
+				pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
 				//マテリアルデータへのポインタ取得
-				pMat = (D3DXMATERIAL*)g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
+				pMat = (D3DXMATERIAL*)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
 
-				for (int nCntMat = 0; nCntMat < (int)g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
+				for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
 				{
 					//ゴースト化状態を考慮した変更用マテリアル変数
 					D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
@@ -470,10 +469,10 @@ void DrawPlayer(void)
 					pDevice->SetMaterial(&matChange);
 
 					//テクスチャ設定
-					pDevice->SetTexture(0, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
+					pDevice->SetTexture(0, useAnimal.aParts[nCntParts].apTexture[nCntMat]);
 
 					//モデル描画
-					g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+					useAnimal.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
 				}
 
 				/*------------------------------------------------------------------
@@ -501,15 +500,15 @@ void DrawPlayer(void)
 
 					//シャドウマトリックスの作成
 					D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
-					D3DXMatrixMultiply(&mtxShadow, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxShadow);
+					D3DXMatrixMultiply(&mtxShadow, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxShadow);
 
 					//シャドウマトリックスの設定
 					pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
 
 					//マテリアルデータへのポインタを取得
-					pMat = (D3DXMATERIAL *)g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
+					pMat = (D3DXMATERIAL *)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
 
-					for (int nCntMat = 0; nCntMat < (int)g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
+					for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
 					{
 						D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
 
@@ -523,7 +522,7 @@ void DrawPlayer(void)
 						pDevice->SetTexture(0, NULL);
 
 						//モデル描画
-						g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+						useAnimal.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
 					}
 				}
 			}
