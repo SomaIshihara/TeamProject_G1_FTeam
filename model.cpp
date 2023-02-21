@@ -29,7 +29,7 @@ void InitModel(void)
 	InitAnimalModel();
 
 	//オブジェクトモデルの初期化
-	InitObjectModel();
+	//InitObjectModel();
 }
 
 //========================
@@ -65,7 +65,7 @@ void InitAnimalModel(void)
 			{//読み込み成功したら
 				//テクスチャ読み込み
 				D3DXMATERIAL *pMat;	//マテリアルポインタ
-
+				
 				//マテリアル情報に対するポインタ取得
 				pMat = (D3DXMATERIAL *)g_aAnimalModel[nCntModel].aParts[nCntParts].pBuffMat->GetBufferPointer();
 
@@ -146,6 +146,16 @@ void UninitModel(void)
 	{
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
+			//テクスチャ破棄
+			for (int nCntTex = 0; nCntTex < MAX_TEXTURE; nCntTex++)
+			{
+				if (g_aAnimalModel[nCntModel].aParts[nCntParts].apTexture[nCntTex] != NULL)
+				{
+					g_aAnimalModel[nCntModel].aParts[nCntParts].apTexture[nCntTex]->Release();
+					g_aAnimalModel[nCntModel].aParts[nCntParts].apTexture[nCntTex] = NULL;
+				}
+			}
+
 			//メッシュの破棄
 			if (g_aAnimalModel[nCntModel].aParts[nCntParts].pMesh != NULL)
 			{
@@ -166,6 +176,16 @@ void UninitModel(void)
 	//設計図
 	for (int nCntObj = 0; nCntObj < OBJECTTYPE_MAX; nCntObj++)
 	{
+		//テクスチャ破棄
+		for (int nCntTex = 0; nCntTex < MAX_TEXTURE; nCntTex++)
+		{
+			if (g_aObjModelBP[nCntObj].aParts[0].apTexture[nCntTex] != NULL)
+			{
+				g_aObjModelBP[nCntObj].aParts[0].apTexture[nCntTex]->Release();
+				g_aObjModelBP[nCntObj].aParts[0].apTexture[nCntTex] = NULL;
+			}
+		}
+
 		//メッシュの破棄
 		if (g_aObjModelBP[nCntObj].aParts[0].pMesh != NULL)
 		{
