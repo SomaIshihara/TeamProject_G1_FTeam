@@ -113,7 +113,7 @@ void SetMeshDomeVertexBuffer(void)
 		float Height_Y = cosf(yRadian) * g_MeshDome.fRadius;		//Yの高さ
 		float aTexV = (MESHDOME_TEX_HEIGHT / (MESHDOME_SEPALATE + 2)) * nCntDevideY;	//テクスチャの高さ
 
-		int nStrageVtx = nNumVtx;									//１周するときに使用するため、１周の開始番号を格納
+		int nStrageVtx = nNumVtx;		//１周するときに使用するため、１周の開始番号を格納
 
 		for (int nCntDevideX = 0; nCntDevideX < MESHDOME_SPLIT; nCntDevideX++)
 		{//横１周分の頂点座標を設定

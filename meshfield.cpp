@@ -25,8 +25,6 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshfield = NULL;		//頂点バッファのポインタ
 LPDIRECT3DTEXTURE9		g_pTextureMeshfield = NULL;		//テクスチャのポインタ
 LPDIRECT3DINDEXBUFFER9	g_pIdxBuffMeshField = NULL;		//インデックスバッファへのポインタ
 D3DXMATRIX				g_mtxWorldMeshfield;			//ワールドマトリックス
-
-MESHFIELD				g_MeshFieldTemp;
 MESHFIELD				g_MeshField[NUM_MESHFIELD];
 
 //====================================================================
@@ -36,15 +34,10 @@ void InitMeshfield(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
 
-	// 保存しておいた情報を代入
-	//g_MeshField[0] = g_MeshFieldTemp;
-
 	//設定類は外部ファイルに移動
 #if 0
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		GetTextureFilePath(0),
-		&g_pTextureMeshfield);
+	D3DXCreateTextureFromFile(pDevice, GetTextureFilePath(0), &g_pTextureMeshfield);
 
 	//構造体を初期化
 	for (int nCntfield = 0; nCntfield < MAX_FIELD; nCntfield++)
@@ -59,17 +52,13 @@ void InitMeshfield(void)
 #endif
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHFIELD_ALL_VERTEX,
-		D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED,
-		&g_pVtxBuffMeshfield, NULL);
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHFIELD_ALL_VERTEX * NUM_MESHFIELD, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshfield, NULL);
 
 	//頂点情報設定
 	SetFieldVertex();
 
 	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHFIELD_ALL_INDEX,
-		D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED,
-		&g_pIdxBuffMeshField, NULL);
+	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHFIELD_ALL_INDEX * NUM_MESHFIELD, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED,	&g_pIdxBuffMeshField, NULL);
 
 	//インデックス情報を設定
 	SetFieldIndex();
@@ -85,34 +74,39 @@ void SetFieldVertex(void)
 
 	//頂点番号
 	int nNumVtx = 0;
-	float Rot = D3DX_PI;	//角度
 
-	pVtx[nNumVtx].pos = ZERO_SET;				//中心座標代入
-	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);	//法線
-	pVtx[nNumVtx].col = XCOL_WHITE;
-	pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 0.5f);
-	nNumVtx++;
-
-	//周辺の頂点情報の設定
-	for (int nCntVtx = 0; nCntVtx < MESHFIELD_SPLIT; nCntVtx++, nNumVtx++)
+	for (int nCntField = 0; nCntField < NUM_MESHFIELD; nCntField++)
 	{
-		pVtx[nNumVtx].pos =	D3DXVECTOR3(
-				sinf(Rot) * g_MeshField[0].fRadius,		//Xの位置
-				0.0f,									//Yの位置
-				cosf(Rot) * g_MeshField[0].fRadius);	//Zの位置
+		float Rot = D3DX_PI;	//角度
 
-		pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nNumVtx].pos = ZERO_SET;				//中心座標代入
+		pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);	//法線
 		pVtx[nNumVtx].col = XCOL_WHITE;
+		pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 0.5f);
+		nNumVtx++;
 
-		float aTexU = 0.5f - 0.5f * sinf(Rot);	//テクスチャ幅
-		float aTexV = 0.5f - 0.5f * cosf(Rot);	//テクスチャ高さ
-		
-		pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, aTexV);
+		//周辺の頂点情報の設定
+		for (int nCntVtx = 0; nCntVtx < MESHFIELD_SPLIT; nCntVtx++, nNumVtx++)
+		{
+			pVtx[nNumVtx].pos = D3DXVECTOR3(
+				sinf(Rot) * g_MeshField[nCntField].fRadius,	//Xの位置
+				0.0f,										//Yの位置
+				cosf(Rot) * g_MeshField[nCntField].fRadius);//Zの位置
 
-		//角度を　全体の角度÷分割数で割った答え分、引く
-		Rot -= ONE_LAP / MESHFIELD_SPLIT;
+			pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pVtx[nNumVtx].col = XCOL_WHITE;
+
+			float aTexU = 0.5f - 0.5f * sinf(Rot);	//テクスチャ幅
+			float aTexV = 0.5f - 0.5f * cosf(Rot);	//テクスチャ高さ
+
+			pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, aTexV);
+
+			//角度を　全体の角度÷分割数で割った答え分、引く
+			Rot -= ONE_LAP / MESHFIELD_SPLIT;
+		}
 	}
 
+	//蝶バッファをアンロック
 	g_pVtxBuffMeshfield->Unlock();
 }
 
