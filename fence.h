@@ -12,11 +12,26 @@
 //マクロ
 #define MAX_USE_FENCE		(16)	//柵最大使用数
 
+//フェンス用構造体
+typedef struct
+{
+	//位置関係
+	D3DXVECTOR3 pos, posOld;	//位置
+	D3DXVECTOR3 rot;			//向き
+	int nFallTime;				//落下時間
+
+	//描画関係
+	D3DXMATRIX mtxWorld;		//ワールドマトリ
+
+	//使用有無
+	bool bUse;					//使用有無
+} Fence;
+
 //プロトタイプ宣言
 void InitFence(void);
 void UninitFence(void);
 void UpdateFence(void);
 void DrawFence(void);
-void SetFence(D3DXVECTOR3 pos, D3DXVECTOR3 rot);
+void SetFence(float fLength, D3DXVECTOR3 rot);
 
 #endif // !_FENCE_H_

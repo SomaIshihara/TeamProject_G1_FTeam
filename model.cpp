@@ -28,7 +28,7 @@ void InitModel(void)
 	InitAnimalModel();
 
 	//オブジェクトモデルの初期化
-	//InitObjectModel();
+	InitObjectModel();
 }
 
 //========================

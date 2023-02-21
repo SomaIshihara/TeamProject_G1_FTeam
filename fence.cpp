@@ -8,11 +8,12 @@
 #include "fence.h"
 #include "model.h"
 #include "camera.h"
+#include "meshfield.h"
 
 //マクロ
 
 //グローバル
-Model g_aFenceModel[MAX_USE_FENCE] = {};
+Fence g_aFence[MAX_USE_FENCE];
 
 //========================
 //初期化処理
@@ -20,15 +21,12 @@ Model g_aFenceModel[MAX_USE_FENCE] = {};
 void InitFence(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
-	D3DXMATERIAL *pMat;	//マテリアルポインタ
-	int nNumVtx;		//頂点数
-	DWORD dwSizeFVF;	//頂点フォーマットのサイズ
-	BYTE *pVtxBuff;		//頂点バッファポインタ
 
 	//変数初期化
-	for (int nCntInitBP = 0; nCntInitBP < MAX_USE_FENCE; nCntInitBP++)
+	for (int nCntfence = 0; nCntfence < MAX_USE_FENCE; nCntfence++)
 	{
-		g_aFenceModel[nCntInitBP].aParts[0] = {};
+		g_aFence[nCntfence] = {};
+		SetFence(GetMeshField()->fRadius, D3DXVECTOR3(0.0f, ((float)nCntfence / MAX_USE_FENCE) * 2 * D3DX_PI, 0.0f));
 	}
 }
 
@@ -37,22 +35,7 @@ void InitFence(void)
 //========================
 void UninitFence(void)
 {
-	for (int nCount = 0; nCount < MAX_USE_FENCE; nCount++)
-	{//NULL入れるのみ
-		//メッシュの破棄
-		if (g_aFenceModel[nCount].aParts[0].pMesh != NULL)
-		{
-			g_aFenceModel[nCount].aParts[0].pMesh->Release();
-			g_aFenceModel[nCount].aParts[0].pMesh = NULL;
-		}
-
-		//マテリアルの破棄
-		if (g_aFenceModel[nCount].aParts[0].pBuffMat != NULL)
-		{
-			g_aFenceModel[nCount].aParts[0].pBuffMat->Release();
-			g_aFenceModel[nCount].aParts[0].pBuffMat = NULL;
-		}
-	}
+	
 }
 
 //========================
@@ -69,19 +52,26 @@ void UpdateFence(void)
 void DrawFence(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
-	D3DXMATRIX mtxRot, mtxTrans;	//計算用
+	D3DXMATRIX mtxScall, mtxRot, mtxTrans;	//計算用
 	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
 	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
+
+	//柵モデル取得
+	Model fenceModel = GetXObject(OBJECTTYPE_FENCE);
 
 	//現在のマテリアル取得
 	pDevice->GetMaterial(&matDef);
 
-	for (int nCount = 0; nCount < MAX_OBJECT; nCount++)
+	for (int nCount = 0; nCount < MAX_USE_FENCE; nCount++)
 	{
 		if (g_aFence[nCount].bUse == true)
 		{
 			//ワールドマトリックス初期化
 			D3DXMatrixIdentity(&g_aFence[nCount].mtxWorld);
+
+			//拡縮を反映
+			D3DXMatrixScaling(&mtxScall, 4.0f, 4.0f, 4.0f);
+			D3DXMatrixMultiply(&g_aFence[nCount].mtxWorld, &g_aFence[nCount].mtxWorld, &mtxScall);
 
 			//向きを反映
 			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_aFence[nCount].rot.y, g_aFence[nCount].rot.x, g_aFence[nCount].rot.z);
@@ -95,26 +85,18 @@ void DrawFence(void)
 			pDevice->SetTransform(D3DTS_WORLD, &g_aFence[nCount].mtxWorld);
 
 			//マテリアルデータへのポインタ取得
-			pMat = (D3DXMATERIAL*)g_aBPrint[g_aFence[nCount].bpidx].pBuffMat->GetBufferPointer();
+			pMat = (D3DXMATERIAL*)fenceModel.aParts[0].pBuffMat->GetBufferPointer();
 
-			for (int nCntMat = 0; nCntMat < (int)g_aBPrint[g_aFence[nCount].bpidx].dwNumMat; nCntMat++)
+			for (int nCntMat = 0; nCntMat < (int)fenceModel.aParts[0].dwNumMatModel; nCntMat++)
 			{
 				//マテリアル設定
-				D3DMATERIAL9 changeMat = pMat[nCntMat].MatD3D;
-				//ダメージ状態なら赤追加
-				if (g_aFence[nCount].state == OBJSTATE_DAMAGE)
-				{
-					changeMat.Diffuse.r = 1.0f * OBJ_RED_ALPHA + pMat[nCntMat].MatD3D.Diffuse.r * (1.0f - OBJ_RED_ALPHA);
-					changeMat.Diffuse.g = 0.0f * OBJ_RED_ALPHA + pMat[nCntMat].MatD3D.Diffuse.g * (1.0f - OBJ_RED_ALPHA);
-					changeMat.Diffuse.b = 0.0f * OBJ_RED_ALPHA + pMat[nCntMat].MatD3D.Diffuse.b * (1.0f - OBJ_RED_ALPHA);
-				}
-				pDevice->SetMaterial(&changeMat);
+				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 				//テクスチャ設定
-				pDevice->SetTexture(0, g_aBPrint[g_aFence[nCount].bpidx].apTexture[nCntMat]);
+				pDevice->SetTexture(0, fenceModel.aParts[0].apTexture[nCntMat]);
 
 				//モデル描画
-				g_aBPrint[g_aFence[nCount].bpidx].pMesh->DrawSubset(nCntMat);
+				fenceModel.aParts[0].pMesh->DrawSubset(nCntMat);
 			}
 		}
 	}
@@ -126,31 +108,22 @@ void DrawFence(void)
 //========================
 //表示処理
 //========================
-void SetFence(BLUEPRINTIDX bpidx, D3DXVECTOR3 pos, D3DXVECTOR3 rot, bool bLifeUse, int nLife)
+void SetFence(float fLength, D3DXVECTOR3 rot)
 {
-	for (int nCntObj = 0; nCntObj < MAX_OBJECT; nCntObj++)
+	for (int nCntObj = 0; nCntObj < MAX_USE_FENCE; nCntObj++)
 	{
 		if (g_aFence[nCntObj].bUse == false)
 		{
 			//引数の情報を追加
-			g_aFence[nCntObj].bpidx = bpidx;
-			g_aFence[nCntObj].pos = pos;
+			g_aFence[nCntObj].pos.x = fLength * sinf(rot.y);
+			g_aFence[nCntObj].pos.y = 0.0f;
+			g_aFence[nCntObj].pos.z = fLength * cosf(rot.y);
+			g_aFence[nCntObj].posOld = g_aFence[nCntObj].pos;
 			g_aFence[nCntObj].rot = rot;
-			g_aFence[nCntObj].bLifeUse = bLifeUse;
-			g_aFence[nCntObj].nLife = nLife;
-
-			//体力を使用する場合のみ影設定
-			if (g_aFence[nCntObj].bLifeUse == true)
-			{
-				//影設定
-				g_aFence[nCntObj].nIdxShadow = SetShadow();
-			}
+			g_aFence[nCntObj].nFallTime = 0;
 
 			//使用していることにする
 			g_aFence[nCntObj].bUse = true;
-
-			//オブジェクト数増やす
-			g_nNumObj++;
 
 			//抜ける
 			break;
