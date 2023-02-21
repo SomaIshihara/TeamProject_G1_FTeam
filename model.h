@@ -101,13 +101,12 @@ typedef struct
 	float fJump;	//ジャンプ量
 	float fRadius;	//半径（未使用）
 	int nNumParts;	//パーツ数
-	//追加するものがあったら下に追加
 } Model;
 
 //プロトタイプ宣言
 void InitModel(void);
 void UninitModel(void);
-Model GetModel(ANIMAL animal);
-void SetObject(int nObjNum, D3DXVECTOR3 pos, D3DXVECTOR3 rot);
+Model GetAnimal(ANIMAL animal);
+Model GetXObject(OBJECTTYPE objtype);
 
 #endif // !_MODEL_H_

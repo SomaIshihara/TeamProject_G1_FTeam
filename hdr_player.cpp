@@ -57,7 +57,7 @@ void InitPlayer_HDR(void)
 
 		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 
-		g_aPlayerHDR[nCntPlayer].model = GetModel(g_aPlayerHDR[nCntPlayer].animal);
+		g_aPlayerHDR[nCntPlayer].model = GetAnimal(g_aPlayerHDR[nCntPlayer].animal);
 		g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
 	}
 

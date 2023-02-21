@@ -172,6 +172,7 @@
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="eff_shock-wave_00.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="fence.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="hdr_player.cpp" />
     <ClCompile Include="HDR_camera.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="effect.h" />
     <ClInclude Include="eff_shock-wave_00.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="fence.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="HDR_camera.h" />
     <ClInclude Include="hdr_player.h" />
