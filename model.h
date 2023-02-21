@@ -9,6 +9,7 @@
 
 //マクロ
 #define MAX_PARTS	(10)	//パーツ使用最大数
+#define MAX_TEXTURE	(16)	//テクスチャ最大数
 
 //配置モデル列挙
 typedef enum
@@ -82,11 +83,11 @@ typedef struct
 	LPD3DXBUFFER pBuffMat;	//マテリアルポインタ
 	DWORD dwNumMatModel;	//マテ数
 	D3DXVECTOR3 posOffset;	//モーション設定前の位置（オフセット）
-	D3DXVECTOR3 pos;		//モーション設定した位置
+	D3DXVECTOR3 pos;		//モーション設定した位置（オブジェクトの場合こちらのみ使用）
 	D3DXVECTOR3 rotOffset;	//モーション設定前の向き（オフセット）
-	D3DXVECTOR3 rot;		//モーション設定した向き
+	D3DXVECTOR3 rot;		//モーション設定した向き（オブジェクトの場合こちらのみ使用）
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
-	LPDIRECT3DTEXTURE9 apTexture[16];	//テクスチャポインタ
+	LPDIRECT3DTEXTURE9 apTexture[MAX_TEXTURE];	//テクスチャポインタ
 	int mIdxModelParent;	//親モデルインデックス
 	bool bUse;				//使用の有無
 } Parts;
@@ -107,5 +108,6 @@ typedef struct
 void InitModel(void);
 void UninitModel(void);
 Model GetModel(ANIMAL animal);
+void SetObject(int nObjNum, D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
 #endif // !_MODEL_H_

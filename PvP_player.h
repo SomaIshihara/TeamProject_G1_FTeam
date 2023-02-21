@@ -42,6 +42,14 @@ typedef struct
 
 }PlayModel;
 
+//プレイヤー個人で使うモデル類構造体
+typedef struct
+{
+	D3DXVECTOR3 pos;		//モーション設定した位置
+	D3DXVECTOR3 rot;		//モーション設定した向き
+	D3DXMATRIX mtxWorld;	//ワールドマトリ
+} AnimalInstance;
+
 //プレイヤー構造体
 struct Player
 {
@@ -82,7 +90,7 @@ struct Player
 	ComAIBrain *pAI;		//AIポインタ
 
 	//描画類
-	Model model;			//使用モデル
+	AnimalInstance animalInst[MAX_PARTS];
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
 	bool bUseShadow;		//影使用の有無
 	bool bUsePlayer;		//プレイヤー使用の有無
