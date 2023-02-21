@@ -17,7 +17,7 @@
 #define NUM_CHARGE_CYLINDER					(4)							// シリンダーの数
 #define CHARGECYLINDER_ALL_VTX		(CHARGECYLINDER_SPLIT * 2 + 2)		// シリンダーの最大頂点・インデックス数
 #define CHARGE_MAX_RADIUS					(40.0f)						// 最大半径
-#define CHARGE_SPREAD_SPEED					(3.5f)						// 半径増加量　　SPREAD　＝　広がる
+#define CHARGE_SPREAD_SPEED					(3.5f)						// 半径増加量	SPREAD ＝ 広がる
 #define CHARGE_TOPPART_SPREAD				(1.3f)						// 上部の部分だけの広がり倍率
 #define CHARGE_HEIGHT_EXTEND				(2.0f)						// 高さが伸び縮みするスピード
 #define CHARGE_TEX_PASS				"data/TEXTURE/ChargeCylinder.png"	// チャージシリンダーのテクスチャパス
@@ -81,18 +81,16 @@ void SetChargeCylinderVertex(int nCntCylinder)
 	VERTEX_3D *pVtx;
 
 	//頂点バッファのロック
-	g_pVtxBuffChargeCylinder->Lock(0, 0, (void**)&pVtx, 0);
-
-	//対象のプレイヤー情報取得
-	Player *pPlayer = &GetPlayer()[nCntCylinder];
+	g_pVtxBuffChargeCylinder->Lock(0, 0, (void* *)&pVtx, 0);
 
 	//ポインターをずらす
 	pVtx += CHARGECYLINDER_ALL_VTX * nCntCylinder;
 
-	//Y軸の角度
-	float Rot = D3DX_PI;
-
-	D3DXCOLOR col = D3DXCOLOR(1.0f * pPlayer->moveGauge, 1.0f - pPlayer->moveGauge *0.3f, 1.0f - pPlayer->moveGauge *1.0f, 1.0f);
+	float Rot = D3DX_PI;	//Y軸の角度	
+	float LapSepRot = ONE_LAP / CHARGECYLINDER_SPLIT;	//１周の分割割合を求める
+	float gauge = GetPlayer()[nCntCylinder].moveGauge;		//プレイヤーのゲージ量を格納
+	float TexSep_U = CHARGECYLINDER_TEX_RESOLUTION / CHARGECYLINDER_SPLIT;//テクスチャの横の分割の割合を求める
+	D3DXCOLOR col = D3DXCOLOR(1.0f * gauge, 1.0f - gauge * 0.3f, 1.0f - gauge, 1.0f);//プレイヤーのゲージ量に応じたグラデーション
 
 	//頂点座標の設定
 	for (int nCntVtx = 0; nCntVtx <= CHARGECYLINDER_SPLIT; nCntVtx++)
@@ -115,19 +113,19 @@ void SetChargeCylinderVertex(int nCntCylinder)
 		}
 
 		//法線ベクトルの設定
-		pVtx[nCntVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nCntVtx].nor = 
 		pVtx[nNumTopVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[nCntVtx].col = col;
+		pVtx[nCntVtx].col = 
 		pVtx[nNumTopVtx].col = col;
 
 		//テクスチャ座標の設定
-		pVtx[nCntVtx].tex = D3DXVECTOR2(nCntVtx * (CHARGECYLINDER_TEX_RESOLUTION / CHARGECYLINDER_SPLIT), 1.0f);
-		pVtx[nNumTopVtx].tex = D3DXVECTOR2(nCntVtx * (CHARGECYLINDER_TEX_RESOLUTION / CHARGECYLINDER_SPLIT), 0.0f);
+		pVtx[nCntVtx].tex = D3DXVECTOR2(nCntVtx * TexSep_U, 1.0f);
+		pVtx[nNumTopVtx].tex = D3DXVECTOR2(nCntVtx * TexSep_U, 0.0f);
 
 		//角度を　全体の角度÷分割数で割った答え分、引く
-		Rot -= ONE_LAP / CHARGECYLINDER_SPLIT;
+		Rot -= LapSepRot;
 	}
 
 	//頂点バッファのアンロック
@@ -139,27 +137,16 @@ void SetChargeCylinderIndex(int nCntCylinder)
 {
 	WORD *pIdx;
 	//インデックスバッファをロックし、頂点番号へのポインタを取得
-	g_pIdxBuffChargeCylinder->Lock(0, 0, (void**)&pIdx, 0);
+	g_pIdxBuffChargeCylinder->Lock(0, 0, (void* *)&pIdx, 0);
 
-	//ポインターをずらす
-	pIdx += CHARGECYLINDER_ALL_VTX * nCntCylinder;
+	pIdx += CHARGECYLINDER_ALL_VTX * nCntCylinder;			//ポインターをずらす
+	int nBottomNumber = ODDPARITY + CHARGECYLINDER_SPLIT;	//シリンダー下部の基準頂点番号
 
 	//インデックス番号データの設定
 	for (int nCntIdx = 0; nCntIdx < CHARGECYLINDER_ALL_VTX; nCntIdx++)
 	{
-		//カウンターが偶数の時
-		if (nCntIdx % EVENPARITY == NOPARITY)
-		{
-			//シリンダー上部の頂点番号を記憶
-			pIdx[nCntIdx] = nCntIdx / EVENPARITY;
-		}
-
-		//カウンターが奇数の時
-		if (nCntIdx % EVENPARITY == ODDPARITY)
-		{
-			//シリンダー下部の頂点番号を記憶
-			pIdx[nCntIdx] = (nCntIdx / EVENPARITY) + ODDPARITY + CHARGECYLINDER_SPLIT;
-		}
+		//カウンターが偶数の場合、後半以降の計算式 ↓ の答えがゼロになる	奇数の場合は、シリンダー下部の基準頂点番号が加算される
+		pIdx[nCntIdx] = (nCntIdx / EVENPARITY) + (nBottomNumber * (nCntIdx % EVENPARITY));
 	}
 
 	//インデックスバッファのアンロック
@@ -178,7 +165,7 @@ void UninitChargeCylinder(void)
 		g_pTextureChargeCylinder = NULL;
 	}
 
-	//バッファの破棄
+	//頂点バッファの破棄
 	if (g_pVtxBuffChargeCylinder != NULL)
 	{
 		g_pVtxBuffChargeCylinder->Release();
@@ -219,43 +206,40 @@ void UpdateChargeCylinder(void)
 }
 
 // プレイヤーの位置に設定する
-void SetChargeCylinderPos(int nCntCylinder)
+void SetChargeCylinderPos(int nCntPos)
 {
-	//プレイヤーの情報取得
-	Player *pPlayer = &GetPlayer()[nCntCylinder];
-
 	//シリンダーの位置をプレイヤーと同じにする
-	g_ChargeCylinder[nCntCylinder].pos = pPlayer->pos;
+	g_ChargeCylinder[nCntPos].pos = GetPlayer()[nCntPos].pos;
 }
 
 // シリンダーの広がる処理
-void SpreadChargeCylinder(int nCntCylinder)
+void SpreadChargeCylinder(int nCntSpread)
 {
 	//半径を広げる
-	g_ChargeCylinder[nCntCylinder].fRadius += CHARGE_SPREAD_SPEED;
+	g_ChargeCylinder[nCntSpread].fRadius += CHARGE_SPREAD_SPEED;
 
 	//最大半径に到達した
-	if (g_ChargeCylinder[nCntCylinder].fRadius >= CHARGE_MAX_RADIUS)
+	if (g_ChargeCylinder[nCntSpread].fRadius >= CHARGE_MAX_RADIUS)
 	{
 		//使わなくする
-		g_ChargeCylinder[nCntCylinder].bUse = false;
+		g_ChargeCylinder[nCntSpread].bUse = false;
 	}
 }
 
 // チャージシリンダーの伸び縮みする処理
-void ExtendChargeCylinder(int nCntCylinder)
+void ExtendChargeCylinder(int nCntExtend)
 {
 	//伸びる
-	if (g_ChargeCylinder[nCntCylinder].bExtend == true)
+	if (g_ChargeCylinder[nCntExtend].bExtend == true)
 	{
 		//伸びる
-		g_ChargeCylinder[nCntCylinder].fHeight += CHARGE_HEIGHT_EXTEND;
+		g_ChargeCylinder[nCntExtend].fHeight += CHARGE_HEIGHT_EXTEND;
 
 		//最大の高さを超えた
-		if (g_ChargeCylinder[nCntCylinder].fHeight > CHARGECYLINDER_HEIGHT)
+		if (g_ChargeCylinder[nCntExtend].fHeight > CHARGECYLINDER_HEIGHT)
 		{
-			g_ChargeCylinder[nCntCylinder].fHeight = CHARGECYLINDER_HEIGHT;	//最大の高さにする
-			g_ChargeCylinder[nCntCylinder].bExtend = false;					//次回から縮ませる
+			g_ChargeCylinder[nCntExtend].fHeight = CHARGECYLINDER_HEIGHT;	//最大の高さにする
+			g_ChargeCylinder[nCntExtend].bExtend = false;					//次回から縮ませる
 		}
 	}
 
@@ -263,13 +247,13 @@ void ExtendChargeCylinder(int nCntCylinder)
 	else
 	{
 		//伸びる
-		g_ChargeCylinder[nCntCylinder].fHeight = CHARGE_HEIGHT_EXTEND;
+		g_ChargeCylinder[nCntExtend].fHeight = CHARGE_HEIGHT_EXTEND;
 
 		//最低の高さを超えた
-		if (g_ChargeCylinder[nCntCylinder].fHeight < 0.0f)
+		if (g_ChargeCylinder[nCntExtend].fHeight < 0.0f)
 		{
-			g_ChargeCylinder[nCntCylinder].fHeight = 0.0f;	//最低の高さにする
-			g_ChargeCylinder[nCntCylinder].bExtend = true;	//次回から伸ばす
+			g_ChargeCylinder[nCntExtend].fHeight = 0.0f;	//最低の高さにする
+			g_ChargeCylinder[nCntExtend].bExtend = true;	//次回から伸ばす
 		}
 	}
 }
@@ -281,6 +265,18 @@ void DrawChargeCylinder(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	D3DXMATRIX mtxRot, mtxTrans;
+
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffChargeCylinder, 0, sizeof(VERTEX_3D));
+
+	//インデックスバッファをデータストリームに設定
+	pDevice->SetIndices(g_pIdxBuffChargeCylinder);
+
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
+
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_pTextureChargeCylinder);
 
 	//両面カリングをON
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -309,42 +305,31 @@ void DrawChargeCylinder(void)
 			//ワールドマトリックスの設定
 			pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldChargeCylinder);
 
-			//頂点バッファをデータストリームに設定
-			pDevice->SetStreamSource(0, g_pVtxBuffChargeCylinder, 0, sizeof(VERTEX_3D));
-
-			//インデックスバッファをデータストリームに設定
-			pDevice->SetIndices(g_pIdxBuffChargeCylinder);
-
-			//頂点フォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_3D);
-
-			//テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureChargeCylinder);
-
+			//ポリゴンの描画
 			pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, CHARGECYLINDER_ALL_VTX, 0, CHARGECYLINDER_ALL_VTX);
 		}
 	}
-
-	//通常カリングにする
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 	//アルファテストを無効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	//通常カリングにする
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
 // シリンダーの設定処理
-void SetChargeCylinder(D3DXVECTOR3 pos, int nCntCylinder)
+void SetChargeCylinder(D3DXVECTOR3 pos, int nCntSet)
 {
 	//対象シリンダーが使われていない
-	if (g_ChargeCylinder[nCntCylinder].bUse == false)
+	if (g_ChargeCylinder[nCntSet].bUse == false)
 	{
-		g_ChargeCylinder[nCntCylinder].pos = pos;			// 位置反映
-		g_ChargeCylinder[nCntCylinder].rot = ZERO_SET;		// 向き初期化
-		g_ChargeCylinder[nCntCylinder].fRadius = 0.0f;		// 半径初期化
-		g_ChargeCylinder[nCntCylinder].fHeight = 0.0f;		// 高さ初期化
-		g_ChargeCylinder[nCntCylinder].bExtend = true;		// 伸びる
-		g_ChargeCylinder[nCntCylinder].bUse = true;			// 使用する
+		g_ChargeCylinder[nCntSet].pos = pos;			// 位置反映
+		g_ChargeCylinder[nCntSet].rot = ZERO_SET;		// 向き初期化
+		g_ChargeCylinder[nCntSet].fRadius = 0.0f;		// 半径初期化
+		g_ChargeCylinder[nCntSet].fHeight = 0.0f;		// 高さ初期化
+		g_ChargeCylinder[nCntSet].bExtend = true;		// 伸びる
+		g_ChargeCylinder[nCntSet].bUse = true;			// 使用する
 	}
 }

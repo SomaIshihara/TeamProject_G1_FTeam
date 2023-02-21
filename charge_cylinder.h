@@ -14,13 +14,13 @@ void SetChargeCylinderIndex(int nCntCylinder);	// インデックス番号の設定処理
 
 void UninitChargeCylinder(void);			// 終了処理
 
-void UpdateChargeCylinder(void);							// 更新処理
-void SetChargeCylinderPos(int nCntCylinder);				// プレイヤーの位置に設定する
-void SpreadChargeCylinder(int nCntCylinder);				// チャージシリンダーの広がる処理
-void ExtendChargeCylinder(int nCntCylinder);				// チャージシリンダーの伸び縮みする処理
+void UpdateChargeCylinder(void);				// 更新処理
+void SetChargeCylinderPos(int nCntPos);			// プレイヤーの位置に設定する
+void SpreadChargeCylinder(int nCntSpread);		// チャージシリンダーの広がる処理
+void ExtendChargeCylinder(int nCntExtend);		// チャージシリンダーの伸び縮みする処理
 
 void DrawChargeCylinder(void);		// 描画処理
 
-void SetChargeCylinder(D3DXVECTOR3 pos, int nCntCylinder);		// シリンダーを設定
+void SetChargeCylinder(D3DXVECTOR3 pos, int nCntSet);		// シリンダーを設定
 
 #endif
