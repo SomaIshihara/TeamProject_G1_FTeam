@@ -82,9 +82,9 @@ typedef struct
 	LPD3DXBUFFER pBuffMat;	//マテリアルポインタ
 	DWORD dwNumMatModel;	//マテ数
 	D3DXVECTOR3 posOffset;	//モーション設定前の位置（オフセット）
-	D3DXVECTOR3 pos;		//モーション設定した位置
+	D3DXVECTOR3 pos;		//モーション設定した位置（オブジェクトの場合こちらのみ使用）
 	D3DXVECTOR3 rotOffset;	//モーション設定前の向き（オフセット）
-	D3DXVECTOR3 rot;		//モーション設定した向き
+	D3DXVECTOR3 rot;		//モーション設定した向き（オブジェクトの場合こちらのみ使用）
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
 	LPDIRECT3DTEXTURE9 apTexture[16];	//テクスチャポインタ
 	int mIdxModelParent;	//親モデルインデックス
@@ -107,5 +107,6 @@ typedef struct
 void InitModel(void);
 void UninitModel(void);
 Model GetModel(ANIMAL animal);
+void SetObject(int nObjNum, D3DXVECTOR3 pos, D3DXVECTOR3 rot);
 
 #endif // !_MODEL_H_
