@@ -225,6 +225,9 @@
     <ClCompile Include="input.cpp">
       <Filter>ソース ファイル\Main\Input</Filter>
     </ClCompile>
+    <ClCompile Include="fence.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -349,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="input.h">
       <Filter>ヘッダー ファイル\Main\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="fence.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -46,7 +46,7 @@
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
 #define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
-#define HIPDROP_RADIUS			(80.0f)		//ヒップドロップ判定範囲
+#define HIPDROP_RADIUS			(60.0f)		//ヒップドロップ判定範囲
 #define REBOUND_RATIO			(0.15f)		//当たった後の自分の分の移動量割合
 
 //アイテム関係
@@ -393,7 +393,7 @@ void DrawPlayer(void)
 	//プレイヤーの数だけ繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
-		Model useAnimal = GetModel(g_aPlayerPvP[nCntPlayer].animal);
+		Model useAnimal = GetAnimal(g_aPlayerPvP[nCntPlayer].animal);
 
 		//"プレイヤーの"ワールドマトリックス初期化
 		D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].mtxWorld);
