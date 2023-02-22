@@ -9,7 +9,8 @@
 #include "file.h"
 
 //マクロ
-#define MAX_PLACE_OBJ	(256)
+#define MAX_PLACE_OBJ		(256)
+#define MAX_TEMPSTR_CHAR	(4096)
 
 //プロト
 void InitAnimalModel(void);
