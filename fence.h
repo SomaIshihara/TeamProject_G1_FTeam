@@ -10,7 +10,7 @@
 #include "main.h"
 
 //マクロ
-#define MAX_USE_FENCE		(16)	//柵最大使用数
+#define MAX_USE_FENCE		(32)	//柵最大使用数
 
 //フェンス用構造体
 typedef struct

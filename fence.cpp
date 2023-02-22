@@ -11,6 +11,7 @@
 #include "meshfield.h"
 
 //マクロ
+#define FENCE_SCALE		(5.0f)		//フェンスの拡大倍率
 
 //グローバル
 Fence g_aFence[MAX_USE_FENCE];
@@ -52,7 +53,8 @@ void UpdateFence(void)
 void DrawFence(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
-	D3DXMATRIX mtxScall, mtxRot, mtxTrans;	//計算用
+	D3DXMATRIX mtxScall, mtxRot, mtxTrans, mtxTexture;	//計算用
+	D3DXMATRIX mtxInvNor;			//法線用
 	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
 	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
 
@@ -70,7 +72,7 @@ void DrawFence(void)
 			D3DXMatrixIdentity(&g_aFence[nCount].mtxWorld);
 
 			//拡縮を反映
-			D3DXMatrixScaling(&mtxScall, 4.0f, 4.0f, 4.0f);
+			D3DXMatrixScaling(&mtxScall, FENCE_SCALE, FENCE_SCALE, FENCE_SCALE);
 			D3DXMatrixMultiply(&g_aFence[nCount].mtxWorld, &g_aFence[nCount].mtxWorld, &mtxScall);
 
 			//向きを反映
@@ -83,6 +85,10 @@ void DrawFence(void)
 
 			//ワールドマトリックス設定
 			pDevice->SetTransform(D3DTS_WORLD, &g_aFence[nCount].mtxWorld);
+
+			//テクスチャ拡縮
+			D3DXMatrixScaling(&mtxTexture, FENCE_SCALE, FENCE_SCALE, 1.0f);
+			pDevice->SetTransform(D3DTS_TEXTURE0, &mtxTexture);
 
 			//マテリアルデータへのポインタ取得
 			pMat = (D3DXMATERIAL*)fenceModel.aParts[0].pBuffMat->GetBufferPointer();
