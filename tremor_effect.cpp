@@ -19,7 +19,6 @@
 
 //マクロ定義
 #define	TREMOR_EFFECT_TEX_PASS		"data\\TEXTURE\\charge_effect001.png"
-#define TREMOR_EFFECT_TIME				(30)		//エフェクト発生時間（フレーム単位）
 #define TREMOR_FADEOUT_TIME				(15)		//フェードアウト開始時間（フレーム単位）
 
 //グローバル変数

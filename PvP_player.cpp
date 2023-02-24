@@ -37,6 +37,7 @@
 #define PLAYER_ROTATE_SPEED		(0.02f * D3DX_PI)	//回転速度
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)		//ヒップドロップスピンの回転値
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
+#define PLAYER_ACTIONRIGOR_ADD	(30)		//アクション硬直の追加の時間
 
 //移動量関係
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -225,37 +226,43 @@ void UpdatePlayer(void)
 
 		if (g_aPlayerPvP[nCntPlayer].bUsePlayer == true)
 		{//使用時のみ行う
-			//AI処理
-			if (g_aPlayerPvP[nCntPlayer].pAI != NULL)
-			{//AI
-				//AIがコントローラー操作
-				SelectAIMove(&g_aPlayerPvP[nCntPlayer]);
-			}
-			else
-			{//プレイヤー
-				//（下の部分ゲームパッドが一つも使用されていなければ無視）
-				if (GetUseControllerNum_PvP() != 0)
-				{
-					g_aPlayerPvP[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
+			//アクション硬直時間減らす
+			g_aPlayerPvP[nCntPlayer].nActionRigor--;
+
+			if (g_aPlayerPvP[nCntPlayer].nActionRigor <= 0)
+			{
+				//AI処理
+				if (g_aPlayerPvP[nCntPlayer].pAI != NULL)
+				{//AI
+					//AIがコントローラー操作
+					SelectAIMove(&g_aPlayerPvP[nCntPlayer]);
 				}
-			}
-
-			//操作処理
-			ControllPlayer(nCntPlayer);
-
-			//当たり判定類
-			if (g_aPlayerPvP[nCntPlayer].nGhostItemTime <= 0)
-			{//ゴースト化状態でなければ
-				if (CollisionPP(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH) == true)
-				{
-					SetAttackEffect(g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].pos, g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer);
+				else
+				{//プレイヤー
+					//（下の部分ゲームパッドが一つも使用されていなければ無視）
+					if (GetUseControllerNum_PvP() != 0)
+					{
+						g_aPlayerPvP[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
+					}
 				}
-				
-				CollisionIP(nCntPlayer);
 
-				if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_HIPDROP)
-				{//ヒップドロップ中なら
-					CollisionHipDropPP(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH, HIPDROP_RADIUS, PLAYER_BLOWING_POWER);
+				//操作処理
+				ControllPlayer(nCntPlayer);
+
+				//当たり判定類
+				if (g_aPlayerPvP[nCntPlayer].nGhostItemTime <= 0)
+				{//ゴースト化状態でなければ
+					if (CollisionPP(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH) == true)
+					{
+						SetAttackEffect(g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].pos, g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer);
+					}
+
+					CollisionIP(nCntPlayer);
+
+					if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_HIPDROP)
+					{//ヒップドロップ中なら
+						CollisionHipDropPP(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH, HIPDROP_RADIUS, PLAYER_BLOWING_POWER);
+					}
 				}
 			}
 		}
@@ -285,6 +292,7 @@ void UpdatePlayer(void)
 				{//ヒップドロップしてたならエフェクト出す
 					SetTremorEffect(g_aPlayerPvP[nCntPlayer].pos);
 					g_aPlayerPvP[nCntPlayer].bHipDrop = false;    //ヒップドロップしてない
+					g_aPlayerPvP[nCntPlayer].nActionRigor = TREMOR_EFFECT_TIME + PLAYER_ACTIONRIGOR_ADD;
 				}
 				g_aPlayerPvP[nCntPlayer].bJump = false;
 				g_aPlayerPvP[nCntPlayer].moveV0.y = 0.0f;

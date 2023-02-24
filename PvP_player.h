@@ -77,6 +77,7 @@ struct Player
 	int nScore;				//得点
 	int nLastHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
 	PLAYERSTAT stat;		//状態
+	int nActionRigor;		//アクション硬直時間
 	int nPlayerNum;			//プレイヤー番号
 
 	//アイテム類
