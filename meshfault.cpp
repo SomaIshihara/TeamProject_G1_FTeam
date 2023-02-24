@@ -81,11 +81,11 @@ void SetMeshFaultVertex(void)
 		}
 
 		//法線ベクトルの設定
-		pVtx[nCntMeshFault].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[nCntMeshFault].nor =
 		pVtx[nNumBottomVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[nCntMeshFault].col = XCOL_WHITE;
+		pVtx[nCntMeshFault].col = 
 		pVtx[nNumBottomVtx].col = XCOL_WHITE;
 
 		//テクスチャ座標の設定

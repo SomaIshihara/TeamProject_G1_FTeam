@@ -10,6 +10,13 @@
 //マクロ
 #define MAX_PARTS	(10)	//パーツ使用最大数
 
+//配置モデル列挙
+typedef enum
+{
+	OBJECTTYPE_FENCE = 0,
+	OBJECTTYPE_MAX
+} OBJECTTYPE;
+
 //動物種類列挙（一旦いのししのみ）
 typedef enum
 {
@@ -22,9 +29,9 @@ typedef enum
 {
 	MOTIONTYPE_NEUTRAL = 0,	//ニュートラル
 	MOTIONTYPE_MOVE,		//移動
-	MOTIONTYPE_ACTION,		//アクション（EC未使用・ピクトさん未実装）
-	MOTIONTYPE_JUMP,		//ジャンプ（EC未使用・ピクトさん未実装）
-	MOTIONTYPE_LANDING,		//着地（EC未使用・ピクトさん未実装）
+	MOTIONTYPE_ACTION,		//アクション
+	MOTIONTYPE_JUMP,		//ジャンプ
+	MOTIONTYPE_LANDING,		//着地
 	MOTIONTYPE_MAX
 } MOTIONTYPE;
 
@@ -75,11 +82,11 @@ typedef struct
 	LPD3DXBUFFER pBuffMat;	//マテリアルポインタ
 	DWORD dwNumMatModel;	//マテ数
 	D3DXVECTOR3 posOffset;	//モーション設定前の位置（オフセット）
-	D3DXVECTOR3 pos;		//モーション設定した位置
+	D3DXVECTOR3 pos;		//モーション設定した位置（オブジェクトの場合こちらのみ使用）
 	D3DXVECTOR3 rotOffset;	//モーション設定前の向き（オフセット）
-	D3DXVECTOR3 rot;		//モーション設定した向き
+	D3DXVECTOR3 rot;		//モーション設定した向き（オブジェクトの場合こちらのみ使用）
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
-	LPDIRECT3DTEXTURE9 apTexture[16];	//テクスチャポインタ
+	LPDIRECT3DTEXTURE9 apTexture[MAX_TEXTURE];	//テクスチャポインタ
 	int mIdxModelParent;	//親モデルインデックス
 	bool bUse;				//使用の有無
 } Parts;
@@ -93,12 +100,12 @@ typedef struct
 	float fJump;	//ジャンプ量
 	float fRadius;	//半径（未使用）
 	int nNumParts;	//パーツ数
-	//追加するものがあったら下に追加
 } Model;
 
 //プロトタイプ宣言
 void InitModel(void);
 void UninitModel(void);
-Model GetModel(ANIMAL animal);
+Model GetAnimal(ANIMAL animal);
+Model GetXObject(OBJECTTYPE objtype);
 
 #endif // !_MODEL_H_

@@ -7,6 +7,7 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 #include "camera.h"
 #include "input.h"
 #include "PvP_player.h"
+#include "hdr_player.h"
 #include "camera_frame.h"
 #include "input.h"
 
@@ -194,8 +195,8 @@ void Set_NumCamera(NumCamera type)
 
 		g_Camera[nCntCamera].fMaxLength = MAX_DRAW;				//最大描画距離設定
 
-		g_Camera[nCntCamera].viewport.X = 0.0f;					//原点Ⅹ位置代入
-		g_Camera[nCntCamera].viewport.Y = 0.0f;					//原点Ｙ位置代入
+		g_Camera[nCntCamera].viewport.X = (DWORD)0.0f;					//原点Ⅹ位置代入
+		g_Camera[nCntCamera].viewport.Y = (DWORD)0.0f;					//原点Ｙ位置代入
 		g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH;		//画面幅初期化
 		g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;	//画面高さ初期化
 		g_Camera[nCntCamera].viewport.MinZ = 0.0f;
@@ -213,8 +214,8 @@ void Set_NumCamera(NumCamera type)
 		{
 			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
-			g_Camera[nCntCamera].viewport.X = (SCREEN_WIDTH / 2) * (nCntCamera % 2);	//原点Ⅹ位置代入
-			g_Camera[nCntCamera].viewport.Y = NIL_F;									//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.X = (DWORD)(SCREEN_WIDTH / 2) * (nCntCamera % 2);	//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = (DWORD)NIL_F;									//原点Ｙ位置代入
 			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH / 2;						//画面幅初期化
 			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;						//画面高さ初期化
 			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
@@ -236,8 +237,8 @@ void Set_NumCamera(NumCamera type)
 		{
 			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
-			g_Camera[nCntCamera].viewport.X = NIL_F;									//原点Ⅹ位置代入
-			g_Camera[nCntCamera].viewport.Y = (SCREEN_HEIGHT / 2) * (nCntCamera % 2);	//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.X = (DWORD)NIL_F;									//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = (DWORD)(SCREEN_HEIGHT / 2) * (nCntCamera % 2);	//原点Ｙ位置代入
 			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH;							//画面幅初期化
 			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT / 2;					//画面高さ初期化
 			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
@@ -272,6 +273,28 @@ void Set_NumCamera(NumCamera type)
 		}
 	}
 	break;
+
+	/*----------------------------------------------------------------
+	各プレイヤー専用のカメラの処理
+	----------------------------------------------------------------*/
+	case NumCamera_FOUR_SIDE:
+	{
+		for (nCntCamera; nCntCamera < NUM_CAMERA; nCntCamera++)
+		{
+			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
+
+			g_Camera[nCntCamera].viewport.X = (DWORD)(SCREEN_WIDTH / 4) * nCntCamera;	//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = (DWORD)NIL_F;									//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH / 4;						//画面幅初期化
+			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;						//画面高さ初期化
+			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
+			g_Camera[nCntCamera].viewport.MaxZ = 1.0f;
+			g_Camera[nCntCamera].bUse = true;
+
+			//注視点の位置更新
+			UpdatePosVHDRCamera(nCntCamera);
+		}
+	}
 	}
 
 	//画面分割の枠を設定
@@ -387,21 +410,44 @@ void UpdatePosVCamera(int nCntCamera)
 //注視点の位置設定
 void SetPosRCamera(int nCntCamera)
 {
+	MODE GameMode = GetMode();
+
+	//プレイヤー情報取得
+	Player *pPlayer = GetPlayer();
+	Player_HDR *pPlayer_HDR = GetPlayer_HDR();
+
 	//追従 または ３人称が  ON
 	if (g_bChase == true || g_bTPS == true)
 	{
-		//プレイヤー情報取得
-		Player *pPlayer = GetPlayer();
-
-		//対象のプレイヤーに注視点を合わせる
-		g_Camera[nCntCamera].posR = pPlayer[nCntCamera].pos;
-
-		//３人称視点
-		if (g_bTPS)
+		switch (GameMode)
 		{
-			//3人称視点設定
-			TPS_ChaseCamera(nCntCamera, pPlayer[nCntCamera].rot);
+		case MODE_PvPGAME:
+			
+			//対象のプレイヤーに注視点を合わせる
+			g_Camera[nCntCamera].posR = pPlayer[nCntCamera].pos;
+
+			//３人称視点
+			if (g_bTPS)
+			{
+				//3人称視点設定
+				TPS_ChaseCamera(nCntCamera, pPlayer[nCntCamera].rot);
+			}
+			break;
+
+		case MODE_RaceGAME:
+			
+			//対象のプレイヤーに注視点を合わせる
+			g_Camera[nCntCamera].posR = pPlayer_HDR[nCntCamera].pos;
+
+			//３人称視点
+			if (g_bTPS)
+			{
+				//3人称視点設定
+				TPS_ChaseCamera(nCntCamera, pPlayer_HDR[nCntCamera].rot);
+			}
+			break;
 		}
+			
 	}
 }
 

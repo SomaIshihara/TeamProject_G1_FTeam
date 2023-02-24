@@ -265,5 +265,5 @@ void AddTime(int nValue)
 //===============================
 void SetTimerDejit(void)
 {
-	g_aTime.nDejit = pow(10, NUM_PLACE);
+	g_aTime.nDejit = (int)pow(10, NUM_PLACE);
 }

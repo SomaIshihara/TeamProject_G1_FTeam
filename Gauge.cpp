@@ -48,7 +48,7 @@ Author:大宮愛羅
 //グローバル変数	
 LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffGauge = NULL;					//バッファへのポインタ
 LPDIRECT3DTEXTURE9		g_pTextureGauge[GAUGETYPE_MAX] = {};	//テクスチャへのポインタ(ゲージ分)
-Gauge					g_Gauge[GAUGETYPE_MAX];					//ゲージ情報
+Gauge					g_Gauge[MAX_USE_GAMEPAD][GAUGETYPE_MAX];					//ゲージ情報
 
 const D3DXVECTOR3		g_Pos[MAX_USE_GAMEPAD] =				//ゲージの位置
 {
@@ -89,25 +89,25 @@ void InitGauge(void)
 	//４人全員のゲージの頂点情報初期化
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
-		//位置を初期化
-		g_Gauge[nCntPlayer].pos = g_Pos[nCntPlayer];
-
 		for (int nCntGauge = 0; nCntGauge < GAUGETYPE_MAX; nCntGauge++, pVtx += VTX_MAX)
 		{//ゲージ分
-		 //頂点座標の設定
+			//位置を初期化
+			g_Gauge[nCntPlayer][nCntGauge].pos = g_Pos[nCntPlayer];
+
+			//頂点座標の設定
 			switch (nCntGauge)
 			{
 			case GAUGETYPE_NORMAL:
-				pVtx[VTX_LE_UP].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-				pVtx[VTX_RI_UP].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-				pVtx[VTX_LE_DO].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);
-				pVtx[VTX_RI_DO].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);
+				pVtx[VTX_LE_UP].pos = g_Gauge[nCntPlayer][nCntGauge].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+				pVtx[VTX_RI_UP].pos = g_Gauge[nCntPlayer][nCntGauge].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+				pVtx[VTX_LE_DO].pos = g_Gauge[nCntPlayer][nCntGauge].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);
+				pVtx[VTX_RI_DO].pos = g_Gauge[nCntPlayer][nCntGauge].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);
 				break;
 			default:
-				pVtx[VTX_LE_UP].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//左上
-				pVtx[VTX_RI_UP].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(GAUGE_WIDTH, 0.0f, 0.0f);	//右上
-				pVtx[VTX_LE_DO].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);	//左下
-				pVtx[VTX_RI_DO].pos = g_Gauge[nCntPlayer].pos + D3DXVECTOR3(GAUGE_WIDTH, GAUGE_HEIGHT, 0.0f);	//右下
+				pVtx[VTX_LE_UP].pos = g_Gauge[nCntPlayer][nCntGauge].pos + D3DXVECTOR3(0.0f, 0.0f, 0.0f);	//左上
+				pVtx[VTX_RI_UP].pos = g_Gauge[nCntPlayer][nCntGauge].pos + D3DXVECTOR3(GAUGE_WIDTH, 0.0f, 0.0f);	//右上
+				pVtx[VTX_LE_DO].pos = g_Gauge[nCntPlayer][nCntGauge].pos + D3DXVECTOR3(0.0f, GAUGE_HEIGHT, 0.0f);	//左下
+				pVtx[VTX_RI_DO].pos = g_Gauge[nCntPlayer][nCntGauge].pos + D3DXVECTOR3(GAUGE_WIDTH, GAUGE_HEIGHT, 0.0f);	//右下
 				break;
 			}
 
@@ -221,10 +221,10 @@ void UpdateGauge(void)
 		}
 
 		//頂点座標の設定
-		pVtx[VTX_LE_UP].pos.x = g_Gauge[nCntGauge].pos.x + 0.0f;					//左上
-		pVtx[VTX_RI_UP].pos.x = g_Gauge[nCntGauge].pos.x + GAUGE_WIDTH * Parcent;	//右上
-		pVtx[VTX_LE_DO].pos.x = g_Gauge[nCntGauge].pos.x + 0.0f;					//左下
-		pVtx[VTX_RI_DO].pos.x = g_Gauge[nCntGauge].pos.x + GAUGE_WIDTH * Parcent;	//右下
+		pVtx[VTX_LE_UP].pos.x = g_Gauge[nCntGauge][1].pos.x + 0.0f;						//左上
+		pVtx[VTX_RI_UP].pos.x = g_Gauge[nCntGauge][1].pos.x + GAUGE_WIDTH * Parcent;	//右上
+		pVtx[VTX_LE_DO].pos.x = g_Gauge[nCntGauge][1].pos.x + 0.0f;						//左下
+		pVtx[VTX_RI_DO].pos.x = g_Gauge[nCntGauge][1].pos.x + GAUGE_WIDTH * Parcent;	//右下
 	}
 
 	//頂点バッファをロックする

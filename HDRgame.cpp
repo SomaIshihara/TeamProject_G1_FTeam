@@ -10,28 +10,13 @@ Author:平澤詩苑
 #include "file.h"
 #include "color.h"
 #include "fade.h"
-#include "camera.h"
+#include "HDR_camera.h"
 #include "camera_frame.h"
 #include "pause.h"
-#include "PvP_player.h"
+#include "hdr_player.h"
 #include "model.h"
 #include "light.h"
-#include "wall.h"
-#include "meshdome.h"
-#include "meshfield.h"
-#include "meshfault.h"
-#include "meshcylinder.h"
-#include "gauge.h"
-#include "score.h"
-#include "bonus.h"
-#include "item.h"
 #include "timer.h"
-#include "particle.h"
-#include "charge_effect.h"
-#include "attack_effect.h"
-#include "tremor_effect.h"
-#include "charge_cylinder.h"
-#include "eff_shock-wave_00.h"
 #include "sound.h"
 #include "bg.h"
 
@@ -59,6 +44,7 @@ void InitHDRGame(void)
 	
 	InitLight();				// ライト初期化処理
 	InitModel();				// モデルの初期化処理（プレイヤーの前に行うこと！）
+	InitPlayer_HDR();
 	InitCameraFrame();			// 画面分割の枠初期化処理
 	InitCamera(g_NumCamera_HDR);	// カメラの初期化処理
 	InitPause();				// ポーズ画面の初期化処理
@@ -87,6 +73,7 @@ void UninitHDRGame(void)
 	UninitLight();			// ライト終了処理
 	UninitCamera();			// カメラの終了処理
 	UninitPause();			// ポーズ画面の終了処理
+	UninitPlayer_HDR();
 	UninitModel();			// モデルの終了処理
 
 	UninitCameraFrame();	// 画面分割の枠終了処理
@@ -102,7 +89,6 @@ void UninitHDRGame(void)
 void UpdateHDRGame(void)
 {
 	FADE fadeState = GetFade();
-	Player *pPlayer = GetPlayer();
 
 	//ポーズがOFF
 	if (g_bPause_HDR == false)
@@ -110,6 +96,8 @@ void UpdateHDRGame(void)
 		UpdateLight();			// ライトの更新処理
 		UpdateCamera();			// カメラの更新処理
 		UpdateTime();		//タイマーの更新処理
+		UpdatePlayer_HDR();
+
 
 		ChangeNumCamera_HDR();	//カメラの数変更処理
 
@@ -176,6 +164,7 @@ void DrawHDRGame(void)
 		SetCamera(nCntCamera);		// カメラの設定処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
 		DrawTime();					//タイマーの描画処理
+		DrawPlayer_HDR();
 
 									//ポーズがON
 		if (g_bPause_HDR == true && g_bPhotoMode_HDR == false)

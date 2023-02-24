@@ -9,6 +9,7 @@
 #include "PvP_player.h"
 #include "input.h"
 #include "meshfield.h"
+#include "conversioninput.h"
 #include <time.h>
 
 //マクロ
@@ -72,50 +73,63 @@ void SelectAIMove(Player *pCom)
 
 	if (pCom->stat != PLAYERSTAT_FALL)
 	{//落ちていない
-		pCom->pAI->controll.bPushXRele = false;
+		SetButton(pCom->nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X, false);
 
-		//一番近いプレイヤーの方を向くようにする
-		//近いプレイヤーを探す
-		for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+		if (pCom->stat != PLAYERSTAT_DASH && pCom->stat != PLAYERSTAT_HIPDROP)
 		{
-			if ((pPlayer + nCntPlayer) != pCom)
-			{//自分でなければ
-			 //距離計算
-				float fLength = PYTHAGORAS(((pPlayer + nCntPlayer)->pos.x - pCom->pos.x), ((pPlayer + nCntPlayer)->pos.z - pCom->pos.z));
+			//一番近いプレイヤーの方を向くようにする
+			//近いプレイヤーを探す
+			for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+			{
+				if ((pPlayer + nCntPlayer) != pCom)
+				{//自分でなければ
+				 //距離計算
+					float fLength = PYTHAGORAS(((pPlayer + nCntPlayer)->pos.x - pCom->pos.x), ((pPlayer + nCntPlayer)->pos.z - pCom->pos.z));
 
-				if (pNearPlayer == NULL || fMinLength >= fLength)
-				{//何も入っていない または もっと近いプレイヤー見つけた
-					//距離と近いプレイヤーのポインタ代入
-					fMinLength = fLength;
-					pNearPlayer = (pPlayer + nCntPlayer);
+					if (pNearPlayer == NULL || fMinLength >= fLength)
+					{//何も入っていない または もっと近いプレイヤー見つけた
+					 //距離と近いプレイヤーのポインタ代入
+						fMinLength = fLength;
+						pNearPlayer = (pPlayer + nCntPlayer);
+					}
 				}
+			}
+
+			//角度を変える（2DSTGのホーミング技術使用）
+			float fRotMove = pCom->rot.y;
+			float fRotDest = atan2f(pNearPlayer->pos.x - pCom->pos.x, pNearPlayer->pos.z - pCom->pos.z);
+			float fRotDiff = FIX_ROT(fRotDest - fRotMove + D3DX_PI);
+			if ((int)(fabsf(fRotDiff) * 10) == 0)//10にしないと厳しすぎてプルプルする
+			{
+				SetStick(pCom->nPlayerNum, CONVSTICK_NEUTRAL);
+				pCom->pAI->nCounterWaitTime++;
+			}
+			else
+			{
+				//判断
+				if ((int)copysign(1, fRotDiff) < 0)
+				{
+					SetStick(pCom->nPlayerNum, CONVSTICK_LEFT);
+				}
+				else
+				{
+					SetStick(pCom->nPlayerNum, CONVSTICK_RIGHT);
+				}
+
+				//待機時間リセット
+				pCom->pAI->nCounterWaitTime = 0;
 			}
 		}
 
-		//角度を変える（2DSTGのホーミング技術使用）
-		float fRotMove = pCom->rot.y;
-		float fRotDest = atan2f(pNearPlayer->pos.x - pCom->pos.x, pNearPlayer->pos.z - pCom->pos.z);
-		float fRotDiff = FIX_ROT(fRotDest - fRotMove + D3DX_PI);
-		if ((int)(fabsf(fRotDiff) * 10) == 0)//10にしないと厳しすぎてプルプルする
-		{
-			pCom->pAI->controll.stick = AISTICK_NEUTRAL;
-			pCom->pAI->nCounterWaitTime++;
-		}
-		else
-		{
-			pCom->pAI->controll.stick = (AISTICK)((int)copysignf(1.0f, fRotDiff));
-			pCom->pAI->nCounterWaitTime = 0;
-		}
-
 		//スティック操作をしていないならチャージ
-		if (pCom->pAI->controll.stick == AISTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= TEST_CHARGE_WAIT)
+		if (GetStick(pCom->nPlayerNum) == CONVSTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= TEST_CHARGE_WAIT)
 		{
 			int nChargeWidth = (int)(((CHARGE_AVG + c_aAIParam[pCom->pAI->difficulty].fChargeAboutPlus) - (CHARGE_AVG - c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus)) * CHARGE_DIGIT);
 			pCom->pAI->fChargePower = (float)(rand() % (nChargeWidth + 1)) / CHARGE_DIGIT + c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus;
 			ChargeAI(pCom);
 
 		}
-		else if (pCom->pAI->controll.bPushX == true)
+		else if (GetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == true)
 		{
 			ChargeAI(pCom);
 		}
@@ -131,7 +145,7 @@ void SelectAIMove(Player *pCom)
 				pCom->pAI->bDoHipdrop = rand() % (HIPDROP_RAND_DIGIT + 1) <= c_aAIParam[pCom->pAI->difficulty].nHipdropRandom ? true : false;
 				if (pCom->pAI->bDoHipdrop == true || pCom->stat == PLAYERSTAT_JUMP)
 				{
-					pCom->pAI->controll.bPushA = true;
+					SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_A, true);
 					if (pCom->stat == PLAYERSTAT_JUMP)
 					{
 						if (pCom->jumpTime > c_aAIParam[pCom->pAI->difficulty].nHipdropTime)
@@ -140,7 +154,7 @@ void SelectAIMove(Player *pCom)
 						}
 						else
 						{
-							pCom->pAI->controll.bPushA = false;
+							SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_A, true);
 						}
 					}
 				}
@@ -151,21 +165,21 @@ void SelectAIMove(Player *pCom)
 			}
 			else
 			{
-				pCom->pAI->controll.bPushA = false;
+				SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_A, false);
 			}
 		}
 		else
 		{
 			pCom->pAI->bHipdropped = false;
-			pCom->pAI->controll.bPushA = false;
+			SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_A, false);
 		}
 	}
 	else
 	{//落ちたのでAIがコントローラーから手を放してOMGしている
-		pCom->pAI->controll.bPushA = false;
-		pCom->pAI->controll.bPushX = false;
-		pCom->pAI->controll.bPushXRele = false;
-		pCom->pAI->controll.stick = AISTICK_NEUTRAL;
+		SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_A, false);
+		SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_X, false);
+		SetButton(pCom->nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X, false);
+		SetStick(pCom->nPlayerNum, CONVSTICK_NEUTRAL);
 	}
 }
 
@@ -176,13 +190,13 @@ void ChargeAI(Player *pCom)
 {
 	if (pCom->moveGauge >= pCom->pAI->fChargePower)
 	{
-		pCom->pAI->controll.bPushX = false;
-		pCom->pAI->controll.bPushXRele = true;
+		SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_X, false);
+		SetButton(pCom->nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X, true);
 		pCom->pAI->nCounterWaitTime = 0;
 	}
 	else
 	{
-		pCom->pAI->controll.bPushX = true;
+		SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_X, true);
 	}
 }
 

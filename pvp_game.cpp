@@ -35,6 +35,7 @@ Author:平澤詩苑
 #include "sound.h"
 #include "bg.h"
 #include "comai.h"
+#include "fence.h"
 
 //グローバル変数宣言
 bool g_bPause_PvP = false;				// ポーズ
@@ -63,7 +64,8 @@ void InitPvPGame(void)
 	InitMeshfield();			// ステージ初期化処理
 	InitMeshFault();			// メッシュの断面初期化処理
 	InitMeshCylinder();			// メッシュシリンダー初期化処理
-	InitModel();				// モデルの初期化処理（プレイヤーの前に行うこと！）
+	InitModel();				// モデルの初期化処理（モデルを使用する初期化の前に行うこと！）
+	InitFence();				// フェンスの初期化処理
 	InitComAI();				// コンピューターAIの初期化処理（プレイヤーの前に行うこと）
 	InitPlayer();				// プレイヤーの初期化処理
 	InitBonus();				// ボーナスの初期化処理
@@ -113,6 +115,7 @@ void UninitPvPGame(void)
 	UninitMeshCylinder();	// メッシュシリンダー終了処理
 	UninitMeshDome();		// メッシュドーム終了処理
 	UninitMeshFault();		// メッシュの断面終了処理
+	UninitFence();			// フェンスの終了処理（形式上置いておいただけ）
 	UninitWall();			// 壁の終了処理
 	UninitCamera();			// カメラの終了処理
 	UninitComAI();			// コンピューターAIの終了処理
@@ -155,6 +158,7 @@ void UpdatePvPGame(void)
 		UpdateMeshCylinder();	// メッシュシリンダー更新処理
 		UpdateMeshDome();		// メッシュドーム更新処理
 		UpdateMeshFault();		// メッシュの断面更新処理
+		UpdateFence();			// フェンスの更新処理
 		UpdatePlayer();			// プレイヤーの更新処理
 		UpdateBonus();			// ボーナスの更新処理
 		UpdateItem();			// アイテムの更新処理
@@ -213,6 +217,7 @@ void UpdatePvPGame(void)
 				UpdateMeshCylinder();	// メッシュシリンダー更新処理
 				UpdateMeshDome();		// メッシュドーム更新処理
 				UpdateMeshFault();		// メッシュの断面更新処理
+				UpdateFence();			// フェンスの更新処理
 				UpdatePlayer();			// プレイヤーの更新処理
 				UpdateBonus();			// ボーナスの更新処理
 				UpdateItem();			// アイテムの更新処理
@@ -258,7 +263,8 @@ void DrawPvPGame(void)
 									//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 		DrawMeshDome();				// メッシュドームの描画処理	
 		DrawMeshFault();			// メッシュの断面描画処理
-		DrawWall();					// 壁の描画処理
+		//DrawWall();					// 壁の描画処理
+		DrawFence();				// フェンスの描画処理
 		{// エフェクトの描画処理
 			DrawChargeEffect();		//チャージエフェクト
 			DrawChargeCylinder();	//チャージエフェクト(しりんだー)

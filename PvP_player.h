@@ -42,6 +42,14 @@ typedef struct
 
 }PlayModel;
 
+//プレイヤー個人で使うモデル類構造体
+typedef struct
+{
+	D3DXVECTOR3 pos;		//モーション設定した位置
+	D3DXVECTOR3 rot;		//モーション設定した向き
+	D3DXMATRIX mtxWorld;	//ワールドマトリ
+} AnimalInstance;
+
 //プレイヤー構造体
 struct Player
 {
@@ -52,6 +60,7 @@ struct Player
 	D3DXVECTOR3 moveV0;		//初期移動量
 	D3DXVECTOR3 rot;		//向き
 	float moveGauge;		//移動量(ダッシュ)
+	float fOldMoveGauge;		//前の移動量（アクション硬直に使用）
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 	bool bJump;				//ジャンプしているかどうか
 	bool bHipDrop;			//ヒップドロップしているかどうか
@@ -62,26 +71,28 @@ struct Player
 
 	//衝突関係
 	D3DXVECTOR3 faceCollider[2];	//当たり判定
-	int lastAtkPlayer;				//最後に触れたプレイヤー
+	int nFrameAtkPlayer;			//このフレームで触れたプレイヤー
 
 	//パラメータ類
 	ANIMAL animal;			//使用している動物
 	int nScore;				//得点
-	int nNumHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
+	int nLastHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
 	PLAYERSTAT stat;		//状態
+	int nActionRigor;		//アクション硬直時間
+	int nPlayerNum;			//プレイヤー番号
 
 	//アイテム類
 	int nATKItemTime;		//はじき強化アイテムの持続時間
 	int nDEFItemTime;		//押し合い強化アイテムの持続時間
 	int nGhostItemTime;		//ゴースト化アイテムの持続時間
-	bool bMUTEKI;			//無敵状態かどうか（変数名は仮ですいい変数名考えてくれ）
-	int nMUTEKITime;		//無敵の持続時間
+	bool bInvincible;		//無敵状態かどうか（変数名は仮ですいい変数名考えてくれ）
+	int nInvincibleTime;	//無敵の持続時間
 
 	//AIの操作（AIVerにて追加）
 	ComAIBrain *pAI;		//AIポインタ
 
 	//描画類
-	Model model;			//使用モデル
+	AnimalInstance animalInst[MAX_PARTS];
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
 	bool bUseShadow;		//影使用の有無
 	bool bUsePlayer;		//プレイヤー使用の有無
