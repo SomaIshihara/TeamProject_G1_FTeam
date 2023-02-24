@@ -60,6 +60,7 @@ struct Player
 	D3DXVECTOR3 moveV0;		//初期移動量
 	D3DXVECTOR3 rot;		//向き
 	float moveGauge;		//移動量(ダッシュ)
+	float fOldMoveGauge;		//前の移動量（アクション硬直に使用）
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 	bool bJump;				//ジャンプしているかどうか
 	bool bHipDrop;			//ヒップドロップしているかどうか

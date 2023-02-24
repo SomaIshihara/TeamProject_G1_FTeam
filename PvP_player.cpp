@@ -38,7 +38,8 @@
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)		//ヒップドロップスピンの回転値
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 #define PLAYER_HIPDROP_ACTIONRIGOR	(45)		//ヒップドロップのアクション硬直の時間
-#define PLAYER_DASH_ACTIONRIGOR	(60)		//ダッシュのアクション硬直の時間
+#define PLAYER_DASH_ACTIONRIGOR	(20)		//ダッシュのアクション硬直のベースの時間
+#define PLAYER_D_ACTRIGOR_CALC(x)	(powf((x - 0.75f), 2) + 1)
 
 //移動量関係
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -575,6 +576,9 @@ void DashPlayer(int nDashPlayer)
 {
 	PlaySound(SOUND_LABEL_SE_GRASSDASH);
 
+	//アクション硬直用にパワー移動
+	g_aPlayerPvP[nDashPlayer].fOldMoveGauge = g_aPlayerPvP[nDashPlayer].moveGauge;
+
 	//進行方向の設定
 	g_aPlayerPvP[nDashPlayer].move.x = -sinf(g_aPlayerPvP[nDashPlayer].rot.y) * g_aPlayerPvP[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
 	g_aPlayerPvP[nDashPlayer].move.z = -cosf(g_aPlayerPvP[nDashPlayer].rot.y) * g_aPlayerPvP[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
@@ -626,7 +630,7 @@ void ControllPlayer(int nPlayerNum)
 		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
 			if (g_aPlayerPvP[nPlayerNum].stat == PLAYERSTAT_DASH)
 			{
-				g_aPlayerPvP[nPlayerNum].nActionRigor = PLAYER_DASH_ACTIONRIGOR;
+				g_aPlayerPvP[nPlayerNum].nActionRigor = PLAYER_DASH_ACTIONRIGOR * PLAYER_D_ACTRIGOR_CALC(g_aPlayerPvP[nPlayerNum].fOldMoveGauge);
 				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 			}
 			else
