@@ -9,7 +9,6 @@
 
 //マクロ
 #define MAX_PARTS	(10)	//パーツ使用最大数
-#define MAX_TEXTURE	(16)	//テクスチャ最大数
 
 //配置モデル列挙
 typedef enum

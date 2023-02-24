@@ -4,6 +4,8 @@
 //Author:石原颯馬
 //
 //==========================================
+#define _CRTDBG_MAP_ALLOC
+
 #include "main.h"
 #include "input.h"
 #include "camera.h"
@@ -18,6 +20,7 @@
 #include "light.h"
 #include "sound.h"
 #include "conversioninput.h"
+#include <crtdbg.h>
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前

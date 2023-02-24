@@ -115,32 +115,32 @@ void LoadWall(void)
 
 				//幅
 			case WALLCASE_WIDTH:
-				g_aWall[nLine].fWidth = atof(aData);
+				g_aWall[nLine].fWidth = fatof(aData);
 				break;
 
 				//高さ
 			case WALLCASE_HEIGHT:
-				g_aWall[nLine].fHeight = atof(aData);
+				g_aWall[nLine].fHeight = fatof(aData);
 				break;
 
 				//奥行き
 			case WALLCASE_DEPTH:
-				g_aWall[nLine].fDepth = atof(aData);
+				g_aWall[nLine].fDepth = fatof(aData);
 				break;
 
 				//X座標
 			case WALLCASE_POSX:
-				g_aWall[nLine].pos.x = atof(aData);
+				g_aWall[nLine].pos.x = fatof(aData);
 				break;
 
 				//Y座標
 			case WALLCASE_POSY:
-				g_aWall[nLine].pos.y = atof(aData);
+				g_aWall[nLine].pos.y = fatof(aData);
 				break;
 
 				//Z座標
 			case WALLCASE_POSZ:
-				g_aWall[nLine].pos.z = atof(aData);
+				g_aWall[nLine].pos.z = fatof(aData);
 				break;
 			}
 

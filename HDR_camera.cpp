@@ -195,8 +195,8 @@ void Set_NumHDRCamera(NumCamera type)
 
 		g_HDRCamera[nCntHDRCamera].fMaxLength = MAX_DRAW;				//最大描画距離設定
 
-		g_HDRCamera[nCntHDRCamera].viewport.X = 0.0f;					//原点Ⅹ位置代入
-		g_HDRCamera[nCntHDRCamera].viewport.Y = 0.0f;					//原点Ｙ位置代入
+		g_HDRCamera[nCntHDRCamera].viewport.X = (DWORD)0.0f;					//原点Ⅹ位置代入
+		g_HDRCamera[nCntHDRCamera].viewport.Y = (DWORD)0.0f;					//原点Ｙ位置代入
 		g_HDRCamera[nCntHDRCamera].viewport.Width = SCREEN_WIDTH;		//画面幅初期化
 		g_HDRCamera[nCntHDRCamera].viewport.Height = SCREEN_HEIGHT;	//画面高さ初期化
 		g_HDRCamera[nCntHDRCamera].viewport.MinZ = 0.0f;
@@ -215,8 +215,8 @@ void Set_NumHDRCamera(NumCamera type)
 		{
 			g_HDRCamera[nCntHDRCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
-			g_HDRCamera[nCntHDRCamera].viewport.X = (SCREEN_WIDTH / 4) * nCntHDRCamera;	//原点Ⅹ位置代入
-			g_HDRCamera[nCntHDRCamera].viewport.Y = NIL_F;									//原点Ｙ位置代入
+			g_HDRCamera[nCntHDRCamera].viewport.X = (DWORD)(SCREEN_WIDTH / 4) * nCntHDRCamera;	//原点Ⅹ位置代入
+			g_HDRCamera[nCntHDRCamera].viewport.Y = (DWORD)NIL_F;									//原点Ｙ位置代入
 			g_HDRCamera[nCntHDRCamera].viewport.Width = SCREEN_WIDTH / 4;						//画面幅初期化
 			g_HDRCamera[nCntHDRCamera].viewport.Height = SCREEN_HEIGHT;						//画面高さ初期化
 			g_HDRCamera[nCntHDRCamera].viewport.MinZ = 0.0f;
@@ -238,8 +238,8 @@ void Set_NumHDRCamera(NumCamera type)
 		{
 			g_HDRCamera[nCntHDRCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
-			g_HDRCamera[nCntHDRCamera].viewport.X = NIL_F;									//原点Ⅹ位置代入
-			g_HDRCamera[nCntHDRCamera].viewport.Y = (SCREEN_HEIGHT / 2) * (nCntHDRCamera % 2);	//原点Ｙ位置代入
+			g_HDRCamera[nCntHDRCamera].viewport.X = (DWORD)NIL_F;									//原点Ⅹ位置代入
+			g_HDRCamera[nCntHDRCamera].viewport.Y = (DWORD)(SCREEN_HEIGHT / 2) * (nCntHDRCamera % 2);	//原点Ｙ位置代入
 			g_HDRCamera[nCntHDRCamera].viewport.Width = SCREEN_WIDTH;							//画面幅初期化
 			g_HDRCamera[nCntHDRCamera].viewport.Height = SCREEN_HEIGHT / 2;					//画面高さ初期化
 			g_HDRCamera[nCntHDRCamera].viewport.MinZ = 0.0f;

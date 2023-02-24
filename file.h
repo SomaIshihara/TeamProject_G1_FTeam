@@ -13,7 +13,6 @@
 #include "meshfault.h"
 
 //マクロ
-#define MAX_NUM_TEXTURE	(32)	//最大テクスチャ数
 #define MAX_NUM_MODEL	(128)	//最大モデル数
 
 //コード名
@@ -123,14 +122,14 @@
 typedef struct
 {
 	int numTexture;	//テクスチャ数
-	char fileName[MAX_NUM_TEXTURE][MAX_PATH_STR];
+	char fileName[MAX_TEXTURE][MAX_PATH_STR];
 } ReadTextureData;
 
 //モデル
 typedef struct
 {
 	int numTexture;	//テクスチャ数
-	char fileName[MAX_NUM_TEXTURE][MAX_PATH_STR];
+	char fileName[MAX_TEXTURE][MAX_PATH_STR];
 } ReadModelData;
 
 //カメラはCamera.hのものを使う

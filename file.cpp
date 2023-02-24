@@ -67,7 +67,7 @@ READSTAT g_readStat = READSTAT_NONE;
 
 //Žæ“¾‚µ‚½‚à‚Ì
 //‹L‰¯‚·‚é
-char g_aTexFilePath[MAX_NUM_TEXTURE][MAX_PATH_STR];
+char g_aTexFilePath[MAX_TEXTURE][MAX_PATH_STR];
 char g_aModelFilePath[MAX_NUM_MODEL][MAX_PATH_STR];
 ReadPlayerModel g_readPlayermodel[ANIMAL_MAX];
 
@@ -260,7 +260,7 @@ void LoadModelViewerFile(const char *path)
 					//Žæ“¾•”•ª
 					else if (strncmp(&aCode[0], CODE_TEXTURE_FILENAME, sizeof CODE_TEXTURE_FILENAME / sizeof(char) - 1) == 0)
 					{
-						if (g_counterReadTexture < MAX_NUM_TEXTURE)
+						if (g_counterReadTexture < MAX_TEXTURE)
 						{
 							pSprit = strtok(&aCode[0], " =\n");	//ˆ—“à—e‚Ì•”•ªÁ‚·
 
