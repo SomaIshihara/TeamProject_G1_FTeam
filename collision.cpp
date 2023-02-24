@@ -251,6 +251,7 @@ bool CollisionHipDropPP(Player *pATKPlayer, float fWidth, float fHeight, float f
 
 					//UŒ‚‚³‚ê‚½ˆµ‚¢‚É‚·‚é
 					pPlayer->nLastHitPlayer = pATKPlayer->nPlayerNum;
+					pPlayer->bJump = true;
 				}
 			}
 		}

@@ -663,7 +663,7 @@ void ControllPlayer(int nPlayerNum)
 		}
 
 		//ジャンプ・ヒップドロップ
-		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
+		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
 		{
 			if (g_aPlayerPvP[nPlayerNum].bJump)
 			{
@@ -687,8 +687,22 @@ void ControllPlayer(int nPlayerNum)
 	//ヒップドロップ中
 	else
 	{
+		//ヒップドロップのスピン中	
+		if (g_aPlayerPvP[nPlayerNum].bHipDropSpin)
+		{
+			//前転させる				
+			g_aPlayerPvP[nPlayerNum].rot.x += PLAYER_HIPSPIN_SPEED;
+
+			//１周した				
+			if (g_aPlayerPvP[nPlayerNum].rot.x <= PLAYER_HIPSPIN_LAP)
+			{
+				g_aPlayerPvP[nPlayerNum].rot.x = 0.0f;			//回転値を元に戻す
+				g_aPlayerPvP[nPlayerNum].bHipDropSpin = false;	//スピンし終わった		
+			}
+		}
+
 		//ヒップドロップ硬直時間がある
-		if (g_aPlayerPvP[nPlayerNum].nHipDropWait > 0)
+		else
 		{
 			g_aPlayerPvP[nPlayerNum].nHipDropWait--;		//硬直時間を減らしていく
 		}
@@ -964,8 +978,8 @@ void ItemStateParticle(int nPlayerNum)
 
 	if (g_aPlayerPvP[nPlayerNum].nGhostItemTime > 0)
 	{
-		//SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
-		//SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
+		//SetParticle(g_aPlayerPvP[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
+		//SetParticle(g_aPlayerPvP[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
 	}
 }
 
