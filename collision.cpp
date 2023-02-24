@@ -202,7 +202,7 @@ bool CollisionHipDropPP(Player *pATKPlayer, float fWidth, float fHeight, float f
 	//–¢”½‰f‚ÌˆÊ’ul—¶
 	D3DXVECTOR3 posTemp = pATKPlayer->pos + pATKPlayer->move;
 
-	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++)
+	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++, pPlayer++)
 	{
 		if (pPlayer != pATKPlayer)
 		{
@@ -231,13 +231,13 @@ bool CollisionHipDropPP(Player *pATKPlayer, float fWidth, float fHeight, float f
 			fAreaAZ = TASUKIGAKE(vecToPosZ.z, vecToPosZ.y, vecMove.z, vecMove.y);
 			fAreaBZ = TASUKIGAKE(vecLineZ.z, vecLineZ.y, vecMove.z, vecMove.y);
 			//¶‘¤AND”ÍˆÍ“à
-			float fHeight = posTemp.y - pPlayer->pos.y;
-			if (fHeight <= fHeight)
+			float fHeightDelta = posTemp.y - pPlayer->pos.y;
+			if (fHeightDelta <= fHeight)
 			{
-				float fRadius = PYTHAGORAS(pPlayer->pos.x - posTemp.x,
+				float fRadiusDelta = PYTHAGORAS(pPlayer->pos.x - posTemp.x,
 					pPlayer->pos.z - posTemp.z);
 
-				if (fRadius <= fRadius)
+				if (fRadiusDelta <= fRadius)
 				{
 					//ˆÚ“®—ÊŒvŽZ
 					float fAngleHipDrop = atan2f(pPlayer->pos.x - posTemp.x,

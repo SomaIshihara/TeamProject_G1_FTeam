@@ -74,22 +74,22 @@ void InitPvPGame(void)
 	InitCamera(g_NumCamera_PvP);	// カメラの初期化処理
 	InitWall();					// 壁の初期化処理
 	InitPause();				// ポーズ画面の初期化処理
-	//InitParticle();				// パーティクルの初期化処理
-	//{// エフェクトの初期化処理
-	//	InitChargeEffect();		//チャージエフェクト
-	//	InitChargeCylinder();	//チャージエフェクト(しりんだー)
-	//	InitAttackEffect();		//攻撃エフェクト
-	//	InitTremorEffect();		//ヒップドロップエフェクト
-	//	InitEff_shockWave_00(); //ダッシュ衝撃波エフェクト
-	//}	
-	//InitScore();				// スコアの初期化
-	//InitTime();					// タイマーの初期化処理
+	InitParticle();				// パーティクルの初期化処理
+	{// エフェクトの初期化処理
+		InitChargeEffect();		//チャージエフェクト
+		InitChargeCylinder();	//チャージエフェクト(しりんだー)
+		InitAttackEffect();		//攻撃エフェクト
+		InitTremorEffect();		//ヒップドロップエフェクト
+		InitEff_shockWave_00(); //ダッシュ衝撃波エフェクト
+	}	
+	InitScore();				// スコアの初期化
+	InitTime();					// タイマーの初期化処理
 	InitGauge();				// ゲージの初期化処理
 
 
-	//SetTime(LIMIT_TIMER);		// タイマーの設定処理
+	SetTime(LIMIT_TIMER);		// タイマーの設定処理
 
-	//SetScore(0,4);				// スコアの設定処理
+	SetScore(0,4);				// スコアの設定処理
 
 	g_bPause_PvP = false;				// ポーズの初期化
 	g_bDisconnectPlayer_PvP = false;	//正常にコントローラーが接続されている状態とする
@@ -125,17 +125,17 @@ void UninitPvPGame(void)
 	UninitPause();			// ポーズ画面の終了処理
 	UninitGauge();			// ゲージの終了処理
 	UninitModel();			// モデルの終了処理
-	//UninitParticle();		// パーティクルの終了処理
-	//{	// エフェクトの終了処理
-	//	UninitChargeEffect();		//チャージエフェクト
-	//	UninitChargeCylinder();		//チャージエフェクト(しりんだー)
-	//	UninitAttackEffect();		//攻撃エフェクト
-	//	UninitTremorEffect();		//ヒップドロップエフェクト
-	//	UninitEff_shockWave_00();	//ダッシュ衝撃波エフェクト
-	//}
-	//UninitScore();			// スコアの終了処理
+	UninitParticle();		// パーティクルの終了処理
+	{	// エフェクトの終了処理
+		UninitChargeEffect();		//チャージエフェクト
+		UninitChargeCylinder();		//チャージエフェクト(しりんだー)
+		UninitAttackEffect();		//攻撃エフェクト
+		UninitTremorEffect();		//ヒップドロップエフェクト
+		UninitEff_shockWave_00();	//ダッシュ衝撃波エフェクト
+	}
+	UninitScore();			// スコアの終了処理
 	UninitCameraFrame();	// 画面分割の枠終了処理
-	//UninitTime();			// タイマーの終了処理（ここは順番は問わない）
+	UninitTime();			// タイマーの終了処理（ここは順番は問わない）
 
 	//ゲームBGM停止
 	StopSound(SOUND_LABEL_BGM_GAME);
@@ -165,16 +165,16 @@ void UpdatePvPGame(void)
 		UpdateCamera();			// カメラの更新処理
 		UpdateWall();			// 壁の更新処理
 		UpdateGauge();			// ゲージの更新処理
-		//{// エフェクトの更新処理
-		//	UpdateChargeEffect();		//チャージエフェクト
-		//	UpdateChargeCylinder();		//チャージエフェクト(しりんだー)
-		//	UpdateAttackEffect();		//攻撃エフェクト
-		//	UpdateTremorEffect();		//ヒップドロップエフェクト
-		//	UpdateEff_shockWave_00();	//ダッシュ衝撃波エフェクト
-		//}
-		//UpdateParticle();	// パーティクルの更新処理
-		//UpdateScore();		//スコアの更新処理
-		//UpdateTime();		//タイマーの更新処理
+		{// エフェクトの更新処理
+			UpdateChargeEffect();		//チャージエフェクト
+			UpdateChargeCylinder();		//チャージエフェクト(しりんだー)
+			UpdateAttackEffect();		//攻撃エフェクト
+			UpdateTremorEffect();		//ヒップドロップエフェクト
+			UpdateEff_shockWave_00();	//ダッシュ衝撃波エフェクト
+		}
+		UpdateParticle();	// パーティクルの更新処理
+		UpdateScore();		//スコアの更新処理
+		UpdateTime();		//タイマーの更新処理
 
 		ChangeNumCamera_PvP();	//カメラの数変更処理
 
@@ -223,15 +223,15 @@ void UpdatePvPGame(void)
 				UpdateItem();			// アイテムの更新処理
 				UpdateWall();			// 壁の更新処理
 				UpdateGauge();			// ゲージの更新処理
-				//{// エフェクトの更新処理
-				//	UpdateChargeEffect();	//チャージエフェクト
-				//	UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
-				//	UpdateAttackEffect();	//攻撃エフェクト
-				//	UpdateTremorEffect();	//ヒップドロップエフェクト
-				//}
-				//UpdateParticle();	// パーティクルの更新処理
-				//UpdateScore();		//スコアの更新処理
-				//UpdateTime();		//タイマーの更新処理
+				{// エフェクトの更新処理
+					UpdateChargeEffect();	//チャージエフェクト
+					UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
+					UpdateAttackEffect();	//攻撃エフェクト
+					UpdateTremorEffect();	//ヒップドロップエフェクト
+				}
+				UpdateParticle();	// パーティクルの更新処理
+				UpdateScore();		//スコアの更新処理
+				UpdateTime();		//タイマーの更新処理
 			}
 		}
 	}
@@ -265,21 +265,21 @@ void DrawPvPGame(void)
 		DrawMeshFault();			// メッシュの断面描画処理
 		//DrawWall();					// 壁の描画処理
 		DrawFence();				// フェンスの描画処理
-		//{// エフェクトの描画処理
-		//	DrawChargeEffect();		//チャージエフェクト
-		//	DrawChargeCylinder();	//チャージエフェクト(しりんだー)
-		//	DrawAttackEffect();		//攻撃エフェクト
-		//	DrawTremorEffect();		//ヒップドロップエフェクト
-		//	DrawEff_shockWave_00();	//ダッシュ衝撃波エフェクト
-		//}	
-		//DrawParticle();				// パーティクルの描画処理
+		{// エフェクトの描画処理
+			DrawChargeEffect();		//チャージエフェクト
+			DrawChargeCylinder();	//チャージエフェクト(しりんだー)
+			DrawAttackEffect();		//攻撃エフェクト
+			DrawTremorEffect();		//ヒップドロップエフェクト
+			DrawEff_shockWave_00();	//ダッシュ衝撃波エフェクト
+		}	
+		DrawParticle();				// パーティクルの描画処理
 		DrawPlayer();				// プレイヤーの描画処理
 		DrawBonus();				// ボーナスの描画処理
 		DrawItem();					// アイテムの描画処理
 		DrawGauge();				// ゲージの描画処理
-		//DrawScore();				// スコアの描画処理
+		DrawScore();				// スコアの描画処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
-		//DrawTime();					//タイマーの描画処理
+		DrawTime();					//タイマーの描画処理
 
 									//ポーズがON
 		if (g_bPause_PvP == true && g_bPhotoMode_PvP == false)

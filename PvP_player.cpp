@@ -255,7 +255,7 @@ void UpdatePlayer(void)
 
 				if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_HIPDROP)
 				{//ヒップドロップ中なら
-					CollisionHipDropPP(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH, HIPDROP_RADIUS, PLAYER_HIPDROP_POWER);
+					CollisionHipDropPP(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH, HIPDROP_RADIUS, PLAYER_BLOWING_POWER);
 				}
 			}
 		}
