@@ -37,7 +37,8 @@
 #define PLAYER_ROTATE_SPEED		(0.02f * D3DX_PI)	//回転速度
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)		//ヒップドロップスピンの回転値
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
-#define PLAYER_ACTIONRIGOR_ADD	(30)		//アクション硬直の追加の時間
+#define PLAYER_HIPDROP_ACTIONRIGOR	(45)		//ヒップドロップのアクション硬直の時間
+#define PLAYER_DASH_ACTIONRIGOR	(60)		//ダッシュのアクション硬直の時間
 
 //移動量関係
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
@@ -292,7 +293,7 @@ void UpdatePlayer(void)
 				{//ヒップドロップしてたならエフェクト出す
 					SetTremorEffect(g_aPlayerPvP[nCntPlayer].pos);
 					g_aPlayerPvP[nCntPlayer].bHipDrop = false;    //ヒップドロップしてない
-					g_aPlayerPvP[nCntPlayer].nActionRigor = TREMOR_EFFECT_TIME + PLAYER_ACTIONRIGOR_ADD;
+					g_aPlayerPvP[nCntPlayer].nActionRigor = PLAYER_HIPDROP_ACTIONRIGOR;
 				}
 				g_aPlayerPvP[nCntPlayer].bJump = false;
 				g_aPlayerPvP[nCntPlayer].moveV0.y = 0.0f;
@@ -623,15 +624,27 @@ void ControllPlayer(int nPlayerNum)
 		if ((int)(g_aPlayerPvP[nPlayerNum].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
 			&& (int)(g_aPlayerPvP[nPlayerNum].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
 		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-			if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == true)
-			{//Xボタンが押された					 
-			 //プレイヤーのチャージ処理
-				ChargePlayer(nPlayerNum);
+			if (g_aPlayerPvP[nPlayerNum].stat == PLAYERSTAT_DASH)
+			{
+				g_aPlayerPvP[nPlayerNum].nActionRigor = PLAYER_DASH_ACTIONRIGOR;
+				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 			}
 			else
 			{
-				RotatePlayer(nPlayerNum);
-				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
+				g_aPlayerPvP[nPlayerNum].nActionRigor--;
+				if (g_aPlayerPvP[nPlayerNum].nActionRigor <= 0)
+				{
+					if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == true)
+					{//Xボタンが押された					 
+					 //プレイヤーのチャージ処理
+						ChargePlayer(nPlayerNum);
+					}
+					else
+					{
+						RotatePlayer(nPlayerNum);
+						g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
+					}
+				}
 			}
 
 			if (GetButton(nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X) == true)
