@@ -263,7 +263,7 @@ void DrawPvPGame(void)
 									//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 		DrawMeshDome();				// メッシュドームの描画処理	
 		DrawMeshFault();			// メッシュの断面描画処理
-		DrawWall();					// 壁の描画処理
+		//DrawWall();					// 壁の描画処理
 		DrawFence();				// フェンスの描画処理
 		{// エフェクトの描画処理
 			DrawChargeEffect();		//チャージエフェクト

@@ -1,6 +1,6 @@
 //==========================================
 //
-//落下防止柵プログラム[fence.cpp]
+//落下防止フェンスプログラム[fence.cpp]
 //Author:石原颯馬
 //
 //==========================================
@@ -11,7 +11,7 @@
 #include "meshfield.h"
 
 //マクロ
-#define FENCE_SCALE		(5.0f)		//フェンスの拡大倍率
+
 
 //グローバル
 Fence g_aFence[MAX_USE_FENCE];
@@ -27,7 +27,7 @@ void InitFence(void)
 	for (int nCntfence = 0; nCntfence < MAX_USE_FENCE; nCntfence++)
 	{
 		g_aFence[nCntfence] = {};
-		SetFence(GetMeshField()->fRadius, D3DXVECTOR3(0.0f, ((float)nCntfence / MAX_USE_FENCE) * 2 * D3DX_PI, 0.0f));
+		SetFence(GetMeshField()->fRadius, D3DXVECTOR3(0.0f, FIX_ROT(((float)nCntfence / MAX_USE_FENCE) * 2 * D3DX_PI), 0.0f));
 	}
 }
 
@@ -58,7 +58,7 @@ void DrawFence(void)
 	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
 	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
 
-	//柵モデル取得
+	//フェンスモデル取得
 	Model fenceModel = GetXObject(OBJECTTYPE_FENCE);
 
 	//現在のマテリアル取得
@@ -116,6 +116,7 @@ void DrawFence(void)
 //========================
 void SetFence(float fLength, D3DXVECTOR3 rot)
 {
+	fLength -= 10.0f;
 	for (int nCntObj = 0; nCntObj < MAX_USE_FENCE; nCntObj++)
 	{
 		if (g_aFence[nCntObj].bUse == false)
@@ -135,4 +136,12 @@ void SetFence(float fLength, D3DXVECTOR3 rot)
 			break;
 		}
 	}
+}
+
+//========================
+//取得処理
+//========================
+Fence *GetFence(void)
+{
+	return &g_aFence[0];
 }

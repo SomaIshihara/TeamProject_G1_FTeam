@@ -165,6 +165,7 @@
     <ClCompile Include="camera_frame.cpp" />
     <ClCompile Include="charge_cylinder.cpp" />
     <ClCompile Include="charge_effect.cpp" />
+    <ClCompile Include="collision.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="comai.cpp" />
     <ClCompile Include="conversioninput.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="camera_frame.h" />
     <ClInclude Include="charge_cylinder.h" />
     <ClInclude Include="charge_effect.h" />
+    <ClInclude Include="collision.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="comai.h" />

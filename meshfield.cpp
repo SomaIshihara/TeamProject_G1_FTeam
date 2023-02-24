@@ -163,7 +163,7 @@ void UninitMeshfield(void)
 void UpdateMeshfield(void)
 {
 	//îºåaÇèkÇﬂÇÈ
-	g_MeshField[0].fRadius -= MESHFIELD_SHRINK_SPEED;
+	//g_MeshField[0].fRadius -= MESHFIELD_SHRINK_SPEED;
 
 	//ç≈è¨îºåaÇÊÇËÇ‡è¨Ç≥Ç≠Ç»Ç¡ÇΩ
 	if (g_MeshField[0].fRadius < MESHFIELD_MIN_RADIUS)

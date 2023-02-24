@@ -70,12 +70,12 @@ struct Player
 
 	//衝突関係
 	D3DXVECTOR3 faceCollider[2];	//当たり判定
-	int lastAtkPlayer;				//最後に触れたプレイヤー
+	int nFrameAtkPlayer;			//このフレームで触れたプレイヤー
 
 	//パラメータ類
 	ANIMAL animal;			//使用している動物
 	int nScore;				//得点
-	int nNumHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
+	int nLastHitPlayer;		//最後に衝突したプレイヤー（初期値-1）
 	PLAYERSTAT stat;		//状態
 	int nPlayerNum;			//プレイヤー番号
 

@@ -1,6 +1,6 @@
 //==========================================
 //
-//落下防止柵プログラムのヘッダ[fence.h]
+//落下防止フェンスプログラムのヘッダ[fence.h]
 //Author:石原颯馬
 //
 //==========================================
@@ -10,7 +10,10 @@
 #include "main.h"
 
 //マクロ
-#define MAX_USE_FENCE		(32)	//柵最大使用数
+#define MAX_USE_FENCE		(32)	//フェンス最大使用数
+#define FENCE_SCALE			(5.0f)		//フェンスの拡大倍率
+#define FENCE_WIDTH			(12.0f)		//フェンスの幅
+#define FENCE_DEPTH			(1.0f)		//フェンスの高さ
 
 //フェンス用構造体
 typedef struct
@@ -33,5 +36,6 @@ void UninitFence(void);
 void UpdateFence(void);
 void DrawFence(void);
 void SetFence(float fLength, D3DXVECTOR3 rot);
+Fence *GetFence(void);
 
 #endif // !_FENCE_H_
