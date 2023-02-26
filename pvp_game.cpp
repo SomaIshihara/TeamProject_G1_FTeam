@@ -201,7 +201,7 @@ void UpdatePvPGame(void)
 	else
 	{
 		//ポーズ画面の更新処理
-		UpdatePause();
+		UpdatePause(MODE_PvPGAME);
 
 		//フォトモードON
 		if (g_bPhotoMode_PvP)

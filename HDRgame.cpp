@@ -19,6 +19,10 @@ Author:平澤詩苑
 #include "timer.h"
 #include "sound.h"
 #include "bg.h"
+#include "block.h"
+#include "meshfield.h"
+#include "meshdome.h"
+#include "fence.h"
 
 //グローバル変数宣言
 bool g_bPause_HDR = false;				// ポーズ
@@ -30,9 +34,9 @@ CHECKMODE	g_CheckMode_HDR;
 NumCamera	g_NumCamera_HDR;
 bool		g_bPhotoMode_HDR;			// フォトモード切替		true:ポーズ画面非表示	false:ボーズ画面表示
 
-										//------------------------------------------------
-										//				ゲームの初期化処理
-										//------------------------------------------------
+//------------------------------------------------
+//				ゲームの初期化処理
+//------------------------------------------------
 void InitHDRGame(void)
 {
 	g_nUseContNum_HDR = SetUseController_HDR();		// コントローラーの使用設定
@@ -48,7 +52,10 @@ void InitHDRGame(void)
 	InitCameraFrame();			// 画面分割の枠初期化処理
 	InitCamera(g_NumCamera_HDR);	// カメラの初期化処理
 	InitPause();				// ポーズ画面の初期化処理
-	
+	InitBlock();				// ブロックの初期化処理
+	InitMeshfield();
+	InitMeshDome();
+	InitFence();
 	InitTime();					// タイマーの初期化処理
 
 	SetTime(LIMIT_TIMER);		// タイマーの設定処理
@@ -75,6 +82,10 @@ void UninitHDRGame(void)
 	UninitPause();			// ポーズ画面の終了処理
 	UninitPlayer_HDR();
 	UninitModel();			// モデルの終了処理
+	UninitBlock();			// ブロックの終了処理
+	UninitMeshfield();
+	UninitMeshDome();
+	UninitFence();
 
 	UninitCameraFrame();	// 画面分割の枠終了処理
 	UninitTime();			// タイマーの終了処理（ここは順番は問わない）
@@ -96,6 +107,7 @@ void UpdateHDRGame(void)
 		UpdateLight();			// ライトの更新処理
 		UpdateCamera();			// カメラの更新処理
 		UpdateTime();		//タイマーの更新処理
+		UpdateBlock();			// ブロックの更新処理
 		UpdatePlayer_HDR();
 
 
@@ -124,7 +136,7 @@ void UpdateHDRGame(void)
 	else
 	{
 		//ポーズ画面の更新処理
-		UpdatePause();
+		UpdatePause(MODE_RaceGAME);
 
 		//フォトモードON
 		if (g_bPhotoMode_HDR)
@@ -164,7 +176,11 @@ void DrawHDRGame(void)
 		SetCamera(nCntCamera);		// カメラの設定処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
 		DrawTime();					//タイマーの描画処理
+		DrawBlock();				// ブロックの描画処理
 		DrawPlayer_HDR();
+		DrawMeshfield();
+		DrawMeshDome();
+		DrawFence();
 
 									//ポーズがON
 		if (g_bPause_HDR == true && g_bPhotoMode_HDR == false)

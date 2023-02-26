@@ -9,6 +9,7 @@
 #include "color.h"
 #include "sound.h"
 #include "meshfield.h"
+#include "block.h"
 
 //グローバル変数
 Player_HDR g_aPlayerHDR[MAX_USE_GAMEPAD];
@@ -24,10 +25,10 @@ void HipDropPlayer_HDR(int nHipDropPlayer);		//ヒップドロップ処理
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 {
-	{ D3DXVECTOR3(-75.0f,0.0f,0.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
-	{ D3DXVECTOR3(-25.0f,0.0f,0.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
-	{ D3DXVECTOR3(25.0f,0.0f,0.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
-	{ D3DXVECTOR3(75.0f,0.0f,0.0f) ,D3DXVECTOR3(0.0f,0.0f,0.0f) },
+	{ D3DXVECTOR3(-225.0f,2200.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(-75.0f,2200.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(75.0f,2200.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(225.0f,2200.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
 };
 
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
@@ -107,10 +108,11 @@ void UpdatePlayer_HDR(void)
 
 			//各プレイヤーの操作
 			ControllGPadPlayer_HDR(nCntPlayer);
+
 		}
 
-		//使用されているかにかかわらず行う
-		g_aPlayerHDR[nCntPlayer].move.y = -15;
+		////使用されているかにかかわらず行う
+		//g_aPlayerHDR[nCntPlayer].move.y = -15;
 
 		//ジャンプ量設定
 		if (g_aPlayerHDR[nCntPlayer].bHipDrop == true)
@@ -124,19 +126,16 @@ void UpdatePlayer_HDR(void)
 
 		//普通に移動
 		g_aPlayerHDR[nCntPlayer].pos += g_aPlayerHDR[nCntPlayer].move;
-	
-		if (g_aPlayerHDR[nCntPlayer].HipDropPower < 0)
-		{
-			g_aPlayerHDR[nCntPlayer].bJump = false;
-			g_aPlayerHDR[nCntPlayer].bHipDrop = false;
-		}
 
 		if (g_aPlayerHDR[nCntPlayer].pos.y < 0)
 		{
 			g_aPlayerHDR[nCntPlayer].pos.y = 0;
+			g_aPlayerHDR[nCntPlayer].move.y = 0;
 			g_aPlayerHDR[nCntPlayer].bJump = false;
 			g_aPlayerHDR[nCntPlayer].bHipDrop = false;
 		}
+
+		CollisionBlock(nCntPlayer);
 	}
 }
 //========================
@@ -173,6 +172,8 @@ void DrawPlayer_HDR(void)
 		{
 			if (g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].bUse == true)
 			{
+				g_aPlayerHDR[nCntPlayer].posOld_Coll.y = g_aPlayerHDR[nCntPlayer].pos.y;
+
 				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
 				D3DXMATRIX mtxParent;					//親のマトリ
 
@@ -344,10 +345,25 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 	PlaySound(SOUND_LABEL_SE_HIPDROP);
 
 	g_aPlayerHDR[nHipDropPlayer].HipDropPower = g_aPlayerHDR[nHipDropPlayer].pos.y - g_aPlayerHDR[nHipDropPlayer].posOld.y;
+
+	if (g_aPlayerHDR[nHipDropPlayer].HipDropPower >= 150)
+	{
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 10;
+	}
+	else if (g_aPlayerHDR[nHipDropPlayer].HipDropPower > 80)
+	{
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 4;
+	}
+	else
+	{
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 1;
+	}
+
+	g_aPlayerHDR[nHipDropPlayer].move.y = -15.0f;		//ヒップドロップの降下速度を代入
 	g_aPlayerHDR[nHipDropPlayer].moveV0.y = -15.0f;		//ヒップドロップの降下速度を代入
-	g_aPlayerHDR[nHipDropPlayer].jumpTime = 0;							//ジャンプ時間リセット
-	g_aPlayerHDR[nHipDropPlayer].bHipDrop = true;						//ヒップドロップしている
-	g_aPlayerHDR[nHipDropPlayer].bHipDropSpin = true;					//スピンしている
+	g_aPlayerHDR[nHipDropPlayer].jumpTime = 0;						//ジャンプ時間リセット
+	g_aPlayerHDR[nHipDropPlayer].bHipDrop = true;					//ヒップドロップしている
+	g_aPlayerHDR[nHipDropPlayer].bHipDropSpin = true;				//スピンしている
 	//g_aPlayerHDR[nHipDropPlayer].stat = PLAYERSTAT_HIPDROP;
 }
 //========================
