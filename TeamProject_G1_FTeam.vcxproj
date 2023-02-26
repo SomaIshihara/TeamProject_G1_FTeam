@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="attack_effect.cpp" />
     <ClCompile Include="bg.cpp" />
+    <ClCompile Include="block.cpp" />
     <ClCompile Include="bonus.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="camera_frame.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="ai.h" />
     <ClInclude Include="attack_effect.h" />
     <ClInclude Include="bg.h" />
+    <ClInclude Include="block.h" />
     <ClInclude Include="bonus.h" />
     <ClInclude Include="camera_frame.h" />
     <ClInclude Include="charge_cylinder.h" />

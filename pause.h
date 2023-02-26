@@ -31,7 +31,7 @@ typedef struct
 //****************************//
 void InitPause(void);
 void UninitPause(void);
-void UpdatePause(void);
+void UpdatePause(MODE mode);
 void DrawPause(void);
 void SetPause(PAUSE Pause);
 void SetPadPause(bool bDisconect, int GamePad = -1);
