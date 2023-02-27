@@ -233,11 +233,11 @@ void UpdateTitle(void)
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffTitle->Lock(0, 0, (void* *)&pVtx, 0);
 	
-		//
-		DirecUpTitle(0);
+	//
+	DirecUpTitle(0);
 
-		//
-		DirecDownTitle(0);
+	//
+	DirecDownTitle(0);
 	
 	switch (g_select)
 	{
@@ -260,23 +260,10 @@ void UpdateTitle(void)
 
 		pVtx += VTX_MAX;
 
-		//if (nCntButtonEffect1 % 2 == 0 && g_Title[TITLE_START].bUseButtom == true)
-		//{//ボタンを押したときに2Fに一回
-		//	pVtx[VTX_LE_UP].col = XCOL_WHITE;
-		//	pVtx[VTX_RI_UP].col = XCOL_WHITE;
-		//	pVtx[VTX_LE_DO].col = XCOL_WHITE;
-		//	pVtx[VTX_RI_DO].col = XCOL_WHITE;
-
-		//	pVtx[VTX_LE_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_RI_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_LE_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_RI_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//}
-
-			pVtx[VTX_LE_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-			pVtx[VTX_RI_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-			pVtx[VTX_LE_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-			pVtx[VTX_RI_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		pVtx[VTX_LE_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		pVtx[VTX_RI_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		pVtx[VTX_LE_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		pVtx[VTX_RI_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 
 		break;
 
@@ -289,39 +276,12 @@ void UpdateTitle(void)
 		pVtx[VTX_LE_DO].col = XCOL_WHITE;
 		pVtx[VTX_RI_DO].col = XCOL_WHITE;
 
-		//if (nCntButtonEffect2 % 2 == 0 && g_Title[TITLE_EXIT].bUseButtom == true)
-		//{//ボタンを押したときに2Fに一回
-		//	pVtx[VTX_LE_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_RI_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_LE_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_RI_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-
-		//	pVtx[VTX_LE_UP].col = XCOL_WHITE;
-		//	pVtx[VTX_RI_UP].col = XCOL_WHITE;
-		//	pVtx[VTX_LE_DO].col = XCOL_WHITE;
-		//	pVtx[VTX_RI_DO].col = XCOL_WHITE;
-		//}
-
 		pVtx -= VTX_MAX;
 
 		pVtx[VTX_LE_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 		pVtx[VTX_RI_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 		pVtx[VTX_LE_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 		pVtx[VTX_RI_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-
-		//if (nCntButtonEffect2 % 2 == 0 && g_Title[TITLE_EXIT].bUseButtom == true)
-		//{//ボタンを押したときに2Fに一回
-		//	pVtx[VTX_LE_UP].col = XCOL_WHITE;
-		//	pVtx[VTX_RI_UP].col = XCOL_WHITE;
-		//	pVtx[VTX_LE_DO].col = XCOL_WHITE;
-		//	pVtx[VTX_RI_DO].col = XCOL_WHITE;
-
-		//	pVtx[VTX_LE_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_RI_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_LE_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//	pVtx[VTX_RI_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-		//}
-
 		break;
 	}
 
@@ -382,13 +342,7 @@ void UpdateTitle(void)
 	UpdateLight();
 
 	//カメラの更新処理
-	UpdateCamera();
-
-	//メッシュドームの更新処理
-	UpdateMeshDome();
-
-	//ステージの更新処理
-	UpdateMeshfield();
+	CameraForTitle();
 }
 
 //------------------------------------------------
@@ -414,11 +368,9 @@ void DrawTitle(void)
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTitle * VTX_MAX, 2);
 	}
 
-	//メッシュドームの描画処理
-	DrawMeshDome();
-
-	//ステージの描画処理
-	DrawMeshfield();
+	SetCamera(0);		// １番目のカメラの設定処理	
+	DrawMeshDome();		// メッシュドームの描画処理	
+	DrawMeshfield();	// ステージの描画処理
 }
 //
 void DirecUpTitle(int NumPad)
