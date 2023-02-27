@@ -46,7 +46,7 @@ void InitTime(void)
 	
 		g_aTime.pos = ZERO_SET;//位置初期化
 		g_aTime.nCounter = 0;
-		SetTimerDejit();		//桁数設定
+		SetTimerDigit();		//桁数設定
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(
@@ -202,7 +202,7 @@ void SetTime(int nTime)
 
 	for (nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++, pVtx += VTX_MAX)
 	{
-		int aTexU = g_aTime.nTime % g_aTime.nDejit / (g_aTime.nDejit / 10);
+		int aTexU = g_aTime.nTime % g_aTime.nDigit / (g_aTime.nDigit / 10);
 
 		//テクスチャ座標の設定
 		pVtx[0].tex = D3DXVECTOR2(aTexU * 0.1f, 0.0f);
@@ -210,13 +210,13 @@ void SetTime(int nTime)
 		pVtx[2].tex = D3DXVECTOR2(aTexU * 0.1f, 1.0f);
 		pVtx[3].tex = D3DXVECTOR2(aTexU * 0.1f + 0.1f, 1.0f);
 
-		g_aTime.nDejit /= 10;
+		g_aTime.nDigit /= 10;
 	}
 	//頂点バッファをアンロックする
 	g_pVtxBuffTime->Unlock();
 
 	//桁数再設定
-	SetTimerDejit();
+	SetTimerDigit();
 }
 
 //===============================
@@ -243,7 +243,7 @@ void AddTime(int nValue)
 
 		for (nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++, pVtx += VTX_MAX)
 		{
-			int aTexU = g_aTime.nTime % g_aTime.nDejit / (g_aTime.nDejit / 10);
+			int aTexU = g_aTime.nTime % g_aTime.nDigit / (g_aTime.nDigit / 10);
 
 			//テクスチャ座標の設定
 			pVtx[0].tex = D3DXVECTOR2(aTexU * 0.1f, 0.0f);
@@ -251,19 +251,19 @@ void AddTime(int nValue)
 			pVtx[2].tex = D3DXVECTOR2(aTexU * 0.1f, 1.0f);
 			pVtx[3].tex = D3DXVECTOR2(aTexU * 0.1f + 0.1f, 1.0f);
 
-			g_aTime.nDejit /= 10;
+			g_aTime.nDigit /= 10;
 		}
 		//頂点バッファをアンロックする
 		g_pVtxBuffTime->Unlock();
 
 		//桁数再設定
-		SetTimerDejit();
+		SetTimerDigit();
 }
 
 //===============================
 //タイムの桁数設定
 //===============================
-void SetTimerDejit(void)
+void SetTimerDigit(void)
 {
-	g_aTime.nDejit = (int)pow(10, NUM_PLACE);
+	g_aTime.nDigit = (int)pow(10, NUM_PLACE);
 }

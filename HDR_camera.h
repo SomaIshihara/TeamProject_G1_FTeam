@@ -17,9 +17,9 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 typedef enum
 {
 	NumHDRCamera_ONLY = 0,			//全体の俯瞰視点
-	NumHDRCamera_HALF_SIDE,		//横に分けた２つの視点
-	NumHDRCamera_HALF_HIGH_row,	//縦に分けた２つの視点
-	NumHDRCamera_FOUR_Separate,	//各プレイヤーを見られる４つの視点
+	NumHDRCamera_HALF_SIDE,			//横に分けた２つの視点
+	NumHDRCamera_HALF_HIGH_row,		//縦に分けた２つの視点
+	NumHDRCamera_FOUR_Separate,		//各プレイヤーを見られる４つの視点
 	NumHDRCamera_MAX,
 }NumHDRCamera;
 
@@ -40,15 +40,15 @@ typedef struct
 
 //プロトタイプ宣言
 void InitSetHDRCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumHDRCamera);	//カメラの位置設定
-void InitHDRCamera(NumCamera type);		//初期化処理
-void UninitHDRCamera(void);				//終了処理
-void UpdateHDRCamera(void);				//更新処理
-void SetHDRCamera(int nIdx);				//設定処理
-void MoveHDRCamera(int nCntHDRCamera);		//カメラの移動処理
+void InitHDRCamera(NumCamera type);				//初期化処理
+void UninitHDRCamera(void);						//終了処理
+void UpdateHDRCamera(void);						//更新処理
+void SetHDRCamera(int nIdx);					//設定処理
+void MoveHDRCamera(int nCntHDRCamera);			//カメラの移動処理
 
 void SetPosRHDRCamera(int nCntHDRCamera);		//注視点設定
 void UpdatePosVHDRCamera(int nCntHDRCamera);	//視点の位置更新
-HDRCamera *GetHDRCamera(void);				//カメラの取得
+HDRCamera *GetHDRCamera(void);					//カメラの取得
 
 										//=========================================
 										//カメラの台数別　設定処理

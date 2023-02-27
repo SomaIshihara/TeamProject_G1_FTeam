@@ -10,9 +10,6 @@
 #include "camera.h"
 #include "meshfield.h"
 
-//マクロ
-
-
 //グローバル
 Fence g_aFence[MAX_USE_FENCE];
 

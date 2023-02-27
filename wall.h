@@ -58,12 +58,12 @@ typedef struct
 } Wall;
 
 //プロトタイプ宣言
-void InitWall(void);	// 初期化処理
-void UninitWall(void);	// 終了処理
-void UpdateWall(void);	// 更新処理
-void DrawWall(void);	// 描画処理
+void InitWall(void);		// 初期化処理
+void UninitWall(void);		// 終了処理
+void UpdateWall(void);		// 更新処理
+void DrawWall(void);		// 描画処理
 
-void LoadWall(void);	// 壁の情報読み込み
+void LoadWall(void);		// 壁の情報読み込み
 void SetWallVertex(void);	// 壁の頂点情報設定処理
 
 bool CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, float fWidth, float fHeight);	//壁の当たり判定

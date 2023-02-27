@@ -551,7 +551,6 @@ void SwitchPause(void)
 			break;
 		}
 
-		
 		break;
 
 	case PAUSE_QUIT:

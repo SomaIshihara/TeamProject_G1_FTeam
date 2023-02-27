@@ -156,9 +156,6 @@
     <ClCompile Include="attack_effect.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="tremor_effect.cpp">
-      <Filter>ソース ファイル\Game\Effect</Filter>
-    </ClCompile>
     <ClCompile Include="charge_cylinder.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
@@ -233,6 +230,9 @@
     </ClCompile>
     <ClCompile Include="block.cpp">
       <Filter>ソース ファイル\Game\Game_HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="tremor_effect.cpp">
+      <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

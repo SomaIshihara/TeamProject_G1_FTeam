@@ -59,7 +59,7 @@ bool CollisionPP(Player *pATKPlayer, float fWidth, float fHeight, float fDepth)
 
 	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++,pPlayer++)
 	{
-		if (pPlayer !=pATKPlayer)
+		if (pPlayer != pATKPlayer && pPlayer->nGhostItemTime <= 0)
 		{
 			//’¸“_Ý’è
 			GenerateCollision(pPlayer->pos,pPlayer->rot, &collPos, fWidth, fDepth);
@@ -204,7 +204,7 @@ bool CollisionHipDropPP(Player *pATKPlayer, float fWidth, float fHeight, float f
 
 	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++, pPlayer++)
 	{
-		if (pPlayer != pATKPlayer)
+		if (pPlayer != pATKPlayer && pPlayer->nGhostItemTime <= 0)
 		{
 			//’¸“_Ý’è
 			GenerateCollision(pPlayer->pos, pPlayer->rot, &collPos, fWidth, fDepth);

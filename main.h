@@ -84,7 +84,7 @@ typedef enum
 #define ONE_LAP		(D3DX_PI * 2.0f)	//１周分の角度
 
 
-#define MAX_MOJI	(256)		//外部ファイル読み込みなどに使用する格納する文字の最大数
+#define MAX_CHAR	(256)		//外部ファイル読み込みなどに使用する格納する文字の最大数
 
 //頂点情報[2D]
 typedef struct

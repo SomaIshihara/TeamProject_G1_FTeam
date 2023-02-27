@@ -34,7 +34,7 @@ typedef struct
 	D3DXVECTOR3 pos;				//タイムの位置
 	int nTime;						//タイムの値
 	int nCounter;					//タイムのカウンター	
-	int nDejit;						//桁数
+	int nDigit;						//桁数
 	int nTemp;						//タイムの保存用
 }TIME;
 
@@ -45,7 +45,7 @@ void UpdateTime(void);
 void DrawTime(void);
 void SetTime(int nTime);
 void AddTime(int nValue);
-void SetTimerDejit(void);
+void SetTimerDigit(void);
 
 
 #endif

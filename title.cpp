@@ -122,7 +122,7 @@ void InitTitle(void)
 void LoadTitle(void)
 {
 	FILE *pFile;
-	char aData[MAX_MOJI];		//“Ç‚İ‚ñ‚¾•¶š‚ğŠi”[
+	char aData[MAX_CHAR];		//“Ç‚İ‚ñ‚¾•¶š‚ğŠi”[
 
 	pFile = fopen(TITLE_INFOFILE, "r");
 

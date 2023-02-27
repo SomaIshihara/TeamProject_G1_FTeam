@@ -14,7 +14,7 @@ typedef enum
 {
 	BLOCKTYPE_ATK = 0,		//はじき強化
 	BLOCKTYPE_DEF,			//押し合い強化
-	BLOCKTYPE_GHOST,			//ゴースト
+	BLOCKTYPE_GHOST,		//ゴースト
 	BLOCKTYPE_INVINCIBLE,	//無敵
 	BLOCKTYPE_MAX
 }BLOCKTYPE;

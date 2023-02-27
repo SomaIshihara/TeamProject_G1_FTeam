@@ -595,7 +595,7 @@ void HipDropPlayer(int nHipDropPlayer)
 	PlaySound(SOUND_LABEL_SE_HIPDROP);
 
 	g_aPlayerPvP[nHipDropPlayer].moveV0.y = PLAYER_HIPDROP_POWER;		//ヒップドロップの降下速度を代入
-	g_aPlayerPvP[nHipDropPlayer].move.x = 0.0f;						//X・Zの移動量消す
+	g_aPlayerPvP[nHipDropPlayer].move.x = 0.0f;							//X・Zの移動量消す
 	g_aPlayerPvP[nHipDropPlayer].move.z = 0.0f;
 	g_aPlayerPvP[nHipDropPlayer].moveGauge = 0.0f;
 	g_aPlayerPvP[nHipDropPlayer].jumpTime = 0;							//ジャンプ時間リセット
@@ -645,7 +645,6 @@ void ControllPlayer(int nPlayerNum)
 					}
 					else
 					{
-						RotatePlayer(nPlayerNum);
 						g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 					}
 				}
@@ -678,11 +677,11 @@ void ControllPlayer(int nPlayerNum)
 			MovePlayer(nPlayerNum);
 		}
 
-		////回転
-		//if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == false)
-		//{//Xボタンが押されていない
-		//	RotatePlayer(nPlayerNum);
-		//}
+		//回転
+		if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == false)
+		{//Xボタンが押されていない
+			RotatePlayer(nPlayerNum);
+		}
 	}
 	//ヒップドロップ中
 	else
@@ -973,13 +972,6 @@ void ItemStateParticle(int nPlayerNum)
 	{
 		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 5.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER_DEF);
 		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 7.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER_DEF);
-	}
-
-
-	if (g_aPlayerPvP[nPlayerNum].nGhostItemTime > 0)
-	{
-		//SetParticle(g_aPlayerPvP[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
-		//SetParticle(g_aPlayerPvP[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
 	}
 }
 

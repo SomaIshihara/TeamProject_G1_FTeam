@@ -238,46 +238,6 @@ void CollisionIP(int nPlayerNum)
 	{
 		if (g_Item[nCntItem].buse == true)
 		{
-			{
-				//移動ベクトル
-				//vecMove = pPlayer[nPlayerNum].pos - pPlayer[nPlayerNum].posOld;
-
-				////位置計算
-				//pos0.x = g_Item[nCntItem].pos.x - (g_Item[nCntItem].fWidth / 2) * cosf(g_Item[nCntItem].rot.y);
-				//pos0.y = 0.0f;
-				//pos0.z = g_Item[nCntItem].pos.z + (g_Item[nCntItem].fWidth / 2) * sinf(g_Item[nCntItem].rot.y);
-
-				//pos1.x = g_Item[nCntItem].pos.x + (g_Item[nCntItem].fWidth / 2) * cosf(g_Item[nCntItem].rot.y);
-				//pos1.y = 0.0f;
-				//pos1.z = g_Item[nCntItem].pos.z - (g_Item[nCntItem].fWidth / 2) * sinf(g_Item[nCntItem].rot.y);
-
-				//vecLine = pos1 - pos0;	//境界線ベクトル
-				//vecToPos = pPlayer[nPlayerNum].pos - pos0;
-				//vecToPosOld = pPlayer[nPlayerNum].posOld - pos0;
-
-				////面積求める
-				//fAreaA = TASUKIGAKE(vecToPos.x, vecToPos.z, vecMove.x, vecMove.z);
-				//fAreaB = TASUKIGAKE(vecLine.x, vecLine.z, vecMove.x, vecMove.z);
-
-				//if (pPlayer[nPlayerNum].pos.y >= g_Item[nCntItem].pos.y - COLLISION_SIZE_Y
-				//	&&pPlayer[nPlayerNum].pos.y <= g_Item[nCntItem].pos.y + COLLISION_SIZE_Y)
-				//{
-				//	//上に伸びている線の左側に行くと値がマイナスになるらしいよ
-				//	if ((vecLine.z * vecToPosOld.x) - (vecLine.x * vecToPosOld.z) >= 0.0f && (vecLine.z * vecToPos.x) - (vecLine.x * vecToPos.z) < 0.0f)
-				//	{//平行四辺形の大きさの割合が0.0~1.0なら間に入っている
-				//		if (fAreaA / fAreaB >= 0.0f && fAreaA / fAreaB <= 1.0f)
-				//		{//ごっつん
-
-				//			pPlayer[nPlayerNum].nATKItemTime = 300;
-				//			//使われていない状態にする
-				//			g_Item[nCntItem].RespawnDelay = 3;
-				//			g_Item[nCntItem].fAlpha = 1.0f;
-				//			g_Item[nCntItem].buse = false;
-				//		}
-
-				//	}
-				//}
-			}
 			if (pPlayer[nPlayerNum].pos.x >= g_Item[nCntItem].pos.x - COLLISION_SIZE_XZ
 				&&pPlayer[nPlayerNum].pos.x <= g_Item[nCntItem].pos.x + COLLISION_SIZE_XZ
 				&&pPlayer[nPlayerNum].pos.z >= g_Item[nCntItem].pos.z - COLLISION_SIZE_XZ
@@ -300,15 +260,15 @@ void CollisionIP(int nPlayerNum)
 				switch (g_Item[nCntItem].type)
 				{
 				case ITEMTYPE_ATK:
-					pPlayer[nPlayerNum].nATKItemTime = 300;
+					pPlayer[nPlayerNum].nATKItemTime = 420;
 					break;
 
 				case ITEMTYPE_DEF:
-					pPlayer[nPlayerNum].nDEFItemTime = 300;
+					pPlayer[nPlayerNum].nDEFItemTime = 420;
 					break;
 
 				case ITEMTYPE_GHOST:
-					pPlayer[nPlayerNum].nGhostItemTime = 150;
+					pPlayer[nPlayerNum].nGhostItemTime = 600;
 					break;
 
 				}

@@ -106,7 +106,7 @@ void UpdateHDRGame(void)
 	{
 		UpdateLight();			// ライトの更新処理
 		UpdateCamera();			// カメラの更新処理
-		UpdateTime();		//タイマーの更新処理
+		UpdateTime();			//タイマーの更新処理
 		UpdateBlock();			// ブロックの更新処理
 		UpdatePlayer_HDR();
 
@@ -147,7 +147,7 @@ void UpdateHDRGame(void)
 			if (GetKeyboardTrigger(DIK_RIGHT))
 			{
 				UpdateLight();			// ライトの更新処理
-				UpdateTime();		//タイマーの更新処理
+				UpdateTime();			//タイマーの更新処理
 			}
 		}
 	}

@@ -105,7 +105,6 @@ void InitPlayer(void);
 void UninitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
-void EffectingPlayer(Player *pBuffPlayer, ITEMTYPE type, int nTime);
 Player *GetPlayer(void);
 
 #endif // !_PLAYER_H_

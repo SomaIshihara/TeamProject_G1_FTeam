@@ -63,16 +63,16 @@ void InitSetHDRCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumHDRCamera)
 	g_HDRCamera[nNumHDRCamera].posV = posV;	//視点
 	g_HDRCamera[nNumHDRCamera].posR = posR;	//注視点
 
-										//上方向ベクトルだけ固定
+	//上方向ベクトルだけ固定
 	g_HDRCamera[nNumHDRCamera].vecU = VECU_OVER;	//上方向ベクトル
 
-											//それぞれの位置の差分を格納する変数
+	//それぞれの位置の差分を格納する変数
 	float PosDiffX, PosDiffZ;
 
 	PosDiffX = powf(g_HDRCamera[nNumHDRCamera].posR.x - g_HDRCamera[nNumHDRCamera].posV.x, DIFF_TIMES);	//２乗
 	PosDiffZ = powf(g_HDRCamera[nNumHDRCamera].posR.z - g_HDRCamera[nNumHDRCamera].posV.z, DIFF_TIMES);	//２乗
 
-																							//長さの算出
+	//長さの算出
 	g_HDRCamera[nNumHDRCamera].fLength = sqrtf(PosDiffX + PosDiffZ);
 
 	//視点の位置更新
