@@ -15,13 +15,12 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffCameraFrame = NULL;		//’¸“_ƒoƒbƒtƒ@‚Ö‚Ìƒ|ƒCƒ“ƒ
 bool					g_bUseFrame[UseFrame_MAX];			//ŠeƒtƒŒ[ƒ€‚ğg—p‚·‚é‚©‚Ç‚¤‚©
 const bool c_aUseFrame[NumCamera_MAX][UseFrame_MAX]=
 {
-	{ false ,false ,false ,false },
-	{ false ,true ,false ,false },
-	{ true ,false ,false ,false },
-	{ true ,true ,false ,false },
-	{ false ,true ,true ,true }
+	{ false ,false ,false ,false },	//˜gü‘S‚ÄOFF
+	{ false ,true ,false ,false },	//’†‰›cü‚Ì‚İ‚ğON
+	{ true ,false ,false ,false },	//’†‰›‰¡ü‚Ì‚İ‚ğON
+	{ true ,true ,false ,false },	//’†‰›‚Ì\šü‚ğON
+	{ false ,true ,true ,true }		//cü‚·‚×‚ÄON
 };
-
 
 //==============================================================
 //‰æ–Ê•ªŠ„‚Ì˜g‚Ì‰Šú‰»ˆ—

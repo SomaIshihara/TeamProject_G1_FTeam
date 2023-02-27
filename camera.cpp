@@ -284,7 +284,7 @@ void Set_NumCamera(NumCamera type)
 			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
 			g_Camera[nCntCamera].viewport.X = (DWORD)(SCREEN_WIDTH / 4) * nCntCamera;	//原点Ⅹ位置代入
-			g_Camera[nCntCamera].viewport.Y = (DWORD)NIL_F;									//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.Y = (DWORD)NIL_F;								//原点Ｙ位置代入
 			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH / 4;						//画面幅初期化
 			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;						//画面高さ初期化
 			g_Camera[nCntCamera].viewport.MinZ = 0.0f;

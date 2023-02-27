@@ -9,12 +9,16 @@
 
 #include "main.h"
 
+//プレイヤーの位置設定のため、ヘッダに移動しました
+#define MAX_BLOCK			(100)		//最大数
+#define COLLISION_SIZE_Y	(80.0f)		//高さの当たり判定サイズ
+
 //アイテム種類列挙型
 typedef enum
 {
 	BLOCKTYPE_ATK = 0,		//はじき強化
 	BLOCKTYPE_DEF,			//押し合い強化
-	BLOCKTYPE_GHOST,			//ゴースト
+	BLOCKTYPE_GHOST,		//ゴースト
 	BLOCKTYPE_INVINCIBLE,	//無敵
 	BLOCKTYPE_MAX
 }BLOCKTYPE;
