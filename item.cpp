@@ -35,6 +35,7 @@ DWORD					g_dwNumMatItem = 0;					//マテリアルの数
 D3DXMATRIX				g_mtxWorldItem;						//ワールドマトリックス
 Item					g_Item[MAX_ITEM];					//アイテムの情報
 bool					bposuse[MAX_POS];					//その座標を使用しているかどうか
+int						g_nInvincibleItem;					//無敵アイテム取得回数
 
 //========================
 //初期化処理
@@ -84,7 +85,9 @@ void InitItem(void)
 	for (int nCntPos = 0; nCntPos < MAX_POS; nCntPos++)
 	{
 		bposuse[nCntPos] = false;
-	}	
+	}
+
+	g_nInvincibleItem = 0;
 }
 
 //========================
@@ -211,7 +214,7 @@ void SetItem(void)
 					g_Item[nCntItem].pos = g_ItemRespawnPos[g_Item[nCntItem].RespawnPos]
 						+ D3DXVECTOR3(NIL_F, (float)(rand() % 200), NIL_F);
 					//アイテムの種類を設定
-					g_Item[nCntItem].type = (ITEMTYPE)(rand() % ITEMTYPE_MAX);
+					g_Item[nCntItem].type = (ITEMTYPE)(rand() % (ITEMTYPE_MAX - g_nInvincibleItem));
 					g_Item[nCntItem].DespawnLimit = 0;
 					bposuse[g_Item[nCntItem].RespawnPos] = true;
 					g_Item[nCntItem].buse = true;
@@ -271,6 +274,10 @@ void CollisionIP(int nPlayerNum)
 					pPlayer[nPlayerNum].nGhostItemTime = 600;
 					break;
 
+				case ITEMTYPE_INVINCIBLE:
+					pPlayer[nPlayerNum].nInvincibleTime = 420;
+					g_nInvincibleItem++;
+					break;
 				}
 		
 				//使われていない状態にする

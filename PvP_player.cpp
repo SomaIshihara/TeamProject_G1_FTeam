@@ -44,7 +44,6 @@
 //移動量関係
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
 #define PLAYER_JUMP_SPEED		(7.7f)		//プレイヤージャンプ速度
-#define ACCELERATION_GRAVITY	(9.8f)		//重力加速度
 #define PLAYER_WEIGHT			(50)		//質量
 #define PLAYER_POWER_ADD		(0.025f)	//移動の強さの増加値
 #define DUMP_COEF				(0.04f)		//減衰係数
@@ -56,7 +55,7 @@
 
 //アイテム関係
 #define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
-#define ACCELERATION_ITEMMAG	(1.5f)		//アイテム所持中の強化倍率
+#define ACCELERATION_ITEMADD	(0.4f)		//アイテム所持中の強化量
 #define DEFANCE_CONS			(0.0f)		//防御定数（1.0で完全防御）
 #define DEFANCE_ITEMADD			(0.3f)		//アイテム所持中の強化量
 #define INVINCIBLE_ATK			(1.0f)		//無敵状態の自分の変換割合
@@ -154,7 +153,6 @@ void InitPlayer(void)
 		g_aPlayerPvP[nCntPlayer].nATKItemTime = 0;
 		g_aPlayerPvP[nCntPlayer].nDEFItemTime = 0;
 		g_aPlayerPvP[nCntPlayer].nGhostItemTime = 0;
-		g_aPlayerPvP[nCntPlayer].bInvincible = false;
 		g_aPlayerPvP[nCntPlayer].nInvincibleTime = 0;
 
 		g_aPlayerPvP[nCntPlayer].pAI = NULL;
@@ -267,6 +265,12 @@ void UpdatePlayer(void)
 					}
 				}
 			}
+
+			//回転
+			if (GetButton(nCntPlayer, INPUTTYPE_PRESS, BUTTON_X) == false)
+			{//Xボタンが押されていない
+				RotatePlayer(nCntPlayer);
+			}
 		}
 
 		//使用されているかにかかわらず行う
@@ -351,22 +355,22 @@ void UpdatePlayer(void)
 
 			//割合設定
 			float fPowerConvertion1, fPowerConvertion2;
-			if (g_aPlayerPvP[nCntPlayer].bInvincible == true)
+			if (g_aPlayerPvP[nCntPlayer].nInvincibleTime > 0)
 			{//我無敵也(自分0%,相手100%)
 				fPowerConvertion1 = INVINCIBLE_DEF;
 				fPowerConvertion2 = INVINCIBLE_ATK;
 			}
-			else if (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].bInvincible == true)
+			else if (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].nInvincibleTime > 0)
 			{//相手無敵也(自分100%,相手0%)
 				fPowerConvertion1 = INVINCIBLE_ATK;
 				fPowerConvertion2 = INVINCIBLE_DEF;
 			}
 			else
 			{//どっちもむてきじゃないよ
-				fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+				fPowerConvertion1 = ACCELERATION_CONS + (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMADD : 0.0f) -
 					DEFANCE_CONS + (g_aPlayerPvP[nCntPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
 
-				fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayerPvP[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+				fPowerConvertion2 = ACCELERATION_CONS + (g_aPlayerPvP[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMADD : 0.0f) -
 					DEFANCE_CONS + (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
 			}
 
@@ -676,12 +680,6 @@ void ControllPlayer(int nPlayerNum)
 
 			MovePlayer(nPlayerNum);
 		}
-
-		//回転
-		if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == false)
-		{//Xボタンが押されていない
-			RotatePlayer(nPlayerNum);
-		}
 	}
 	//ヒップドロップ中
 	else
@@ -954,6 +952,7 @@ void DecrementItemTime(int nPlayerNum)
 	g_aPlayerPvP[nPlayerNum].nATKItemTime--;
 	g_aPlayerPvP[nPlayerNum].nDEFItemTime--;
 	g_aPlayerPvP[nPlayerNum].nGhostItemTime--;
+	g_aPlayerPvP[nPlayerNum].nInvincibleTime--;
 }
 
 //========================
@@ -972,6 +971,13 @@ void ItemStateParticle(int nPlayerNum)
 	{
 		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 5.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER_DEF);
 		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 7.0f, 15, PARTICLE_NORMAL, OBJECT_PLAYER_DEF);
+	}
+
+
+	if (g_aPlayerPvP[nPlayerNum].nInvincibleTime > 0)
+	{
+		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 12.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER_INVINCIBLE);
+		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER_INVINCIBLE);
 	}
 }
 

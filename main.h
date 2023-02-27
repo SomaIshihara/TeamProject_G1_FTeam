@@ -48,14 +48,15 @@ typedef enum
 } CHECKMODE;
 
 //マクロ定義
-#define CLASS_NAME			"WindowClass"
-#define SCREEN_WIDTH		(1280)		//クライアント領域の幅
-#define SCREEN_HEIGHT		(720)		//クライアント領域の高さ
-#define MAX_FPS				(60)		//最大フレームレート
-#define FVF_VERTEX_2D		(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//2D
-#define FVF_VERTEX_3D		(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//3D
-#define MAX_TEXTURE			(16)	//テクスチャ最大数
-#define MAX_PATH_STR		(512)	//最大パス文字列
+#define CLASS_NAME				"WindowClass"
+#define SCREEN_WIDTH			(1280)		//クライアント領域の幅
+#define SCREEN_HEIGHT			(720)		//クライアント領域の高さ
+#define MAX_FPS					(60)		//最大フレームレート
+#define FVF_VERTEX_2D			(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//2D
+#define FVF_VERTEX_3D			(D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)	//3D
+#define MAX_TEXTURE				(16)	//テクスチャ最大数
+#define MAX_PATH_STR			(512)	//最大パス文字列
+#define ACCELERATION_GRAVITY	(9.8f)		//重力加速度
 
 //便利なやつ
 #define FIX_ROT(x)			(fmodf(x + (D3DX_PI * 3), D3DX_PI * 2) - D3DX_PI)	//角度を-PI~PIに修正

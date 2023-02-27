@@ -286,106 +286,109 @@ bool CollisionFence(Player *pPlayer, float fFenceWidth, float fPlayerHeight, flo
 
 	for (int nCntFence = 0; nCntFence < MAX_USE_FENCE; nCntFence++, pFence++)
 	{
-		//頂点設定
-		GenerateCollision(pFence->pos, pFence->rot, &collPos, fFenceWidth * fenceSize, fFenceDepth * fenceSize);
-
-		//ベクトル求める
-		//move
-		vecMove = posTemp - pPlayer->posOld;
-
-		//X
-		//右方向の計算
-		vecLineRight = collPos.pos1 - collPos.pos0;
-		vecToPosRight = posTemp - collPos.pos0;
-		vecToPosOldRight = pPlayer->posOld - collPos.pos0;
-
-		//左方向の計算
-		vecLineLeft = collPos.pos3 - collPos.pos2;
-		vecToPosLeft = posTemp - collPos.pos2;
-		vecToPosOldLeft = pPlayer->posOld - collPos.pos2;
-
-		//Z
-		//上方向の計算
-		vecLineUp = collPos.pos2 - collPos.pos1;
-		vecToPosUp = posTemp - collPos.pos1;
-		vecToPosOldUp = pPlayer->posOld - collPos.pos1;
-		//下方向の計算
-		vecLineDown = collPos.pos0 - collPos.pos3;
-		vecToPosDown = posTemp - collPos.pos3;
-		vecToPosOldDown = pPlayer->posOld - collPos.pos3;
-
-		//当たり判定本番
-		//X
-		//面積求める
-		fAreaARight = TASUKIGAKE(vecToPosRight.x, vecToPosRight.z, vecMove.x, vecMove.z);
-		fAreaALeft = TASUKIGAKE(vecToPosLeft.x, vecToPosLeft.z, vecMove.x, vecMove.z);
-		fAreaBRight = TASUKIGAKE(vecLineRight.x, vecLineRight.z, vecMove.x, vecMove.z);
-		fAreaBLeft = TASUKIGAKE(vecLineLeft.x, vecLineLeft.z, vecMove.x, vecMove.z);
-
-		//左側AND範囲内
-		if ((vecLineRight.z * vecToPosRight.x) - (vecLineRight.x * vecToPosRight.z) <= 0.0f && (vecLineRight.z * vecToPosOldRight.x) - (vecLineRight.x * vecToPosOldRight.z) >= 0.0f)
+		if (pFence->bCollision == true)
 		{
-			if (fAreaARight / fAreaBRight >= 0.0f && fAreaARight / fAreaBRight <= 1.0f)
+			//頂点設定
+			GenerateCollision(pFence->pos, pFence->rot, &collPos, fFenceWidth * fenceSize, fFenceDepth * fenceSize);
+
+			//ベクトル求める
+			//move
+			vecMove = posTemp - pPlayer->posOld;
+
+			//X
+			//右方向の計算
+			vecLineRight = collPos.pos1 - collPos.pos0;
+			vecToPosRight = posTemp - collPos.pos0;
+			vecToPosOldRight = pPlayer->posOld - collPos.pos0;
+
+			//左方向の計算
+			vecLineLeft = collPos.pos3 - collPos.pos2;
+			vecToPosLeft = posTemp - collPos.pos2;
+			vecToPosOldLeft = pPlayer->posOld - collPos.pos2;
+
+			//Z
+			//上方向の計算
+			vecLineUp = collPos.pos2 - collPos.pos1;
+			vecToPosUp = posTemp - collPos.pos1;
+			vecToPosOldUp = pPlayer->posOld - collPos.pos1;
+			//下方向の計算
+			vecLineDown = collPos.pos0 - collPos.pos3;
+			vecToPosDown = posTemp - collPos.pos3;
+			vecToPosOldDown = pPlayer->posOld - collPos.pos3;
+
+			//当たり判定本番
+			//X
+			//面積求める
+			fAreaARight = TASUKIGAKE(vecToPosRight.x, vecToPosRight.z, vecMove.x, vecMove.z);
+			fAreaALeft = TASUKIGAKE(vecToPosLeft.x, vecToPosLeft.z, vecMove.x, vecMove.z);
+			fAreaBRight = TASUKIGAKE(vecLineRight.x, vecLineRight.z, vecMove.x, vecMove.z);
+			fAreaBLeft = TASUKIGAKE(vecLineLeft.x, vecLineLeft.z, vecMove.x, vecMove.z);
+
+			//左側AND範囲内
+			if ((vecLineRight.z * vecToPosRight.x) - (vecLineRight.x * vecToPosRight.z) <= 0.0f && (vecLineRight.z * vecToPosOldRight.x) - (vecLineRight.x * vecToPosOldRight.z) >= 0.0f)
 			{
-				//割合求める
-				float fRate = fAreaARight / fAreaBRight;
+				if (fAreaARight / fAreaBRight >= 0.0f && fAreaARight / fAreaBRight <= 1.0f)
+				{
+					//割合求める
+					float fRate = fAreaARight / fAreaBRight;
 
-				//反射処理
-				RefrectPlayer(pPlayer, pFence, fRate, vecLineRight, collPos.pos0);
+					//反射処理
+					RefrectPlayer(pPlayer, pFence, fRate, vecLineRight, collPos.pos0);
 
-				//終了
-				return true;
+					//終了
+					return true;
+				}
 			}
-		}
-		else if ((vecLineLeft.z * vecToPosLeft.x) - (vecLineLeft.x * vecToPosLeft.z) <= 0.0f && (vecLineLeft.z * vecToPosOldLeft.x) - (vecLineLeft.x * vecToPosOldLeft.z) >= 0.0f)
-		{
-			if (fAreaALeft / fAreaBLeft >= 0.0f && fAreaALeft / fAreaBLeft <= 1.0f)
+			else if ((vecLineLeft.z * vecToPosLeft.x) - (vecLineLeft.x * vecToPosLeft.z) <= 0.0f && (vecLineLeft.z * vecToPosOldLeft.x) - (vecLineLeft.x * vecToPosOldLeft.z) >= 0.0f)
 			{
-				//割合求める
-				float fRate = fAreaALeft / fAreaBLeft;
+				if (fAreaALeft / fAreaBLeft >= 0.0f && fAreaALeft / fAreaBLeft <= 1.0f)
+				{
+					//割合求める
+					float fRate = fAreaALeft / fAreaBLeft;
 
-				//反射処理
-				RefrectPlayer(pPlayer, pFence, fRate, vecLineLeft, collPos.pos2);
+					//反射処理
+					RefrectPlayer(pPlayer, pFence, fRate, vecLineLeft, collPos.pos2);
 
-				//終了
-				return true;
+					//終了
+					return true;
+				}
 			}
-		}
 
-		//Z
-		//面積求める
-		fAreaAUp = TASUKIGAKE(vecToPosUp.x, vecToPosUp.z, vecMove.x, vecMove.z);
-		fAreaADown = TASUKIGAKE(vecToPosDown.x, vecToPosDown.z, vecMove.x, vecMove.z);
-		fAreaBUp = TASUKIGAKE(vecLineUp.x, vecLineUp.z, vecMove.x, vecMove.z);
-		fAreaBDown = TASUKIGAKE(vecLineDown.x, vecLineDown.z, vecMove.x, vecMove.z);
+			//Z
+			//面積求める
+			fAreaAUp = TASUKIGAKE(vecToPosUp.x, vecToPosUp.z, vecMove.x, vecMove.z);
+			fAreaADown = TASUKIGAKE(vecToPosDown.x, vecToPosDown.z, vecMove.x, vecMove.z);
+			fAreaBUp = TASUKIGAKE(vecLineUp.x, vecLineUp.z, vecMove.x, vecMove.z);
+			fAreaBDown = TASUKIGAKE(vecLineDown.x, vecLineDown.z, vecMove.x, vecMove.z);
 
-		//左側AND範囲内
-		if ((vecLineUp.z * vecToPosUp.x) - (vecLineUp.x * vecToPosUp.z) <= 0.0f && (vecLineUp.z * vecToPosOldUp.x) - (vecLineUp.x * vecToPosOldUp.z) >= 0.0f)
-		{
-			if (fAreaAUp / fAreaBUp >= 0.0f && fAreaAUp / fAreaBUp <= 1.0f)
+			//左側AND範囲内
+			if ((vecLineUp.z * vecToPosUp.x) - (vecLineUp.x * vecToPosUp.z) <= 0.0f && (vecLineUp.z * vecToPosOldUp.x) - (vecLineUp.x * vecToPosOldUp.z) >= 0.0f)
 			{
-				//割合求める
-				float fRate = fAreaAUp / fAreaBUp;
+				if (fAreaAUp / fAreaBUp >= 0.0f && fAreaAUp / fAreaBUp <= 1.0f)
+				{
+					//割合求める
+					float fRate = fAreaAUp / fAreaBUp;
 
-				//反射処理
-				RefrectPlayer(pPlayer, pFence, fRate, vecLineUp, collPos.pos1);
+					//反射処理
+					RefrectPlayer(pPlayer, pFence, fRate, vecLineUp, collPos.pos1);
 
-				//終了
-				return true;
+					//終了
+					return true;
+				}
 			}
-		}
-		else if ((vecLineDown.z * vecToPosDown.x) - (vecLineDown.x * vecToPosDown.z) <= 0.0f && (vecLineDown.z * vecToPosOldDown.x) - (vecLineDown.x * vecToPosOldDown.z) >= 0.0f)
-		{
-			if (fAreaADown / fAreaBDown >= 0.0f && fAreaADown / fAreaBDown <= 1.0f)
+			else if ((vecLineDown.z * vecToPosDown.x) - (vecLineDown.x * vecToPosDown.z) <= 0.0f && (vecLineDown.z * vecToPosOldDown.x) - (vecLineDown.x * vecToPosOldDown.z) >= 0.0f)
 			{
-				//割合求める
-				float fRate = fAreaADown / fAreaBDown;
+				if (fAreaADown / fAreaBDown >= 0.0f && fAreaADown / fAreaBDown <= 1.0f)
+				{
+					//割合求める
+					float fRate = fAreaADown / fAreaBDown;
 
-				//反射処理
-				RefrectPlayer(pPlayer, pFence, fRate, vecLineDown, collPos.pos3);
+					//反射処理
+					RefrectPlayer(pPlayer, pFence, fRate, vecLineDown, collPos.pos3);
 
-				//終了
-				return true;
+					//終了
+					return true;
+				}
 			}
 		}
 	}
@@ -541,6 +544,9 @@ void RefrectPlayer(Player *pPlayer, Fence *pFence, float fRate, D3DXVECTOR3 vecL
 	//ちゃんと移動する
 	pPlayer->pos.x += pPlayer->move.x;
 	pPlayer->pos.z += pPlayer->move.z;
+
+	//フェンス消す
+	pFence->bUse = false;
 }
 
 //========================

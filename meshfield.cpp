@@ -17,7 +17,7 @@
 #define CENTER_AND_ONELAP		(2)						//中心点と１周で重なる点
 #define MESHFIELD_ALL_VERTEX	(MESHFIELD_SPLIT + 1)	//周辺の分割地点と中心
 #define MESHFIELD_ALL_INDEX		(MESHFIELD_SPLIT + 2)	//周辺の分割地点と中心・１周で重なる点
-#define MESHFIELD_MIN_RADIUS	(200.0f)				//最小半径
+#define MESHFIELD_MIN_RADIUS	(250.0f)				//最小半径
 #define MESHFIELD_SHRINK_SPEED	(0.1f)					//縮まるスピード
 
 //グローバル変数
