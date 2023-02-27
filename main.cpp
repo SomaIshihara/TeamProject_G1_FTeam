@@ -21,6 +21,8 @@
 #include "sound.h"
 #include "conversioninput.h"
 #include <crtdbg.h>
+#include "meshfield.h"
+#include "meshdome.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -41,6 +43,7 @@ void UpdateShowCursor(void);
 LPDIRECT3D9 g_pD3D = NULL;	//Direct3Dオブジェクトへのポインタ
 LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
+NumCamera g_NumTitleCamera = NumCamera_ONLY;		//カメラ初期化の引数
 
 #ifdef _DEBUG
 MODE			g_mode = MODE_SELECTGAME;		// 現在のモード
@@ -434,6 +437,18 @@ void Update(void)
 		{
 		case MODE_TITLE:		//タイトル画面の更新
 			UpdateTitle();
+
+			//ライトの更新処理
+			UpdateLight();
+
+			//カメラの更新処理
+			UpdateCamera();
+
+			//メッシュドームの更新処理
+			UpdateMeshDome();
+
+			//ステージの更新処理
+			UpdateMeshfield();
 			break;
 
 		case MODE_SELECTGAME:	//ゲーム選択の更新処理
@@ -485,6 +500,12 @@ void Draw(void)
 		{
 		case MODE_TITLE:		//タイトル画面描画
 			DrawTitle();
+
+			//メッシュドームの描画処理
+			DrawMeshDome();
+
+			//ステージの描画処理
+			DrawMeshfield();
 			break;
 
 		case MODE_SELECTGAME:	//ゲーム選択画面描画処理
@@ -538,6 +559,18 @@ void SetMode(MODE mode)
 	{
 	case MODE_TITLE:		//タイトル画面終了
 		UninitTitle();
+
+		//ライトの終了処理
+		UninitLight();
+
+		//カメラの終了処理
+		UninitCamera();
+
+		//メッシュドームの終了処理
+		UninitMeshDome();
+
+		//ステージの終了処理
+		UninitMeshfield();
 		break;
 
 	case MODE_SELECTGAME:	//ゲーム選択画面終了
@@ -561,6 +594,18 @@ void SetMode(MODE mode)
 	{
 	case MODE_TITLE:		//タイトル画面初期化
 		InitTitle();
+
+		//ライトの初期化処理
+		InitLight();
+
+		//カメラの初期化処理
+		InitCamera(g_NumTitleCamera);
+
+		//メッシュドームの初期化処理
+		InitMeshDome();
+
+		//ステージの初期化処理
+		InitMeshfield();
 		break;
 
 	case MODE_SELECTGAME:	//ゲーム選択画面初期化
