@@ -44,7 +44,7 @@ void InitComAI(void)
 	{//”]‚Ý‚»‚ð‹ó‚Á‚Û‚É‚·‚é
 		g_aiCont[nCntAI] = {};
 		g_aiCont[nCntAI].nCounterWaitTime = 0;
-		g_aiCont[nCntAI].difficulty = AIDIFF_HARD;
+		g_aiCont[nCntAI].difficulty = AIDIFF_NORMAL;
 		g_aiCont[nCntAI].bDoHipdrop = false;
 		g_aiCont[nCntAI].bHipdropped = false;
 		g_bUseAIPointer[nCntAI] = false;

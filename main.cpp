@@ -69,12 +69,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 		0,									//使用しない
 		0,									//使用しない
 		hInstance,							//インスタンスハンドル
-		LoadIcon(NULL,IDI_APPLICATION),		//タスクバーのアイコン
+		(HICON)LoadImage(NULL,"WildBoar_exeIcon.ico",IMAGE_ICON,0,0,LR_SHARED | LR_LOADFROMFILE),		//タスクバーのアイコン
 		LoadCursor(NULL,IDC_ARROW),			//マウスカーソル
 		(HBRUSH)(COLOR_WINDOW + 1),			//クライアント領域の背景色
 		NULL,								//メニューバー
 		CLASS_NAME,							//クラスの名前
-		LoadIcon(NULL,IDI_APPLICATION)		//アプリケーションのアイコン
+		(HICON)LoadImage(NULL,"WildBoar_exeIcon.ico",IMAGE_ICON,0,0,LR_SHARED | LR_LOADFROMFILE)		//アプリケーションのアイコン
 	};
 
 	HWND hWnd;	//ウィンドウハンドル

@@ -36,6 +36,7 @@ Author:平澤詩苑
 #include "bg.h"
 #include "comai.h"
 #include "fence.h"
+#include "GaugeFrame.h"
 
 //グローバル変数宣言
 bool g_bPause_PvP = false;				// ポーズ
@@ -84,6 +85,7 @@ void InitPvPGame(void)
 	InitScore();				// スコアの初期化
 	InitTime();					// タイマーの初期化処理
 	InitGauge();				// ゲージの初期化処理
+	InitGaugeFrame();			// ゲージ枠の初期化処理
 
 
 	SetTime(LIMIT_TIMER);		// タイマーの設定処理
@@ -121,6 +123,7 @@ void UninitPvPGame(void)
 	UninitBonus();			// ボーナスの終了処理
 	UninitItem();			// アイテムの終了処理
 	UninitPause();			// ポーズ画面の終了処理
+	UninitGaugeFrame();		// ゲージ枠の終了処理
 	UninitGauge();			// ゲージの終了処理
 	UninitModel();			// モデルの終了処理
 	UninitParticle();		// パーティクルの終了処理
@@ -162,6 +165,7 @@ void UpdatePvPGame(void)
 		UpdateItem();			// アイテムの更新処理
 		UpdateCamera();			// カメラの更新処理
 		UpdateGauge();			// ゲージの更新処理
+		UpdateGaugeFrame();		// ゲージ枠の更新処理（中身はないが形式上）
 		{// エフェクトの更新処理
 			UpdateChargeEffect();		//チャージエフェクト
 			UpdateChargeCylinder();		//チャージエフェクト(しりんだー)
@@ -219,6 +223,7 @@ void UpdatePvPGame(void)
 				UpdateBonus();			// ボーナスの更新処理
 				UpdateItem();			// アイテムの更新処理
 				UpdateGauge();			// ゲージの更新処理
+				UpdateGaugeFrame();		// ゲージ枠の更新処理（中身はないが形式上）
 				{// エフェクトの更新処理
 					UpdateChargeEffect();	//チャージエフェクト
 					UpdateChargeCylinder();	//チャージエフェクト(しりんだー)
@@ -271,6 +276,7 @@ void DrawPvPGame(void)
 		DrawPlayer();				// プレイヤーの描画処理
 		DrawBonus();				// ボーナスの描画処理
 		DrawItem();					// アイテムの描画処理
+		DrawGaugeFrame();			// ゲージ枠の描画処理（ゲージより前に行うこと）
 		DrawGauge();				// ゲージの描画処理
 		DrawScore();				// スコアの描画処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
