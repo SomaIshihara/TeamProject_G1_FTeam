@@ -144,7 +144,7 @@ void UpdateHDRGame(void)
 			//1フレームだけ更新する
 			if (GetKeyboardTrigger(DIK_RIGHT))
 			{
-				UpdateLight();			// ライトの更新処理
+				UpdateLight();		// ライトの更新処理
 				UpdateTime();		//タイマーの更新処理
 			}
 		}
