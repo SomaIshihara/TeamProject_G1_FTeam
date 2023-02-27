@@ -103,13 +103,17 @@ void UpdateHDRGame(void)
 	//ポーズがOFF
 	if (g_bPause_HDR == false)
 	{
-		UpdateLight();			// ライトの更新処理
 		UpdateHDRCamera();		// カメラの更新処理
-		UpdateTime();			// タイマーの更新処理
-		UpdateBlock();			// ブロックの更新処理
-		UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
 
-		ChangeNumCamera_HDR();	//カメラの数変更処理
+		if (*GetHDR_Ready() == HDR_Ready_OK)
+		{
+			UpdateLight();			// ライトの更新処理
+			UpdateTime();			// タイマーの更新処理
+			UpdateBlock();			// ブロックの更新処理
+			UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
+
+			ChangeNumCamera_HDR();	//カメラの数変更処理
+		}
 
 		//ポーズ取得
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
@@ -300,6 +304,6 @@ void ChangeNumCamera_HDR(void)
 		g_NumCamera_HDR = (NumCamera)nType;
 
 		//カメラの種類を設定
-		Set_NumCamera(g_NumCamera_HDR);
+		Set_NumHDRCamera(g_NumCamera_HDR);
 	}
 }

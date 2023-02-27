@@ -25,10 +25,10 @@ void HipDropPlayer_HDR(int nHipDropPlayer);		//ヒップドロップ処理
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 {
-	{ D3DXVECTOR3(-225.0f,2200.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
-	{ D3DXVECTOR3(-75.0f,2200.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
-	{ D3DXVECTOR3(75.0f,2200.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
-	{ D3DXVECTOR3(225.0f,2200.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(-225.0f,8020.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(-75.0f,8020.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(75.0f,8020.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(225.0f,8020.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
 };
 
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
@@ -46,6 +46,7 @@ void InitPlayer_HDR(void)
 	{
 		//変数初期化
 		g_aPlayerHDR[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
+		g_aPlayerHDR[nCntPlayer].pos.y = MAX_BLOCK * COLLISION_SIZE_Y;	//一番上のブロックの位置に設定
 		g_aPlayerHDR[nCntPlayer].posOld = g_aPlayerHDR[nCntPlayer].pos;
 		g_aPlayerHDR[nCntPlayer].move = ZERO_SET;
 		g_aPlayerHDR[nCntPlayer].moveV0 = ZERO_SET;

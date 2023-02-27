@@ -9,6 +9,10 @@
 
 #include "main.h"
 
+//プレイヤーの位置設定のため、ヘッダに移動しました
+#define MAX_BLOCK			(100)		//最大数
+#define COLLISION_SIZE_Y	(80.0f)		//高さの当たり判定サイズ
+
 //アイテム種類列挙型
 typedef enum
 {

@@ -54,22 +54,22 @@ END_CAMERASET
 #hdrカメラ-----------------------------
 
 HDR_CAMERASET
-	POS = 0.0 100.0 -200.0			# 視点
+	POS = 0.0 100.0 -500.0			# 視点
 	REF = 0.0 0.0 0.0				# 注視点
 END_HDR_CAMERASET
 
 HDR_CAMERASET
-	POS = 0.0 50.0 50.0				# 視点
+	POS = 0.0 100.0 -450.0			# 視点
 	REF = 0.0 0.0 0.0				# 注視点
 END_HDR_CAMERASET
 
 HDR_CAMERASET
-	POS = 0.0 50.0 50.0				# 視点
+	POS = 0.0 100.0 -400.0			# 視点
 	REF = 0.0 0.0 0.0				# 注視点
 END_HDR_CAMERASET
 
 HDR_CAMERASET
-	POS = 0.0 50.0 50.0				# 視点
+	POS = 0.0 100.0 -350.0			# 視点
 	REF = 0.0 0.0 0.0				# 注視点
 END_HDR_CAMERASET
 
