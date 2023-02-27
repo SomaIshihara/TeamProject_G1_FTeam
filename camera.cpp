@@ -456,3 +456,25 @@ Camera *GetCamera(void)
 {
 	return &g_Camera[0];
 }
+
+//*********************************************
+//タイトル用カメラ処理
+//MEMO : カメラは１番目のカメラのみを使用する
+//*********************************************
+void CameraForTitle(void)
+{
+	//カメラの向きY　のポインタを取得
+	float *pRot_Y = &g_Camera[0].rot.y;
+
+	//回転
+	*pRot_Y += 0.04f;
+
+	//向きが3.14を超えた
+	if (D3DX_PI <= *pRot_Y)
+	{
+		FIX_ROT(*pRot_Y);
+	}
+
+	//視点の位置更新
+	UpdatePosVCamera(0);
+}
