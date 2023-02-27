@@ -62,6 +62,7 @@ typedef enum
 #define fatof(x)			(float)atof(x)	//通常のatofだとdouble型で返してくるのでfloatキャストも行うようにしたもの
 #define TASUKIGAKE(ax,az,bx,bz)	((az * bx) - (ax * bz))
 #define PYTHAGORAS(a,b)		sqrtf(powf(a,2) + powf(b,2))
+#define CONVERT_FPS(x)		(int)(x * MAX_FPS)	//秒数をFPSに変換
 
 //フェードマクロ
 #define END_FADE	(60)		//終了余韻

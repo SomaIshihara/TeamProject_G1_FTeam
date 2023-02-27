@@ -45,20 +45,19 @@ void InitHDRGame(void)
 	LoadModelOriginalFile("data\\originalmodel.txt");	// モデルオリジナルファイル読み込み
 	g_NumCamera_HDR = NumCamera_ONLY;			// 初期カメラの設定（現在はPlayer0を注視点としたカメラ　　画面分割ナシ）
 
-	
-	InitLight();				// ライト初期化処理
-	InitModel();				// モデルの初期化処理（プレイヤーの前に行うこと！）
+	InitLight();					// ライト初期化処理
+	InitModel();					// モデルの初期化処理（プレイヤーの前に行うこと！）
 	InitPlayer_HDR();
-	InitCameraFrame();			// 画面分割の枠初期化処理
-	InitCamera(g_NumCamera_HDR);	// カメラの初期化処理
-	InitPause();				// ポーズ画面の初期化処理
-	InitBlock();				// ブロックの初期化処理
+	InitCameraFrame();				// 画面分割の枠初期化処理
+	InitHDRCamera(g_NumCamera_HDR);	// カメラの初期化処理
+	InitPause();					// ポーズ画面の初期化処理
+	InitBlock();					// ブロックの初期化処理
 	InitMeshfield();
 	InitMeshDome();
 	InitFence();
-	InitTime();					// タイマーの初期化処理
+	InitTime();						// タイマーの初期化処理
 
-	SetTime(LIMIT_TIMER);		// タイマーの設定処理
+	SetTime(LIMIT_TIMER);			// タイマーの設定処理
 
 	g_bPause_HDR = false;				// ポーズの初期化
 	g_bDisconnectPlayer_HDR = false;	//正常にコントローラーが接続されている状態とする
@@ -78,7 +77,7 @@ void UninitHDRGame(void)
 	========================================================================*/
 
 	UninitLight();			// ライト終了処理
-	UninitCamera();			// カメラの終了処理
+	UninitHDRCamera();		// カメラの終了処理
 	UninitPause();			// ポーズ画面の終了処理
 	UninitPlayer_HDR();
 	UninitModel();			// モデルの終了処理
@@ -105,15 +104,14 @@ void UpdateHDRGame(void)
 	if (g_bPause_HDR == false)
 	{
 		UpdateLight();			// ライトの更新処理
-		UpdateCamera();			// カメラの更新処理
-		UpdateTime();		//タイマーの更新処理
+		UpdateHDRCamera();		// カメラの更新処理
+		UpdateTime();			// タイマーの更新処理
 		UpdateBlock();			// ブロックの更新処理
-		UpdatePlayer_HDR();
-
+		UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
 
 		ChangeNumCamera_HDR();	//カメラの数変更処理
 
-								//ポーズ取得
+		//ポーズ取得
 		for (int nCntPause = 0; nCntPause < 4; nCntPause++)
 		{
 			//ポーズ状態切り替え
@@ -141,7 +139,7 @@ void UpdateHDRGame(void)
 		//フォトモードON
 		if (g_bPhotoMode_HDR)
 		{
-			UpdateCamera();
+			UpdateHDRCamera();
 
 			//1フレームだけ更新する
 			if (GetKeyboardTrigger(DIK_RIGHT))
@@ -173,7 +171,7 @@ void DrawHDRGame(void)
 	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
 	{
 		//ゲーム内オブジェクトの描画処理
-		SetCamera(nCntCamera);		// カメラの設定処理
+		SetHDRCamera(nCntCamera);	// カメラの設定処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
 		DrawTime();					//タイマーの描画処理
 		DrawBlock();				// ブロックの描画処理
