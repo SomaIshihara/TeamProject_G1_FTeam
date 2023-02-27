@@ -161,8 +161,7 @@ void UpdateGauge(void)
 {
 	Player *pPlayer = GetPlayer();		//プレイヤー情報の取得	
 
-										//ポインタを設定
-	VERTEX_2D *pVtx;
+	VERTEX_2D *pVtx;					//ポインタを設定
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffGauge->Lock(0, 0, (void **)&pVtx, 0);

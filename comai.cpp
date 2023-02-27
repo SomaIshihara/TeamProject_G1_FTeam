@@ -17,7 +17,7 @@
 #define CHARGE_DIGIT		(100)	//チャージの小数点の位置指定
 #define HIPDROP_RADIUS		(100.0f)	//落下回避ヒップドロップまでの距離
 #define HIPDROP_RAND_DIGIT	(100)		//ヒップドロップ回避確率桁数
-#define TEST_CHARGE_WAIT	(90)
+#define CHARGE_WAIT			(90)
 
 //プロト
 void ChargeAI(Player *pCom);
@@ -122,7 +122,7 @@ void SelectAIMove(Player *pCom)
 		}
 
 		//スティック操作をしていないならチャージ
-		if (GetStick(pCom->nPlayerNum) == CONVSTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= TEST_CHARGE_WAIT)
+		if (GetStick(pCom->nPlayerNum) == CONVSTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= CHARGE_WAIT)
 		{
 			int nChargeWidth = (int)(((CHARGE_AVG + c_aAIParam[pCom->pAI->difficulty].fChargeAboutPlus) - (CHARGE_AVG - c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus)) * CHARGE_DIGIT);
 			pCom->pAI->fChargePower = (float)(rand() % (nChargeWidth + 1)) / CHARGE_DIGIT + c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus;

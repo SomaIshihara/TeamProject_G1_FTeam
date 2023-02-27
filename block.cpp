@@ -17,7 +17,7 @@
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(80.0f)		//高さの当たり判定サイズ
-#define BLOCK_LIFE			(1)		//体力
+#define BLOCK_LIFE			(1)			//体力
 
 //グローバル変数宣言     
 LPDIRECT3DTEXTURE9		g_pTextureBlock[MAX_BLOCK_TEX] = {};	//テクスチャへにポインタ
@@ -117,7 +117,9 @@ void UninitBlock(void)
 //更新処理
 //========================
 void UpdateBlock(void)
-{}
+{
+
+}
 
 //========================
 //描画処理

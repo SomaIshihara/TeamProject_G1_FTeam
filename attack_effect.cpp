@@ -125,7 +125,9 @@ void UpdateAttackEffect(void)
 	}
 }
 
+//=================================
 //エフェクトのサイズ更新
+//=================================
 void UpdateAttackEffectSize(int nEffect)
 {
 	//エフェクトのサイズが最大値以下
@@ -231,7 +233,9 @@ void DrawAttackEffect(void)
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
 }
 
+//=================================
 //エフェクトの位置設定
+//=================================
 void SetAttackEffectPos()
 {
 	for (int nCntEffect = 0; nCntEffect < NUM_ATTACK_EFFECT; nCntEffect++)
@@ -245,7 +249,9 @@ void SetAttackEffectPos()
 	}
 }
 
+//=================================
 //エフェクトの設定処理
+//=================================
 void SetAttackEffect(D3DXVECTOR3 pos, int nCntType)
 {
 	//対象のエフェクトが使われていない

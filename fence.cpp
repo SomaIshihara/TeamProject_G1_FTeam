@@ -11,7 +11,8 @@
 #include "meshfield.h"
 
 //マクロ
-
+#define FENCE_FORCE			(50.0f)		//フェンスを中心に寄せる
+#define FENCE_DESTROY_POS	(-800.0f)	//フェンスを消す位置
 
 //グローバル
 Fence g_aFence[MAX_USE_FENCE];
@@ -27,7 +28,7 @@ void InitFence(void)
 	for (int nCntfence = 0; nCntfence < MAX_USE_FENCE; nCntfence++)
 	{
 		g_aFence[nCntfence] = {};
-		SetFence(GetMeshField()->fRadius, D3DXVECTOR3(0.0f, FIX_ROT(((float)nCntfence / MAX_USE_FENCE) * 2 * D3DX_PI), 0.0f));
+		SetFence(GetMeshField()->fRadius - FENCE_FORCE, D3DXVECTOR3(0.0f, FIX_ROT(((float)nCntfence / MAX_USE_FENCE) * 2 * D3DX_PI), 0.0f));
 	}
 }
 
@@ -44,7 +45,46 @@ void UninitFence(void)
 //========================
 void UpdateFence(void)
 {
-	
+	for (int nCntFence = 0; nCntFence < MAX_USE_FENCE; nCntFence++)
+	{
+		if (g_aFence[nCntFence].bUse == true)
+		{
+			//落とす
+			g_aFence[nCntFence].nFallTime++;
+
+			g_aFence[nCntFence].move.y = -(ACCELERATION_GRAVITY * g_aFence[nCntFence].nFallTime / MAX_FPS);
+
+			//移動後がy<0であり、現在の位置が、フィールド以上の高さにいるなら移動量消す
+			if (g_aFence[nCntFence].pos.y + g_aFence[nCntFence].move.y < 0.0f && g_aFence[nCntFence].pos.y >= 0.0f)
+			{
+				//見えないくらい落ちたら消す
+				if (g_aFence[nCntFence].pos.y + g_aFence[nCntFence].move.y < FENCE_DESTROY_POS)
+				{
+					g_aFence[nCntFence].bUse = false;
+				}
+				else
+				{
+					//原点位置からのプレイヤーの距離を計算
+					float fLength = sqrtf(powf((g_aFence[nCntFence].pos.x), 2) + powf((g_aFence[nCntFence].pos.z), 2));
+
+					//原点位置からの距離が、フィールドの半径以下　　なら、フィールドに乗っている
+					if (fLength <= GetMeshField()->fRadius)
+					{
+						g_aFence[nCntFence].move.y = 0.0f;
+						g_aFence[nCntFence].nFallTime = 0;
+						g_aFence[nCntFence].pos.y = 0.0f;
+					}
+					else
+					{
+						g_aFence[nCntFence].bCollision = false;
+					}
+				}
+			}
+
+			//移動量変更
+			g_aFence[nCntFence].pos.y += g_aFence[nCntFence].move.y;
+		}
+	}
 }
 
 //========================
@@ -131,6 +171,7 @@ void SetFence(float fLength, D3DXVECTOR3 rot)
 
 			//使用していることにする
 			g_aFence[nCntObj].bUse = true;
+			g_aFence[nCntObj].bCollision = true;
 
 			//抜ける
 			break;

@@ -62,7 +62,7 @@ void LoadWall(void)
 	int nLetter = 0;		//文字
 	int nColumn = 0;		//列
 	int nLine = 0;			//行
-	char aData[MAX_MOJI];	//文字列
+	char aData[MAX_CHAR];	//文字列
 	FILE *pFile;			//ファイルポインタ
 
 	//バッファの初期化
@@ -417,9 +417,3 @@ bool CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, 
 
 	return bCollision;	//判定を返す
 }
-
-//================================================
-//壁の設定処理（モデルビューワーファイルから設定）
-//Author:石原颯馬
-//Memo:旧仕様も残してあるがデータの構造が違うため別関数用意）
-//================================================

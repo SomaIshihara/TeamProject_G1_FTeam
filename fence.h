@@ -11,7 +11,7 @@
 
 //マクロ
 #define MAX_USE_FENCE		(32)	//フェンス最大使用数
-#define FENCE_SCALE			(5.0f)		//フェンスの拡大倍率
+#define FENCE_SCALE			(4.6f)		//フェンスの拡大倍率
 #define FENCE_WIDTH			(12.0f)		//フェンスの幅
 #define FENCE_DEPTH			(1.0f)		//フェンスの高さ
 
@@ -20,6 +20,7 @@ typedef struct
 {
 	//位置関係
 	D3DXVECTOR3 pos, posOld;	//位置
+	D3DXVECTOR3 move;			//移動量
 	D3DXVECTOR3 rot;			//向き
 	int nFallTime;				//落下時間
 
@@ -28,6 +29,7 @@ typedef struct
 
 	//使用有無
 	bool bUse;					//使用有無
+	bool bCollision;			//当たり判定有無
 } Fence;
 
 //プロトタイプ宣言
