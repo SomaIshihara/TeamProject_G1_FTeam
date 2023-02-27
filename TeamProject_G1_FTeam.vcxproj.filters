@@ -103,6 +103,12 @@
     <Filter Include="ヘッダー ファイル\Main\Input">
       <UniqueIdentifier>{e4c1fa2e-e89f-422f-ae6e-c21e8fa69023}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Game\Game_PvP\Player\UI">
+      <UniqueIdentifier>{33384698-b282-4e7c-b56e-316f6d94eef4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Game\Game_PvP\Player\UI">
+      <UniqueIdentifier>{eeb3e5dc-34c3-42fc-8f29-a7abc2cc4f10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -174,9 +180,6 @@
     <ClCompile Include="item.cpp">
       <Filter>ソース ファイル\Game\Game_PvP</Filter>
     </ClCompile>
-    <ClCompile Include="score.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP</Filter>
-    </ClCompile>
     <ClCompile Include="HDRgame.cpp">
       <Filter>ソース ファイル\Game\Game_HDR</Filter>
     </ClCompile>
@@ -191,9 +194,6 @@
     </ClCompile>
     <ClCompile Include="camera_frame.cpp">
       <Filter>ソース ファイル\Game\Game_PvP</Filter>
-    </ClCompile>
-    <ClCompile Include="gauge.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
     <ClCompile Include="meshfault.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
@@ -233,6 +233,15 @@
     </ClCompile>
     <ClCompile Include="tremor_effect.cpp">
       <Filter>ソース ファイル\Game\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="gauge.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP\Player\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="score.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP\Player\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GaugeFrame.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP\Player\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -311,9 +320,6 @@
     <ClInclude Include="item.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
     </ClInclude>
-    <ClInclude Include="score.h">
-      <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
-    </ClInclude>
     <ClInclude Include="pvp_game.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
     </ClInclude>
@@ -328,9 +334,6 @@
     </ClInclude>
     <ClInclude Include="timer.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP</Filter>
-    </ClInclude>
-    <ClInclude Include="gauge.h">
-      <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
     </ClInclude>
     <ClInclude Include="bg.h">
       <Filter>ヘッダー ファイル</Filter>
@@ -367,6 +370,15 @@
     </ClInclude>
     <ClInclude Include="block.h">
       <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="gauge.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Player\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="score.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Player\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GaugeFrame.h">
+      <Filter>ヘッダー ファイル\Game\Game_PvP\Player\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

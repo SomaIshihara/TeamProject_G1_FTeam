@@ -17,7 +17,7 @@
 #define CHARGE_DIGIT		(100)	//チャージの小数点の位置指定
 #define HIPDROP_RADIUS		(100.0f)	//落下回避ヒップドロップまでの距離
 #define HIPDROP_RAND_DIGIT	(100)		//ヒップドロップ回避確率桁数
-#define CHARGE_WAIT			(90)
+#define CHARGE_WAIT			(75)
 
 //プロト
 void ChargeAI(Player *pCom);

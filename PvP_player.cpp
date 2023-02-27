@@ -55,9 +55,9 @@
 
 //アイテム関係
 #define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
-#define ACCELERATION_ITEMADD	(0.4f)		//アイテム所持中の強化量
+#define ACCELERATION_ITEMADD	(0.35f)		//アイテム所持中の強化量
 #define DEFANCE_CONS			(0.0f)		//防御定数（1.0で完全防御）
-#define DEFANCE_ITEMADD			(0.3f)		//アイテム所持中の強化量
+#define DEFANCE_ITEMADD			(0.4f)		//アイテム所持中の強化量
 #define INVINCIBLE_ATK			(1.0f)		//無敵状態の自分の変換割合
 #define INVINCIBLE_DEF			(0.0f)		//無敵状態の相手の変換割合
 
