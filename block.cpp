@@ -7,6 +7,7 @@
 #include "main.h"
 #include "Block.h"
 #include "HDR_player.h"
+#include "sound.h"
 
 //マクロ定義
 #define MAX_PLAYER			(4)			//最大数
@@ -207,7 +208,8 @@ void CollisionBlock(int nPlayerNum)
 
 					if (pPlayer[nPlayerNum].HipDropPower >= 0)
 					{
-						g_Block[nCntBlock].buse = false;
+						g_Block[nCntBlock].buse = false;	//対象のブロックを使用しない
+						PlaySound(SOUND_LABEL_SE_HIPDROP);	//ヒップドロップ音再生
 					}
 					else
 					{

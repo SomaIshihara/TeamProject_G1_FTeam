@@ -39,11 +39,11 @@ bool		g_bPhotoMode_HDR;			// ƒtƒHƒgƒ‚[ƒhØ‘Ö		true:ƒ|[ƒY‰æ–Ê”ñ•\¦	false:ƒ{[ƒ
 //------------------------------------------------
 void InitHDRGame(void)
 {
-	g_nUseContNum_HDR = SetUseController_HDR();		// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
-	InitFile();								// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
-	LoadModelViewerFile("data\\model.txt");	// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
+	g_nUseContNum_HDR = SetUseController_HDR();			// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
+	InitFile();											// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
+	LoadModelViewerFile("data\\model.txt");				// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
 	LoadModelOriginalFile("data\\originalmodel.txt");	// ƒ‚ƒfƒ‹ƒIƒŠƒWƒiƒ‹ƒtƒ@ƒCƒ‹“Ç‚İ‚İ
-	g_NumCamera_HDR = NumCamera_ONLY;			// ‰ŠúƒJƒƒ‰‚Ìİ’èiŒ»İ‚ÍPlayer0‚ğ’‹“_‚Æ‚µ‚½ƒJƒƒ‰@@‰æ–Ê•ªŠ„ƒiƒVj
+	g_NumCamera_HDR = NumCamera_FOUR_SIDE;			// ‰ŠúƒJƒƒ‰‚Ìİ’èiŒ»İ‚ÍPlayer0‚ğ’‹“_‚Æ‚µ‚½ƒJƒƒ‰@@‰æ–Ê•ªŠ„ƒiƒVj
 
 	InitLight();					// ƒ‰ƒCƒg‰Šú‰»ˆ—
 	InitModel();					// ƒ‚ƒfƒ‹‚Ì‰Šú‰»ˆ—iƒvƒŒƒCƒ„[‚Ì‘O‚És‚¤‚±‚ÆIj
