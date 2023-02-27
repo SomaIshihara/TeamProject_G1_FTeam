@@ -6,11 +6,15 @@ Author:平澤詩苑
 ============================================================================================================================================================*/
 #include "main.h"
 #include "title.h"
+#include "light.h"
+#include "camera.h"
 #include "color.h"
 #include "input.h"
 #include "fade.h"
 #include "sound.h"
 #include "meshfield.h"
+#include "meshdome.h"
+#include "file.h"
 
 #define NUM_TITLE_TEX	(3)									// タイトルに使う画像の数
 #define TITLE_INFOFILE	"data/CSV/title.csv"				// タイトルの情報が入ったファイル名
@@ -34,6 +38,7 @@ LPDIRECT3DVERTEXBUFFER9		g_pVtxBuffTitle = NULL;					//頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9			g_pTextureTitle[NUM_TITLE_TEX] = {};	//テクスチャのポインタ
 Title						g_Title[NUM_TITLE_TEX];					//タイトルの情報
 int							g_select;								//選択番号
+NumCamera g_NumTitleCamera = NumCamera_ONLY;		//カメラ初期化の引数
 int nCntButtonEffect1, nCntButtonEffect2;
 
 //タイトル画面に使用するアイコンたちのパス
@@ -122,6 +127,22 @@ void InitTitle(void)
 
 	//頂点バッファをロックする
 	g_pVtxBuffTitle->Unlock();
+
+	InitFile();
+
+	LoadModelViewerFile("data\\model.txt");				// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
+
+	//ライトの初期化処理
+	InitLight();
+
+	//カメラの初期化処理
+	InitCamera(g_NumTitleCamera);
+
+	//メッシュドームの初期化処理
+	InitMeshDome();
+
+	//ステージの初期化処理
+	InitMeshfield();
 }
 
 //タイトルの情報読み込み処理
@@ -173,6 +194,20 @@ void UninitTitle(void)
 		g_pVtxBuffTitle->Release();
 		g_pVtxBuffTitle = NULL;
 	}
+
+	UninitFile();
+
+	//ライトの終了処理
+	UninitLight();
+
+	//カメラの終了処理
+	UninitCamera();
+
+	//メッシュドームの終了処理
+	UninitMeshDome();
+
+	//ステージの終了処理
+	UninitMeshfield();
 
 	StopSound(SOUND_LABEL_BGM_TITLE);
 }
@@ -342,6 +377,18 @@ void UpdateTitle(void)
 
 	//頂点バッファをロックする
 	g_pVtxBuffTitle->Unlock();
+
+	//ライトの更新処理
+	UpdateLight();
+
+	//カメラの更新処理
+	UpdateCamera();
+
+	//メッシュドームの更新処理
+	UpdateMeshDome();
+
+	//ステージの更新処理
+	UpdateMeshfield();
 }
 
 //------------------------------------------------
@@ -366,6 +413,12 @@ void DrawTitle(void)
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTitle * VTX_MAX, 2);
 	}
+
+	//メッシュドームの描画処理
+	DrawMeshDome();
+
+	//ステージの描画処理
+	DrawMeshfield();
 }
 //
 void DirecUpTitle(int NumPad)
