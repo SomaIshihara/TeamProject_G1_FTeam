@@ -14,8 +14,7 @@
 #include "ai.h"
 
 //マクロ
-#define PLAYER_POWER_LEVEL	(3)			//パワーレベル
-#define PLAYER_POWER_MAX	(0.5f * PLAYER_POWER_LEVEL)		//移動の強さの最大値
+#define PLAYER_POWER_MAX	(1.5f)		//移動の強さの最大値
 
 //プレイヤー状態列挙
 typedef enum

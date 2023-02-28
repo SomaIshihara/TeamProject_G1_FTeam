@@ -13,11 +13,12 @@
 #include <time.h>
 
 //マクロ
-#define CHARGE_AVG			(1.0f)	//チャージの基準値
-#define CHARGE_DIGIT		(100)	//チャージの小数点の位置指定
+#define CHARGE_LENGTH_AVG	(600.0f)	//チャージの移動距離の基準値
+#define CHARGE_DIGIT		(100)		//チャージの小数点の位置指定
 #define HIPDROP_RADIUS		(100.0f)	//落下回避ヒップドロップまでの距離
 #define HIPDROP_RAND_DIGIT	(100)		//ヒップドロップ回避確率桁数
-#define CHARGE_WAIT			(75)
+#define CHARGE_WAIT			(75)		//チャージする前の待機時間
+#define ONE_MORE_PUSH		(0.2f)		//プレイヤーを落とすためにするもう一押し
 
 //プロト
 void ChargeAI(Player *pCom);
@@ -28,9 +29,9 @@ bool g_bUseAIPointer[MAX_USE_GAMEPAD];
 
 const AIParam c_aAIParam[AIDIFF_MAX] = 
 {
-	{ 0.25f, 0.50f, 50, 10 },	//EASY
-	{ 0.17f, 0.25f, 75, 5 },	//NORMAL
-	{ 0.10f, 0.15f, 100, 5 }	//HARD
+	{ 0.50f, 0.25f, 50, 20 },	//EASY
+	{ 0.25f, 0.17f, 75, 15 },	//NORMAL
+	{ 0.15f, 0.10f, 95, 10 }	//HARD
 };
 
 //========================
@@ -124,8 +125,23 @@ void SelectAIMove(Player *pCom)
 		//スティック操作をしていないならチャージ
 		if (GetStick(pCom->nPlayerNum) == CONVSTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= CHARGE_WAIT)
 		{
-			int nChargeWidth = (int)(((CHARGE_AVG + c_aAIParam[pCom->pAI->difficulty].fChargeAboutPlus) - (CHARGE_AVG - c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus)) * CHARGE_DIGIT);
-			pCom->pAI->fChargePower = (float)(rand() % (nChargeWidth + 1)) / CHARGE_DIGIT + c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus;
+			float fAILength = fabsf(D3DXVec3Length(&pCom->pos));
+			float fMoveLength = sqrtf(powf(fAILength, 2) + powf(GetMeshField()->fRadius, 2) - 2 * fAILength * GetMeshField()->fRadius * cosf(pCom->rot.y)) / CHARGE_LENGTH_AVG;	//ジャストなチャージ量を求める
+
+			//↓でアバウトにしていく
+			int nChargeWidth = (int)(((fMoveLength + c_aAIParam[pCom->pAI->difficulty].fChargeAboutPlus) - (fMoveLength - c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus)) * CHARGE_DIGIT);
+			pCom->pAI->fChargePower = (float)(rand() % (nChargeWidth + 1)) / CHARGE_DIGIT + (fMoveLength - c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus) + ONE_MORE_PUSH;
+
+			//最低値以下なら最低値にする
+			if (pCom->pAI->fChargePower < 1.0f / CHARGE_DIGIT)
+			{
+				pCom->pAI->fChargePower = 1.0f / CHARGE_DIGIT;
+			}
+			else if (pCom->pAI->fChargePower > PLAYER_POWER_MAX)
+			{
+				pCom->pAI->fChargePower = PLAYER_POWER_MAX;
+			}
+
 			ChargeAI(pCom);
 
 		}
