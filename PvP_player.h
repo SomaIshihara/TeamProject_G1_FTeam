@@ -68,6 +68,11 @@ struct Player
 	bool bNotMove;			//移動していない
 	int nRespawnPosNum;		//復活した位置番号
 
+	//モーション類
+	Motion motion;				//モーション情報
+	D3DXVECTOR3 motionPos, motionPosOffset;	//位置
+	D3DXVECTOR3 motionRot, motionRotOffset;	//向き
+
 	//衝突関係
 	D3DXVECTOR3 faceCollider[2];	//当たり判定
 	int nFrameAtkPlayer;			//このフレームで触れたプレイヤー

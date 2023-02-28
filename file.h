@@ -202,7 +202,7 @@ void UpdateFile(void);
 void LoadModelViewerFile(const char *path);	//モデルビューワーの設定ファイル読み込み（引数は設定ファイルのパス指定）
 void LoadMotionViewerFile(const char *path, Model *pModel);
 void LoadModelOriginalFile(const char *path);
-void GetMotionInfo(MOTION_INFO *pMotionInfo);
+MOTION_INFO GetMotionInfo(ANIMAL animal, MOTIONTYPE type);
 Fault GetFaultData(void);
 char *GetTextureFilePath(int nTexNum);
 char *GetModelFilePath(int nModNum);

@@ -18,6 +18,12 @@
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(30.0f)		//高さの当たり判定サイズ
 
+//アイテム時間（すべて秒単位）
+#define ITEMTIME_ATK		(7)			//ATKの時間
+#define ITEMTIME_DEF		(7)			//DEFの時間
+#define ITEMTIME_GHOST		(10)		//ゴースト化の時間
+#define ITEMTIME_INV		(7)			//無敵の時間
+
 const D3DXVECTOR3 g_ItemRespawnPos[MAX_POS] =
 {
 	D3DXVECTOR3(INIT_POS_XZ,NIL_F,NIL_F),
@@ -255,29 +261,36 @@ void CollisionIP(int nPlayerNum)
 						if (g_Item[nCntItem].pos.z == g_ItemRespawnPos[nCntPos].z)
 						{
 							bposuse[nCntPos] = false;
+
+							//アイテム効果リセット
+							pPlayer[nPlayerNum].nATKItemTime = 0;
+							pPlayer[nPlayerNum].nDEFItemTime = 0;
+							pPlayer[nPlayerNum].nGhostItemTime = 0;
 						}
 					}
-
 				}
 
-				switch (g_Item[nCntItem].type)
+				if (pPlayer[nPlayerNum].nInvincibleTime <= 0)
 				{
-				case ITEMTYPE_ATK:
-					pPlayer[nPlayerNum].nATKItemTime = 420;
-					break;
+					switch (g_Item[nCntItem].type)
+					{
+					case ITEMTYPE_ATK:
+						pPlayer[nPlayerNum].nATKItemTime = CONVERT_FPS(ITEMTIME_ATK);
+						break;
 
-				case ITEMTYPE_DEF:
-					pPlayer[nPlayerNum].nDEFItemTime = 420;
-					break;
+					case ITEMTYPE_DEF:
+						pPlayer[nPlayerNum].nDEFItemTime = CONVERT_FPS(ITEMTIME_DEF);
+						break;
 
-				case ITEMTYPE_GHOST:
-					pPlayer[nPlayerNum].nGhostItemTime = 600;
-					break;
+					case ITEMTYPE_GHOST:
+						pPlayer[nPlayerNum].nGhostItemTime = CONVERT_FPS(ITEMTIME_GHOST);
+						break;
 
-				case ITEMTYPE_INVINCIBLE:
-					pPlayer[nPlayerNum].nInvincibleTime = 420;
-					g_nInvincibleItem++;
-					break;
+					case ITEMTYPE_INVINCIBLE:
+						pPlayer[nPlayerNum].nInvincibleTime = CONVERT_FPS(ITEMTIME_INV);
+						g_nInvincibleItem++;
+						break;
+					}
 				}
 		
 				//使われていない状態にする
