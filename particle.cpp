@@ -137,13 +137,24 @@ void DrawParticle(void)
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 	pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
 
-	//アルファブレンディングを加算合成に設定
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+	
+	
 
 	for (int nCntParticle = 0; nCntParticle < MAX_PARTICLE; nCntParticle++)
 	{
+		if (g_aParticle[nCntParticle].nObject != OBJECT_PLAYER_GHOST)
+		{//アルファブレンディングを加算合成に設定（ゴースト以外）
+			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+		}
+		else
+		{//アルファブレンディングを減算合成に設定（ゴースト）
+			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
+			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+		}
+		
 		if (g_aParticle[nCntParticle].bUse == true)
 		{
 			//ワールドマトリックスの初期化
@@ -233,6 +244,18 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PART
 				DirectionParticle(nCntParticle);
 
 				break;
+
+				//吸収のパーティクル（ゴースト）
+			case PARTICLE_ACSORPTION_GHOST:
+
+				g_aParticle[nCntParticle].pos.x = g_aParticle[nCntParticle].pos.x + sinf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % 2 + 20) *1.0f;
+				g_aParticle[nCntParticle].pos.y = g_aParticle[nCntParticle].pos.y + cosf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % 2 + 20) *1.0f;
+				g_aParticle[nCntParticle].pos.z = g_aParticle[nCntParticle].pos.z + cosf((float)(rand() % 629 - 314) / 100.0f)* (float)(rand() % 2 + 20) *1.0f;
+
+				//パーティクルの移動方向設定
+				DirectionParticle(nCntParticle);
+
+				break;
 			}
 
 			//寿命の設定
@@ -250,6 +273,10 @@ void SetParticle(D3DXVECTOR3 pos, float fRadius, int nLife, PARTICLE nType, PART
 				break;
 			}
 			else if (nType == PARTICLE_ACSORPTION && ParticleCount == ACSORPTION_PARTICLE)
+			{
+				break;
+			}
+			else if (nType == PARTICLE_ACSORPTION_GHOST && ParticleCount == ACSORPTION_PARTICLE)
 			{
 				break;
 			}
@@ -295,12 +322,12 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 		//通常のパーティクル//
 		//==================//
 		//******************//
-	case PARTICLE_NORMAL:
-	{
-		g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.3f;
-		g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.3f;
-		g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.3f;
-	}
+		case PARTICLE_NORMAL:
+		{
+			g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.3f;
+			g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.3f;
+			g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.3f;
+		}
 		break;
 
 		//******************//
@@ -308,13 +335,21 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 		//吸収のパーティクル//
 		//==================//
 		//******************//
-	case PARTICLE_ACSORPTION:
-	{
-		g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.2f;
-		g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.2f;
-		g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.2f;
-	}
-	break;
+		case PARTICLE_ACSORPTION:
+		{
+			g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.2f;
+			g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.2f;
+			g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.2f;
+		}
+		break;
+
+		case PARTICLE_ACSORPTION_GHOST:
+		{
+			g_aParticle[nCount].move.x += (0.0f - g_aParticle[nCount].move.x) * 0.5f;
+			g_aParticle[nCount].move.y += (0.0f - g_aParticle[nCount].move.y) * 0.5f;
+			g_aParticle[nCount].move.z += (0.0f - g_aParticle[nCount].move.z) * 0.5f;
+		}
+		break;
 	}
 
 	//パーティクルの寿命の割合を算出
@@ -339,9 +374,10 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 		break;
 
 		//ゴースト化
-	case OBJECT_PLAYER_GOAST:
-		pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col = pVtx[VTX_LE_DO].col = pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, LifeParcent);
+	case OBJECT_PLAYER_GHOST:
+		pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col = pVtx[VTX_LE_DO].col = pVtx[VTX_RI_DO].col = D3DXCOLOR(0.2f, 0.2f, 0.2f, 0.1f);
 		break;
+
 	case OBJECT_PLAYER_INVINCIBLE:
 		pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col = pVtx[VTX_LE_DO].col = pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f, 0.75f, 0.0f, 0.1f);
 		break;
@@ -385,7 +421,7 @@ void DirectionParticle(int nCount)
 		//プレイヤーパーティクル
 	case OBJECT_PLAYER_ATK:
 	case OBJECT_PLAYER_DEF:
-	case OBJECT_PLAYER_GOAST:
+	case OBJECT_PLAYER_GHOST:
 		OrnerPos = GetPlayer()->pos;
 		break;
 

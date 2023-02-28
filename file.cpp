@@ -14,14 +14,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-//マクロ
-//マクロなんてねぇよ
-//意訳：枠組みだけ用意してある
-
-//セーブデータ
-//セーブデータなんてねぇよ
-//意訳：枠組みだけ用意してある
-
 //コード関係
 #define CODE_LENGTH	(128 + MAX_PATH_STR)
 
@@ -1011,7 +1003,7 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 
 															//ループ可否読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].mLoop = atoi(pSprit) ? true : false;
+						g_motionInfo[g_counterMotionInfo].bLoop = atoi(pSprit) ? true : false;
 					}
 					else if (strncmp(&aCode[0], CODE_NUM_KEY, sizeof CODE_NUM_KEY / sizeof(char) - 1) == 0)
 					{
@@ -1019,7 +1011,7 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 
 															//キー数読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].mNumKey = atoi(pSprit);
+						g_motionInfo[g_counterMotionInfo].nNumKey = atoi(pSprit);
 					}
 					break;
 				case READSTAT_KEYSET:
@@ -1039,7 +1031,7 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 
 						//フレーム数読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].mFrame = atoi(pSprit);
+						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].nFrame = atoi(pSprit);
 					}
 					break;
 				case READSTAT_KEY:
@@ -1054,15 +1046,15 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 
 						//X座標読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].mPosX = fatof(pSprit);
+						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].fPosX = fatof(pSprit);
 
 						//Y座標読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].mPosY = fatof(pSprit);
+						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].fPosY = fatof(pSprit);
 
 						//Z座標読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].mPosZ = fatof(pSprit);
+						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].fPosZ = fatof(pSprit);
 					}
 					else if (strncmp(&aCode[0], CODE_ROT, sizeof CODE_ROT / sizeof(char) - 1) == 0)
 					{
@@ -1070,15 +1062,15 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 
 						//X向き読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].mRotX = fatof(pSprit);
+						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].fRotX = fatof(pSprit);
 
 						//Y向き読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].mRotY = fatof(pSprit);
+						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].fRotY = fatof(pSprit);
 
 						//Z向き読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].mRotZ = fatof(pSprit);
+						g_motionInfo[g_counterMotionInfo].aKeyInfo[g_counterKeyInfo].aKey[g_counterKey].fRotZ = fatof(pSprit);
 					}
 					break;
 				}
@@ -1249,12 +1241,9 @@ char *GetMotionFilePath(int animal)
 //========================
 //モーション取得処理
 //========================
-void GetMotionInfo(MOTION_INFO *pMotionInfo)
+MOTION_INFO GetMotionInfo(ANIMAL animal, MOTIONTYPE type)
 {
-	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
-	{
-		*(pMotionInfo + nCntMotion) = g_motionInfo[nCntMotion];
-	}
+	return g_motionInfo[type];
 }
 
 //========================

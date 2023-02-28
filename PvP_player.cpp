@@ -9,6 +9,7 @@
 #include "PvP_player.h"
 #include "model.h"
 #include "input.h"
+#include "file.h"
 #include "wall.h"
 #include "score.h"
 #include "debugproc.h"
@@ -96,6 +97,9 @@ void RespawnPlayer(int nRespawnPlayer);		//リスポーン処理
 
 void DecrementItemTime(int nPlayerNum);		//アイテムカウントをすべて減らす
 void ItemStateParticle(int nPlayerNum);		//アイテムパーティクル表示処理
+
+void SetMotion(int nPlayerNum, MOTIONTYPE type);	//モーション設定処理
+void UpdateMotion(int nPlayerNum);					//モーション更新処理
 
 //グローバル変数
 Player g_aPlayerPvP[MAX_USE_GAMEPAD];
@@ -473,18 +477,19 @@ void DrawPlayer(void)
 
 				for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
 				{
-					//ゴースト化状態を考慮した変更用マテリアル変数
+					//ゴースト用
 					D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
+					
+					//ゴースト状態なら消す
+					if (g_aPlayerPvP[nCntPlayer].nGhostItemTime > 0)
+					{
+						//アルファテストを有効にする
+						pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+						pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+						pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+						matChange.Diffuse.a = 0.0f;
+					}
 
-					//ゴースト化状態なら半透明で設定
-					if (g_aPlayerPvP[nCntPlayer].nGhostItemTime > GOAST_FLASHSTART)
-					{
-						matChange.Diffuse.a = GOAST_ALPHA;
-					}
-					else if (g_aPlayerPvP[nCntPlayer].nGhostItemTime > 0 && g_aPlayerPvP[nCntPlayer].nGhostItemTime % (GOAST_FLASHPULSE * 2) < GOAST_FLASHPULSE)
-					{
-						matChange.Diffuse.a = GOAST_ALPHA;
-					}
 					//マテリアル設定
 					pDevice->SetMaterial(&matChange);
 
@@ -494,6 +499,11 @@ void DrawPlayer(void)
 					//モデル描画
 					useAnimal.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
 				}
+
+				//アルファテストを無効にする
+				pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+				pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+				pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
 
 				/*------------------------------------------------------------------
 				影の描画		Author:平澤詩苑 石原颯馬
@@ -974,10 +984,101 @@ void ItemStateParticle(int nPlayerNum)
 	}
 
 
+	if (g_aPlayerPvP[nPlayerNum].nGhostItemTime > 0)
+	{
+		SetParticle(g_aPlayerPvP[nPlayerNum].pos + D3DXVECTOR3(0.0f,7.0f,0.0f), 12.0f, 10, PARTICLE_ACSORPTION_GHOST, OBJECT_PLAYER_GHOST);
+		SetParticle(g_aPlayerPvP[nPlayerNum].pos + D3DXVECTOR3(0.0f,7.0f,0.0f), 7.0f, 10, PARTICLE_ACSORPTION_GHOST, OBJECT_PLAYER_GHOST);
+	}
+
+
 	if (g_aPlayerPvP[nPlayerNum].nInvincibleTime > 0)
 	{
 		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 12.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER_INVINCIBLE);
 		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER_INVINCIBLE);
+	}
+}
+
+//========================
+//モーション設定処理
+//========================
+void SetMotion(int nPlayerNum, MOTIONTYPE type)
+{
+	g_aPlayerPvP[nPlayerNum].motion.motionType = type;
+	g_aPlayerPvP[nPlayerNum].motion.nNowKey = 0;
+	g_aPlayerPvP[nPlayerNum].motion.nCounterMotion = 0;
+}
+
+//========================
+//モーション更新処理
+//========================
+void UpdateMotion(int nPlayerNum)
+{
+	Model model = GetAnimal(g_aPlayerPvP[nPlayerNum].animal);
+	MOTION_INFO mi = GetMotionInfo(g_aPlayerPvP[nPlayerNum].animal, g_aPlayerPvP[nPlayerNum].motion.motionType);
+
+	//今のキーと次のキーを入れておく
+	int nNowKey = g_aPlayerPvP[nPlayerNum].motion.nNowKey;
+	int nNextKey = g_aPlayerPvP[nPlayerNum].motion.nNowKey + 1;
+
+	for (int CntModel = 0; CntModel < MAX_PARTS; CntModel++)
+	{
+		//オフセットを入れておく
+		g_aPlayerPvP[nPlayerNum].motionPosOffset = model.aParts[CntModel].posOffset;
+		g_aPlayerPvP[nPlayerNum].motionRotOffset = model.aParts[CntModel].rotOffset;
+
+		//差分算出
+		float posDiffX = mi.aKeyInfo[nNextKey].aKey[CntModel].fPosX -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fPosX;
+		float posDiffY = mi.aKeyInfo[nNextKey].aKey[CntModel].fPosY -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fPosY;
+		float posDiffZ = mi.aKeyInfo[nNextKey].aKey[CntModel].fPosZ -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fPosZ;
+		float rotDiffX = mi.aKeyInfo[nNextKey].aKey[CntModel].fRotX -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fRotX;
+		float rotDiffY = mi.aKeyInfo[nNextKey].aKey[CntModel].fRotY -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fRotY;
+		float rotDiffZ = mi.aKeyInfo[nNextKey].aKey[CntModel].fRotZ -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fRotZ;
+
+		//位置向き算出
+		float posDemandX = mi.aKeyInfo[nNowKey].aKey[CntModel].fPosX +
+			posDiffX * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float posDemandY = mi.aKeyInfo[nNowKey].aKey[CntModel].fPosY +
+			posDiffY * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float posDemandZ = mi.aKeyInfo[nNowKey].aKey[CntModel].fPosZ +
+			posDiffZ * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float rotDemandX = mi.aKeyInfo[nNowKey].aKey[CntModel].fRotX +
+			rotDiffX * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float rotDemandY = mi.aKeyInfo[nNowKey].aKey[CntModel].fRotY +
+			rotDiffY * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float rotDemandZ = mi.aKeyInfo[nNowKey].aKey[CntModel].fRotZ +
+			rotDiffZ * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+
+		//パーツの位置向き設定
+		g_aPlayerPvP[nPlayerNum].motionPos = g_aPlayerPvP[nPlayerNum].motionPosOffset + D3DXVECTOR3(posDemandX, posDemandY, posDemandZ);
+		g_aPlayerPvP[nPlayerNum].motionRot = g_aPlayerPvP[nPlayerNum].motionRotOffset + D3DXVECTOR3(rotDemandX, rotDemandY, rotDemandZ);
+	}
+	g_aPlayerPvP[nPlayerNum].motion.nCounterMotion++;
+
+	//再生フレーム後の挙動
+	if (g_aPlayerPvP[nPlayerNum].motion.nCounterMotion == mi.aKeyInfo[nNowKey].nFrame)
+	{//再生フレーム数に達したら
+		//カウンターをリセットしてキーを一つ増やす
+		g_aPlayerPvP[nPlayerNum].motion.nCounterMotion = 0;
+		g_aPlayerPvP[nPlayerNum].motion.nNowKey++;
+
+		//キーの最大数に達したらループするか否かに応じて再設定する
+		if (g_aPlayerPvP[nPlayerNum].motion.nNowKey == mi.nNumKey)
+		{
+			if (mi.bLoop == true)
+			{//ループさせる
+				g_aPlayerPvP[nPlayerNum].motion.nNowKey = 0;
+			}
+			else
+			{//通常はNEUTRAL状態にする
+				SetMotion(nPlayerNum, MOTIONTYPE_NEUTRAL);
+			}
+		}
 	}
 }
 

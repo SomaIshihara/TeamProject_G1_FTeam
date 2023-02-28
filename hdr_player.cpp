@@ -192,7 +192,7 @@ void DrawPlayer_HDR(void)
 				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
 				D3DXMATRIX mtxParent;					//親のマトリ
 
-														//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
+				//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
 				g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos = g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].posOffset;
 				g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot = g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rotOffset;
 

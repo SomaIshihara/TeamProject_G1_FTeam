@@ -9,7 +9,8 @@
 #include "fence.h"
 
 //マクロ
-#define REFRECT_WEAK	(0.2f)	//反射を弱めるのに使う
+#define REFRECT_WEAK	(1.75f)	//反射を弱める・強めるのに使う
+#define REFRECT_MAX		(20.0f)	//反射量最大値
 
 //当たり判定範囲構造体
 typedef struct
@@ -544,6 +545,11 @@ void RefrectPlayer(Player *pPlayer, Fence *pFence, float fRate, D3DXVECTOR3 vecL
 
 	//実際の移動量を設定
 	float fVecLength = D3DXVec3Length(&pPlayer->move);
+	if (fVecLength > REFRECT_MAX)
+	{
+		fVecLength = REFRECT_MAX;
+	}
+
 	vecRefrect *= fVecLength / fRateRemaining;
 
 	//移動量変更
