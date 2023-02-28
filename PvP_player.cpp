@@ -299,6 +299,8 @@ void UpdatePlayer(void)
 					SetTremorEffect(g_aPlayerPvP[nCntPlayer].pos);
 					g_aPlayerPvP[nCntPlayer].bHipDrop = false;    //ヒップドロップしてない
 					g_aPlayerPvP[nCntPlayer].nActionRigor = PLAYER_HIPDROP_ACTIONRIGOR;
+					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
+					PlaySound(SOUND_LABEL_SE_HIPDROP);
 				}
 				g_aPlayerPvP[nCntPlayer].bJump = false;
 				g_aPlayerPvP[nCntPlayer].moveV0.y = 0.0f;
@@ -596,8 +598,6 @@ void DashPlayer(int nDashPlayer)
 //========================
 void HipDropPlayer(int nHipDropPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_HIPDROP);
-
 	g_aPlayerPvP[nHipDropPlayer].moveV0.y = PLAYER_HIPDROP_POWER;		//ヒップドロップの降下速度を代入
 	g_aPlayerPvP[nHipDropPlayer].move.x = 0.0f;							//X・Zの移動量消す
 	g_aPlayerPvP[nHipDropPlayer].move.z = 0.0f;
