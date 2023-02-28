@@ -1,7 +1,7 @@
 //==========================================
 //
 //落下防止フェンスプログラム[fence.cpp]
-//Author:石原颯馬
+//Author:石原颯馬  平澤詩苑
 //
 //==========================================
 #include "main.h"
@@ -11,8 +11,13 @@
 #include "meshfield.h"
 
 //マクロ
-#define FENCE_FORCE			(50.0f)		//フェンスを中心に寄せる
+#define FENCE_FORCE			(70.0f)		//フェンスを中心に寄せる
+#define FENCE_MARGIN_SPACE	(10.0f)		//フェンスが倒れる際の後ろの余裕スペース
 #define FENCE_DESTROY_POS	(-800.0f)	//フェンスを消す位置
+#define FENCE_DROP_SPEED	(1.3f)		//フェンスの落下加速度
+#define FENCE_FALL_SPEED	(0.005f)	//フェンスの倒れる加速度
+#define FENCE_LIMIT_FALL	(3.1f)		//フェンスの倒れる限界回転値
+#define FENCE_SHIFT_LENGTH	(1.0f)		//フェンスが倒れる時の奥にずらす移動量
 
 //グローバル
 Fence g_aFence[MAX_USE_FENCE];
@@ -22,13 +27,18 @@ Fence g_aFence[MAX_USE_FENCE];
 //========================
 void InitFence(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
+	//基本の半径の大きさを格納
+	float fRadius = GetMeshField()->fRadius - FENCE_FORCE;
 
 	//変数初期化
 	for (int nCntfence = 0; nCntfence < MAX_USE_FENCE; nCntfence++)
 	{
+		//情報初期化
 		g_aFence[nCntfence] = {};
-		SetFence(GetMeshField()->fRadius - FENCE_FORCE, D3DXVECTOR3(0.0f, FIX_ROT(((float)nCntfence / MAX_USE_FENCE) * 2 * D3DX_PI), 0.0f));
+		g_aFence[nCntfence].fRadius = fRadius;	//半径設定
+
+		//フェンスを設置
+		SetFence(fRadius, FIX_ROT(((float)nCntfence / MAX_USE_FENCE) * 2 * D3DX_PI));
 	}
 }
 
@@ -45,45 +55,85 @@ void UninitFence(void)
 //========================
 void UpdateFence(void)
 {
+	//フィールドの半径取得
+	float FieldRadius = GetMeshField()->fRadius;
+
 	for (int nCntFence = 0; nCntFence < MAX_USE_FENCE; nCntFence++)
 	{
-		if (g_aFence[nCntFence].bUse == true)
+		//対象のフェンスのポインタを取得
+		Fence *pFence = &g_aFence[nCntFence];
+
+		//対象のフェンスが使われていなかったら、次のフェンスまで処理を飛ばす
+		if (pFence->bUse == false)
 		{
-			//落とす
-			g_aFence[nCntFence].nFallTime++;
-
-			g_aFence[nCntFence].move.y = -(ACCELERATION_GRAVITY * g_aFence[nCntFence].nFallTime / MAX_FPS);
-
-			//移動後がy<0であり、現在の位置が、フィールド以上の高さにいるなら移動量消す
-			if (g_aFence[nCntFence].pos.y + g_aFence[nCntFence].move.y < 0.0f && g_aFence[nCntFence].pos.y >= 0.0f)
-			{
-				//見えないくらい落ちたら消す
-				if (g_aFence[nCntFence].pos.y + g_aFence[nCntFence].move.y < FENCE_DESTROY_POS)
-				{
-					g_aFence[nCntFence].bUse = false;
-				}
-				else
-				{
-					//原点位置からのプレイヤーの距離を計算
-					float fLength = sqrtf(powf((g_aFence[nCntFence].pos.x), 2) + powf((g_aFence[nCntFence].pos.z), 2));
-
-					//原点位置からの距離が、フィールドの半径以下　　なら、フィールドに乗っている
-					if (fLength <= GetMeshField()->fRadius)
-					{
-						g_aFence[nCntFence].move.y = 0.0f;
-						g_aFence[nCntFence].nFallTime = 0;
-						g_aFence[nCntFence].pos.y = 0.0f;
-					}
-					else
-					{
-						g_aFence[nCntFence].bCollision = false;
-					}
-				}
-			}
-
-			//移動量変更
-			g_aFence[nCntFence].pos.y += g_aFence[nCntFence].move.y;
+			continue;
 		}
+
+		//フェンスの倒れる処理
+		FallFence(pFence, FieldRadius);
+
+		//フェンスの落下処理
+		DropFence(pFence, FieldRadius);
+	}
+}
+
+//フェンスの落下処理
+void DropFence(Fence *pFence, float FieldRadius)
+{
+	//フェンスの位置が、フィールドの半径以下
+	if (FieldRadius <= pFence->fRadius)
+	{
+		pFence->bCollision = true;				//後の当たり判定を行わない
+		pFence->fDropSpeed += FENCE_DROP_SPEED;	//落下速度をどんどん上げる
+		pFence->pos.y -= pFence->fDropSpeed;	//落下させる
+
+		//消滅ポイントまで落ちた
+		if (pFence->pos.y <= FENCE_DESTROY_POS)
+		{
+			//使用しない
+			pFence->bUse = false;
+		}
+	}
+}
+
+//フェンスの倒れる処理
+void FallFence(Fence *pFence, float FieldRadius)
+{
+	//フェンスの当たり判定が残っていたら、処理を飛ばす
+	if (pFence->bCollision)
+	{
+		return;
+	}
+
+	pFence->fFallSpeed += FENCE_FALL_SPEED;		//倒れる速度をどんどん上げる
+	pFence->rot.x += pFence->fFallSpeed;		//回転値を加算
+	
+	//フェンスの置かれている位置+余裕を持たせたスペース　より　フィールドの半径がでかい
+	if (pFence->fRadius + FENCE_MARGIN_SPACE <= FieldRadius)
+	{
+		//真横以上にまで倒れた
+		if (D3DX_PI * RIGHT < pFence->rot.x)
+		{
+			pFence->rot.x = D3DX_PI * RIGHT;	//真横に戻す
+			pFence->fFallSpeed = 0.0f;			//倒れるスピードを０にする
+		}
+	}
+
+	//余裕を持たせたスペースよりフィールドの半径が小さかった場合、最大限まで倒れさせる
+	//フェンスが逆さまになりかけるくらい、倒れた
+	else
+	{
+		//少しずつ奥にずらす
+		pFence->fRadius += FENCE_SHIFT_LENGTH;
+		
+		//最大限まで倒れた
+		if (FENCE_LIMIT_FALL < pFence->rot.x)
+		{
+			pFence->bUse = false;	//フェンスを使わない
+		}
+
+		//位置設定
+		SetFencePos(&pFence->pos, pFence->fRadius, pFence->rot.y);
 	}
 }
 
@@ -152,31 +202,39 @@ void DrawFence(void)
 }
 
 //========================
-//表示処理
+//設定処理
 //========================
-void SetFence(float fLength, D3DXVECTOR3 rot)
+void SetFence(float fRadius, float rotY)
 {
-	fLength -= 10.0f;
 	for (int nCntObj = 0; nCntObj < MAX_USE_FENCE; nCntObj++)
 	{
-		if (g_aFence[nCntObj].bUse == false)
+		//対象のフェンスのポインタを取得
+		Fence *pFence = &g_aFence[nCntObj];
+
+		//対象のフェンスが使われていない
+		if (pFence->bUse == false)
 		{
-			//引数の情報を追加
-			g_aFence[nCntObj].pos.x = fLength * sinf(rot.y);
-			g_aFence[nCntObj].pos.y = 0.0f;
-			g_aFence[nCntObj].pos.z = fLength * cosf(rot.y);
-			g_aFence[nCntObj].posOld = g_aFence[nCntObj].pos;
-			g_aFence[nCntObj].rot = rot;
-			g_aFence[nCntObj].nFallTime = 0;
+			//引数の情報を追加			
+			SetFencePos(&pFence->pos, fRadius, rotY);		//位置設定
+			pFence->pos.y = 0.0f;							//初期位置設定
+			pFence->posOld = pFence->pos;					//初期位置設定
+			pFence->fRadius = fRadius;						//半径設定
+			pFence->rot = D3DXVECTOR3(0.0f, rotY, 0.0f);	//角度を設定
+			pFence->fDropSpeed = pFence->fFallSpeed = 0.0f;	//落下・倒れる速度を初期化
 
 			//使用していることにする
-			g_aFence[nCntObj].bUse = true;
-			g_aFence[nCntObj].bCollision = true;
-
-			//抜ける
-			break;
+			pFence->bUse = true;
+			pFence->bCollision = true;
+			break;			  //抜ける
 		}
 	}
+}
+
+//位置設定
+void SetFencePos(D3DXVECTOR3 *pPos, float fRadius, float rotY) 
+{
+	pPos->x = fRadius * sinf(rotY);	//Ⅹ位置設定
+	pPos->z = fRadius * cosf(rotY);	//Ｚ位置設定
 }
 
 //========================

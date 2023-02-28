@@ -554,8 +554,8 @@ void RefrectPlayer(Player *pPlayer, Fence *pFence, float fRate, D3DXVECTOR3 vecL
 	pPlayer->pos.x += pPlayer->move.x;
 	pPlayer->pos.z += pPlayer->move.z;
 
-	//フェンス消す
-	pFence->bUse = false;
+	//フェンスの当たり判定を消す
+	pFence->bCollision = false;
 }
 
 //========================
