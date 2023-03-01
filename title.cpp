@@ -7,7 +7,7 @@ Author:平澤詩苑
 #include "main.h"
 #include "title.h"
 #include "light.h"
-#include "camera.h"
+#include "titleCamera.h"
 #include "color.h"
 #include "input.h"
 #include "fade.h"
@@ -39,7 +39,6 @@ LPDIRECT3DVERTEXBUFFER9		g_pVtxBuffTitle = NULL;					//頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9			g_pTextureTitle[NUM_TITLE_TEX] = {};	//テクスチャのポインタ
 Title						g_Title[NUM_TITLE_TEX];					//タイトルの情報
 int							g_select;								//選択番号
-NumCamera g_NumTitleCamera = NumCamera_ONLY;		//カメラ初期化の引数
 int nCntButtonEffect1, nCntButtonEffect2;
 
 //タイトル画面に使用するアイコンたちのパス
@@ -129,21 +128,12 @@ void InitTitle(void)
 	//頂点バッファをロックする
 	g_pVtxBuffTitle->Unlock();
 
-	InitFile();
-
+	InitFile();	//ファイルの初期化処理
 	LoadModelViewerFile("data\\model.txt");				// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
 
-	//ライトの初期化処理
-	InitLight();
-
-	//カメラの初期化処理
-	InitCamera(g_NumTitleCamera);
-
-	//メッシュドームの初期化処理
-	InitMeshDome();
-
-	//ステージの初期化処理
-	InitMeshfield();
+	InitTitleCamera();	//カメラの初期化処理
+	InitMeshDome();		//メッシュドームの初期化処理
+	InitMeshfield();	//ステージの初期化処理
 }
 
 //タイトルの情報読み込み処理
@@ -196,20 +186,11 @@ void UninitTitle(void)
 		g_pVtxBuffTitle = NULL;
 	}
 
-	UninitFile();
-
-	//ライトの終了処理
-	UninitLight();
-
-	//カメラの終了処理
-	UninitCamera();
-
-	//メッシュドームの終了処理
-	UninitMeshDome();
-
-	//ステージの終了処理
-	UninitMeshfield();
-
+	UninitFile();			//ファイルの終了処理
+	UninitLight();			//ライトの終了処理
+	UninitTitleCamera();	//カメラの終了処理
+	UninitMeshDome();		//メッシュドームの終了処理	
+	UninitMeshfield();		//ステージの終了処理
 	StopSound(SOUND_LABEL_BGM_TITLE);
 }
 
@@ -339,11 +320,8 @@ void UpdateTitle(void)
 	//頂点バッファをロックする
 	g_pVtxBuffTitle->Unlock();
 
-	//ライトの更新処理
-	UpdateLight();
-
 	//カメラの更新処理
-	CameraForTitle();
+	UpdateTitleCamera();
 }
 
 //------------------------------------------------
@@ -360,6 +338,11 @@ void DrawTitle(void)
 	//頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
+	//アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
 	for (int nCntTitle = 0; nCntTitle < NUM_TITLE_TEX; nCntTitle++)
 	{
 		//テクスチャの設定
@@ -369,8 +352,13 @@ void DrawTitle(void)
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTitle * VTX_MAX, 2);
 	}
 
-	SetCamera(0);		// １番目のカメラの設定処理	
-	DrawMeshDome();		// メッシュドームの描画処理	
+	//アルファテストを無効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
+	SetTitleCamera();	// カメラの設定処理
+	DrawMeshDome();		// メッシュドームの描画処理
 	DrawMeshfield();	// ステージの描画処理
 }
 //
