@@ -194,7 +194,10 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="PvP_player.cpp" />
+    <ClCompile Include="rank.cpp" />
     <ClCompile Include="result.cpp" />
+    <ClCompile Include="resultCamera.cpp" />
+    <ClCompile Include="resultCylinder.cpp" />
     <ClCompile Include="resultPlayer.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="select_game.cpp" />
@@ -203,6 +206,7 @@
     <ClCompile Include="title.cpp" />
     <ClCompile Include="tremor_effect.cpp" />
     <ClCompile Include="tutorial.cpp" />
+    <ClCompile Include="VictoryStand.cpp" />
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -243,7 +247,10 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="PvP_player.h" />
+    <ClInclude Include="rank.h" />
     <ClInclude Include="result.h" />
+    <ClInclude Include="resultCamera.h" />
+    <ClInclude Include="resultCylinder.h" />
     <ClInclude Include="resultPlayer.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="select_game.h" />
@@ -252,6 +259,7 @@
     <ClInclude Include="title.h" />
     <ClInclude Include="tremor_effect.h" />
     <ClInclude Include="tutorial.h" />
+    <ClInclude Include="VictoryStand.h" />
     <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>

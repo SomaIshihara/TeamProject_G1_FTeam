@@ -12,10 +12,6 @@
 #define MAX_PLACE_OBJ		(256)
 #define MAX_TEMPSTR_CHAR	(4096)
 
-//プロト
-void InitAnimalModel(void);
-void InitObjectModel(void);
-
 //グローバル変数
 Model g_aAnimalModel[ANIMAL_MAX];		//動物モデル構造体
 Model g_aObjModel[OBJECTTYPE_MAX];		//オブジェクトモデル設計図構造体

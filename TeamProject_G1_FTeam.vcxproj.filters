@@ -82,9 +82,6 @@
     <Filter Include="ヘッダー ファイル\Game\Game_HDR">
       <UniqueIdentifier>{0cfb08cb-c655-4313-b5de-bd55abf28c60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Game_PvP\Player\Stage">
-      <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\Game\Game_HDR\Player">
       <UniqueIdentifier>{7ca0e2f4-9928-451e-90e9-32c1b0cbe418}</UniqueIdentifier>
     </Filter>
@@ -103,11 +100,14 @@
     <Filter Include="ヘッダー ファイル\Main\Input">
       <UniqueIdentifier>{e4c1fa2e-e89f-422f-ae6e-c21e8fa69023}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Game_PvP\Player\UI">
-      <UniqueIdentifier>{33384698-b282-4e7c-b56e-316f6d94eef4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Game\Game_PvP\Player\UI">
       <UniqueIdentifier>{eeb3e5dc-34c3-42fc-8f29-a7abc2cc4f10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Game_PvP\Stage">
+      <UniqueIdentifier>{54914416-c196-443b-a22b-2e855f1e35e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Game\Game_PvP\UI">
+      <UniqueIdentifier>{33384698-b282-4e7c-b56e-316f6d94eef4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -133,22 +133,22 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="meshcylinder.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="meshfield.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="model.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
     <ClCompile Include="wall.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="light.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="meshdome.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="sound.cpp">
       <Filter>ソース ファイル</Filter>
@@ -196,7 +196,7 @@
       <Filter>ソース ファイル\Game\Game_PvP</Filter>
     </ClCompile>
     <ClCompile Include="meshfault.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="timer.cpp">
       <Filter>ソース ファイル\Game\Game_PvP</Filter>
@@ -223,7 +223,7 @@
       <Filter>ソース ファイル\Main\Input</Filter>
     </ClCompile>
     <ClCompile Include="fence.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\Stage</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
     <ClCompile Include="collision.cpp">
       <Filter>ソース ファイル</Filter>
@@ -235,18 +235,30 @@
       <Filter>ソース ファイル\Game\Effect</Filter>
     </ClCompile>
     <ClCompile Include="gauge.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\UI</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\UI</Filter>
     </ClCompile>
     <ClCompile Include="score.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\UI</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\UI</Filter>
     </ClCompile>
     <ClCompile Include="GaugeFrame.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player\UI</Filter>
+      <Filter>ソース ファイル\Game\Game_PvP\UI</Filter>
     </ClCompile>
     <ClCompile Include="result.cpp">
       <Filter>ソース ファイル\Result</Filter>
     </ClCompile>
     <ClCompile Include="resultPlayer.cpp">
+      <Filter>ソース ファイル\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="rank.cpp">
+      <Filter>ソース ファイル\Game\Game_HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="VictoryStand.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="resultCamera.cpp">
+      <Filter>ソース ファイル\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="resultCylinder.cpp">
       <Filter>ソース ファイル\Result</Filter>
     </ClCompile>
   </ItemGroup>
@@ -389,8 +401,20 @@
     <ClInclude Include="result.h">
       <Filter>ヘッダー ファイル\Result</Filter>
     </ClInclude>
+    <ClInclude Include="rank.h">
+      <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="VictoryStand.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="resultCamera.h">
+      <Filter>ヘッダー ファイル\Result</Filter>
+    </ClInclude>
     <ClInclude Include="resultPlayer.h">
-      <Filter>ヘッダー ファイル\SelectGame</Filter>
+      <Filter>ヘッダー ファイル\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="resultCylinder.h">
+      <Filter>ヘッダー ファイル\Result</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
