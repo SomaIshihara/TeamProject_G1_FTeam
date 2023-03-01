@@ -194,6 +194,7 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="PvP_player.cpp" />
+    <ClCompile Include="rank.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="resultCamera.cpp" />
     <ClCompile Include="resultPlayer.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="PvP_player.h" />
+    <ClInclude Include="rank.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="resultCamera.h" />
     <ClInclude Include="resultPlayer.h" />
