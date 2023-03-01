@@ -4,8 +4,8 @@
 Author:平澤詩苑
 
 ============================================================================================================================================================*/
-#ifndef _RESULTCAMERA_H_
-#define _RESULTCAMERA_H_
+#ifndef _TITLECAMERA_H_
+#define _TITLECAMERA_H_
 
 #include "main.h"
 
@@ -19,21 +19,16 @@ typedef struct
 	float		fLength;		//視点と注視点の距離
 	D3DXMATRIX	mtxProjection;	//プロジェクションマトリックス
 	D3DXMATRIX	mtxview;		//ビューマトリックス
-}ResultCamera;
+}TitleCamera;
 
-void InitResultCamera(void);
-void UninitResultCamera(void);
-void UpdateResultCamera(void);
+void InitTitleCamera(void);
+void UninitTitleCamera(void);
+void UpdateTitleCamera(void);
 
 //カメラの移動処理
-void MoveResultCamera(D3DXVECTOR3 ParentPos, D3DXVECTOR3 *pChildPos, float CorRot);
-void MovePosV(void);
-void LengthCamera(void);
-void SpinResultPosV(void);
-void ResetResultCameraPos(void);
-void FixResultCameraRot(void);
-void SetResultCamera(void);
-ResultCamera *GetResultCamera(void);
-void LengthResultCamera(void);
+void MoveTitleCamera(D3DXVECTOR3 ParentPos, D3DXVECTOR3 *pChildPos, float CorRot);
+void SpinTitlePosV(void);
+void SetTitleCamera(void);
+TitleCamera *GetTitleCamera(void);
 
 #endif 

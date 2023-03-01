@@ -261,6 +261,9 @@
     <ClCompile Include="resultCylinder.cpp">
       <Filter>ソース ファイル\Result</Filter>
     </ClCompile>
+    <ClCompile Include="titleCamera.cpp">
+      <Filter>ソース ファイル\Title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -415,6 +418,9 @@
     </ClInclude>
     <ClInclude Include="resultCylinder.h">
       <Filter>ヘッダー ファイル\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="titleCamera.h">
+      <Filter>ヘッダー ファイル\Title</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

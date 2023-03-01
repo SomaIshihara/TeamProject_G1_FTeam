@@ -130,7 +130,7 @@ void LengthCamera(void)
 }
 
 //Ž‹“_‰ñ“]
-void SpinPosV(void)
+void SpinResultPosV(void)
 {
 
 }
