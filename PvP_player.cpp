@@ -808,11 +808,11 @@ void RotatePlayer(int nPadNum)
 	if (!g_bDebugMove)
 	{//リリース用
 	 //ゲームパッド部
-		if (GetStick(nPadNum) == CONVSTICK_LEFT)
+		if (GetStick(nPadNum, INPUTTYPE_PRESS) == CONVSTICK_LEFT)
 		{
 			g_aPlayerPvP[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
 		}
-		else if(GetStick(nPadNum) == CONVSTICK_RIGHT)
+		else if(GetStick(nPadNum, INPUTTYPE_PRESS) == CONVSTICK_RIGHT)
 		{
 			g_aPlayerPvP[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
 		}

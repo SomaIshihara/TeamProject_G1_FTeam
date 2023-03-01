@@ -10,8 +10,8 @@ Author:平澤詩苑
 //選択できるゲームモード
 typedef enum
 {
-	SelectGameMode_PVP = 0,		//落とし合うゲーム
-	SelectGameMode_HipDropRace,	//ヒップドロップレースゲーム
+	SelectGameMode_PVP = 0,	//落とし合うゲーム
+	SelectGameMode_HDR,		//ヒップドロップレースゲーム
 	SelectGameMode_MAX
 }SelectGameMode;
 
@@ -20,7 +20,7 @@ typedef enum
 {
 	SelectGameMenu_BG = 0,
 	SelectGameMenu_PVP,
-	SelectGameMenu_HipDropRace,
+	SelectGameMenu_HDR,
 	SelectGameMenu_MAX
 }SelectGameMenu;
 

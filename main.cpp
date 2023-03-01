@@ -23,6 +23,7 @@
 #include <crtdbg.h>
 #include "meshfield.h"
 #include "meshdome.h"
+#include "result.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -45,7 +46,7 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_PvPGAME;		// 現在のモード
+MODE			g_mode = MODE_TITLE;		// 現在のモード
 #else
 MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #endif
@@ -372,7 +373,9 @@ void Uninit(void)
 	UninitTitle();		// タイトルの終了処理
 	UninitTutorial();	// チュートリアルの終了処理
 	UninitSelectGame();	// ゲーム選択の終了処理
-	UninitPvPGame();		// ゲームの終了処理
+	UninitPvPGame();	// PvPゲームの終了処理
+	UninitHDRGame();	// HDRゲームの終了処理
+	UninitResult();		// リザルト画面の終了処理
 
 	//フェード終了
 	UninitFade();	
@@ -446,11 +449,15 @@ void Update(void)
 			UpdateTutorial();
 			break;
 
-		case MODE_PvPGAME:			//ゲーム画面の更新
+		case MODE_PvPGAME:		//PvPゲーム画面の更新
 			UpdatePvPGame();
 			break;
-		case MODE_RaceGAME:			//ゲーム画面の更新
+		case MODE_RaceGAME:		//HDRゲーム画面の更新
 			UpdateHDRGame();
+			break;
+
+		case MODE_RESULT:
+			UpdateResult();		//リザルト画面の更新
 			break;
 		}
 	}
@@ -497,11 +504,15 @@ void Draw(void)
 			DrawTutorial();
 			break;
 
-		case MODE_PvPGAME:			//ゲーム画面描画
+		case MODE_PvPGAME:		//PvPゲーム画面描画
 			DrawPvPGame();
 			break;
-		case MODE_RaceGAME:			//ゲーム画面の更新
+		case MODE_RaceGAME:		//HDRゲーム画面の描画
 			DrawHDRGame();
+			break;
+
+		case MODE_RESULT:		//リザルト画面の描画処理
+			DrawResult();
 			break;
 		}
 
@@ -550,11 +561,16 @@ void SetMode(MODE mode)
 		UninitTutorial();
 		break;
 
-	case MODE_PvPGAME:			//ゲーム画面終了
+	case MODE_PvPGAME:		//PvPゲーム画面終了
 		UninitPvPGame();
 		break;
-	case MODE_RaceGAME:			//ゲーム画面の更新
+
+	case MODE_RaceGAME:		//HDRゲーム画面終了
 		UninitHDRGame();
+		break;
+
+	case MODE_RESULT:
+		UninitResult();		//リザルト画面終了
 		break;
 	}
 
@@ -573,11 +589,16 @@ void SetMode(MODE mode)
 		InitTutorial();
 		break;
 
-	case MODE_PvPGAME:			//ゲーム画面初期化
+	case MODE_PvPGAME:		//PvPゲーム画面初期化
 		InitPvPGame();
 		break;
-	case MODE_RaceGAME:			//ゲーム画面の更新
+
+	case MODE_RaceGAME:		//HDRゲーム画面初期化
 		InitHDRGame();
+		break;
+
+	case MODE_RESULT:		//リザルト画面初期化
+		InitResult();
 		break;
 	}
 

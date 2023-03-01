@@ -7,7 +7,7 @@ Author:平澤詩苑
 #include "main.h"
 #include "color.h"
 #include "fade.h"
-#include "input.h"
+#include "conversioninput.h"
 #include "sound.h"
 #include "select_game.h"
 
@@ -16,7 +16,8 @@ Author:平澤詩苑
 
 //グローバル変数宣言
 SelectGame					g_SelectGame[SelectGameMenu_MAX];				/*ゲーム選択の情報*/
-SelectGameMenu				g_SelectGameMenu;								/*選択されたゲームモード*/
+SelectGameMenu				g_SelectGameMenu = SelectGameMenu_PVP;			/*選択されたゲームメニュー*/
+SelectGameMode				g_SelectGameMode = SelectGameMode_PVP;			/*選択されたゲームモード*/
 LPDIRECT3DVERTEXBUFFER9		g_pVtxBuffSelectGame = NULL;					/*頂点バッファへのポインタ*/
 LPDIRECT3DTEXTURE9			g_pTextureSelectGame[SelectGameMenu_MAX] = {};	/*テクスチャのポインタ*/
 
@@ -35,6 +36,7 @@ void InitSelectGame(void)
 	//選択メニュー情報の初期化
 	LoadSelectGame();
 	g_SelectGameMenu = SelectGameMenu_PVP;
+	g_SelectGameMode = SelectGameMode_PVP;
 
 	//デバイスへのポインタ + 取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -182,37 +184,37 @@ void UpdateSelectGame(void)
 //ゲームモードを選ぶ
 void ChooseGameMode(void)
 {
-	//右矢印が押された　もしくは　ゲームパッドのSTART or A ボタンが押された
-	if ((GetKeyboardTrigger(DIK_RIGHT) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
+	//右矢印が押された　もしくは　ゲームパッドの右十字キー　が押された　もしくは　左スティックが右に倒された
+	if ((GetKeyboardTrigger(DIK_RIGHT) || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) || GetStick(0, INPUTTYPE_TRIGGER) == CONVSTICK_RIGHT ))
 	{
 		switch (g_SelectGameMenu)
 		{
 			//PVPが選択されている場合  もしくはバグで、何にも選択されていなかった場合
 		case SelectGameMenu_PVP:
 		default:
-			g_SelectGameMenu = SelectGameMenu_HipDropRace;	//選択されているメニューを「ヒップドロップレース」に
+			g_SelectGameMenu = SelectGameMenu_HDR;	//選択されているメニューを「ヒップドロップレース」に
 			break;
 
 			//ヒップドロップレースが選択されている場合
-		case SelectGameMenu_HipDropRace:
+		case SelectGameMenu_HDR:
 			g_SelectGameMenu = SelectGameMenu_PVP;	//選択されているメニューを「PVP」に
 			break;
 		}
 	}
 
-	//右矢印が押された　もしくは　ゲームパッドのSTART or A ボタンが押された
-	if ((GetKeyboardTrigger(DIK_LEFT) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
+	//左矢印が押された　もしくは　ゲームパッドの左十字キーが押された
+	if ((GetKeyboardTrigger(DIK_LEFT) || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) || GetStick(0, INPUTTYPE_TRIGGER) == CONVSTICK_LEFT))
 	{
 		switch (g_SelectGameMenu)
 		{
 			//PVPが選択されている場合  もしくはバグで、何にも選択されていなかった場合
 		case SelectGameMenu_PVP:
 		default:
-			g_SelectGameMenu = SelectGameMenu_HipDropRace;	//選択されているメニューを「ヒップドロップレース」に
+			g_SelectGameMenu = SelectGameMenu_HDR;	//選択されているメニューを「ヒップドロップレース」に
 			break;
 
 			//ヒップドロップレースが選択されている場合
-		case SelectGameMenu_HipDropRace:
+		case SelectGameMenu_HDR:
 			g_SelectGameMenu = SelectGameMenu_PVP;	//選択されているメニューを「PVP」に
 			break;
 		}
@@ -230,16 +232,16 @@ void DecideGameMode(void)
 			//PVPが選択されている場合  もしくはバグで、何にも選択されていなかった場合
 		case SelectGameMenu_PVP:
 
-			//チュートリアル画面に遷移
-			SetFade(MODE_PvPGAME);
+			SetFade(MODE_PvPGAME);					//チュートリアル画面に遷移
+			g_SelectGameMode = SelectGameMode_PVP;	//PVPゲームを選択
 
 			break;
 
 			//ヒップドロップレースが選択されている場合
-		case SelectGameMenu_HipDropRace:
+		case SelectGameMenu_HDR:
 
-			//チュートリアル画面に遷移
-			SetFade(MODE_RaceGAME);
+			SetFade(MODE_RaceGAME);					//チュートリアル画面に遷移
+			g_SelectGameMode = SelectGameMode_HDR;	//ヒップドロップレースゲームを選択
 
 			break;
 		}

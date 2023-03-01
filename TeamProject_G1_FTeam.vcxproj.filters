@@ -243,6 +243,12 @@
     <ClCompile Include="GaugeFrame.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Player\UI</Filter>
     </ClCompile>
+    <ClCompile Include="result.cpp">
+      <Filter>ソース ファイル\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="resultPlayer.cpp">
+      <Filter>ソース ファイル\Result</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -379,6 +385,12 @@
     </ClInclude>
     <ClInclude Include="GaugeFrame.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP\Player\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="result.h">
+      <Filter>ヘッダー ファイル\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="resultPlayer.h">
+      <Filter>ヘッダー ファイル\SelectGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

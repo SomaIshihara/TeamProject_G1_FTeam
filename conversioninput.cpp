@@ -16,9 +16,17 @@ typedef struct
 	bool repeate[BUTTON_MAX];
 } ConvButton;
 
+//スティック用入力構造体
+typedef struct
+{
+	CONVSTICK press;
+	CONVSTICK trigger;
+	CONVSTICK release;
+} ConvStickState;
+
 //グローバル
 ConvButton g_aConvButton[MAX_USE_GAMEPAD] = {};
-CONVSTICK g_aConvStick[MAX_USE_GAMEPAD] = {};
+ConvStickState g_aConvStick[MAX_USE_GAMEPAD] = {};
 
 //キーボード対応操作
 const int c_aKeyboardInput[BUTTON_MAX] = { DIK_SPACE,DIK_RETURN,DIK_P };
@@ -61,21 +69,26 @@ void UpdateConvertionInput(void)
 				g_aConvButton[nCntController].press[nCntButton] = GetGamepadPress(nCntController, c_aGamePadInput[nCntButton]);
 				g_aConvButton[nCntController].trigger[nCntButton] = GetGamepadTrigger(nCntController, c_aGamePadInput[nCntButton]);
 				g_aConvButton[nCntController].release[nCntButton] = GetGamepadRelease(nCntController, c_aGamePadInput[nCntButton]);
-				g_aConvButton[nCntController].repeate[nCntButton] = GetGamepadRepeate(nCntController, c_aGamePadInput[nCntButton]);
 			}
 
 			//スティック
 			if (GetLStickX(nCntController) < 0)
 			{//左に傾いている
-				g_aConvStick[nCntController] = CONVSTICK_LEFT;
+				g_aConvStick[nCntController].trigger = g_aConvStick[nCntController].press != CONVSTICK_LEFT ? CONVSTICK_LEFT : CONVSTICK_NEUTRAL;
+				g_aConvStick[nCntController].release = g_aConvStick[nCntController].press != CONVSTICK_NEUTRAL ? CONVSTICK_NEUTRAL : CONVSTICK_LEFT;
+				g_aConvStick[nCntController].press = CONVSTICK_LEFT;
 			}
 			else if (GetLStickX(nCntController) > 0)
 			{//右に傾いている
-				g_aConvStick[nCntController] = CONVSTICK_RIGHT;
+				g_aConvStick[nCntController].trigger = g_aConvStick[nCntController].press != CONVSTICK_RIGHT ? CONVSTICK_RIGHT : CONVSTICK_NEUTRAL;
+				g_aConvStick[nCntController].release = g_aConvStick[nCntController].press != CONVSTICK_NEUTRAL ? CONVSTICK_NEUTRAL : CONVSTICK_RIGHT;
+				g_aConvStick[nCntController].press = CONVSTICK_RIGHT;
 			}
 			else
 			{//傾いていない
-				g_aConvStick[nCntController] = CONVSTICK_NEUTRAL;
+				g_aConvStick[nCntController].trigger = 
+				g_aConvStick[nCntController].release = 
+				g_aConvStick[nCntController].press = CONVSTICK_NEUTRAL;
 			}
 		}
 		else if (nCntController == 0)
@@ -92,15 +105,15 @@ void UpdateConvertionInput(void)
 			//（ゲームパッドで言う）スティック
 			if (GetKeyboardPress(DIK_A) == true)
 			{//左に傾いている
-				g_aConvStick[0] = CONVSTICK_LEFT;
+				g_aConvStick[0].press = CONVSTICK_LEFT;
 			}
 			else if (GetKeyboardPress(DIK_D) == true)
 			{//右に傾いている
-				g_aConvStick[0] = CONVSTICK_RIGHT;
+				g_aConvStick[0].press = CONVSTICK_RIGHT;
 			}
 			else
 			{//傾いていない
-				g_aConvStick[0] = CONVSTICK_NEUTRAL;
+				g_aConvStick[0].press = CONVSTICK_NEUTRAL;
 			}
 		}
 	}
@@ -156,13 +169,26 @@ bool GetButton(int nPadNum, INPUTTYPE type, BUTTON button)
 //========================
 void SetStick(int nPadNum, CONVSTICK stick)
 {
-	g_aConvStick[nPadNum] = stick;
+	g_aConvStick[nPadNum].press = stick;
 }
 
 //========================
 //スティック入力取得処理
 //========================
-CONVSTICK GetStick(int nPadNum)
+CONVSTICK GetStick(int nPadNum, INPUTTYPE type)
 {
-	return g_aConvStick[nPadNum];
+	switch (type)
+	{
+	case INPUTTYPE_PRESS:
+		return g_aConvStick[nPadNum].press;
+		break;
+	case INPUTTYPE_TRIGGER:
+		return g_aConvStick[nPadNum].trigger;
+		break;
+	case INPUTTYPE_RELEASE:
+		return g_aConvStick[nPadNum].release;
+		break;
+	}
+
+	return CONVSTICK_NEUTRAL;
 }
