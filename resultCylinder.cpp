@@ -105,7 +105,7 @@ void SetResultCylinderVertex(int nCntCylinder)
 			pVtx[nNumTopVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[nCntVtx].col = pVtx[nNumTopVtx].col = XCOL_RED;
+		pVtx[nCntVtx].col = pVtx[nNumTopVtx].col = XCOL_WHITE;
 
 		//テクスチャ座標の設定
 		pVtx[nCntVtx].tex = D3DXVECTOR2(nCntVtx * TexSep_U, 1.0f);

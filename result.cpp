@@ -7,7 +7,6 @@ Author:平澤詩苑
 #include "main.h"
 #include "result.h"
 #include "color.h"
-#include "input.h"
 #include "fade.h"
 #include "file.h"
 #include "model.h"
@@ -15,6 +14,7 @@ Author:平澤詩苑
 #include "resultCamera.h"
 #include "VictoryStand.h"
 #include "resultCylinder.h"
+#include "conversioninput.h"
 
 #define NUM_RESULT			(1)		//リザルト画像の種類
 
@@ -96,6 +96,11 @@ void UpdateResult(void)
 	//リザルト用オブジェクトの更新処理関数呼び出し
 	//===============================================
 	UpdateResultObject();
+
+	if (GetKeyboardTrigger(DIK_RETURN))
+	{
+		SetFade(MODE_TITLE);
+	}
 }
 
 //------------------------------------------------
