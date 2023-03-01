@@ -8,6 +8,7 @@ Author:平澤詩苑 石原颯馬
 #define _COLOR_H_
 
 #include "main.h"
+#include "input.h"
 
 #define COLOR_MIN	(0)		// RGBACOLORの最小数
 #define COLOR_HALF	(127)	// RGBACOLORの中間数
@@ -66,5 +67,14 @@ typedef struct
 
 //プロト
 D3DXCOLOR HSBToRGB(HSBCOLOR hsb);
+
+//プレイヤーのゼッケンの色
+const D3DXCOLOR c_aColPlayer[MAX_USE_GAMEPAD] =
+{
+	XCOL_RED,
+	XCOL_BLUE,
+	XCOL_GREEN,
+	XCOL_YELLOW
+};
 
 #endif

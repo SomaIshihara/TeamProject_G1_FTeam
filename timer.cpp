@@ -163,7 +163,6 @@ void UpdateTime(void)
 //===============================
 void DrawTime(void)
 {
-
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//頂点バッファをデータストリームに設定
@@ -175,14 +174,22 @@ void DrawTime(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureTime);
 
+	//アルファテストを有効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+
 	for (int nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++)
 	{
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTime * VTX_MAX, 2);
 	}
 
+	//アルファテストを無効にする
+	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 }
-
 
 //===============================
 //タイムの設定処理
@@ -224,40 +231,37 @@ void SetTime(int nTime)
 //===============================
 void AddTime(int nValue)
 {
-	/*if (GetGameState() == GAMESTATE_NORMAL )
+	int nCntTime;
+	VERTEX_2D * pVtx;
+
+	g_aTime.nTime -= nValue;
+
+	//制限時間が0になったらゲームオーバー
+	if (g_aTime.nTime == 0)
 	{
-*/
-		int nCntTime;
-		VERTEX_2D * pVtx;
+		SetFade(MODE_RESULT);
+	}
 
-		g_aTime.nTime -= nValue;
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffTime->Lock(0, 0, (void**)&pVtx, 0);
 
-		//制限時間が0になったらゲームオーバー
-		if (g_aTime.nTime == 0)
-		{
-			SetFade(MODE_TITLE);
-		}
+	for (nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++, pVtx += VTX_MAX)
+	{
+		int aTexU = g_aTime.nTime % g_aTime.nDigit / (g_aTime.nDigit / 10);
 
-		//頂点バッファをロックし、頂点情報へのポインタを取得
-		g_pVtxBuffTime->Lock(0, 0, (void**)&pVtx, 0);
+		//テクスチャ座標の設定
+		pVtx[0].tex = D3DXVECTOR2(aTexU * 0.1f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(aTexU * 0.1f + 0.1f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(aTexU * 0.1f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(aTexU * 0.1f + 0.1f, 1.0f);
 
-		for (nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++, pVtx += VTX_MAX)
-		{
-			int aTexU = g_aTime.nTime % g_aTime.nDigit / (g_aTime.nDigit / 10);
+		g_aTime.nDigit /= 10;
+	}
+	//頂点バッファをアンロックする
+	g_pVtxBuffTime->Unlock();
 
-			//テクスチャ座標の設定
-			pVtx[0].tex = D3DXVECTOR2(aTexU * 0.1f, 0.0f);
-			pVtx[1].tex = D3DXVECTOR2(aTexU * 0.1f + 0.1f, 0.0f);
-			pVtx[2].tex = D3DXVECTOR2(aTexU * 0.1f, 1.0f);
-			pVtx[3].tex = D3DXVECTOR2(aTexU * 0.1f + 0.1f, 1.0f);
-
-			g_aTime.nDigit /= 10;
-		}
-		//頂点バッファをアンロックする
-		g_pVtxBuffTime->Unlock();
-
-		//桁数再設定
-		SetTimerDigit();
+	//桁数再設定
+	SetTimerDigit();
 }
 
 //===============================

@@ -42,7 +42,7 @@ void InitRank(void)
 	//Šeî•ñ“Ç‚İ‚İ
 	for (int nCnt = 0; nCnt < MAX_RANK; nCnt++)
 	{
-		g_aRank[nCnt].pos = D3DXVECTOR3(160.0f + nCnt * 320, 360.0f, 0.0f);
+		g_aRank[nCnt].pos = D3DXVECTOR3(160.0f + nCnt * 320, 600.0f, 0.0f);
 		g_aRank[nCnt].buse = false;
 	}
 

@@ -15,10 +15,10 @@
 //ƒAƒCƒeƒ€Ží—Þ—ñ‹“Œ^
 typedef enum
 {
-	RANK_1ST = 0,		
-	RANK_2ND,			
-	RANK_3RD,		
-	RANK_4TH,	
+	RANK_1ST = 0,
+	RANK_2ND,
+	RANK_3RD,
+	RANK_4TH,
 	RANK_MAX
 }RANK;
 

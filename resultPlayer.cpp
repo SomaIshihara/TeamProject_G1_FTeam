@@ -6,6 +6,7 @@
 //==========================================
 #include "resultPlayer.h"
 #include "select_game.h"
+#include "color.h"
 
 //マクロ定義
 
@@ -86,11 +87,11 @@ void DrawPlayer_RESULT(void)
 		Model useAnimal;
 
 		//ゲームモードに応じて取得するものを変更
-		if (GetSelectGameMode() == SelectGameMode_PVP)
+		if (GetSelGameMode() == SelGameMode_PVP)
 		{
 			useAnimal = GetAnimal(GetPlayer()[nCntPlayer].animal);
 		}
-		else if (GetSelectGameMode() == SelectGameMode_HDR)
+		else if (GetSelGameMode() == SelGameMode_HDR)
 		{
 			useAnimal = GetAnimal(GetPlayer_HDR()[nCntPlayer].animal);
 		}
@@ -151,8 +152,16 @@ void DrawPlayer_RESULT(void)
 
 			for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
 			{
-				//マテリアル設定
-				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+				//ゴースト用
+				D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
+
+				if (nCntParts == MAX_PARTS - 1)
+				{//ゼッケンの時は色変更
+					matChange.Diffuse = c_aColPlayer[nCntPlayer];
+				}
+
+				//マテリアルの設定
+				pDevice->SetMaterial(&matChange);
 
 				//テクスチャ設定
 				pDevice->SetTexture(0, useAnimal.aParts[nCntParts].apTexture[nCntMat]);

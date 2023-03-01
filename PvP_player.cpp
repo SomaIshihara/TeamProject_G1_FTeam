@@ -116,14 +116,6 @@ const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 	{ D3DXVECTOR3(50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_WD,0.0f) },
 };
 
-const D3DXCOLOR c_aColPlayer[MAX_USE_GAMEPAD] =
-{
-	XCOL_RED,
-	XCOL_BLUE,
-	XCOL_GREEN,
-	XCOL_YELLOW
-};
-
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
 const bool c_aAIMove[MAX_USE_GAMEPAD] = { false,true,true,true };
 

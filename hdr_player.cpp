@@ -236,8 +236,16 @@ void DrawPlayer_HDR(void)
 
 				for (int nCntMat = 0; nCntMat < (int)g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
 				{
+					//ゴースト用
+					D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
+
+					if (nCntParts == MAX_PARTS - 1)
+					{//ゼッケンの時は色変更
+						matChange.Diffuse = c_aColPlayer[nCntPlayer];
+					}
+
 					//マテリアルの設定
-					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+					pDevice->SetMaterial(&matChange);
 
 					//テクスチャ設定
 					pDevice->SetTexture(0, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);

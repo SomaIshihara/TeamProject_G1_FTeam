@@ -10,19 +10,10 @@ Author:平澤詩苑
 //選択できるゲームモード
 typedef enum
 {
-	SelectGameMode_PVP = 0,	//落とし合うゲーム
-	SelectGameMode_HDR,		//ヒップドロップレースゲーム
-	SelectGameMode_MAX
-}SelectGameMode;
-
-//選択メニュー
-typedef enum
-{
-	SelectGameMenu_BG = 0,
-	SelectGameMenu_PVP,
-	SelectGameMenu_HDR,
-	SelectGameMenu_MAX
-}SelectGameMenu;
+	SelGameMode_PVP = 0,	//落とし合うゲーム
+	SelGameMode_HDR,		//ヒップドロップレースゲーム
+	SelGameMode_MAX
+}SelGameMode;
 
 //ゲーム選択情報の構造体
 typedef struct
@@ -44,6 +35,6 @@ void DrawSelectGame(void);
 
 void ChooseGameMode(void);
 void DecideGameMode(void);
-SelectGameMode GetSelectGameMode(void);
+SelGameMode GetSelGameMode(void);
 
 #endif 
