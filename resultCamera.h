@@ -26,8 +26,9 @@ void UninitResultCamera(void);
 void UpdateResultCamera(void);
 
 //ƒJƒƒ‰‚ÌˆÚ“®ˆ—
-void MoveResultCamera(D3DXVECTOR3 *pParentPos, D3DXVECTOR3 *pChildPos, float CorRot);
+void MoveResultCamera(D3DXVECTOR3 ParentPos, D3DXVECTOR3 *pChildPos, float CorRot);
 void MovePosV(void);
+void LengthCamera(void);
 void SpinPosV(void);
 void ResetResultCameraPos(void);
 void FixResultCameraRot(void);

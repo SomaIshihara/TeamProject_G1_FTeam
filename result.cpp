@@ -14,6 +14,7 @@ Author:平澤詩苑
 #include "resultPlayer.h"
 #include "resultCamera.h"
 #include "VictoryStand.h"
+#include "resultCylinder.h"
 
 #define NUM_RESULT			(1)		//リザルト画像の種類
 
@@ -26,60 +27,6 @@ LPDIRECT3DTEXTURE9			g_pTextureResult[NUM_RESULT] = {};	//テクスチャのポインタ
 //************************************************
 void InitResult(void)
 {
-	//デバイスへのポインタ + 取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-
-	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * VTX_MAX * NUM_RESULT, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffResult, NULL);
-
-	//ポインタを設定
-	VERTEX_2D *pVtx;
-
-	//頂点バッファをロックし、頂点情報へのポインタを取得
-	g_pVtxBuffResult->Lock(0, 0, (void* *)&pVtx, 0);
-
-	//各情報の初期化
-	for (int nCntRuselt = 0; nCntRuselt < NUM_RESULT; nCntRuselt++, pVtx += VTX_MAX)
-	{
-		//テクスチャの読み込み
-
-
-		//頂点座標の設定
-		{
-			pVtx[VTX_LE_UP].pos = D3DXVECTOR3(0.0f, 0.0f, NIL_F);
-			pVtx[VTX_RI_UP].pos = D3DXVECTOR3(SCREEN_WIDTH, 0.0f, NIL_F);
-			pVtx[VTX_LE_DO].pos = D3DXVECTOR3(0.0f, SCREEN_HEIGHT, NIL_F);
-			pVtx[VTX_RI_DO].pos = D3DXVECTOR3(SCREEN_WIDTH, SCREEN_HEIGHT, NIL_F);
-		}
-
-		//rhwの設定
-		{
-			pVtx[VTX_LE_UP].rhw = RHW;
-			pVtx[VTX_RI_UP].rhw = RHW;
-			pVtx[VTX_LE_DO].rhw = RHW;
-			pVtx[VTX_RI_DO].rhw = RHW;
-		}
-
-		//頂点カラーの設定
-		{
-			pVtx[VTX_LE_UP].col = XCOL_WHITE;
-			pVtx[VTX_RI_UP].col = XCOL_WHITE;
-			pVtx[VTX_LE_DO].col = XCOL_WHITE;
-			pVtx[VTX_RI_DO].col = XCOL_WHITE;
-		}
-
-		//テクスチャの座標
-		{
-			pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[VTX_RI_UP].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[VTX_LE_DO].tex = D3DXVECTOR2(0.0f, 0.0f);
-			pVtx[VTX_RI_DO].tex = D3DXVECTOR2(0.0f, 0.0f);
-		}
-	}
-
-	//頂点バッファをロックする
-	g_pVtxBuffResult->Unlock();
-
 	//===============================================
 	//リザルト用オブジェクトの初期化処理関数呼び出し
 	//===============================================
@@ -93,6 +40,7 @@ void InitResultObject(void)
 {
 	InitFile();				//ファイル初期化
 	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
+	InitResultCylinder();	//背景の初期化処理
 	InitVictoryStand();		//表彰台の初期化処理
 	InitAnimalModel();		//動物モデル初期化
 	InitPlayer_RESULT();	//プレイヤーの初期化処理
@@ -132,6 +80,7 @@ void UninitResult(void)
 //------------------------------------------------
 void UninitResultObject(void)
 {
+	UninitResultCylinder();		//背景の終了処理
 	UninitModel();				//動物モデル終了処理
 	UninitPlayer_RESULT();		//プレイヤーの終了処理
 	UninitResultCamera();		//カメラの終了処理
@@ -157,29 +106,15 @@ void UpdateResultObject(void)
 	UpdatePlayer_RESULT();		//プレイヤーの更新処理
 	UpdateResultCamera();		//カメラの更新処理
 	UpdateVictoryStand();		//表彰台の更新処理
+	UpdateResultCylinder();		//背景の更新処理
 }
 
 //************************************************
 //				リザルトの描画処理
+//MEMO:2DUIを描画する場合はαテストを忘れずに！
 //************************************************
 void DrawResult(void)
 {
-	/*
-	//デバイスのポインタ + 取得
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-
-	//頂点バッファをデータストリームに設定
-	pDevice->SetStreamSource(0, g_pVtxBuffResult, 0, sizeof(VERTEX_2D));
-
-	//頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
-
-	//テクスチャの設定
-	pDevice->SetTexture(0, NULL);
-
-	//ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);*/
-
 	//===============================================
 	//リザルト用オブジェクトの描画処理関数呼び出し
 	//===============================================
@@ -192,6 +127,7 @@ void DrawResult(void)
 void DrawResultObject(void)
 {
 	SetResultCamera();			//カメラの設定処理
+	DrawResultCylinder();		//背景の描画処理
 	DrawPlayer_RESULT();		//プレイヤーの描画処理
 	DrawVictoryStand();			//表彰台の描画処理
 }

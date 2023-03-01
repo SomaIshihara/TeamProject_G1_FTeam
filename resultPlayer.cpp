@@ -10,7 +10,13 @@
 //マクロ定義
 
 //グローバル変数
-Player_RESULT g_aPlayerResult[MAX_USE_GAMEPAD];
+Player_RESULT g_ResultPlayer[MAX_USE_GAMEPAD];				/*リザルト用プレイヤーの情報*/
+const D3DXVECTOR3 c_ResultPlayerPos[MAX_USE_GAMEPAD] = {	/*プレイヤーの初期位置設定*/
+	D3DXVECTOR3(-150.0f, 0.0f, 0.0f),
+	D3DXVECTOR3(-050.0f, 0.0f, 0.0f),
+	D3DXVECTOR3(+050.0f, 0.0f, 0.0f),
+	D3DXVECTOR3(+150.0f, 0.0f, 0.0f),
+};
 
 //========================
 //初期化処理
@@ -23,20 +29,20 @@ void InitPlayer_RESULT(void)
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
 		//変数初期化
-		g_aPlayerResult[nCntPlayer].pos = ZERO_SET;
-		g_aPlayerResult[nCntPlayer].posOld = ZERO_SET;
-		g_aPlayerResult[nCntPlayer].move = ZERO_SET;
-		g_aPlayerResult[nCntPlayer].rot = ZERO_SET;
-		g_aPlayerResult[nCntPlayer].bHipDrop = false;
-		g_aPlayerResult[nCntPlayer].bHipDropSpin = false;
-		g_aPlayerResult[nCntPlayer].nHipDropWait = 0;
+		g_ResultPlayer[nCntPlayer].pos = 
+		g_ResultPlayer[nCntPlayer].posOld = c_ResultPlayerPos[nCntPlayer];
+		g_ResultPlayer[nCntPlayer].move = ZERO_SET;
+		g_ResultPlayer[nCntPlayer].rot = ZERO_SET;
+		g_ResultPlayer[nCntPlayer].bHipDrop = false;
+		g_ResultPlayer[nCntPlayer].bHipDropSpin = false;
+		g_ResultPlayer[nCntPlayer].nHipDropWait = 0;
 
-		g_aPlayerResult[nCntPlayer].animal = ANIMAL_WILDBOAR;
-		g_aPlayerResult[nCntPlayer].nRank = -1;
+		g_ResultPlayer[nCntPlayer].animal = ANIMAL_WILDBOAR;
+		g_ResultPlayer[nCntPlayer].nRank = -1;
 
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
-			g_aPlayerResult[nCntPlayer].animalInst[nCntParts] = {};
+			g_ResultPlayer[nCntPlayer].animalInst[nCntParts] = {};
 		}
 	}
 }
@@ -90,18 +96,18 @@ void DrawPlayer_RESULT(void)
 		}
 
 		//"プレイヤーの"ワールドマトリックス初期化
-		D3DXMatrixIdentity(&g_aPlayerResult[nCntPlayer].mtxWorld);
+		D3DXMatrixIdentity(&g_ResultPlayer[nCntPlayer].mtxWorld);
 
 		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_aPlayerResult[nCntPlayer].rot.y, g_aPlayerResult[nCntPlayer].rot.x, g_aPlayerResult[nCntPlayer].rot.z);
-		D3DXMatrixMultiply(&g_aPlayerResult[nCntPlayer].mtxWorld, &g_aPlayerResult[nCntPlayer].mtxWorld, &mtxRot);
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_ResultPlayer[nCntPlayer].rot.y, g_ResultPlayer[nCntPlayer].rot.x, g_ResultPlayer[nCntPlayer].rot.z);
+		D3DXMatrixMultiply(&g_ResultPlayer[nCntPlayer].mtxWorld, &g_ResultPlayer[nCntPlayer].mtxWorld, &mtxRot);
 
 		//位置反映
-		D3DXMatrixTranslation(&mtxTrans, g_aPlayerResult[nCntPlayer].pos.x, g_aPlayerResult[nCntPlayer].pos.y, g_aPlayerResult[nCntPlayer].pos.z);
-		D3DXMatrixMultiply(&g_aPlayerResult[nCntPlayer].mtxWorld, &g_aPlayerResult[nCntPlayer].mtxWorld, &mtxTrans);
+		D3DXMatrixTranslation(&mtxTrans, g_ResultPlayer[nCntPlayer].pos.x, g_ResultPlayer[nCntPlayer].pos.y, g_ResultPlayer[nCntPlayer].pos.z);
+		D3DXMatrixMultiply(&g_ResultPlayer[nCntPlayer].mtxWorld, &g_ResultPlayer[nCntPlayer].mtxWorld, &mtxTrans);
 
 		//"プレイヤーの"ワールドマトリックス設定
-		pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerResult[nCntPlayer].mtxWorld);
+		pDevice->SetTransform(D3DTS_WORLD, &g_ResultPlayer[nCntPlayer].mtxWorld);
 
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
@@ -110,35 +116,35 @@ void DrawPlayer_RESULT(void)
 
 			//ここ新仕様
 			//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
-			g_aPlayerResult[nCntPlayer].animalInst[nCntParts].pos = useAnimal.aParts[nCntParts].posOffset;
-			g_aPlayerResult[nCntPlayer].animalInst[nCntParts].rot = useAnimal.aParts[nCntParts].rotOffset;
+			g_ResultPlayer[nCntPlayer].animalInst[nCntParts].pos = useAnimal.aParts[nCntParts].posOffset;
+			g_ResultPlayer[nCntPlayer].animalInst[nCntParts].rot = useAnimal.aParts[nCntParts].rotOffset;
 
 			//"モデルの"ワールドマトリックス初期化
-			D3DXMatrixIdentity(&g_aPlayerResult[nCntPlayer].animalInst[nCntParts].mtxWorld);
+			D3DXMatrixIdentity(&g_ResultPlayer[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
 			//向きを反映
-			D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerResult[nCntPlayer].animalInst[nCntParts].rot.y, g_aPlayerResult[nCntPlayer].animalInst[nCntParts].rot.x, g_aPlayerResult[nCntPlayer].animalInst[nCntParts].rot.z);
-			D3DXMatrixMultiply(&g_aPlayerResult[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerResult[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxRotModel);
+			D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_ResultPlayer[nCntPlayer].animalInst[nCntParts].rot.y, g_ResultPlayer[nCntPlayer].animalInst[nCntParts].rot.x, g_ResultPlayer[nCntPlayer].animalInst[nCntParts].rot.z);
+			D3DXMatrixMultiply(&g_ResultPlayer[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_ResultPlayer[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxRotModel);
 
 			//位置反映
-			D3DXMatrixTranslation(&mtxTransModel, g_aPlayerResult[nCntPlayer].animalInst[nCntParts].pos.x, g_aPlayerResult[nCntPlayer].animalInst[nCntParts].pos.y, g_aPlayerResult[nCntPlayer].animalInst[nCntParts].pos.z);
-			D3DXMatrixMultiply(&g_aPlayerResult[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerResult[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxTransModel);
+			D3DXMatrixTranslation(&mtxTransModel, g_ResultPlayer[nCntPlayer].animalInst[nCntParts].pos.x, g_ResultPlayer[nCntPlayer].animalInst[nCntParts].pos.y, g_ResultPlayer[nCntPlayer].animalInst[nCntParts].pos.z);
+			D3DXMatrixMultiply(&g_ResultPlayer[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_ResultPlayer[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxTransModel);
 
 			//パーツの親マトリ設定
 			if (useAnimal.aParts[nCntParts].mIdxModelParent != -1)
 			{
-				mtxParent = g_aPlayerResult[nCntPlayer].animalInst[useAnimal.aParts[nCntParts].mIdxModelParent].mtxWorld;
+				mtxParent = g_ResultPlayer[nCntPlayer].animalInst[useAnimal.aParts[nCntParts].mIdxModelParent].mtxWorld;
 			}
 			else
 			{
-				mtxParent = g_aPlayerResult[nCntPlayer].mtxWorld;
+				mtxParent = g_ResultPlayer[nCntPlayer].mtxWorld;
 			}
 
 			//パーツのマトリと親マトリをかけ合わせる
-			D3DXMatrixMultiply(&g_aPlayerResult[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerResult[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxParent);
+			D3DXMatrixMultiply(&g_ResultPlayer[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_ResultPlayer[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxParent);
 
 			//"モデルの"ワールドマトリックス設定
-			pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerResult[nCntPlayer].animalInst[nCntParts].mtxWorld);
+			pDevice->SetTransform(D3DTS_WORLD, &g_ResultPlayer[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
 			//マテリアルデータへのポインタ取得
 			pMat = (D3DXMATERIAL*)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
@@ -165,5 +171,5 @@ void DrawPlayer_RESULT(void)
 //リザルト用プレイヤーの情報を取得
 Player_RESULT *GetPlayer_RESULT(void)
 {
-	return &g_aPlayerResult[0];
+	return &g_ResultPlayer[0];
 }

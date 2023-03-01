@@ -197,6 +197,7 @@
     <ClCompile Include="rank.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="resultCamera.cpp" />
+    <ClCompile Include="resultCylinder.cpp" />
     <ClCompile Include="resultPlayer.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="select_game.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="rank.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="resultCamera.h" />
+    <ClInclude Include="resultCylinder.h" />
     <ClInclude Include="resultPlayer.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="select_game.h" />

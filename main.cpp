@@ -46,7 +46,7 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_PvPGAME;		// 現在のモード
+MODE			g_mode = MODE_RESULT;		// 現在のモード
 #else
 MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #endif
