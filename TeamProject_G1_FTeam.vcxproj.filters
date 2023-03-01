@@ -249,6 +249,12 @@
     <ClCompile Include="resultPlayer.cpp">
       <Filter>ソース ファイル\Result</Filter>
     </ClCompile>
+    <ClCompile Include="resultCamera.cpp">
+      <Filter>ソース ファイル\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="VictoryStand.cpp">
+      <Filter>ソース ファイル\Result</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -390,7 +396,13 @@
       <Filter>ヘッダー ファイル\Result</Filter>
     </ClInclude>
     <ClInclude Include="resultPlayer.h">
-      <Filter>ヘッダー ファイル\SelectGame</Filter>
+      <Filter>ヘッダー ファイル\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="resultCamera.h">
+      <Filter>ヘッダー ファイル\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="VictoryStand.h">
+      <Filter>ヘッダー ファイル\Result</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

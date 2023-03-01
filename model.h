@@ -99,6 +99,8 @@ typedef struct
 
 //プロトタイプ宣言
 void InitModel(void);
+void InitAnimalModel(void);
+void InitObjectModel(void);
 void UninitModel(void);
 Model GetAnimal(ANIMAL animal);
 Model GetXObject(OBJECTTYPE objtype);

@@ -9,7 +9,11 @@ Author:平澤詩苑
 #include "color.h"
 #include "input.h"
 #include "fade.h"
+#include "file.h"
+#include "model.h"
 #include "resultPlayer.h"
+#include "resultCamera.h"
+#include "VictoryStand.h"
 
 #define NUM_RESULT			(1)		//リザルト画像の種類
 
@@ -82,12 +86,17 @@ void InitResult(void)
 	InitResultObject();
 }
 
-//================================================
+//------------------------------------------------
 //		リザルト用オブジェクトの初期化処理
-//================================================
+//------------------------------------------------
 void InitResultObject(void)
 {
-	InitPlayer_RESULT();		//プレイヤーの初期化処理
+	InitFile();				//ファイル初期化
+	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
+	InitVictoryStand();		//表彰台の初期化処理
+	InitAnimalModel();		//動物モデル初期化
+	InitPlayer_RESULT();	//プレイヤーの初期化処理
+	InitResultCamera();		//カメラの初期化処理
 }
 
 //************************************************
@@ -118,12 +127,15 @@ void UninitResult(void)
 	UninitResultObject();
 }
 
-//================================================
+//------------------------------------------------
 //		リザルト用オブジェクトの終了処理
-//================================================
+//------------------------------------------------
 void UninitResultObject(void)
 {
+	UninitModel();				//動物モデル終了処理
 	UninitPlayer_RESULT();		//プレイヤーの終了処理
+	UninitResultCamera();		//カメラの終了処理
+	UninitVictoryStand();		//表彰台の終了処理
 }
 
 //************************************************
@@ -137,12 +149,14 @@ void UpdateResult(void)
 	UpdateResultObject();
 }
 
-//================================================
+//------------------------------------------------
 //		リザルト用オブジェクトの更新処理
-//================================================
+//------------------------------------------------
 void UpdateResultObject(void)
 {
 	UpdatePlayer_RESULT();		//プレイヤーの更新処理
+	UpdateResultCamera();		//カメラの更新処理
+	UpdateVictoryStand();		//表彰台の更新処理
 }
 
 //************************************************
@@ -150,6 +164,7 @@ void UpdateResultObject(void)
 //************************************************
 void DrawResult(void)
 {
+	/*
 	//デバイスのポインタ + 取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
@@ -163,7 +178,7 @@ void DrawResult(void)
 	pDevice->SetTexture(0, NULL);
 
 	//ポリゴンの描画
-	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);*/
 
 	//===============================================
 	//リザルト用オブジェクトの描画処理関数呼び出し
@@ -171,10 +186,12 @@ void DrawResult(void)
 	DrawResultObject();
 }
 
-//================================================
+//------------------------------------------------
 //		リザルト用オブジェクトの描画処理
-//================================================
+//------------------------------------------------
 void DrawResultObject(void)
 {
+	SetResultCamera();			//カメラの設定処理
 	DrawPlayer_RESULT();		//プレイヤーの描画処理
+	DrawVictoryStand();			//表彰台の描画処理
 }

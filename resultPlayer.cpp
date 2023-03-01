@@ -39,7 +39,6 @@ void InitPlayer_RESULT(void)
 			g_aPlayerResult[nCntPlayer].animalInst[nCntParts] = {};
 		}
 	}
-
 }
 
 //========================
@@ -81,11 +80,11 @@ void DrawPlayer_RESULT(void)
 		Model useAnimal;
 
 		//ゲームモードに応じて取得するものを変更
-		if (GetSelectGameMode() == SelectGameMenu_PVP)
+		if (GetSelectGameMode() == SelectGameMode_PVP)
 		{
 			useAnimal = GetAnimal(GetPlayer()[nCntPlayer].animal);
 		}
-		else if (GetSelectGameMode() == SelectGameMenu_HDR)
+		else if (GetSelectGameMode() == SelectGameMode_HDR)
 		{
 			useAnimal = GetAnimal(GetPlayer_HDR()[nCntPlayer].animal);
 		}
