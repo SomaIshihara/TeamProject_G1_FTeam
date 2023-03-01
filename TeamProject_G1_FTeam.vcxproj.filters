@@ -249,6 +249,9 @@
     <ClCompile Include="resultPlayer.cpp">
       <Filter>ソース ファイル\Result</Filter>
     </ClCompile>
+    <ClCompile Include="rank.cpp">
+      <Filter>ソース ファイル\Game\Game_HDR</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -391,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="resultPlayer.h">
       <Filter>ヘッダー ファイル\SelectGame</Filter>
+    </ClInclude>
+    <ClInclude Include="rank.h">
+      <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

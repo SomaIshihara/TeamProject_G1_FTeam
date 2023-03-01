@@ -16,6 +16,7 @@
 #include "sound.h"
 #include "meshfield.h"
 #include "block.h"
+#include "rank.h"
 
 //マクロ定義
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)				//ヒップドロップスピンの回転値
@@ -25,6 +26,7 @@
 //グローバル変数
 Player_HDR g_aPlayerHDR[MAX_USE_GAMEPAD];
 int g_nIdxShadow_HDR = -1;
+bool g_buse[MAX_USE_GAMEPAD] = { false };
 
 //プロトタイプ宣言
 void ControllKeyboardPlayer_HDR(int nPlayerNum);
@@ -146,6 +148,12 @@ void UpdatePlayer_HDR(void)
 			g_aPlayerHDR[nCntPlayer].move.y = 0.0f;
 			g_aPlayerHDR[nCntPlayer].bJump = false;
 			g_aPlayerHDR[nCntPlayer].bHipDrop = false;
+
+			if (g_buse[nCntPlayer] == false)
+			{
+				UpdateRank(nCntPlayer);
+				g_buse[nCntPlayer] = true;
+			}
 		}
 
 		//ブロックの当たり判定

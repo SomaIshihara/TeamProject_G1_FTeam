@@ -23,6 +23,7 @@ Author:平澤詩苑
 #include "meshfield.h"
 #include "meshdome.h"
 #include "fence.h"
+#include "rank.h"
 
 //グローバル変数宣言
 bool g_bPause_HDR = false;				// ポーズ
@@ -56,6 +57,7 @@ void InitHDRGame(void)
 	InitMeshDome();
 	InitFence();
 	InitTime();						// タイマーの初期化処理
+	InitRank();
 
 	SetTime(LIMIT_TIMER);			// タイマーの設定処理
 
@@ -85,6 +87,7 @@ void UninitHDRGame(void)
 	UninitMeshfield();
 	UninitMeshDome();
 	UninitFence();
+	UninitRank();
 
 	UninitCameraFrame();	// 画面分割の枠終了処理
 	UninitTime();			// タイマーの終了処理（ここは順番は問わない）
@@ -183,6 +186,7 @@ void DrawHDRGame(void)
 		DrawMeshfield();
 		DrawMeshDome();
 		DrawFence();
+		DrawRank();
 
 									//ポーズがON
 		if (g_bPause_HDR == true && g_bPhotoMode_HDR == false)
