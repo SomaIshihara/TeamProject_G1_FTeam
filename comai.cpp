@@ -126,7 +126,7 @@ void SelectAIMove(Player *pCom)
 		float fAILength = fabsf(D3DXVec3Length(&pCom->pos));
 
 		//スティック操作をしていないならチャージ
-		if (GetStick(pCom->nPlayerNum, INPUTTYPE_PRESS) == CONVSTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= CHARGE_WAIT)
+		if (GetStick(pCom->nPlayerNum, INPUTTYPE_PRESS).x == CONVSTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= CHARGE_WAIT)
 		{
 			float fMoveLength = sqrtf(powf(fAILength, 2) + powf(GetMeshField()->fRadius, 2) - 2 * fAILength * GetMeshField()->fRadius * cosf(pCom->rot.y)) / CHARGE_LENGTH_AVG;	//ジャストなチャージ量を求める
 

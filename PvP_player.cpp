@@ -116,6 +116,14 @@ const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 	{ D3DXVECTOR3(50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_WD,0.0f) },
 };
 
+const D3DXCOLOR c_aColPlayer[MAX_USE_GAMEPAD] =
+{
+	XCOL_RED,
+	XCOL_BLUE,
+	XCOL_GREEN,
+	XCOL_YELLOW
+};
+
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
 const bool c_aAIMove[MAX_USE_GAMEPAD] = { false,true,true,true };
 
@@ -489,6 +497,10 @@ void DrawPlayer(void)
 						pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
 						matChange.Diffuse.a = 0.0f;
 					}
+					else if(nCntParts == MAX_PARTS - 1)
+					{//ゼッケンの時は色変更
+						matChange.Diffuse = c_aColPlayer[nCntPlayer];
+					}
 
 					//マテリアル設定
 					pDevice->SetMaterial(&matChange);
@@ -808,11 +820,11 @@ void RotatePlayer(int nPadNum)
 	if (!g_bDebugMove)
 	{//リリース用
 	 //ゲームパッド部
-		if (GetStick(nPadNum, INPUTTYPE_PRESS) == CONVSTICK_LEFT)
+		if (GetStick(nPadNum, INPUTTYPE_PRESS).x == CONVSTICK_LEFT)
 		{
 			g_aPlayerPvP[nPadNum].rot.y -= PLAYER_ROTATE_SPEED;
 		}
-		else if(GetStick(nPadNum, INPUTTYPE_PRESS) == CONVSTICK_RIGHT)
+		else if(GetStick(nPadNum, INPUTTYPE_PRESS).x == CONVSTICK_RIGHT)
 		{
 			g_aPlayerPvP[nPadNum].rot.y += PLAYER_ROTATE_SPEED;
 		}

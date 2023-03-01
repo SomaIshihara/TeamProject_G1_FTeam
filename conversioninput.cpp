@@ -19,9 +19,9 @@ typedef struct
 //スティック用入力構造体
 typedef struct
 {
-	CONVSTICK press;
-	CONVSTICK trigger;
-	CONVSTICK release;
+	StickXY press;
+	StickXY trigger;
+	StickXY release;
 } ConvStickState;
 
 //グローバル
@@ -72,23 +72,44 @@ void UpdateConvertionInput(void)
 			}
 
 			//スティック
+			//X
 			if (GetLStickX(nCntController) < 0)
 			{//左に傾いている
-				g_aConvStick[nCntController].trigger = g_aConvStick[nCntController].press != CONVSTICK_LEFT ? CONVSTICK_LEFT : CONVSTICK_NEUTRAL;
-				g_aConvStick[nCntController].release = g_aConvStick[nCntController].press != CONVSTICK_NEUTRAL ? CONVSTICK_NEUTRAL : CONVSTICK_LEFT;
-				g_aConvStick[nCntController].press = CONVSTICK_LEFT;
+				g_aConvStick[nCntController].trigger.x = g_aConvStick[nCntController].press.x != CONVSTICK_LEFT ? CONVSTICK_LEFT : CONVSTICK_NEUTRAL;
+				g_aConvStick[nCntController].release.x = g_aConvStick[nCntController].press.x != CONVSTICK_NEUTRAL ? CONVSTICK_NEUTRAL : CONVSTICK_LEFT;
+				g_aConvStick[nCntController].press.x = CONVSTICK_LEFT;
 			}
 			else if (GetLStickX(nCntController) > 0)
 			{//右に傾いている
-				g_aConvStick[nCntController].trigger = g_aConvStick[nCntController].press != CONVSTICK_RIGHT ? CONVSTICK_RIGHT : CONVSTICK_NEUTRAL;
-				g_aConvStick[nCntController].release = g_aConvStick[nCntController].press != CONVSTICK_NEUTRAL ? CONVSTICK_NEUTRAL : CONVSTICK_RIGHT;
-				g_aConvStick[nCntController].press = CONVSTICK_RIGHT;
+				g_aConvStick[nCntController].trigger.x = g_aConvStick[nCntController].press.x != CONVSTICK_RIGHT ? CONVSTICK_RIGHT : CONVSTICK_NEUTRAL;
+				g_aConvStick[nCntController].release.x = g_aConvStick[nCntController].press.x != CONVSTICK_NEUTRAL ? CONVSTICK_NEUTRAL : CONVSTICK_RIGHT;
+				g_aConvStick[nCntController].press.x = CONVSTICK_RIGHT;
 			}
 			else
 			{//傾いていない
-				g_aConvStick[nCntController].trigger = 
-				g_aConvStick[nCntController].release = 
-				g_aConvStick[nCntController].press = CONVSTICK_NEUTRAL;
+				g_aConvStick[nCntController].trigger.x = 
+				g_aConvStick[nCntController].release.x = 
+				g_aConvStick[nCntController].press.x = CONVSTICK_NEUTRAL;
+			}
+
+			//Y
+			if (GetLStickY(nCntController) < 0)
+			{//下に傾いている
+				g_aConvStick[nCntController].trigger.y = g_aConvStick[nCntController].press.y != CONVSTICK_DOWN ? CONVSTICK_DOWN : CONVSTICK_NEUTRAL;
+				g_aConvStick[nCntController].release.y = g_aConvStick[nCntController].press.y != CONVSTICK_NEUTRAL ? CONVSTICK_NEUTRAL : CONVSTICK_DOWN;
+				g_aConvStick[nCntController].press.y = CONVSTICK_DOWN;
+			}
+			else if (GetLStickY(nCntController) > 0)
+			{//上に傾いている
+				g_aConvStick[nCntController].trigger.y = g_aConvStick[nCntController].press.y != CONVSTICK_UP ? CONVSTICK_UP : CONVSTICK_NEUTRAL;
+				g_aConvStick[nCntController].release.y = g_aConvStick[nCntController].press.y != CONVSTICK_NEUTRAL ? CONVSTICK_NEUTRAL : CONVSTICK_UP;
+				g_aConvStick[nCntController].press.y = CONVSTICK_UP;
+			}
+			else
+			{//傾いていない
+				g_aConvStick[nCntController].trigger.y =
+				g_aConvStick[nCntController].release.y =
+				g_aConvStick[nCntController].press.y = CONVSTICK_NEUTRAL;
 			}
 		}
 		else if (nCntController == 0)
@@ -103,17 +124,32 @@ void UpdateConvertionInput(void)
 			}
 
 			//（ゲームパッドで言う）スティック
+			//X
 			if (GetKeyboardPress(DIK_A) == true)
 			{//左に傾いている
-				g_aConvStick[0].press = CONVSTICK_LEFT;
+				g_aConvStick[0].press.x = CONVSTICK_LEFT;
 			}
 			else if (GetKeyboardPress(DIK_D) == true)
 			{//右に傾いている
-				g_aConvStick[0].press = CONVSTICK_RIGHT;
+				g_aConvStick[0].press.x = CONVSTICK_RIGHT;
 			}
 			else
 			{//傾いていない
-				g_aConvStick[0].press = CONVSTICK_NEUTRAL;
+				g_aConvStick[0].press.x = CONVSTICK_NEUTRAL;
+			}
+
+			//Y
+			if (GetKeyboardPress(DIK_W) == true)
+			{//左に傾いている
+				g_aConvStick[0].press.x = CONVSTICK_UP;
+			}
+			else if (GetKeyboardPress(DIK_S) == true)
+			{//右に傾いている
+				g_aConvStick[0].press.x = CONVSTICK_DOWN;
+			}
+			else
+			{//傾いていない
+				g_aConvStick[0].press.x = CONVSTICK_NEUTRAL;
 			}
 		}
 	}
@@ -165,17 +201,17 @@ bool GetButton(int nPadNum, INPUTTYPE type, BUTTON button)
 }
 
 //========================
-//スティック入力設定処理
+//スティック入力設定処理（Xのみ）
 //========================
 void SetStick(int nPadNum, CONVSTICK stick)
 {
-	g_aConvStick[nPadNum].press = stick;
+	g_aConvStick[nPadNum].press.x = stick;
 }
 
 //========================
 //スティック入力取得処理
 //========================
-CONVSTICK GetStick(int nPadNum, INPUTTYPE type)
+StickXY GetStick(int nPadNum, INPUTTYPE type)
 {
 	switch (type)
 	{
@@ -190,5 +226,5 @@ CONVSTICK GetStick(int nPadNum, INPUTTYPE type)
 		break;
 	}
 
-	return CONVSTICK_NEUTRAL;
+	return{ CONVSTICK_NEUTRAL,CONVSTICK_NEUTRAL };
 }

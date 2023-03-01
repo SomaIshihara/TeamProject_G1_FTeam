@@ -8,7 +8,7 @@
 #define _MODEL_H_
 
 //マクロ
-#define MAX_PARTS	(10)	//パーツ使用最大数
+#define MAX_PARTS	(11)	//パーツ使用最大数
 
 //配置モデル列挙
 typedef enum

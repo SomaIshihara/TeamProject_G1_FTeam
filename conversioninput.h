@@ -33,10 +33,19 @@ typedef enum
 typedef enum
 {
 	CONVSTICK_LEFT = -1,
-	CONVSTICK_NEUTRAL,
 	CONVSTICK_RIGHT,
+	CONVSTICK_UP,
+	CONVSTICK_DOWN,
+	CONVSTICK_NEUTRAL,
 	CONVSTICK_MAX
 } CONVSTICK;
+
+//スティックXYの構造体
+typedef struct
+{
+	CONVSTICK x;
+	CONVSTICK y;
+} StickXY;
 
 //プロトタイプ宣言
 void InitConvertionInput(void);
@@ -44,6 +53,6 @@ void UpdateConvertionInput(void);
 void SetButton(int nPadNum, INPUTTYPE type, BUTTON button, bool stat);
 bool GetButton(int nPadNum, INPUTTYPE type, BUTTON button);
 void SetStick(int nPadNum, CONVSTICK stick);
-CONVSTICK GetStick(int nPadNum, INPUTTYPE type);
+StickXY GetStick(int nPadNum, INPUTTYPE type);
 
 #endif // !_CONVERSION_INPUT_H_

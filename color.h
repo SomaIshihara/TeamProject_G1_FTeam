@@ -20,6 +20,7 @@ Author:平澤詩苑 石原颯馬
 #define RGBA_ORANGE		D3DCOLOR_RGBA(COLOR_MAX, COLOR_HALF,COLOR_MIN, COLOR_MAX)	// オレンジ
 #define RGBA_GREEN		D3DCOLOR_RGBA(COLOR_MIN, COLOR_MAX, COLOR_MIN, COLOR_MAX)	// 緑
 #define RGBA_BLUE		D3DCOLOR_RGBA(COLOR_MIN, COLOR_MIN, COLOR_MAX, COLOR_MAX)	// 青
+#define RGBA_YELLOW		D3DCOLOR_RGBA(COLOR_MAX, 246, COLOR_MIN, COLOR_MAX)			// 黄色
 #define RGBA_RIGHTBLUE	D3DCOLOR_RGBA(COLOR_HALF,COLOR_HALF,COLOR_MAX, COLOR_MAX)	// ライトブルー
 
 //D3DXCOLOR のマクロ
@@ -29,6 +30,8 @@ Author:平澤詩苑 石原颯馬
 #define XCOL_BLACKSHADOW	D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.85f)	// 黒影
 #define XCOL_YELLOW			D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f)	// 黄色
 #define XCOL_RED			D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)	// 赤色
+#define XCOL_BLUE			D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)	// 青色
+#define XCOL_GREEN			D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)	// 緑色
 #define XCOL_NO_SELECT		D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.4f)	// 選択されていない時の色
 
 //自作の色構造体のマクロ

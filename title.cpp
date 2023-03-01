@@ -15,6 +15,7 @@ Author:平澤詩苑
 #include "meshfield.h"
 #include "meshdome.h"
 #include "file.h"
+#include "conversioninput.h"
 
 #define NUM_TITLE_TEX	(3)									// タイトルに使う画像の数
 #define TITLE_INFOFILE	"data/CSV/title.csv"				// タイトルの情報が入ったファイル名
@@ -375,7 +376,7 @@ void DrawTitle(void)
 //
 void DirecUpTitle(int NumPad)
 {
-	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(NumPad, XINPUT_GAMEPAD_DPAD_UP) == true)
+	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(NumPad, XINPUT_GAMEPAD_DPAD_UP) == true || GetStick(0,INPUTTYPE_TRIGGER).y == CONVSTICK_UP)
 	{
 		switch (g_select)
 		{
@@ -396,7 +397,7 @@ void DirecUpTitle(int NumPad)
 //
 void DirecDownTitle(int NumPad)
 {
-	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(NumPad, XINPUT_GAMEPAD_DPAD_DOWN) == true)
+	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(NumPad, XINPUT_GAMEPAD_DPAD_DOWN) == true || GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN)
 	{
 		switch (g_select)
 		{

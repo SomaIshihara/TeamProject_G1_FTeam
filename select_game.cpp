@@ -185,7 +185,7 @@ void UpdateSelectGame(void)
 void ChooseGameMode(void)
 {
 	//右矢印が押された　もしくは　ゲームパッドの右十字キー　が押された　もしくは　左スティックが右に倒された
-	if ((GetKeyboardTrigger(DIK_RIGHT) || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) || GetStick(0, INPUTTYPE_TRIGGER) == CONVSTICK_RIGHT ))
+	if ((GetKeyboardTrigger(DIK_RIGHT) || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) || GetStick(0, INPUTTYPE_TRIGGER).x == CONVSTICK_RIGHT ))
 	{
 		switch (g_SelectGameMenu)
 		{
@@ -203,7 +203,7 @@ void ChooseGameMode(void)
 	}
 
 	//左矢印が押された　もしくは　ゲームパッドの左十字キーが押された
-	if ((GetKeyboardTrigger(DIK_LEFT) || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) || GetStick(0, INPUTTYPE_TRIGGER) == CONVSTICK_LEFT))
+	if ((GetKeyboardTrigger(DIK_LEFT) || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) || GetStick(0, INPUTTYPE_TRIGGER).x == CONVSTICK_LEFT))
 	{
 		switch (g_SelectGameMenu)
 		{

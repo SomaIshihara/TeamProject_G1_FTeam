@@ -9,7 +9,7 @@ SCRIPT			# この行は絶対消さないこと！
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 10
+NUM_MODEL = 11
 
 #------------------------------------------------------------------------------
 # モデルファイル名
@@ -24,6 +24,7 @@ MODEL_FILENAME = data/MODEL/ino/ino_right_forefoot.x	# [6]
 MODEL_FILENAME = data/MODEL/ino/ino_right_foretoes.x	# [7]
 MODEL_FILENAME = data/MODEL/ino/ino_right_hindleg.x		# [8]
 MODEL_FILENAME = data/MODEL/ino/ino_right_hindtoes.x	# [9]
+MODEL_FILENAME = data/MODEL/ino/ino_cloth.x				# [10]ゼッケン（プログラム上で色変更）
 
 #------------------------------------------------------------------------------
 # キャラクター情報
@@ -103,6 +104,13 @@ CHARACTERSET
 		POS = -0.8 -6.0 1.0
 		ROT = 0.0 0.0 0.0
 	END_PARTSSET
+	
+	PARTSSET						# [10]ゼッケン
+		INDEX = 10
+		PARENT = 0					# (親)体
+		POS = 0.0 0.0 0.0
+		ROT = 0.0 0.0 0.0
+	END_PARTSSET
 END_CHARACTERSET
 
 #------------------------------------------------------------------------------
@@ -163,6 +171,11 @@ MOTIONSET
 		END_KEY
 
 		KEY	# ----- [ 9 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
+		
+		KEY	# ----- [ 10 ] -----
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
@@ -227,6 +240,11 @@ MOTIONSET
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
+		
+		KEY	# ----- [ 10 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
 	END_KEYSET
 END_MOTIONSET
 
@@ -285,6 +303,11 @@ MOTIONSET
 		END_KEY
 
 		KEY	# ----- [ 9 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
+		
+		KEY	# ----- [ 10 ] -----
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
@@ -348,6 +371,11 @@ MOTIONSET
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
+		
+		KEY	# ----- [ 10 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
 	END_KEYSET
 END_MOTIONSET
 #---------------------------------------
@@ -405,6 +433,11 @@ MOTIONSET
 		END_KEY
 
 		KEY	# ----- [ 9 ] -----
+			POS = 0.00 0.00 0.00
+			ROT = 0.00 0.00 0.00
+		END_KEY
+		
+		KEY	# ----- [ 10 ] -----
 			POS = 0.00 0.00 0.00
 			ROT = 0.00 0.00 0.00
 		END_KEY
