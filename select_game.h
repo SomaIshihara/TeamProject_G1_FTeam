@@ -44,5 +44,6 @@ void DrawSelectGame(void);
 
 void ChooseGameMode(void);
 void DecideGameMode(void);
+SelectGameMode GetSelectGameMode(void);
 
 #endif 

@@ -274,3 +274,9 @@ void DrawSelectGame(void)
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntSelect * VTX_MAX, 2);
 	}
 }
+
+//選択されたゲームモードを取得
+SelectGameMode GetSelectGameMode(void)
+{
+	return g_SelectGameMode;
+}
