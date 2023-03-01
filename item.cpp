@@ -18,6 +18,12 @@
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 #define COLLISION_SIZE_Y	(30.0f)		//高さの当たり判定サイズ
 
+//アイテム時間（すべて秒単位）
+#define ITEMTIME_ATK		(7)			//ATKの時間
+#define ITEMTIME_DEF		(7)			//DEFの時間
+#define ITEMTIME_GHOST		(10)		//ゴースト化の時間
+#define ITEMTIME_INV		(7)			//無敵の時間
+
 const D3DXVECTOR3 g_ItemRespawnPos[MAX_POS] =
 {
 	D3DXVECTOR3(INIT_POS_XZ,NIL_F,NIL_F),
@@ -35,6 +41,7 @@ DWORD					g_dwNumMatItem = 0;					//マテリアルの数
 D3DXMATRIX				g_mtxWorldItem;						//ワールドマトリックス
 Item					g_Item[MAX_ITEM];					//アイテムの情報
 bool					bposuse[MAX_POS];					//その座標を使用しているかどうか
+int						g_nInvincibleItem;					//無敵アイテム取得回数
 
 //========================
 //初期化処理
@@ -84,7 +91,9 @@ void InitItem(void)
 	for (int nCntPos = 0; nCntPos < MAX_POS; nCntPos++)
 	{
 		bposuse[nCntPos] = false;
-	}	
+	}
+
+	g_nInvincibleItem = 0;
 }
 
 //========================
@@ -211,7 +220,7 @@ void SetItem(void)
 					g_Item[nCntItem].pos = g_ItemRespawnPos[g_Item[nCntItem].RespawnPos]
 						+ D3DXVECTOR3(NIL_F, (float)(rand() % 200), NIL_F);
 					//アイテムの種類を設定
-					g_Item[nCntItem].type = (ITEMTYPE)(rand() % ITEMTYPE_MAX);
+					g_Item[nCntItem].type = (ITEMTYPE)(rand() % (ITEMTYPE_MAX - g_nInvincibleItem));
 					g_Item[nCntItem].DespawnLimit = 0;
 					bposuse[g_Item[nCntItem].RespawnPos] = true;
 					g_Item[nCntItem].buse = true;
@@ -238,46 +247,6 @@ void CollisionIP(int nPlayerNum)
 	{
 		if (g_Item[nCntItem].buse == true)
 		{
-			{
-				//移動ベクトル
-				//vecMove = pPlayer[nPlayerNum].pos - pPlayer[nPlayerNum].posOld;
-
-				////位置計算
-				//pos0.x = g_Item[nCntItem].pos.x - (g_Item[nCntItem].fWidth / 2) * cosf(g_Item[nCntItem].rot.y);
-				//pos0.y = 0.0f;
-				//pos0.z = g_Item[nCntItem].pos.z + (g_Item[nCntItem].fWidth / 2) * sinf(g_Item[nCntItem].rot.y);
-
-				//pos1.x = g_Item[nCntItem].pos.x + (g_Item[nCntItem].fWidth / 2) * cosf(g_Item[nCntItem].rot.y);
-				//pos1.y = 0.0f;
-				//pos1.z = g_Item[nCntItem].pos.z - (g_Item[nCntItem].fWidth / 2) * sinf(g_Item[nCntItem].rot.y);
-
-				//vecLine = pos1 - pos0;	//境界線ベクトル
-				//vecToPos = pPlayer[nPlayerNum].pos - pos0;
-				//vecToPosOld = pPlayer[nPlayerNum].posOld - pos0;
-
-				////面積求める
-				//fAreaA = TASUKIGAKE(vecToPos.x, vecToPos.z, vecMove.x, vecMove.z);
-				//fAreaB = TASUKIGAKE(vecLine.x, vecLine.z, vecMove.x, vecMove.z);
-
-				//if (pPlayer[nPlayerNum].pos.y >= g_Item[nCntItem].pos.y - COLLISION_SIZE_Y
-				//	&&pPlayer[nPlayerNum].pos.y <= g_Item[nCntItem].pos.y + COLLISION_SIZE_Y)
-				//{
-				//	//上に伸びている線の左側に行くと値がマイナスになるらしいよ
-				//	if ((vecLine.z * vecToPosOld.x) - (vecLine.x * vecToPosOld.z) >= 0.0f && (vecLine.z * vecToPos.x) - (vecLine.x * vecToPos.z) < 0.0f)
-				//	{//平行四辺形の大きさの割合が0.0~1.0なら間に入っている
-				//		if (fAreaA / fAreaB >= 0.0f && fAreaA / fAreaB <= 1.0f)
-				//		{//ごっつん
-
-				//			pPlayer[nPlayerNum].nATKItemTime = 300;
-				//			//使われていない状態にする
-				//			g_Item[nCntItem].RespawnDelay = 3;
-				//			g_Item[nCntItem].fAlpha = 1.0f;
-				//			g_Item[nCntItem].buse = false;
-				//		}
-
-				//	}
-				//}
-			}
 			if (pPlayer[nPlayerNum].pos.x >= g_Item[nCntItem].pos.x - COLLISION_SIZE_XZ
 				&&pPlayer[nPlayerNum].pos.x <= g_Item[nCntItem].pos.x + COLLISION_SIZE_XZ
 				&&pPlayer[nPlayerNum].pos.z >= g_Item[nCntItem].pos.z - COLLISION_SIZE_XZ
@@ -292,25 +261,36 @@ void CollisionIP(int nPlayerNum)
 						if (g_Item[nCntItem].pos.z == g_ItemRespawnPos[nCntPos].z)
 						{
 							bposuse[nCntPos] = false;
+
+							//アイテム効果リセット
+							pPlayer[nPlayerNum].nATKItemTime = 0;
+							pPlayer[nPlayerNum].nDEFItemTime = 0;
+							pPlayer[nPlayerNum].nGhostItemTime = 0;
 						}
 					}
-
 				}
 
-				switch (g_Item[nCntItem].type)
+				if (pPlayer[nPlayerNum].nInvincibleTime <= 0)
 				{
-				case ITEMTYPE_ATK:
-					pPlayer[nPlayerNum].nATKItemTime = 300;
-					break;
+					switch (g_Item[nCntItem].type)
+					{
+					case ITEMTYPE_ATK:
+						pPlayer[nPlayerNum].nATKItemTime = CONVERT_FPS(ITEMTIME_ATK);
+						break;
 
-				case ITEMTYPE_DEF:
-					pPlayer[nPlayerNum].nDEFItemTime = 300;
-					break;
+					case ITEMTYPE_DEF:
+						pPlayer[nPlayerNum].nDEFItemTime = CONVERT_FPS(ITEMTIME_DEF);
+						break;
 
-				case ITEMTYPE_GHOST:
-					pPlayer[nPlayerNum].nGhostItemTime = 150;
-					break;
+					case ITEMTYPE_GHOST:
+						pPlayer[nPlayerNum].nGhostItemTime = CONVERT_FPS(ITEMTIME_GHOST);
+						break;
 
+					case ITEMTYPE_INVINCIBLE:
+						pPlayer[nPlayerNum].nInvincibleTime = CONVERT_FPS(ITEMTIME_INV);
+						g_nInvincibleItem++;
+						break;
+					}
 				}
 		
 				//使われていない状態にする

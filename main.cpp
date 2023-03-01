@@ -4,6 +4,8 @@
 //Author:石原颯馬
 //
 //==========================================
+#define _CRTDBG_MAP_ALLOC
+
 #include "main.h"
 #include "input.h"
 #include "camera.h"
@@ -18,6 +20,9 @@
 #include "light.h"
 #include "sound.h"
 #include "conversioninput.h"
+#include <crtdbg.h>
+#include "meshfield.h"
+#include "meshdome.h"
 
 //マクロ定義
 #define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
@@ -40,7 +45,7 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_RaceGAME;		// 現在のモード
+MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #else
 MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #endif
@@ -64,12 +69,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 		0,									//使用しない
 		0,									//使用しない
 		hInstance,							//インスタンスハンドル
-		LoadIcon(NULL,IDI_APPLICATION),		//タスクバーのアイコン
+		(HICON)LoadImage(NULL,"WildBoar_exeIcon.ico",IMAGE_ICON,0,0,LR_SHARED | LR_LOADFROMFILE),		//タスクバーのアイコン
 		LoadCursor(NULL,IDC_ARROW),			//マウスカーソル
 		(HBRUSH)(COLOR_WINDOW + 1),			//クライアント領域の背景色
 		NULL,								//メニューバー
 		CLASS_NAME,							//クラスの名前
-		LoadIcon(NULL,IDI_APPLICATION)		//アプリケーションのアイコン
+		(HICON)LoadImage(NULL,"WildBoar_exeIcon.ico",IMAGE_ICON,0,0,LR_SHARED | LR_LOADFROMFILE)		//アプリケーションのアイコン
 	};
 
 	HWND hWnd;	//ウィンドウハンドル

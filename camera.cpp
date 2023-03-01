@@ -195,8 +195,8 @@ void Set_NumCamera(NumCamera type)
 
 		g_Camera[nCntCamera].fMaxLength = MAX_DRAW;				//最大描画距離設定
 
-		g_Camera[nCntCamera].viewport.X = 0.0f;					//原点Ⅹ位置代入
-		g_Camera[nCntCamera].viewport.Y = 0.0f;					//原点Ｙ位置代入
+		g_Camera[nCntCamera].viewport.X = (DWORD)0.0f;					//原点Ⅹ位置代入
+		g_Camera[nCntCamera].viewport.Y = (DWORD)0.0f;					//原点Ｙ位置代入
 		g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH;		//画面幅初期化
 		g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;	//画面高さ初期化
 		g_Camera[nCntCamera].viewport.MinZ = 0.0f;
@@ -214,8 +214,8 @@ void Set_NumCamera(NumCamera type)
 		{
 			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
-			g_Camera[nCntCamera].viewport.X = (SCREEN_WIDTH / 2) * (nCntCamera % 2);	//原点Ⅹ位置代入
-			g_Camera[nCntCamera].viewport.Y = NIL_F;									//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.X = (DWORD)(SCREEN_WIDTH / 2) * (nCntCamera % 2);	//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = (DWORD)NIL_F;									//原点Ｙ位置代入
 			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH / 2;						//画面幅初期化
 			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;						//画面高さ初期化
 			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
@@ -237,8 +237,8 @@ void Set_NumCamera(NumCamera type)
 		{
 			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
-			g_Camera[nCntCamera].viewport.X = NIL_F;									//原点Ⅹ位置代入
-			g_Camera[nCntCamera].viewport.Y = (SCREEN_HEIGHT / 2) * (nCntCamera % 2);	//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.X = (DWORD)NIL_F;									//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = (DWORD)(SCREEN_HEIGHT / 2) * (nCntCamera % 2);	//原点Ｙ位置代入
 			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH;							//画面幅初期化
 			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT / 2;					//画面高さ初期化
 			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
@@ -283,8 +283,8 @@ void Set_NumCamera(NumCamera type)
 		{
 			g_Camera[nCntCamera].fMaxLength = MAX_DRAW;	//最大描画距離設定
 
-			g_Camera[nCntCamera].viewport.X = (SCREEN_WIDTH / 4) * nCntCamera;	//原点Ⅹ位置代入
-			g_Camera[nCntCamera].viewport.Y = NIL_F;									//原点Ｙ位置代入
+			g_Camera[nCntCamera].viewport.X = (DWORD)(SCREEN_WIDTH / 4) * nCntCamera;	//原点Ⅹ位置代入
+			g_Camera[nCntCamera].viewport.Y = (DWORD)NIL_F;								//原点Ｙ位置代入
 			g_Camera[nCntCamera].viewport.Width = SCREEN_WIDTH / 4;						//画面幅初期化
 			g_Camera[nCntCamera].viewport.Height = SCREEN_HEIGHT;						//画面高さ初期化
 			g_Camera[nCntCamera].viewport.MinZ = 0.0f;
@@ -455,4 +455,26 @@ void SetPosRCamera(int nCntCamera)
 Camera *GetCamera(void)
 {
 	return &g_Camera[0];
+}
+
+//*********************************************
+//タイトル用カメラ処理
+//MEMO : カメラは１番目のカメラのみを使用する
+//*********************************************
+void CameraForTitle(void)
+{
+	//カメラの向きY　のポインタを取得
+	float *pRot_Y = &g_Camera[0].rot.y;
+
+	//回転
+	*pRot_Y += 0.04f;
+
+	//向きが3.14を超えた
+	if (D3DX_PI <= *pRot_Y)
+	{
+		FIX_ROT(*pRot_Y);
+	}
+
+	//視点の位置更新
+	UpdatePosVCamera(0);
 }

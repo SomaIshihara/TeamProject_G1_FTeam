@@ -62,7 +62,7 @@ void LoadWall(void)
 	int nLetter = 0;		//文字
 	int nColumn = 0;		//列
 	int nLine = 0;			//行
-	char aData[MAX_MOJI];	//文字列
+	char aData[MAX_CHAR];	//文字列
 	FILE *pFile;			//ファイルポインタ
 
 	//バッファの初期化
@@ -115,32 +115,32 @@ void LoadWall(void)
 
 				//幅
 			case WALLCASE_WIDTH:
-				g_aWall[nLine].fWidth = atof(aData);
+				g_aWall[nLine].fWidth = fatof(aData);
 				break;
 
 				//高さ
 			case WALLCASE_HEIGHT:
-				g_aWall[nLine].fHeight = atof(aData);
+				g_aWall[nLine].fHeight = fatof(aData);
 				break;
 
 				//奥行き
 			case WALLCASE_DEPTH:
-				g_aWall[nLine].fDepth = atof(aData);
+				g_aWall[nLine].fDepth = fatof(aData);
 				break;
 
 				//X座標
 			case WALLCASE_POSX:
-				g_aWall[nLine].pos.x = atof(aData);
+				g_aWall[nLine].pos.x = fatof(aData);
 				break;
 
 				//Y座標
 			case WALLCASE_POSY:
-				g_aWall[nLine].pos.y = atof(aData);
+				g_aWall[nLine].pos.y = fatof(aData);
 				break;
 
 				//Z座標
 			case WALLCASE_POSZ:
-				g_aWall[nLine].pos.z = atof(aData);
+				g_aWall[nLine].pos.z = fatof(aData);
 				break;
 			}
 
@@ -417,9 +417,3 @@ bool CollisionWall(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, 
 
 	return bCollision;	//判定を返す
 }
-
-//================================================
-//壁の設定処理（モデルビューワーファイルから設定）
-//Author:石原颯馬
-//Memo:旧仕様も残してあるがデータの構造が違うため別関数用意）
-//================================================

@@ -83,8 +83,7 @@ void InitBonus(void)
 	{
 		if (pMat[nCntMat].pTextureFilename != NULL)
 		{//テクスチャファイルが存在する　
-
-		 //テクスチャの読み込み
+			//テクスチャの読み込み
 			D3DXCreateTextureFromFile(pDevice,
 				pMat[nCntMat].pTextureFilename,
 				&g_pTextureBonus[nCntMat]);

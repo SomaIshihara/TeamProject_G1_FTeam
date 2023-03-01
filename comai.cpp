@@ -13,11 +13,12 @@
 #include <time.h>
 
 //マクロ
-#define CHARGE_AVG			(1.0f)	//チャージの基準値
-#define CHARGE_DIGIT		(100)	//チャージの小数点の位置指定
+#define CHARGE_LENGTH_AVG	(600.0f)	//チャージの移動距離の基準値
+#define CHARGE_DIGIT		(100)		//チャージの小数点の位置指定
 #define HIPDROP_RADIUS		(100.0f)	//落下回避ヒップドロップまでの距離
 #define HIPDROP_RAND_DIGIT	(100)		//ヒップドロップ回避確率桁数
-#define TEST_CHARGE_WAIT	(90)
+#define CHARGE_WAIT			(75)		//チャージする前の待機時間
+#define ONE_MORE_PUSH		(0.2f)		//プレイヤーを落とすためにするもう一押し
 
 //プロト
 void ChargeAI(Player *pCom);
@@ -28,9 +29,10 @@ bool g_bUseAIPointer[MAX_USE_GAMEPAD];
 
 const AIParam c_aAIParam[AIDIFF_MAX] = 
 {
-	{ 0.25f, 0.50f, 50, 10 },	//EASY
-	{ 0.17f, 0.25f, 75, 5 },	//NORMAL
-	{ 0.10f, 0.15f, 100, 5 }	//HARD
+	{ 0.50f, 0.25f, 30, 20 },	//EASY
+	{ 0.25f, 0.17f, 60, 15 },	//NORMAL
+	{ 0.15f, 0.10f, 90, 10 },	//HARD
+	{ 0.00f, 0.50f, 0, 0 }		//VIEW
 };
 
 //========================
@@ -44,7 +46,7 @@ void InitComAI(void)
 	{//脳みそを空っぽにする
 		g_aiCont[nCntAI] = {};
 		g_aiCont[nCntAI].nCounterWaitTime = 0;
-		g_aiCont[nCntAI].difficulty = AIDIFF_HARD;
+		g_aiCont[nCntAI].difficulty = AIDIFF_NORMAL;
 		g_aiCont[nCntAI].bDoHipdrop = false;
 		g_aiCont[nCntAI].bHipdropped = false;
 		g_bUseAIPointer[nCntAI] = false;
@@ -73,8 +75,6 @@ void SelectAIMove(Player *pCom)
 
 	if (pCom->stat != PLAYERSTAT_FALL)
 	{//落ちていない
-		SetButton(pCom->nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X, false);
-
 		if (pCom->stat != PLAYERSTAT_DASH && pCom->stat != PLAYERSTAT_HIPDROP)
 		{
 			//一番近いプレイヤーの方を向くようにする
@@ -99,6 +99,7 @@ void SelectAIMove(Player *pCom)
 			float fRotMove = pCom->rot.y;
 			float fRotDest = atan2f(pNearPlayer->pos.x - pCom->pos.x, pNearPlayer->pos.z - pCom->pos.z);
 			float fRotDiff = FIX_ROT(fRotDest - fRotMove + D3DX_PI);
+
 			if ((int)(fabsf(fRotDiff) * 10) == 0)//10にしないと厳しすぎてプルプルする
 			{
 				SetStick(pCom->nPlayerNum, CONVSTICK_NEUTRAL);
@@ -121,11 +122,28 @@ void SelectAIMove(Player *pCom)
 			}
 		}
 
+		//あらかじめAIの中心からの距離求める
+		float fAILength = fabsf(D3DXVec3Length(&pCom->pos));
+
 		//スティック操作をしていないならチャージ
-		if (GetStick(pCom->nPlayerNum) == CONVSTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= TEST_CHARGE_WAIT)
+		if (GetStick(pCom->nPlayerNum) == CONVSTICK_NEUTRAL && pCom->pAI->nCounterWaitTime >= CHARGE_WAIT)
 		{
-			int nChargeWidth = (int)(((CHARGE_AVG + c_aAIParam[pCom->pAI->difficulty].fChargeAboutPlus) - (CHARGE_AVG - c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus)) * CHARGE_DIGIT);
-			pCom->pAI->fChargePower = (float)(rand() % (nChargeWidth + 1)) / CHARGE_DIGIT + c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus;
+			float fMoveLength = sqrtf(powf(fAILength, 2) + powf(GetMeshField()->fRadius, 2) - 2 * fAILength * GetMeshField()->fRadius * cosf(pCom->rot.y)) / CHARGE_LENGTH_AVG;	//ジャストなチャージ量を求める
+
+			//↓でアバウトにしていく
+			int nChargeWidth = (int)((((fMoveLength + c_aAIParam[pCom->pAI->difficulty].fChargeAboutPlus) - (fMoveLength - c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus)) * CHARGE_DIGIT) + ONE_MORE_PUSH);
+			pCom->pAI->fChargePower = (float)(rand() % (nChargeWidth + 1)) / CHARGE_DIGIT + (fMoveLength - c_aAIParam[pCom->pAI->difficulty].fChargeAboutMinus);
+
+			//最低値以下なら最低値にする
+			if (pCom->pAI->fChargePower < 1.0f / CHARGE_DIGIT)
+			{
+				pCom->pAI->fChargePower = 1.0f / CHARGE_DIGIT;
+			}
+			else if (pCom->pAI->fChargePower > PLAYER_POWER_MAX)
+			{
+				pCom->pAI->fChargePower = PLAYER_POWER_MAX;
+			}
+
 			ChargeAI(pCom);
 
 		}
@@ -135,17 +153,14 @@ void SelectAIMove(Player *pCom)
 		}
 
 		//落ちそうならヒップドロップ回避
-		float fRadiusAI = PYTHAGORAS(pCom->pos.x, pCom->pos.z);
-
-		//落ちそうならジャンプ
-		if (GetMeshField()->fRadius - fRadiusAI <= HIPDROP_RADIUS)
+		if (GetMeshField()->fRadius - fAILength <= HIPDROP_RADIUS)
 		{
 			if (pCom->pAI->bHipdropped == false)
 			{
 				pCom->pAI->bDoHipdrop = rand() % (HIPDROP_RAND_DIGIT + 1) <= c_aAIParam[pCom->pAI->difficulty].nHipdropRandom ? true : false;
 				if (pCom->pAI->bDoHipdrop == true || pCom->stat == PLAYERSTAT_JUMP)
 				{
-					SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_A, true);
+					SetButton(pCom->nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A, true);
 					if (pCom->stat == PLAYERSTAT_JUMP)
 					{
 						if (pCom->jumpTime > c_aAIParam[pCom->pAI->difficulty].nHipdropTime)
@@ -154,7 +169,7 @@ void SelectAIMove(Player *pCom)
 						}
 						else
 						{
-							SetButton(pCom->nPlayerNum, INPUTTYPE_PRESS, BUTTON_A, true);
+							SetButton(pCom->nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A, false);
 						}
 					}
 				}

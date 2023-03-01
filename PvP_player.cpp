@@ -9,6 +9,7 @@
 #include "PvP_player.h"
 #include "model.h"
 #include "input.h"
+#include "file.h"
 #include "wall.h"
 #include "score.h"
 #include "debugproc.h"
@@ -27,6 +28,8 @@
 #include "particle.h"
 #include "comai.h"
 #include "conversioninput.h"
+#include "collision.h"
+#include "fence.h"
 
 //マクロ
 #define PLAYER_HIPDROP_WAIT		(15)		//ヒップドロップの「開始・着地」硬直時間
@@ -35,25 +38,27 @@
 #define PLAYER_ROTATE_SPEED		(0.02f * D3DX_PI)	//回転速度
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)		//ヒップドロップスピンの回転値
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
+#define PLAYER_HIPDROP_ACTIONRIGOR	(45)		//ヒップドロップのアクション硬直の時間
+#define PLAYER_DASH_ACTIONRIGOR	(20)		//ダッシュのアクション硬直のベースの時間
+#define PLAYER_D_ACTRIGOR_CALC(x)	(powf((x - 0.75f), 2) + 1)
 
 //移動量関係
 #define PLAYER_MOVE_SPEED		(20.0f)		//プレイヤー移動速度
 #define PLAYER_JUMP_SPEED		(7.7f)		//プレイヤージャンプ速度
-#define ACCELERATION_GRAVITY	(9.8f)		//重力加速度
 #define PLAYER_WEIGHT			(50)		//質量
 #define PLAYER_POWER_ADD		(0.025f)	//移動の強さの増加値
 #define DUMP_COEF				(0.04f)		//減衰係数
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
 #define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
-#define HIPDROP_RADIUS			(80.0f)		//ヒップドロップ判定範囲
+#define HIPDROP_RADIUS			(60.0f)		//ヒップドロップ判定範囲
 #define REBOUND_RATIO			(0.15f)		//当たった後の自分の分の移動量割合
 
 //アイテム関係
 #define ACCELERATION_CONS		(0.5f)		//加速定数（1.0で全部渡す）
-#define ACCELERATION_ITEMMAG	(1.5f)		//アイテム所持中の強化倍率
+#define ACCELERATION_ITEMADD	(0.35f)		//アイテム所持中の強化量
 #define DEFANCE_CONS			(0.0f)		//防御定数（1.0で完全防御）
-#define DEFANCE_ITEMADD			(0.3f)		//アイテム所持中の強化量
+#define DEFANCE_ITEMADD			(0.4f)		//アイテム所持中の強化量
 #define INVINCIBLE_ATK			(1.0f)		//無敵状態の自分の変換割合
 #define INVINCIBLE_DEF			(0.0f)		//無敵状態の相手の変換割合
 
@@ -76,12 +81,6 @@
 #define ROT_S	(0.0f * D3DX_PI)	//下
 #define ROT_D	(0.5f * D3DX_PI)	//右
 
-//当たり判定範囲構造体
-typedef struct
-{
-	D3DXVECTOR3 pos0, pos1, pos2, pos3;
-} CollisionPos;
-
 //プロト
 void ControllPlayer(int nPlayerNum);
 
@@ -93,15 +92,14 @@ void DashPlayer(int nDashPlayer);			//ダッシュ処理
 void JumpPlayer(int nJumpPlayer);			//ジャンプ処理
 void HipDropPlayer(int nHipDropPlayer);		//ヒップドロップ処理
 
-void CollisionPP(int nPlayerNum);			//プレイヤー同士の衝突判定
-void CollisionHipDropPP(int nPlayerNum);	//ヒップドロップ時の衝突判定
-void GenerateCollision(int nPlayerNum, CollisionPos *pCollision);
-
 void DownPlayer(int nDownPlayerNum);		//ダウンしたプレイヤーの処理
 void RespawnPlayer(int nRespawnPlayer);		//リスポーン処理
 
 void DecrementItemTime(int nPlayerNum);		//アイテムカウントをすべて減らす
 void ItemStateParticle(int nPlayerNum);		//アイテムパーティクル表示処理
+
+void SetMotion(int nPlayerNum, MOTIONTYPE type);	//モーション設定処理
+void UpdateMotion(int nPlayerNum);					//モーション更新処理
 
 //グローバル変数
 Player g_aPlayerPvP[MAX_USE_GAMEPAD];
@@ -151,20 +149,22 @@ void InitPlayer(void)
 
 		g_aPlayerPvP[nCntPlayer].animal = ANIMAL_WILDBOAR;
 		g_aPlayerPvP[nCntPlayer].nScore = 0;
-		g_aPlayerPvP[nCntPlayer].lastAtkPlayer = -1;
-		g_aPlayerPvP[nCntPlayer].nNumHitPlayer = -1;
+		g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer = -1;
+		g_aPlayerPvP[nCntPlayer].nLastHitPlayer = -1;
 		g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
 		g_aPlayerPvP[nCntPlayer].nPlayerNum = nCntPlayer;
 
 		g_aPlayerPvP[nCntPlayer].nATKItemTime = 0;
 		g_aPlayerPvP[nCntPlayer].nDEFItemTime = 0;
 		g_aPlayerPvP[nCntPlayer].nGhostItemTime = 0;
-		g_aPlayerPvP[nCntPlayer].bInvincible = false;
 		g_aPlayerPvP[nCntPlayer].nInvincibleTime = 0;
 
 		g_aPlayerPvP[nCntPlayer].pAI = NULL;
 
-		g_aPlayerPvP[nCntPlayer].model = GetModel(g_aPlayerPvP[nCntPlayer].animal);
+		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
+		{
+			g_aPlayerPvP[nCntPlayer].animalInst[nCntParts] = {};
+		}
 		g_aPlayerPvP[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 
 		g_pNotMove[nCntPlayer] = &g_aPlayerPvP[nCntPlayer];
@@ -196,14 +196,7 @@ void InitPlayer(void)
 //========================
 void UninitPlayer(void)
 {
-	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
-	{//プレイヤーの数だけ処理する
-		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
-		{//取得した方なのでNULL入れるだけでOK
-			g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pMesh = NULL;
-			g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pBuffMat = NULL;
-		}
-	}
+	
 }
 
 //========================
@@ -221,7 +214,7 @@ void UpdatePlayer(void)
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
 		//前回の情報初期化
-		g_aPlayerPvP[nCntPlayer].lastAtkPlayer = -1;
+		g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer = -1;
 
 		//現在の位置を前回の位置にする
 		g_aPlayerPvP[nCntPlayer].posOld = g_aPlayerPvP[nCntPlayer].pos;
@@ -237,34 +230,50 @@ void UpdatePlayer(void)
 
 		if (g_aPlayerPvP[nCntPlayer].bUsePlayer == true)
 		{//使用時のみ行う
-			//AI処理
-			if (g_aPlayerPvP[nCntPlayer].pAI != NULL)
-			{//AI
-				//AIがコントローラー操作
-				SelectAIMove(&g_aPlayerPvP[nCntPlayer]);
-			}
-			else
-			{//プレイヤー
-				//（下の部分ゲームパッドが一つも使用されていなければ無視）
-				if (GetUseControllerNum_PvP() != 0)
-				{
-					g_aPlayerPvP[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
+			//アクション硬直時間減らす
+			g_aPlayerPvP[nCntPlayer].nActionRigor--;
+
+			if (g_aPlayerPvP[nCntPlayer].nActionRigor <= 0)
+			{
+				//AI処理
+				if (g_aPlayerPvP[nCntPlayer].pAI != NULL)
+				{//AI
+					//AIがコントローラー操作
+					SelectAIMove(&g_aPlayerPvP[nCntPlayer]);
+				}
+				else
+				{//プレイヤー
+					//（下の部分ゲームパッドが一つも使用されていなければ無視）
+					if (GetUseControllerNum_PvP() != 0)
+					{
+						g_aPlayerPvP[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
+					}
+				}
+
+				//操作処理
+				ControllPlayer(nCntPlayer);
+
+				//当たり判定類
+				if (g_aPlayerPvP[nCntPlayer].nGhostItemTime <= 0)
+				{//ゴースト化状態でなければ
+					if (CollisionPP(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH) == true)
+					{
+						SetAttackEffect(g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].pos, g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer);
+					}
+
+					CollisionIP(nCntPlayer);
+
+					if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_HIPDROP)
+					{//ヒップドロップ中なら
+						CollisionHipDropPP(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH, HIPDROP_RADIUS, PLAYER_BLOWING_POWER);
+					}
 				}
 			}
 
-			//操作処理
-			ControllPlayer(nCntPlayer);
-
-			//当たり判定類
-			if (g_aPlayerPvP[nCntPlayer].nGhostItemTime <= 0)
-			{//ゴースト化状態でなければ
-				CollisionPP(nCntPlayer);
-				CollisionIP(nCntPlayer);
-
-				if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_HIPDROP)
-				{//ヒップドロップ中なら
-					CollisionHipDropPP(nCntPlayer);
-				}
+			//回転
+			if (GetButton(nCntPlayer, INPUTTYPE_PRESS, BUTTON_X) == false)
+			{//Xボタンが押されていない
+				RotatePlayer(nCntPlayer);
 			}
 		}
 
@@ -293,6 +302,9 @@ void UpdatePlayer(void)
 				{//ヒップドロップしてたならエフェクト出す
 					SetTremorEffect(g_aPlayerPvP[nCntPlayer].pos);
 					g_aPlayerPvP[nCntPlayer].bHipDrop = false;    //ヒップドロップしてない
+					g_aPlayerPvP[nCntPlayer].nActionRigor = PLAYER_HIPDROP_ACTIONRIGOR;
+					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
+					PlaySound(SOUND_LABEL_SE_HIPDROP);
 				}
 				g_aPlayerPvP[nCntPlayer].bJump = false;
 				g_aPlayerPvP[nCntPlayer].moveV0.y = 0.0f;
@@ -328,51 +340,59 @@ void UpdatePlayer(void)
 			}
 		}
 
-		if (g_aPlayerPvP[nCntPlayer].lastAtkPlayer == -1)
+		if (g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer == -1)
 		{//ぶつかってないまたは移動量交換済み		
 			//ヒップドロップの硬直中ではない
 			if (g_aPlayerPvP[nCntPlayer].nHipDropWait <= 0)
 			{
-				//普通に移動
-				g_aPlayerPvP[nCntPlayer].pos += g_aPlayerPvP[nCntPlayer].move;
+				//フェンスに衝突していなければ
+				if (CollisionFence(&g_aPlayerPvP[nCntPlayer], FENCE_WIDTH, PLAYER_SIZE_HEIGHT, FENCE_DEPTH, FENCE_SCALE) == false)
+				{
+					//普通に移動
+					g_aPlayerPvP[nCntPlayer].pos += g_aPlayerPvP[nCntPlayer].move;
+				}//衝突していれば関数内で移動処理を行う
 			}
 		}
 		else
 		{//ぶつかった
 			//移動量交換
 			D3DXVECTOR3 moveTmp1 = g_aPlayerPvP[nCntPlayer].move;
-			D3DXVECTOR3 moveTmp2 = g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].move;
+			D3DXVECTOR3 moveTmp2 = g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].move;
 
 			//割合設定
 			float fPowerConvertion1, fPowerConvertion2;
-			if (g_aPlayerPvP[nCntPlayer].bInvincible == true)
+			if (g_aPlayerPvP[nCntPlayer].nInvincibleTime > 0)
 			{//我無敵也(自分0%,相手100%)
 				fPowerConvertion1 = INVINCIBLE_DEF;
 				fPowerConvertion2 = INVINCIBLE_ATK;
 			}
-			else if (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].bInvincible == true)
+			else if (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].nInvincibleTime > 0)
 			{//相手無敵也(自分100%,相手0%)
 				fPowerConvertion1 = INVINCIBLE_ATK;
 				fPowerConvertion2 = INVINCIBLE_DEF;
 			}
 			else
 			{//どっちもむてきじゃないよ
-				fPowerConvertion1 = ACCELERATION_CONS * (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
+				fPowerConvertion1 = ACCELERATION_CONS + (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMADD : 0.0f) -
 					DEFANCE_CONS + (g_aPlayerPvP[nCntPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
 
-				fPowerConvertion2 = ACCELERATION_CONS * (g_aPlayerPvP[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMMAG : 1.0f) -
-					DEFANCE_CONS + (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
+				fPowerConvertion2 = ACCELERATION_CONS + (g_aPlayerPvP[nCntPlayer].nATKItemTime > 0 ? ACCELERATION_ITEMADD : 0.0f) -
+					DEFANCE_CONS + (g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].nDEFItemTime > 0 ? DEFANCE_ITEMADD : 0.0f);
 			}
 
 			g_aPlayerPvP[nCntPlayer].move = (moveTmp2 * fPowerConvertion1) + (moveTmp1 * (1.0f - fPowerConvertion2) * REBOUND_RATIO);
-			g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].move = (moveTmp1 * fPowerConvertion2) + (moveTmp2 * (1.0f - fPowerConvertion1) * REBOUND_RATIO);
+			g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].move = (moveTmp1 * fPowerConvertion2) + (moveTmp2 * (1.0f - fPowerConvertion1) * REBOUND_RATIO);
 
 			//移動量交換済み扱いにする
-			g_aPlayerPvP[nCntPlayer].lastAtkPlayer = -1;
-			g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].lastAtkPlayer].lastAtkPlayer = -1;
+			g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer = -1;
+			g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].nFrameAtkPlayer = -1;
 
-			//普通に移動
-			g_aPlayerPvP[nCntPlayer].pos += g_aPlayerPvP[nCntPlayer].move;
+			//フェンスに衝突していなければ
+			if (CollisionFence(&g_aPlayerPvP[nCntPlayer], PLAYER_SIZE_WIDTH, PLAYER_SIZE_HEIGHT, PLAYER_SIZE_DEPTH, FENCE_SCALE) == false)
+			{
+				//普通に移動
+				g_aPlayerPvP[nCntPlayer].pos += g_aPlayerPvP[nCntPlayer].move;
+			}//衝突していれば関数内で移動処理を行う
 		}
 
 		//移動量減衰
@@ -397,6 +417,8 @@ void DrawPlayer(void)
 	//プレイヤーの数だけ繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
+		Model useAnimal = GetAnimal(g_aPlayerPvP[nCntPlayer].animal);
+
 		//"プレイヤーの"ワールドマトリックス初期化
 		D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].mtxWorld);
 
@@ -413,30 +435,31 @@ void DrawPlayer(void)
 
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
-			if (g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].bUse == true)
+			if (useAnimal.aParts[nCntParts].bUse == true)
 			{
 				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
 				D3DXMATRIX mtxParent;					//親のマトリ
 
+				//ここ新仕様
 				//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
-				g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pos = g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].posOffset;
-				g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rot = g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rotOffset;
+				g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos = useAnimal.aParts[nCntParts].posOffset;
+				g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot = useAnimal.aParts[nCntParts].rotOffset;
 
 				//"モデルの"ワールドマトリックス初期化
-				D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld);
+				D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
 				//向きを反映
-				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rot.y, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rot.x, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].rot.z);
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxRotModel);
+				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.y, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.x, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.z);
+				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxRotModel);
 
 				//位置反映
-				D3DXMatrixTranslation(&mtxTransModel, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pos.x, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pos.y, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pos.z);
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxTransModel);
+				D3DXMatrixTranslation(&mtxTransModel, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.x, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.y, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.z);
+				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxTransModel);
 
 				//パーツの親マトリ設定
-				if (g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mIdxModelParent != -1)
+				if (useAnimal.aParts[nCntParts].mIdxModelParent != -1)
 				{
-					mtxParent = g_aPlayerPvP[nCntPlayer].model.aParts[g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mIdxModelParent].mtxWorld;
+					mtxParent = g_aPlayerPvP[nCntPlayer].animalInst[useAnimal.aParts[nCntParts].mIdxModelParent].mtxWorld;
 				}
 				else
 				{
@@ -444,37 +467,43 @@ void DrawPlayer(void)
 				}
 
 				//パーツのマトリと親マトリをかけ合わせる
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxParent);
+				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxParent);
 
-				//"プレイヤーの"ワールドマトリックス設定
-				pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld);
+				//"モデルの"ワールドマトリックス設定
+				pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
 				//マテリアルデータへのポインタ取得
-				pMat = (D3DXMATERIAL*)g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
+				pMat = (D3DXMATERIAL*)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
 
-				for (int nCntMat = 0; nCntMat < (int)g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
+				for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
 				{
-					//ゴースト化状態を考慮した変更用マテリアル変数
+					//ゴースト用
 					D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
+					
+					//ゴースト状態なら消す
+					if (g_aPlayerPvP[nCntPlayer].nGhostItemTime > 0)
+					{
+						//アルファテストを有効にする
+						pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+						pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+						pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+						matChange.Diffuse.a = 0.0f;
+					}
 
-					//ゴースト化状態なら半透明で設定
-					if (g_aPlayerPvP[nCntPlayer].nGhostItemTime > GOAST_FLASHSTART)
-					{
-						matChange.Diffuse.a = GOAST_ALPHA;
-					}
-					else if (g_aPlayerPvP[nCntPlayer].nGhostItemTime > 0 && g_aPlayerPvP[nCntPlayer].nGhostItemTime % (GOAST_FLASHPULSE * 2) < GOAST_FLASHPULSE)
-					{
-						matChange.Diffuse.a = GOAST_ALPHA;
-					}
 					//マテリアル設定
 					pDevice->SetMaterial(&matChange);
 
 					//テクスチャ設定
-					pDevice->SetTexture(0, g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
+					pDevice->SetTexture(0, useAnimal.aParts[nCntParts].apTexture[nCntMat]);
 
 					//モデル描画
-					g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+					useAnimal.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
 				}
+
+				//アルファテストを無効にする
+				pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+				pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+				pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
 
 				/*------------------------------------------------------------------
 				影の描画		Author:平澤詩苑 石原颯馬
@@ -501,15 +530,15 @@ void DrawPlayer(void)
 
 					//シャドウマトリックスの作成
 					D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
-					D3DXMatrixMultiply(&mtxShadow, &g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxShadow);
+					D3DXMatrixMultiply(&mtxShadow, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxShadow);
 
 					//シャドウマトリックスの設定
 					pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
 
 					//マテリアルデータへのポインタを取得
-					pMat = (D3DXMATERIAL *)g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
+					pMat = (D3DXMATERIAL *)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
 
-					for (int nCntMat = 0; nCntMat < (int)g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
+					for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
 					{
 						D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
 
@@ -523,7 +552,7 @@ void DrawPlayer(void)
 						pDevice->SetTexture(0, NULL);
 
 						//モデル描画
-						g_aPlayerPvP[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+						useAnimal.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
 					}
 				}
 			}
@@ -563,6 +592,9 @@ void DashPlayer(int nDashPlayer)
 {
 	PlaySound(SOUND_LABEL_SE_GRASSDASH);
 
+	//アクション硬直用にパワー移動
+	g_aPlayerPvP[nDashPlayer].fOldMoveGauge = g_aPlayerPvP[nDashPlayer].moveGauge;
+
 	//進行方向の設定
 	g_aPlayerPvP[nDashPlayer].move.x = -sinf(g_aPlayerPvP[nDashPlayer].rot.y) * g_aPlayerPvP[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
 	g_aPlayerPvP[nDashPlayer].move.z = -cosf(g_aPlayerPvP[nDashPlayer].rot.y) * g_aPlayerPvP[nDashPlayer].moveGauge * PLAYER_MOVE_SPEED;
@@ -576,10 +608,8 @@ void DashPlayer(int nDashPlayer)
 //========================
 void HipDropPlayer(int nHipDropPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_HIPDROP);
-
 	g_aPlayerPvP[nHipDropPlayer].moveV0.y = PLAYER_HIPDROP_POWER;		//ヒップドロップの降下速度を代入
-	g_aPlayerPvP[nHipDropPlayer].move.x = 0.0f;						//X・Zの移動量消す
+	g_aPlayerPvP[nHipDropPlayer].move.x = 0.0f;							//X・Zの移動量消す
 	g_aPlayerPvP[nHipDropPlayer].move.z = 0.0f;
 	g_aPlayerPvP[nHipDropPlayer].moveGauge = 0.0f;
 	g_aPlayerPvP[nHipDropPlayer].jumpTime = 0;							//ジャンプ時間リセット
@@ -602,370 +632,6 @@ void JumpPlayer(int nJumpPlayer)
 }
 
 //========================
-//プレイヤー同士の衝突判定処理
-//========================
-void CollisionPP(int nPlayerNum)
-{
-	//=pos0~pos3の説明==================
-	// pos3		pos2
-	//	・<-----・		矢印:vecLine
-	//	｜		↑
-	//	｜		｜
-	//	↓		｜
-	//	・----->・
-	// pos0		pos1
-	//==================================
-
-	//頂点
-	CollisionPos collPos;
-
-	D3DXVECTOR3 vecLineRight, vecToPosRight, vecToPosOldRight;
-	D3DXVECTOR3 vecLineLeft, vecToPosLeft, vecToPosOldLeft;
-	D3DXVECTOR3 vecLineUp, vecToPosUp, vecToPosOldUp;
-	D3DXVECTOR3 vecLineDown, vecToPosDown, vecToPosOldDown;
-	D3DXVECTOR3 vecMove[2];
-
-	//2は2頂点の2
-	float fAreaARight[2], fAreaALeft[2], fAreaBRight[2], fAreaBLeft[2];
-	float fAreaAUp[2], fAreaADown[2], fAreaBUp[2], fAreaBDown[2];
-
-	//未反映の位置考慮
-	D3DXVECTOR3 posTemp = g_aPlayerPvP[nPlayerNum].pos + g_aPlayerPvP[nPlayerNum].move;
-
-	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++)
-	{
-		if (nCntOtherPlayer != nPlayerNum)
-		{
-			//頂点設定
-			GenerateCollision(nCntOtherPlayer, &collPos);
-
-			//ベクトル求める
-			//move
-			for (int nCntCollision = 0; nCntCollision < 2; nCntCollision++)
-			{
-				vecMove[nCntCollision] = (posTemp + g_aPlayerPvP[nPlayerNum].faceCollider[nCntCollision]) - (g_aPlayerPvP[nPlayerNum].posOld + g_aPlayerPvP[nPlayerNum].faceCollider[nCntCollision]);
-			}
-
-			//X
-			//右方向の計算
-			vecLineRight = collPos.pos1 - collPos.pos0;
-			vecToPosRight = posTemp - collPos.pos0;
-			vecToPosOldRight = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos0;
-
-			//左方向の計算
-			vecLineLeft = collPos.pos3 - collPos.pos2;
-			vecToPosLeft = posTemp - collPos.pos2;
-			vecToPosOldLeft = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos2;
-
-			//Z
-			//上方向の計算
-			vecLineUp = collPos.pos2 - collPos.pos1;
-			vecToPosUp = posTemp - collPos.pos1;
-			vecToPosOldUp = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos1;
-			//下方向の計算
-			vecLineDown = collPos.pos0 - collPos.pos3;
-			vecToPosDown = posTemp - collPos.pos3;
-			vecToPosOldDown = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos3;
-
-			//当たり判定本番
-			for (int nCntCollision = 0; nCntCollision < 2; nCntCollision++)
-			{
-				//X
-				//面積求める
-				fAreaARight[nCntCollision] = TASUKIGAKE(vecToPosRight.x, vecToPosRight.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
-				fAreaALeft[nCntCollision] = TASUKIGAKE(vecToPosLeft.x, vecToPosLeft.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
-				fAreaBRight[nCntCollision] = TASUKIGAKE(vecLineRight.x, vecLineRight.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
-				fAreaBLeft[nCntCollision] = TASUKIGAKE(vecLineLeft.x, vecLineLeft.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
-
-				//左側AND範囲内
-				if ((vecLineRight.z * vecToPosRight.x) - (vecLineRight.x * vecToPosRight.z) <= 0.0f && (vecLineRight.z * vecToPosOldRight.x) - (vecLineRight.x * vecToPosOldRight.z) >= 0.0f)
-				{
-					if (fAreaARight[nCntCollision] / fAreaBRight[nCntCollision] >= 0.0f && fAreaARight[nCntCollision] / fAreaBRight[nCntCollision] <= 1.0f)
-					{
-						if (posTemp.y >= g_aPlayerPvP[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayerPvP[nCntOtherPlayer].pos.y + PLAYER_SIZE_HEIGHT)
-						{
-							if (fabsf(g_aPlayerPvP[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayerPvP[nPlayerNum].move.z) > 0.0f)
-							{//動いてる
-								g_aPlayerPvP[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
-								g_aPlayerPvP[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
-
-								SetAttackEffect(g_aPlayerPvP[nCntOtherPlayer].pos, nCntOtherPlayer);
-							}
-							//1.0f = pushback
-							float fRate = fAreaARight[nCntCollision] / fAreaBRight[nCntCollision];
-							g_aPlayerPvP[nPlayerNum].pos.x = collPos.pos0.x + (vecLineRight.x * fRate) - sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							g_aPlayerPvP[nPlayerNum].pos.z = collPos.pos0.z + (vecLineRight.z * fRate) - cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							break;
-						}
-					}
-				}
-				else if ((vecLineLeft.z * vecToPosLeft.x) - (vecLineLeft.x * vecToPosLeft.z) <= 0.0f && (vecLineLeft.z * vecToPosOldLeft.x) - (vecLineLeft.x * vecToPosOldLeft.z) >= 0.0f)
-				{
-					if (fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision] >= 0.0f && fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision] <= 1.0f)
-					{
-						if (posTemp.y >= g_aPlayerPvP[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayerPvP[nCntOtherPlayer].pos.y + PLAYER_SIZE_HEIGHT)
-						{
-							if (fabsf(g_aPlayerPvP[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayerPvP[nPlayerNum].move.z) > 0.0f)
-							{//動いてる
-								g_aPlayerPvP[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
-								g_aPlayerPvP[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
-
-								SetAttackEffect(g_aPlayerPvP[nCntOtherPlayer].pos, nCntOtherPlayer);
-							}
-							float fRate = fAreaALeft[nCntCollision] / fAreaBLeft[nCntCollision];
-							g_aPlayerPvP[nPlayerNum].pos.x = collPos.pos2.x + (vecLineLeft.x * fRate) + sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							g_aPlayerPvP[nPlayerNum].pos.z = collPos.pos2.z + (vecLineLeft.z * fRate) + cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							break;
-						}
-					}
-				}
-			
-				//Z
-				//面積求める
-				fAreaAUp[nCntCollision] = TASUKIGAKE(vecToPosUp.x, vecToPosUp.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
-				fAreaADown[nCntCollision] = TASUKIGAKE(vecToPosDown.x, vecToPosDown.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
-				fAreaBUp[nCntCollision] = TASUKIGAKE(vecLineUp.x, vecLineUp.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
-				fAreaBDown[nCntCollision] = TASUKIGAKE(vecLineDown.x, vecLineDown.z, vecMove[nCntCollision].x, vecMove[nCntCollision].z);
-
-				//左側AND範囲内
-				if ((vecLineUp.z * vecToPosUp.x) - (vecLineUp.x * vecToPosUp.z) <= 0.0f && (vecLineUp.z * vecToPosOldUp.x) - (vecLineUp.x * vecToPosOldUp.z) >= 0.0f)
-				{
-					if (fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision] >= 0.0f && fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision] <= 1.0f)
-					{
-						if (posTemp.y >= g_aPlayerPvP[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayerPvP[nCntOtherPlayer].pos.y + PLAYER_SIZE_HEIGHT)
-						{
-							if (fabsf(g_aPlayerPvP[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayerPvP[nPlayerNum].move.z) > 0.0f)
-							{//動いてる
-								g_aPlayerPvP[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
-								g_aPlayerPvP[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
-
-								SetAttackEffect(g_aPlayerPvP[nCntOtherPlayer].pos, nCntOtherPlayer);
-							}
-							float fRate = fAreaAUp[nCntCollision] / fAreaBUp[nCntCollision];
-							g_aPlayerPvP[nPlayerNum].pos.x = collPos.pos1.x + (vecLineUp.x * fRate) + cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							g_aPlayerPvP[nPlayerNum].pos.z = collPos.pos1.z + (vecLineUp.z * fRate) - sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							break;
-						}
-					}
-				}
-				else if ((vecLineDown.z * vecToPosDown.x) - (vecLineDown.x * vecToPosDown.z) <= 0.0f && (vecLineDown.z * vecToPosOldDown.x) - (vecLineDown.x * vecToPosOldDown.z) >= 0.0f)
-				{
-					if (fAreaADown[nCntCollision] / fAreaBDown[nCntCollision] >= 0.0f && fAreaADown[nCntCollision] / fAreaBDown[nCntCollision] <= 1.0f)
-					{
-						if (posTemp.y >= g_aPlayerPvP[nCntOtherPlayer].pos.y && posTemp.y <= g_aPlayerPvP[nCntOtherPlayer].pos.y + PLAYER_SIZE_HEIGHT)
-						{
-							if (fabsf(g_aPlayerPvP[nPlayerNum].move.x) > 0.0f || fabsf(g_aPlayerPvP[nPlayerNum].move.z) > 0.0f)
-							{//動いてる
-								g_aPlayerPvP[nPlayerNum].lastAtkPlayer = nCntOtherPlayer;
-								g_aPlayerPvP[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
-
-								SetAttackEffect(g_aPlayerPvP[nCntOtherPlayer].pos, nCntOtherPlayer);
-							}
-							float fRate = fAreaADown[nCntCollision] / fAreaBDown[nCntCollision];
-							g_aPlayerPvP[nPlayerNum].pos.x = collPos.pos3.x + (vecLineDown.x * fRate) - cosf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							g_aPlayerPvP[nPlayerNum].pos.z = collPos.pos3.z + (vecLineDown.z * fRate) + sinf(g_aPlayerPvP[nCntOtherPlayer].rot.y) / D3DX_PI * 1.0f;
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-//========================
-//ヒップドロップ時の衝突処理
-//========================
-void CollisionHipDropPP(int nPlayerNum)
-{
-	//=pos0~pos2の説明==================
-	//
-	//		・g_ap[nPNum].posOld
-	//		↓
-	//		・g_ap[nPNum].pos
-	// pos1		pos0
-	//	・<-----・		矢印:vecLine
-	//	｜
-	//	｜
-	//	↓
-	//　・
-	// pos2
-	//==================================
-
-	//頂点
-	CollisionPos collPos;
-
-	D3DXVECTOR3 vecLineX, vecToPosX, vecToPosOldX;
-	D3DXVECTOR3 vecLineZ, vecToPosZ, vecToPosOldZ;
-	D3DXVECTOR3 vecMove;
-	float fAreaAX, fAreaBX, fAreaAZ, fAreaBZ;
-
-	//未反映の位置考慮
-	D3DXVECTOR3 posTemp = g_aPlayerPvP[nPlayerNum].pos + g_aPlayerPvP[nPlayerNum].move;
-
-	for (int nCntOtherPlayer = 0; nCntOtherPlayer < MAX_USE_GAMEPAD; nCntOtherPlayer++)
-	{
-		if (nCntOtherPlayer != nPlayerNum)
-		{
-			//頂点設定
-			GenerateCollision(nCntOtherPlayer, &collPos);
-
-			//ベクトル求める
-			//move
-			vecMove = posTemp - g_aPlayerPvP[nPlayerNum].posOld;
-
-			//X
-			vecLineX = collPos.pos1 - collPos.pos0;
-			vecToPosX = posTemp - collPos.pos0;
-			vecToPosOldX = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos0;
-
-			//Z
-			vecLineZ = collPos.pos2 - collPos.pos1;
-			vecToPosZ = posTemp - collPos.pos1;
-			vecToPosOldZ = g_aPlayerPvP[nPlayerNum].posOld - collPos.pos1;
-
-			//当たり判定本番
-			//X
-			//面積求める
-			fAreaAX = TASUKIGAKE(vecToPosX.x, vecToPosX.y, vecMove.x, vecMove.y);
-			fAreaBX = TASUKIGAKE(vecLineX.x, vecLineX.y, vecMove.x, vecMove.y);
-			fAreaAZ = TASUKIGAKE(vecToPosZ.z, vecToPosZ.y, vecMove.z, vecMove.y);
-			fAreaBZ = TASUKIGAKE(vecLineZ.z, vecLineZ.y, vecMove.z, vecMove.y);
-			//左側AND範囲内
-			float fHeight = posTemp.y - g_aPlayerPvP[nCntOtherPlayer].pos.y;
-			if (fHeight <= PLAYER_SIZE_HEIGHT)
-			{
-				float fRadius = PYTHAGORAS(g_aPlayerPvP[nCntOtherPlayer].pos.x - posTemp.x,
-					g_aPlayerPvP[nCntOtherPlayer].pos.z - posTemp.z);
-
-				if (fRadius <= HIPDROP_RADIUS)
-				{
-					//移動量計算
-					float fAngleHipDrop = atan2f(g_aPlayerPvP[nCntOtherPlayer].pos.x - posTemp.x,
-						g_aPlayerPvP[nCntOtherPlayer].pos.z - posTemp.z);
-					g_aPlayerPvP[nCntOtherPlayer].move.x = sinf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
-					g_aPlayerPvP[nCntOtherPlayer].move.z = -cosf(fAngleHipDrop) * PLAYER_BLOWING_POWER;
-
-					//ちょっと飛ばす
-					g_aPlayerPvP[nCntOtherPlayer].moveV0.y = PLAYER_BLOWING_POWER;
-					g_aPlayerPvP[nCntOtherPlayer].jumpTime = 0;
-
-					//攻撃された扱いにする
-					g_aPlayerPvP[nCntOtherPlayer].nNumHitPlayer = nPlayerNum;
-				}
-			}
-		}
-	}
-}
-
-//========================
-//当たり判定生成
-//========================
-void GenerateCollision(int nPlayerNum, CollisionPos *pCollision)
-{
-	//各頂点を求めるのに必要な変数
-	D3DXMATRIX mtxWorld;	//回転のベースとなるワールドマトリ
-	D3DXMATRIX mtxRot;		//回転行列
-	D3DXMATRIX mtxTrans;	//すべて変換後の行列
-	D3DXVECTOR3 vtxTrans;	//変換後の点
-
-	//-mtx----------------------------------------------------------------------------------------------------------------------------
-	//回転行列を作る
-	D3DXMatrixIdentity(&mtxWorld);
-
-	//向き反映
-	D3DXMatrixRotationY(&mtxRot, FIX_ROT(g_aPlayerPvP[nPlayerNum].rot.y));
-	D3DXMatrixMultiply(&mtxWorld, &mtxRot, &mtxWorld);
-
-	//位置反映
-	mtxWorld._41 = g_aPlayerPvP[nPlayerNum].pos.x;
-	mtxWorld._42 = 0.0f;
-	mtxWorld._43 = g_aPlayerPvP[nPlayerNum].pos.z;
-
-	//-mtx----------------------------------------------------------------------------------------------------------------------------
-	
-	//-pos0---------------------------------------------------------------------------------------------------------------------------
-	//回転行列をもとに頂点を回転する
-	//ベースをコピー
-	mtxTrans = mtxWorld;
-
-	//0度のときの点を置く
-	D3DXVECTOR3 vtxPos = D3DXVECTOR3(
-		- PLAYER_SIZE_WIDTH,
-		0.0f,
-		- PLAYER_SIZE_DEPTH);
-
-
-	//回転行列とかけ合わせる
-	D3DXVec3TransformCoord(&vtxTrans, &vtxPos, &mtxTrans);
-
-	pCollision->pos0.x = vtxTrans.x;
-	pCollision->pos0.y = vtxTrans.y;
-	pCollision->pos0.z = vtxTrans.z;
-	//-pos0---------------------------------------------------------------------------------------------------------------------------
-
-	//-pos1---------------------------------------------------------------------------------------------------------------------------
-	//回転行列をもとに頂点を回転する
-	//ベースをコピー
-	mtxTrans = mtxWorld;
-
-	//0度のときの点を置く
-	vtxPos = D3DXVECTOR3(
-		+ PLAYER_SIZE_WIDTH,
-		0.0f,
-		- PLAYER_SIZE_DEPTH);
-
-	//回転行列とかけ合わせる
-	D3DXVec3TransformCoord(&vtxTrans, &vtxPos, &mtxTrans);
-
-	//変換後の点の場所を代入
-	pCollision->pos1.x = vtxTrans.x;
-	pCollision->pos1.y = vtxTrans.y;
-	pCollision->pos1.z = vtxTrans.z;
-	//-pos1---------------------------------------------------------------------------------------------------------------------------
-
-	//-pos2---------------------------------------------------------------------------------------------------------------------------
-	//回転行列をもとに頂点を回転する
-	//ベースをコピー
-	mtxTrans = mtxWorld;
-
-	//0度のときの点を置く
-	vtxPos = D3DXVECTOR3(
-		+ PLAYER_SIZE_WIDTH,
-		0.0f,
-		+ PLAYER_SIZE_DEPTH);
-
-	//回転行列とかけ合わせる
-	D3DXVec3TransformCoord(&vtxTrans, &vtxPos, &mtxTrans);
-
-	//変換後の点の場所を代入
-	pCollision->pos2.x = vtxTrans.x;
-	pCollision->pos2.y = vtxTrans.y;
-	pCollision->pos2.z = vtxTrans.z;
-	//-pos2---------------------------------------------------------------------------------------------------------------------------
-
-	//-pos3---------------------------------------------------------------------------------------------------------------------------
-	//回転行列をもとに頂点を回転する
-	//ベースをコピー
-	mtxTrans = mtxWorld;
-
-	//0度のときの点を置く
-	vtxPos = D3DXVECTOR3(
-		- PLAYER_SIZE_WIDTH,
-		0.0f,
-		+ PLAYER_SIZE_DEPTH);
-
-	//回転行列とかけ合わせる
-	D3DXVec3TransformCoord(&vtxTrans, &vtxPos, &mtxTrans);
-
-	//変換後の点の場所を代入
-	pCollision->pos3.x = vtxTrans.x;
-	pCollision->pos3.y = vtxTrans.y;
-	pCollision->pos3.z = vtxTrans.z;
-	//-pos3---------------------------------------------------------------------------------------------------------------------------
-}
-
-//========================
 //プレイヤーの処理
 //========================
 void ControllPlayer(int nPlayerNum)
@@ -976,15 +642,26 @@ void ControllPlayer(int nPlayerNum)
 		if ((int)(g_aPlayerPvP[nPlayerNum].move.x * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0
 			&& (int)(g_aPlayerPvP[nPlayerNum].move.z * pow(10, DECIMAL_PLACE + 1)) / (int)pow(10, DECIMAL_PLACE) == 0)
 		{//もうこれ動いてるって言わないよね（ほぼ動いていない）
-			if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == true)
-			{//Xボタンが押された					 
-			 //プレイヤーのチャージ処理
-				ChargePlayer(nPlayerNum);
+			if (g_aPlayerPvP[nPlayerNum].stat == PLAYERSTAT_DASH)
+			{
+				g_aPlayerPvP[nPlayerNum].nActionRigor = PLAYER_DASH_ACTIONRIGOR * PLAYER_D_ACTRIGOR_CALC(g_aPlayerPvP[nPlayerNum].fOldMoveGauge);
+				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 			}
 			else
 			{
-				RotatePlayer(nPlayerNum);
-				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
+				g_aPlayerPvP[nPlayerNum].nActionRigor--;
+				if (g_aPlayerPvP[nPlayerNum].nActionRigor <= 0)
+				{
+					if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == true)
+					{//Xボタンが押された					 
+					 //プレイヤーのチャージ処理
+						ChargePlayer(nPlayerNum);
+					}
+					else
+					{
+						g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
+					}
+				}
 			}
 
 			if (GetButton(nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X) == true)
@@ -999,7 +676,7 @@ void ControllPlayer(int nPlayerNum)
 		}
 
 		//ジャンプ・ヒップドロップ
-		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
+		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
 		{
 			if (g_aPlayerPvP[nPlayerNum].bJump)
 			{
@@ -1013,18 +690,26 @@ void ControllPlayer(int nPlayerNum)
 
 			MovePlayer(nPlayerNum);
 		}
-
-		////回転
-		//if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == false)
-		//{//Xボタンが押されていない
-		//	RotatePlayer(nPlayerNum);
-		//}
 	}
 	//ヒップドロップ中
 	else
 	{
+		//ヒップドロップのスピン中	
+		if (g_aPlayerPvP[nPlayerNum].bHipDropSpin)
+		{
+			//前転させる				
+			g_aPlayerPvP[nPlayerNum].rot.x += PLAYER_HIPSPIN_SPEED;
+
+			//１周した				
+			if (g_aPlayerPvP[nPlayerNum].rot.x <= PLAYER_HIPSPIN_LAP)
+			{
+				g_aPlayerPvP[nPlayerNum].rot.x = 0.0f;			//回転値を元に戻す
+				g_aPlayerPvP[nPlayerNum].bHipDropSpin = false;	//スピンし終わった		
+			}
+		}
+
 		//ヒップドロップ硬直時間がある
-		if (g_aPlayerPvP[nPlayerNum].nHipDropWait > 0)
+		else
 		{
 			g_aPlayerPvP[nPlayerNum].nHipDropWait--;		//硬直時間を減らしていく
 		}
@@ -1195,10 +880,10 @@ void RotatePlayer(int nPadNum)
 //========================
 void DownPlayer(int nDownPlayerNum)
 {
-	if (g_aPlayerPvP[nDownPlayerNum].nNumHitPlayer != -1)
+	if (g_aPlayerPvP[nDownPlayerNum].nLastHitPlayer != -1)
 	{//当てられて落ちた場合
-		g_aPlayerPvP[g_aPlayerPvP[nDownPlayerNum].nNumHitPlayer].nScore++;
-		AddScore(1, g_aPlayerPvP[nDownPlayerNum].nNumHitPlayer);
+		g_aPlayerPvP[g_aPlayerPvP[nDownPlayerNum].nLastHitPlayer].nScore++;
+		AddScore(1, g_aPlayerPvP[nDownPlayerNum].nLastHitPlayer);
 	}
 	else
 	{//ただ単に自滅した場合
@@ -1260,8 +945,8 @@ void RespawnPlayer(int nRespawnPlayer)
 	g_aPlayerPvP[nRespawnPlayer].bHipDrop = false;
 	g_aPlayerPvP[nRespawnPlayer].bHipDropSpin = false;
 
-	g_aPlayerPvP[nRespawnPlayer].lastAtkPlayer = -1;
-	g_aPlayerPvP[nRespawnPlayer].nNumHitPlayer = -1;
+	g_aPlayerPvP[nRespawnPlayer].nFrameAtkPlayer = -1;
+	g_aPlayerPvP[nRespawnPlayer].nLastHitPlayer = -1;
 	g_aPlayerPvP[nRespawnPlayer].stat = PLAYERSTAT_WAIT;
 
 	g_aPlayerPvP[nRespawnPlayer].nATKItemTime = 0;
@@ -1277,6 +962,7 @@ void DecrementItemTime(int nPlayerNum)
 	g_aPlayerPvP[nPlayerNum].nATKItemTime--;
 	g_aPlayerPvP[nPlayerNum].nDEFItemTime--;
 	g_aPlayerPvP[nPlayerNum].nGhostItemTime--;
+	g_aPlayerPvP[nPlayerNum].nInvincibleTime--;
 }
 
 //========================
@@ -1300,8 +986,99 @@ void ItemStateParticle(int nPlayerNum)
 
 	if (g_aPlayerPvP[nPlayerNum].nGhostItemTime > 0)
 	{
-		//SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
-		//SetParticle(g_aPlayer[nPlayerNum].pos, 12.0f, 10, PARTICLE_NORMAL, OBJECT_PLAYER_GOAST);
+		SetParticle(g_aPlayerPvP[nPlayerNum].pos + D3DXVECTOR3(0.0f,7.0f,0.0f), 12.0f, 10, PARTICLE_ACSORPTION_GHOST, OBJECT_PLAYER_GHOST);
+		SetParticle(g_aPlayerPvP[nPlayerNum].pos + D3DXVECTOR3(0.0f,7.0f,0.0f), 7.0f, 10, PARTICLE_ACSORPTION_GHOST, OBJECT_PLAYER_GHOST);
+	}
+
+
+	if (g_aPlayerPvP[nPlayerNum].nInvincibleTime > 0)
+	{
+		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 12.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER_INVINCIBLE);
+		SetParticle(g_aPlayerPvP[nPlayerNum].pos, 7.0f, 15, PARTICLE_ACSORPTION, OBJECT_PLAYER_INVINCIBLE);
+	}
+}
+
+//========================
+//モーション設定処理
+//========================
+void SetMotion(int nPlayerNum, MOTIONTYPE type)
+{
+	g_aPlayerPvP[nPlayerNum].motion.motionType = type;
+	g_aPlayerPvP[nPlayerNum].motion.nNowKey = 0;
+	g_aPlayerPvP[nPlayerNum].motion.nCounterMotion = 0;
+}
+
+//========================
+//モーション更新処理
+//========================
+void UpdateMotion(int nPlayerNum)
+{
+	Model model = GetAnimal(g_aPlayerPvP[nPlayerNum].animal);
+	MOTION_INFO mi = GetMotionInfo(g_aPlayerPvP[nPlayerNum].animal, g_aPlayerPvP[nPlayerNum].motion.motionType);
+
+	//今のキーと次のキーを入れておく
+	int nNowKey = g_aPlayerPvP[nPlayerNum].motion.nNowKey;
+	int nNextKey = g_aPlayerPvP[nPlayerNum].motion.nNowKey + 1;
+
+	for (int CntModel = 0; CntModel < MAX_PARTS; CntModel++)
+	{
+		//オフセットを入れておく
+		g_aPlayerPvP[nPlayerNum].motionPosOffset = model.aParts[CntModel].posOffset;
+		g_aPlayerPvP[nPlayerNum].motionRotOffset = model.aParts[CntModel].rotOffset;
+
+		//差分算出
+		float posDiffX = mi.aKeyInfo[nNextKey].aKey[CntModel].fPosX -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fPosX;
+		float posDiffY = mi.aKeyInfo[nNextKey].aKey[CntModel].fPosY -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fPosY;
+		float posDiffZ = mi.aKeyInfo[nNextKey].aKey[CntModel].fPosZ -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fPosZ;
+		float rotDiffX = mi.aKeyInfo[nNextKey].aKey[CntModel].fRotX -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fRotX;
+		float rotDiffY = mi.aKeyInfo[nNextKey].aKey[CntModel].fRotY -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fRotY;
+		float rotDiffZ = mi.aKeyInfo[nNextKey].aKey[CntModel].fRotZ -
+			mi.aKeyInfo[nNowKey].aKey[CntModel].fRotZ;
+
+		//位置向き算出
+		float posDemandX = mi.aKeyInfo[nNowKey].aKey[CntModel].fPosX +
+			posDiffX * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float posDemandY = mi.aKeyInfo[nNowKey].aKey[CntModel].fPosY +
+			posDiffY * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float posDemandZ = mi.aKeyInfo[nNowKey].aKey[CntModel].fPosZ +
+			posDiffZ * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float rotDemandX = mi.aKeyInfo[nNowKey].aKey[CntModel].fRotX +
+			rotDiffX * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float rotDemandY = mi.aKeyInfo[nNowKey].aKey[CntModel].fRotY +
+			rotDiffY * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+		float rotDemandZ = mi.aKeyInfo[nNowKey].aKey[CntModel].fRotZ +
+			rotDiffZ * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
+
+		//パーツの位置向き設定
+		g_aPlayerPvP[nPlayerNum].motionPos = g_aPlayerPvP[nPlayerNum].motionPosOffset + D3DXVECTOR3(posDemandX, posDemandY, posDemandZ);
+		g_aPlayerPvP[nPlayerNum].motionRot = g_aPlayerPvP[nPlayerNum].motionRotOffset + D3DXVECTOR3(rotDemandX, rotDemandY, rotDemandZ);
+	}
+	g_aPlayerPvP[nPlayerNum].motion.nCounterMotion++;
+
+	//再生フレーム後の挙動
+	if (g_aPlayerPvP[nPlayerNum].motion.nCounterMotion == mi.aKeyInfo[nNowKey].nFrame)
+	{//再生フレーム数に達したら
+		//カウンターをリセットしてキーを一つ増やす
+		g_aPlayerPvP[nPlayerNum].motion.nCounterMotion = 0;
+		g_aPlayerPvP[nPlayerNum].motion.nNowKey++;
+
+		//キーの最大数に達したらループするか否かに応じて再設定する
+		if (g_aPlayerPvP[nPlayerNum].motion.nNowKey == mi.nNumKey)
+		{
+			if (mi.bLoop == true)
+			{//ループさせる
+				g_aPlayerPvP[nPlayerNum].motion.nNowKey = 0;
+			}
+			else
+			{//通常はNEUTRAL状態にする
+				SetMotion(nPlayerNum, MOTIONTYPE_NEUTRAL);
+			}
+		}
 	}
 }
 

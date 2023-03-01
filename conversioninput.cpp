@@ -42,10 +42,17 @@ void InitConvertionInput(void)
 //========================
 void UpdateConvertionInput(void)
 {
-	
-	
 	for (int nCntController = 0; nCntController < MAX_USE_GAMEPAD; nCntController++)
 	{
+		//ボタンリセット
+		for (int nCntButton = 0; nCntButton < BUTTON_MAX; nCntButton++)
+		{
+			g_aConvButton[nCntController].press[nCntButton] = false;
+			g_aConvButton[nCntController].trigger[nCntButton] = false;
+			g_aConvButton[nCntController].release[nCntButton] = false;
+			g_aConvButton[nCntController].repeate[nCntButton] = false;
+		}
+
 		if (GetUseGamepad(nCntController) == true)
 		{//ゲームパッドの入力を代入（すべて）
 			//ボタン

@@ -160,11 +160,13 @@
   <ItemGroup>
     <ClCompile Include="attack_effect.cpp" />
     <ClCompile Include="bg.cpp" />
+    <ClCompile Include="block.cpp" />
     <ClCompile Include="bonus.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="camera_frame.cpp" />
     <ClCompile Include="charge_cylinder.cpp" />
     <ClCompile Include="charge_effect.cpp" />
+    <ClCompile Include="collision.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="comai.cpp" />
     <ClCompile Include="conversioninput.cpp" />
@@ -172,7 +174,9 @@
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="eff_shock-wave_00.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="fence.cpp" />
     <ClCompile Include="file.cpp" />
+    <ClCompile Include="GaugeFrame.cpp" />
     <ClCompile Include="hdr_player.cpp" />
     <ClCompile Include="HDR_camera.cpp" />
     <ClCompile Include="pvp_game.cpp" />
@@ -203,10 +207,12 @@
     <ClInclude Include="ai.h" />
     <ClInclude Include="attack_effect.h" />
     <ClInclude Include="bg.h" />
+    <ClInclude Include="block.h" />
     <ClInclude Include="bonus.h" />
     <ClInclude Include="camera_frame.h" />
     <ClInclude Include="charge_cylinder.h" />
     <ClInclude Include="charge_effect.h" />
+    <ClInclude Include="collision.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="comai.h" />
@@ -215,7 +221,9 @@
     <ClInclude Include="effect.h" />
     <ClInclude Include="eff_shock-wave_00.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="fence.h" />
     <ClInclude Include="file.h" />
+    <ClInclude Include="GaugeFrame.h" />
     <ClInclude Include="HDR_camera.h" />
     <ClInclude Include="hdr_player.h" />
     <ClInclude Include="pvp_game.h" />
@@ -241,6 +249,12 @@
     <ClInclude Include="tremor_effect.h" />
     <ClInclude Include="tutorial.h" />
     <ClInclude Include="wall.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="WildBoar_exeIcon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

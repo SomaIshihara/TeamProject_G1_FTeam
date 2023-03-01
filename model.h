@@ -38,40 +38,35 @@ typedef enum
 //キー構造体
 typedef struct
 {
-	float mPosX;	//位置X
-	float mPosY;	//位置Y
-	float mPosZ;	//位置Z
-	float mRotX;	//向きX
-	float mRotY;	//向きY
-	float mRotZ;	//向きZ
+	float fPosX;	//位置X
+	float fPosY;	//位置Y
+	float fPosZ;	//位置Z
+	float fRotX;	//向きX
+	float fRotY;	//向きY
+	float fRotZ;	//向きZ
 } KEY;
 
 //キー情報の構造体
 typedef struct
 {
-	int mFrame;	//再生フレーム
+	int nFrame;				//再生フレーム
 	KEY aKey[MAX_PARTS];	//モデルのキー要素
 } KEY_INFO;
 
 //モーション状態構造体
 typedef struct
 {
-	bool mLoop;	//ループするか
-	int mNumKey;//キー総数
+	bool bLoop;				//ループするか
+	int nNumKey;			//キー総数
 	KEY_INFO aKeyInfo[16];	//キーの情報（16は適宜変えて）
 } MOTION_INFO;
 
 //モーション構造体
 typedef struct
 {
-	//アニメーション関係
-	MOTION_INFO aMotionInfo[MOTIONTYPE_MAX];	//モーション情報
-	int mNumMotion;								//モーションの総数
-	MOTIONTYPE motionType;						//モーション種類
-	bool mLoopMotion;							//ループするか
-	int mNumKey;								//キー総数
-	int mKey;									//現在のキーNo.
-	int mCounterMotion;							//モーションカウンター
+	MOTIONTYPE motionType;	//モーション種類
+	int nNowKey;			//現在のキーNo.
+	int nCounterMotion;		//モーションカウンター
 } Motion;
 
 //パーツ構造体
@@ -86,7 +81,7 @@ typedef struct
 	D3DXVECTOR3 rotOffset;	//モーション設定前の向き（オフセット）
 	D3DXVECTOR3 rot;		//モーション設定した向き（オブジェクトの場合こちらのみ使用）
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
-	LPDIRECT3DTEXTURE9 apTexture[16];	//テクスチャポインタ
+	LPDIRECT3DTEXTURE9 apTexture[MAX_TEXTURE];	//テクスチャポインタ
 	int mIdxModelParent;	//親モデルインデックス
 	bool bUse;				//使用の有無
 } Parts;
@@ -100,13 +95,12 @@ typedef struct
 	float fJump;	//ジャンプ量
 	float fRadius;	//半径（未使用）
 	int nNumParts;	//パーツ数
-	//追加するものがあったら下に追加
 } Model;
 
 //プロトタイプ宣言
 void InitModel(void);
 void UninitModel(void);
-Model GetModel(ANIMAL animal);
-void SetObject(int nObjNum, D3DXVECTOR3 pos, D3DXVECTOR3 rot);
+Model GetAnimal(ANIMAL animal);
+Model GetXObject(OBJECTTYPE objtype);
 
 #endif // !_MODEL_H_

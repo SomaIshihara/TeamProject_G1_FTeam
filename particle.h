@@ -1,10 +1,9 @@
 #ifndef _PARTICLE_H_
-
 #define _PARTICLE_H_
 
 #include"main.h"
 
-#define MAX_PARTICLE			(8192)	//パーティクルの最大数
+#define MAX_PARTICLE			(512)	//パーティクルの最大数
 #define NORMAL_PARTICLE			(16)	//通常パーティクルの発生数
 #define ACSORPTION_PARTICLE		(4)	//吸収パーティクルの発生数
 
@@ -13,6 +12,7 @@ typedef enum
 {
 	PARTICLE_NORMAL = 0,
 	PARTICLE_ACSORPTION,
+	PARTICLE_ACSORPTION_GHOST,
 	PARTICLE_MAX
 
 }PARTICLE;
@@ -22,7 +22,8 @@ typedef enum
 {
 	OBJECT_PLAYER_ATK = 0,
 	OBJECT_PLAYER_DEF,
-	OBJECT_PLAYER_GOAST,
+	OBJECT_PLAYER_GHOST,
+	OBJECT_PLAYER_INVINCIBLE,
 	OBJECT_BONUS,
 	OBJECT_MAX,
 

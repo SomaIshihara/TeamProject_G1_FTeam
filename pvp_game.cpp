@@ -35,6 +35,8 @@ Author:•½àV‰‘
 #include "sound.h"
 #include "bg.h"
 #include "comai.h"
+#include "fence.h"
+#include "GaugeFrame.h"
 
 //ƒOƒ[ƒoƒ‹•Ï”éŒ¾
 bool g_bPause_PvP = false;				// ƒ|[ƒY
@@ -51,26 +53,26 @@ bool		g_bPhotoMode_PvP;			// ƒtƒHƒgƒ‚[ƒhØ‘Ö		true:ƒ|[ƒY‰æ–Ê”ñ•\¦	false:ƒ{[ƒ
 //------------------------------------------------
 void InitPvPGame(void)
 {
-	g_nUseContNum_PvP = SetUseController_PvP();		// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
-	InitFile();								// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
-	LoadModelViewerFile("data\\model.txt");	// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
+	g_nUseContNum_PvP = SetUseController_PvP();			// ƒRƒ“ƒgƒ[ƒ‰[‚Ìg—pİ’è
+	InitFile();											// ƒtƒ@ƒCƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İ‘O‚És‚¤‚±‚ÆIj
+	LoadModelViewerFile("data\\model.txt");				// ƒ‚ƒfƒ‹ƒrƒ…[ƒ[ƒtƒ@ƒCƒ‹“Ç‚İ‚İiŠeƒIƒuƒWƒFƒNƒg‰Šú‰»‘O‚És‚¤‚±‚ÆIj
 	LoadModelOriginalFile("data\\originalmodel.txt");	// ƒ‚ƒfƒ‹ƒIƒŠƒWƒiƒ‹ƒtƒ@ƒCƒ‹“Ç‚İ‚İ
-	g_NumCamera_PvP = NumCamera_ONLY;			// ‰ŠúƒJƒƒ‰‚Ìİ’èiŒ»İ‚ÍPlayer0‚ğ’‹“_‚Æ‚µ‚½ƒJƒƒ‰@@‰æ–Ê•ªŠ„ƒiƒVj
-
+	g_NumCamera_PvP = NumCamera_ONLY;					// ‰ŠúƒJƒƒ‰‚Ìİ’èiŒ»İ‚ÍPlayer0‚ğ’‹“_‚Æ‚µ‚½ƒJƒƒ‰@@‰æ–Ê•ªŠ„ƒiƒVj
+	
 	InitBg();					// ”wŒi‚Ì‰Šú‰»ˆ—
 	InitLight();				// ƒ‰ƒCƒg‰Šú‰»ˆ—
 	InitMeshDome();				// ƒƒbƒVƒ…ƒh[ƒ€‰Šú‰»ˆ—
 	InitMeshfield();			// ƒXƒe[ƒW‰Šú‰»ˆ—
 	InitMeshFault();			// ƒƒbƒVƒ…‚Ì’f–Ê‰Šú‰»ˆ—
 	InitMeshCylinder();			// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[‰Šú‰»ˆ—
-	InitModel();				// ƒ‚ƒfƒ‹‚Ì‰Šú‰»ˆ—iƒvƒŒƒCƒ„[‚Ì‘O‚És‚¤‚±‚ÆIj
+	InitModel();				// ƒ‚ƒfƒ‹‚Ì‰Šú‰»ˆ—iƒ‚ƒfƒ‹‚ğg—p‚·‚é‰Šú‰»‚Ì‘O‚És‚¤‚±‚ÆIj
+	InitFence();				// ƒtƒFƒ“ƒX‚Ì‰Šú‰»ˆ—
 	InitComAI();				// ƒRƒ“ƒsƒ…[ƒ^[AI‚Ì‰Šú‰»ˆ—iƒvƒŒƒCƒ„[‚Ì‘O‚És‚¤‚±‚Æj
 	InitPlayer();				// ƒvƒŒƒCƒ„[‚Ì‰Šú‰»ˆ—
 	InitBonus();				// ƒ{[ƒiƒX‚Ì‰Šú‰»ˆ—
 	InitItem();					// ƒAƒCƒeƒ€‚Ì‰Šú‰»ˆ—
 	InitCameraFrame();			// ‰æ–Ê•ªŠ„‚Ì˜g‰Šú‰»ˆ—
-	InitCamera(g_NumCamera_PvP);	// ƒJƒƒ‰‚Ì‰Šú‰»ˆ—
-	InitWall();					// •Ç‚Ì‰Šú‰»ˆ—
+	InitCamera(g_NumCamera_PvP);// ƒJƒƒ‰‚Ì‰Šú‰»ˆ—
 	InitPause();				// ƒ|[ƒY‰æ–Ê‚Ì‰Šú‰»ˆ—
 	InitParticle();				// ƒp[ƒeƒBƒNƒ‹‚Ì‰Šú‰»ˆ—
 	{// ƒGƒtƒFƒNƒg‚Ì‰Šú‰»ˆ—
@@ -83,6 +85,7 @@ void InitPvPGame(void)
 	InitScore();				// ƒXƒRƒA‚Ì‰Šú‰»
 	InitTime();					// ƒ^ƒCƒ}[‚Ì‰Šú‰»ˆ—
 	InitGauge();				// ƒQ[ƒW‚Ì‰Šú‰»ˆ—
+	InitGaugeFrame();			// ƒQ[ƒW˜g‚Ì‰Šú‰»ˆ—
 
 
 	SetTime(LIMIT_TIMER);		// ƒ^ƒCƒ}[‚Ìİ’èˆ—
@@ -113,13 +116,14 @@ void UninitPvPGame(void)
 	UninitMeshCylinder();	// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[I—¹ˆ—
 	UninitMeshDome();		// ƒƒbƒVƒ…ƒh[ƒ€I—¹ˆ—
 	UninitMeshFault();		// ƒƒbƒVƒ…‚Ì’f–ÊI—¹ˆ—
-	UninitWall();			// •Ç‚ÌI—¹ˆ—
+	UninitFence();			// ƒtƒFƒ“ƒX‚ÌI—¹ˆ—iŒ`®ã’u‚¢‚Ä‚¨‚¢‚½‚¾‚¯j
 	UninitCamera();			// ƒJƒƒ‰‚ÌI—¹ˆ—
 	UninitComAI();			// ƒRƒ“ƒsƒ…[ƒ^[AI‚ÌI—¹ˆ—
 	UninitPlayer();			// ƒvƒŒƒCƒ„[‚ÌI—¹ˆ—
 	UninitBonus();			// ƒ{[ƒiƒX‚ÌI—¹ˆ—
 	UninitItem();			// ƒAƒCƒeƒ€‚ÌI—¹ˆ—
 	UninitPause();			// ƒ|[ƒY‰æ–Ê‚ÌI—¹ˆ—
+	UninitGaugeFrame();		// ƒQ[ƒW˜g‚ÌI—¹ˆ—
 	UninitGauge();			// ƒQ[ƒW‚ÌI—¹ˆ—
 	UninitModel();			// ƒ‚ƒfƒ‹‚ÌI—¹ˆ—
 	UninitParticle();		// ƒp[ƒeƒBƒNƒ‹‚ÌI—¹ˆ—
@@ -155,12 +159,13 @@ void UpdatePvPGame(void)
 		UpdateMeshCylinder();	// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[XVˆ—
 		UpdateMeshDome();		// ƒƒbƒVƒ…ƒh[ƒ€XVˆ—
 		UpdateMeshFault();		// ƒƒbƒVƒ…‚Ì’f–ÊXVˆ—
+		UpdateFence();			// ƒtƒFƒ“ƒX‚ÌXVˆ—
 		UpdatePlayer();			// ƒvƒŒƒCƒ„[‚ÌXVˆ—
 		UpdateBonus();			// ƒ{[ƒiƒX‚ÌXVˆ—
 		UpdateItem();			// ƒAƒCƒeƒ€‚ÌXVˆ—
 		UpdateCamera();			// ƒJƒƒ‰‚ÌXVˆ—
-		UpdateWall();			// •Ç‚ÌXVˆ—
 		UpdateGauge();			// ƒQ[ƒW‚ÌXVˆ—
+		UpdateGaugeFrame();		// ƒQ[ƒW˜g‚ÌXVˆ—i’†g‚Í‚È‚¢‚ªŒ`®ãj
 		{// ƒGƒtƒFƒNƒg‚ÌXVˆ—
 			UpdateChargeEffect();		//ƒ`ƒƒ[ƒWƒGƒtƒFƒNƒg
 			UpdateChargeCylinder();		//ƒ`ƒƒ[ƒWƒGƒtƒFƒNƒg(‚µ‚è‚ñ‚¾[)
@@ -197,7 +202,7 @@ void UpdatePvPGame(void)
 	else
 	{
 		//ƒ|[ƒY‰æ–Ê‚ÌXVˆ—
-		UpdatePause();
+		UpdatePause(MODE_PvPGAME);
 
 		//ƒtƒHƒgƒ‚[ƒhON
 		if (g_bPhotoMode_PvP)
@@ -213,11 +218,12 @@ void UpdatePvPGame(void)
 				UpdateMeshCylinder();	// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[XVˆ—
 				UpdateMeshDome();		// ƒƒbƒVƒ…ƒh[ƒ€XVˆ—
 				UpdateMeshFault();		// ƒƒbƒVƒ…‚Ì’f–ÊXVˆ—
+				UpdateFence();			// ƒtƒFƒ“ƒX‚ÌXVˆ—
 				UpdatePlayer();			// ƒvƒŒƒCƒ„[‚ÌXVˆ—
 				UpdateBonus();			// ƒ{[ƒiƒX‚ÌXVˆ—
 				UpdateItem();			// ƒAƒCƒeƒ€‚ÌXVˆ—
-				UpdateWall();			// •Ç‚ÌXVˆ—
 				UpdateGauge();			// ƒQ[ƒW‚ÌXVˆ—
+				UpdateGaugeFrame();		// ƒQ[ƒW˜g‚ÌXVˆ—i’†g‚Í‚È‚¢‚ªŒ`®ãj
 				{// ƒGƒtƒFƒNƒg‚ÌXVˆ—
 					UpdateChargeEffect();	//ƒ`ƒƒ[ƒWƒGƒtƒFƒNƒg
 					UpdateChargeCylinder();	//ƒ`ƒƒ[ƒWƒGƒtƒFƒNƒg(‚µ‚è‚ñ‚¾[)
@@ -258,7 +264,7 @@ void DrawPvPGame(void)
 									//DrawMeshCylinder();	// ƒƒbƒVƒ…ƒVƒŠƒ“ƒ_[‚Ì•`‰æˆ—
 		DrawMeshDome();				// ƒƒbƒVƒ…ƒh[ƒ€‚Ì•`‰æˆ—	
 		DrawMeshFault();			// ƒƒbƒVƒ…‚Ì’f–Ê•`‰æˆ—
-		DrawWall();					// •Ç‚Ì•`‰æˆ—
+		DrawFence();				// ƒtƒFƒ“ƒX‚Ì•`‰æˆ—
 		{// ƒGƒtƒFƒNƒg‚Ì•`‰æˆ—
 			DrawChargeEffect();		//ƒ`ƒƒ[ƒWƒGƒtƒFƒNƒg
 			DrawChargeCylinder();	//ƒ`ƒƒ[ƒWƒGƒtƒFƒNƒg(‚µ‚è‚ñ‚¾[)
@@ -270,6 +276,7 @@ void DrawPvPGame(void)
 		DrawPlayer();				// ƒvƒŒƒCƒ„[‚Ì•`‰æˆ—
 		DrawBonus();				// ƒ{[ƒiƒX‚Ì•`‰æˆ—
 		DrawItem();					// ƒAƒCƒeƒ€‚Ì•`‰æˆ—
+		DrawGaugeFrame();			// ƒQ[ƒW˜g‚Ì•`‰æˆ—iƒQ[ƒW‚æ‚è‘O‚És‚¤‚±‚Æj
 		DrawGauge();				// ƒQ[ƒW‚Ì•`‰æˆ—
 		DrawScore();				// ƒXƒRƒA‚Ì•`‰æˆ—
 		DrawCameraFrame();			// ‰æ–Ê•ªŠ„‚Ì˜g•`‰æˆ—

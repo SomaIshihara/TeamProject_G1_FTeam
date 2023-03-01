@@ -27,8 +27,8 @@ void InitMeshCylinder(void)
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshCylinder);
 
 	//ポリゴンの初期化
-	g_posMeshCylinder = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	g_rotMeshCylinder = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_posMeshCylinder = 
+	g_rotMeshCylinder = ZERO_SET;
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (MESHSYLINDER_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshCylinder, NULL);
@@ -83,7 +83,7 @@ void InitMeshCylinder(void)
 	//インデックスバッファの生成
 	pDevice->CreateIndexBuffer(sizeof(WORD) * (MESHSYLINDER_SPLIT * 2 + 2), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &g_pIdxBuffMeshCylinder, NULL);
 
-	WORD*pIdx;
+	WORD *pIdx;
 
 	//インデックスバッファをロックし、頂点番号へのポインタを取得
 	g_pIdxBuffMeshCylinder->Lock(0, 0, (void**)&pIdx, 0);
@@ -100,11 +100,45 @@ void InitMeshCylinder(void)
 			pIdx[nCntMeshCylinder] = (nCntMeshCylinder / EVENPARITY) + ODDPARITY + MESHSYLINDER_SPLIT;
 		}
 	}
+
 	//インデックスバッファのアンロック
 	g_pIdxBuffMeshCylinder->Unlock();
 }
 
+//--------------------------------------------------------------------------------------------------------
+//ポリゴンの終了処理
+//--------------------------------------------------------------------------------------------------------
+void UninitMeshCylinder(void)
+{
+	//インデックスの破棄
+	if (g_pIdxBuffMeshCylinder != NULL)
+	{
+		g_pIdxBuffMeshCylinder->Release();
+		g_pIdxBuffMeshCylinder = NULL;
+	}
 
+	//テクスチャの破棄
+	if (g_pTextureMeshCylinder != NULL)
+	{
+		g_pTextureMeshCylinder->Release();
+		g_pTextureMeshCylinder = NULL;
+	}
+
+	//バッファの破棄
+	if (g_pVtxBuffMeshCylinder != NULL)
+	{
+		g_pVtxBuffMeshCylinder->Release();
+		g_pVtxBuffMeshCylinder = NULL;
+	}
+}
+
+//--------------------------------------------------------------------------------------------------------
+//ポリゴンの更新処理
+//--------------------------------------------------------------------------------------------------------
+void UpdateMeshCylinder(void)
+{
+
+}
 
 //--------------------------------------------------------------------------------------------------------
 //ポリゴンの描画処理
@@ -140,44 +174,6 @@ void DrawMeshCylinder(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureMeshCylinder);
 
+	//ポリゴン描画
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, (MESHSYLINDER_SPLIT * 2 + 2), 0, (MESHSYLINDER_SPLIT * 2 + 2));
-}
-
-
-
-//--------------------------------------------------------------------------------------------------------
-//ポリゴンの終了処理
-//--------------------------------------------------------------------------------------------------------
-void UninitMeshCylinder(void)
-{
-	//インデックスの破棄
-	if (g_pIdxBuffMeshCylinder != NULL)
-	{
-		g_pIdxBuffMeshCylinder->Release();
-		g_pIdxBuffMeshCylinder = NULL;
-	}
-
-	//テクスチャの破棄
-	if (g_pTextureMeshCylinder != NULL)
-	{
-		g_pTextureMeshCylinder->Release();
-		g_pTextureMeshCylinder = NULL;
-	}
-
-	//バッファの破棄
-	if (g_pVtxBuffMeshCylinder != NULL)
-	{
-		g_pVtxBuffMeshCylinder->Release();
-		g_pVtxBuffMeshCylinder = NULL;
-	}
-}
-
-
-
-//--------------------------------------------------------------------------------------------------------
-//ポリゴンの更新処理
-//--------------------------------------------------------------------------------------------------------
-void UpdateMeshCylinder(void)
-{
-
 }

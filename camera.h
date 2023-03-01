@@ -56,4 +56,6 @@ Camera *GetCamera(void);				//カメラの取得
 void Set_NumCamera(NumCamera type);
 void TPS_ChaseCamera(int nCntCamera, D3DXVECTOR3 rot);
 
+void CameraForTitle(void);//タイトル用カメラ処理
+
 #endif

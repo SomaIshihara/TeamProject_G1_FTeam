@@ -6,10 +6,15 @@ Author:平澤詩苑
 ============================================================================================================================================================*/
 #include "main.h"
 #include "title.h"
+#include "light.h"
+#include "camera.h"
 #include "color.h"
 #include "input.h"
 #include "fade.h"
 #include "sound.h"
+#include "meshfield.h"
+#include "meshdome.h"
+#include "file.h"
 
 #define NUM_TITLE_TEX	(3)									// タイトルに使う画像の数
 #define TITLE_INFOFILE	"data/CSV/title.csv"				// タイトルの情報が入ったファイル名
@@ -25,6 +30,7 @@ typedef struct
 	float		fWidth;		//幅
 	float		fHeight;	//高さ
 	TITLE		type;		//種類
+	bool		bUseButtom;	//タイトル画面のボタン
 }Title;
 
 //グローバル変数宣言
@@ -32,10 +38,12 @@ LPDIRECT3DVERTEXBUFFER9		g_pVtxBuffTitle = NULL;					//頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9			g_pTextureTitle[NUM_TITLE_TEX] = {};	//テクスチャのポインタ
 Title						g_Title[NUM_TITLE_TEX];					//タイトルの情報
 int							g_select;								//選択番号
+NumCamera g_NumTitleCamera = NumCamera_ONLY;		//カメラ初期化の引数
+int nCntButtonEffect1, nCntButtonEffect2;
 
 //タイトル画面に使用するアイコンたちのパス
 const char *c_apTitleTexName[NUM_TITLE_TEX] = {
-	"data/TEXTURE/title.png",
+	"data/TEXTURE/title000.png",
 	"data/TEXTURE/continue.png",
 	"data/TEXTURE/restart.png",
 };
@@ -109,6 +117,9 @@ void InitTitle(void)
 			pVtx[VTX_RI_DO].tex = D3DXVECTOR2(1.0f, 1.0f);
 		}
 
+		//ボタンを押したかどうか
+		g_Title[nCntTitle].bUseButtom = false;
+
 		g_Title[nCntTitle].type = (TITLE)nCntTitle;
 	}
 
@@ -116,13 +127,29 @@ void InitTitle(void)
 
 	//頂点バッファをロックする
 	g_pVtxBuffTitle->Unlock();
+
+	InitFile();
+
+	LoadModelViewerFile("data\\model.txt");				// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
+
+	//ライトの初期化処理
+	InitLight();
+
+	//カメラの初期化処理
+	InitCamera(g_NumTitleCamera);
+
+	//メッシュドームの初期化処理
+	InitMeshDome();
+
+	//ステージの初期化処理
+	InitMeshfield();
 }
 
 //タイトルの情報読み込み処理
 void LoadTitle(void)
 {
 	FILE *pFile;
-	char aData[MAX_MOJI];		//読み込んだ文字を格納
+	char aData[MAX_CHAR];		//読み込んだ文字を格納
 
 	pFile = fopen(TITLE_INFOFILE, "r");
 
@@ -168,6 +195,20 @@ void UninitTitle(void)
 		g_pVtxBuffTitle = NULL;
 	}
 
+	UninitFile();
+
+	//ライトの終了処理
+	UninitLight();
+
+	//カメラの終了処理
+	UninitCamera();
+
+	//メッシュドームの終了処理
+	UninitMeshDome();
+
+	//ステージの終了処理
+	UninitMeshfield();
+
 	StopSound(SOUND_LABEL_BGM_TITLE);
 }
 
@@ -176,18 +217,27 @@ void UninitTitle(void)
 //------------------------------------------------
 void UpdateTitle(void)
 {
+	//ボタン点滅のカウンタ初期化
+	if (g_Title[TITLE_START].bUseButtom == false)
+	{
+		nCntButtonEffect1 = 120;
+	}
+	if (g_Title[TITLE_EXIT].bUseButtom == false)
+	{
+	    nCntButtonEffect2 = 120;
+	}	
+
 	//ポインタを設定
 	VERTEX_2D *pVtx;
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffTitle->Lock(0, 0, (void* *)&pVtx, 0);
-
 	
-		//
-		DirecUpTitle(0);
+	//
+	DirecUpTitle(0);
 
-		//
-		DirecDownTitle(0);
+	//
+	DirecDownTitle(0);
 	
 	switch (g_select)
 	{
@@ -198,7 +248,15 @@ void UpdateTitle(void)
 		pVtx[VTX_LE_UP].col = XCOL_WHITE;
 		pVtx[VTX_RI_UP].col = XCOL_WHITE;
 		pVtx[VTX_LE_DO].col = XCOL_WHITE;
-		pVtx[VTX_RI_DO].col = XCOL_WHITE;
+		pVtx[VTX_RI_DO].col = XCOL_WHITE;	
+
+		if (nCntButtonEffect1 % 2 == 0 && g_Title[TITLE_START].bUseButtom == true)
+		{//ボタンを押したときに2Fに一回
+			pVtx[VTX_LE_UP].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+			pVtx[VTX_RI_UP].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+			pVtx[VTX_LE_DO].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+			pVtx[VTX_RI_DO].col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+		}
 
 		pVtx += VTX_MAX;
 
@@ -224,7 +282,6 @@ void UpdateTitle(void)
 		pVtx[VTX_RI_UP].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 		pVtx[VTX_LE_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
 		pVtx[VTX_RI_DO].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-
 		break;
 	}
 
@@ -238,11 +295,17 @@ void UpdateTitle(void)
 			//ゲーム選択画面に遷移
 			SetFade(MODE_SELECTGAME);
 
+			//ボタンを押した
+			g_Title[TITLE_START].bUseButtom = true;
+
 			break;
 
 		case TITLE_EXIT:
 
 			EndProject();
+
+			//ボタンを押した
+			g_Title[TITLE_EXIT].bUseButtom = true;
 
 			break;
 		}
@@ -251,8 +314,35 @@ void UpdateTitle(void)
 		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE);
 	}
 
+	if (g_Title[TITLE_START].bUseButtom == true)
+	{
+		//カウンタを減らす
+		nCntButtonEffect1--;
+
+		if (nCntButtonEffect1 == 0)
+		{//カウンタが0を下回った時
+			g_Title[TITLE_START].bUseButtom = false;
+		}
+	}
+	if (g_Title[TITLE_EXIT].bUseButtom == true)
+	{
+		//カウンタを減らす
+		nCntButtonEffect2--;
+
+		if (nCntButtonEffect2 == 0)
+		{//カウンタが0を下回った時
+			g_Title[TITLE_EXIT].bUseButtom = false;
+		}
+	}
+
 	//頂点バッファをロックする
 	g_pVtxBuffTitle->Unlock();
+
+	//ライトの更新処理
+	UpdateLight();
+
+	//カメラの更新処理
+	CameraForTitle();
 }
 
 //------------------------------------------------
@@ -277,6 +367,10 @@ void DrawTitle(void)
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntTitle * VTX_MAX, 2);
 	}
+
+	SetCamera(0);		// １番目のカメラの設定処理	
+	DrawMeshDome();		// メッシュドームの描画処理	
+	DrawMeshfield();	// ステージの描画処理
 }
 //
 void DirecUpTitle(int NumPad)

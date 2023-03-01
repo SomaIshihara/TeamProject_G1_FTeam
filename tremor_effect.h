@@ -9,17 +9,18 @@
 
 #include "main.h"
 
+//マクロ
+#define TREMOR_EFFECT_TIME		(30)		//エフェクト発生時間（フレーム単位）
+
 //ビルボードの構造体を定義
 typedef struct
 {
 	D3DXVECTOR3 pos;		//位置
 	int			nType;		//エフェクトのタイプ
 	int			nCounter;	//エフェクト発生開始から経過した時間
-	//int			nCntLoop;	//ループした回数（今だけ）
 	float		fSize;		//半径
 	float		fAlpha;		//α値
 	bool		bUse;		//使われているかどうか
-	//bool		bUseTremor;	//チャージが使われているかどうか
 }TremorEffect;
 
 //プロトタイプ宣言

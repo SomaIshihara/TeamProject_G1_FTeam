@@ -19,14 +19,13 @@
 
 //マクロ定義
 #define	TREMOR_EFFECT_TEX_PASS		"data\\TEXTURE\\charge_effect001.png"
-#define TREMOR_EFFECT_TIME				(30)		//エフェクト発生時間（フレーム単位）
 #define TREMOR_FADEOUT_TIME				(15)		//フェードアウト開始時間（フレーム単位）
 
 //グローバル変数
-LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTremorEffect = NULL;				//頂点バッファのポインタ
-LPDIRECT3DTEXTURE9		g_pTextureTremorEffect = NULL;	//テクスチャのポインタ
-D3DXMATRIX				mtxWorldTremorEffect;							//ワールドマトリックス
-TremorEffect			g_TremorEffect[MAX_TREMOR_EFFECT];					//エフェクトの情報
+LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTremorEffect = NULL;		//頂点バッファのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureTremorEffect = NULL;		//テクスチャのポインタ
+D3DXMATRIX				mtxWorldTremorEffect;				//ワールドマトリックス
+TremorEffect			g_TremorEffect[MAX_TREMOR_EFFECT];	//エフェクトの情報
 
 //=================================
 //エフェクトの初期化処理
@@ -38,22 +37,16 @@ void InitTremorEffect(void)
 	VERTEX_3D *pVtx;							//頂点情報へのポインタ
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		TREMOR_EFFECT_TEX_PASS,
-		&g_pTextureTremorEffect);
+	D3DXCreateTextureFromFile(pDevice, TREMOR_EFFECT_TEX_PASS, &g_pTextureTremorEffect);
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(
-		sizeof(VERTEX_3D) * VTX_MAX * MAX_TREMOR_EFFECT,
-		D3DUSAGE_WRITEONLY, FVF_VERTEX_3D,
-		D3DPOOL_MANAGED, &g_pVtxBuffTremorEffect, NULL);
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * VTX_MAX * MAX_TREMOR_EFFECT, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D,D3DPOOL_MANAGED, &g_pVtxBuffTremorEffect, NULL);
 
 	//頂点バッファをロックし頂点情報へのポインタを取得
 	g_pVtxBuffTremorEffect->Lock(0, 0, (void**)&pVtx, 0);
 
 	for (int nCntEffect = 0; nCntEffect < MAX_TREMOR_EFFECT; nCntEffect++, pVtx += VTX_MAX)
 	{
-		//g_TremorEffect[nCntEffect].nType = EFFECTTYPE_TREMOR;	//種類初期化
 		g_TremorEffect[nCntEffect].nCounter = 0;				//経過時間初期化
 		g_TremorEffect[nCntEffect].fSize = TREMOR_EFFECT_SIZE;	//サイズ初期化
 		g_TremorEffect[nCntEffect].fAlpha = 1.0f;				//透明度初期化
@@ -66,16 +59,12 @@ void InitTremorEffect(void)
 		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_TremorEffect[nCntEffect].fSize, 0.0f, -g_TremorEffect[nCntEffect].fSize);
 
 		//nor(法線)の設定
-		pVtx[VTX_LE_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[VTX_RI_UP].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[VTX_LE_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-		pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		pVtx[VTX_LE_UP].nor = pVtx[VTX_RI_UP].nor = 
+		pVtx[VTX_LE_DO].nor = pVtx[VTX_RI_DO].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		//頂点カラーの設定
-		pVtx[VTX_LE_UP].col = RGBA_WHITE;
-		pVtx[VTX_RI_UP].col = RGBA_WHITE;
-		pVtx[VTX_LE_DO].col = RGBA_WHITE;
-		pVtx[VTX_RI_DO].col = RGBA_WHITE;
+		pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col = 
+		pVtx[VTX_LE_DO].col = pVtx[VTX_RI_DO].col = RGBA_WHITE;
 
 		//テクスチャ頂点座標の設定
 		pVtx[VTX_LE_UP].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -84,6 +73,7 @@ void InitTremorEffect(void)
 		pVtx[VTX_RI_DO].tex = D3DXVECTOR2(1.0f, 1.0f);
 	}
 
+	//頂点バッファをアンロック
 	g_pVtxBuffTremorEffect->Unlock();
 }
 
@@ -91,15 +81,13 @@ void InitTremorEffect(void)
 //エフェクトの終了処理
 //=================================
 void UninitTremorEffect(void)
-{
-	
+{	
 	//テクスチャの破棄
 	if (g_pTextureTremorEffect != NULL)
 	{
 		g_pTextureTremorEffect->Release();
 		g_pTextureTremorEffect = NULL;
 	}
-	
 
 	//バッファの破棄
 	if (g_pVtxBuffTremorEffect != NULL)
@@ -139,6 +127,7 @@ void UpdateTremorEffect(void)
 			{
 				g_TremorEffect[nCntEffect].bUse = false;
 			}
+
 			//フェードアウト開始したら透明度減らす
 			else if (g_TremorEffect[nCntEffect].nCounter > TREMOR_FADEOUT_TIME)
 			{
@@ -151,16 +140,15 @@ void UpdateTremorEffect(void)
 //エフェクトのサイズ更新
 void UpdateTremorEffectSize(int nEffect)
 {
-	
-		//エフェクトの大きさを拡大
-		g_TremorEffect[nEffect].fSize += EFFECT_TREMOR_MOVE;
+	//エフェクトの大きさを拡大
+	g_TremorEffect[nEffect].fSize += EFFECT_TREMOR_MOVE;
 
-		//エフェクトの大きさがゼロになった
-		if (g_TremorEffect[nEffect].fSize >= TREMOR_EFFECT_SIZE)
-		{
-			//エフェクト本来の大きさに直す
-			g_TremorEffect[nEffect].fSize = TREMOR_EFFECT_SIZE;
-		}
+	//エフェクトの大きさがゼロになった
+	if (g_TremorEffect[nEffect].fSize >= TREMOR_EFFECT_SIZE)
+	{
+		//エフェクト本来の大きさに直す
+		g_TremorEffect[nEffect].fSize = TREMOR_EFFECT_SIZE;
+	}
 
 	VERTEX_3D *pVtx;							//頂点情報へのポインタ
 
@@ -176,10 +164,9 @@ void UpdateTremorEffectSize(int nEffect)
 	pVtx[VTX_LE_DO].pos = D3DXVECTOR3(-g_TremorEffect[nEffect].fSize, 0.0f, -g_TremorEffect[nEffect].fSize);
 	pVtx[VTX_RI_DO].pos = D3DXVECTOR3(+g_TremorEffect[nEffect].fSize, 0.0f, -g_TremorEffect[nEffect].fSize);
 
-	pVtx[VTX_LE_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_TremorEffect[nEffect].fAlpha);
-	pVtx[VTX_RI_UP].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_TremorEffect[nEffect].fAlpha);
-	pVtx[VTX_LE_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_TremorEffect[nEffect].fAlpha);
-	pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_TremorEffect[nEffect].fAlpha);
+	//頂点カラーの設定		エフェクトのサイズが規定量を超えていれば、徐々に透明になっていく
+	pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col =
+	pVtx[VTX_LE_DO].col = pVtx[VTX_RI_DO].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, g_TremorEffect[nEffect].fAlpha);
 
 	//頂点バッファをアンロックする
 	g_pVtxBuffTremorEffect->Unlock();

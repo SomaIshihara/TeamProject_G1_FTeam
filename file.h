@@ -13,7 +13,6 @@
 #include "meshfault.h"
 
 //マクロ
-#define MAX_NUM_TEXTURE	(32)	//最大テクスチャ数
 #define MAX_NUM_MODEL	(128)	//最大モデル数
 
 //コード名
@@ -123,14 +122,14 @@
 typedef struct
 {
 	int numTexture;	//テクスチャ数
-	char fileName[MAX_NUM_TEXTURE][MAX_PATH_STR];
+	char fileName[MAX_TEXTURE][MAX_PATH_STR];
 } ReadTextureData;
 
 //モデル
 typedef struct
 {
 	int numTexture;	//テクスチャ数
-	char fileName[MAX_NUM_TEXTURE][MAX_PATH_STR];
+	char fileName[MAX_TEXTURE][MAX_PATH_STR];
 } ReadModelData;
 
 //カメラはCamera.hのものを使う
@@ -203,7 +202,7 @@ void UpdateFile(void);
 void LoadModelViewerFile(const char *path);	//モデルビューワーの設定ファイル読み込み（引数は設定ファイルのパス指定）
 void LoadMotionViewerFile(const char *path, Model *pModel);
 void LoadModelOriginalFile(const char *path);
-void GetMotionInfo(MOTION_INFO *pMotionInfo);
+MOTION_INFO GetMotionInfo(ANIMAL animal, MOTIONTYPE type);
 Fault GetFaultData(void);
 char *GetTextureFilePath(int nTexNum);
 char *GetModelFilePath(int nModNum);

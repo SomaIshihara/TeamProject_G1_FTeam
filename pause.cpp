@@ -7,6 +7,7 @@
 #include "main.h"
 #include "pvp_game.h"
 #include "PvP_player.h"
+#include "HDRgame.h"
 #include "pause.h"
 #include "fade.h"
 #include "input.h"
@@ -104,6 +105,7 @@ int g_nCnt[NUM_BUTTON];										//カウント用変数
 bool g_ButtonPush[NUM_BUTTON];								//ボタンが押されたかどうか
 int g_GamePad;
 bool g_bDisconnectPause = false;
+MODE g_gamemode;
 
 //=================================
 //ポーズの初期化処理
@@ -203,8 +205,10 @@ void UninitPause(void)
 //=================================
 //ポーズの更新処理
 //=================================
-void UpdatePause(void)
+void UpdatePause(MODE mode)
 {
+	g_gamemode = mode;
+
 	//ポーズの要因が切断されたものである（全員に操作権）
 	if (g_bDisconnectPause == true)
 	{
@@ -524,13 +528,29 @@ void SwitchPause(void)
 		}
 		CheckUseController_PvP(CHECKMODE_REMOVE);
 		SetEnablePause_PvP(false);
+		SetEnablePause_HDR(false);
 		break;
 
 	case PAUSE_RETRY:
 		PlaySound(SOUND_LABEL_SE_PAUSE_TRANSITION);
 
-		//モード設定（ゲーム画面に遷移)
-		SetFade(MODE_PvPGAME);
+		switch (g_gamemode)
+		{
+		case MODE_PvPGAME:
+
+				//モード設定（ゲーム画面に遷移)
+				SetFade(MODE_PvPGAME);
+
+				break;
+
+		case MODE_RaceGAME:
+
+			//モード設定（ゲーム画面に遷移)
+			SetFade(MODE_RaceGAME);
+
+			break;
+		}
+
 		break;
 
 	case PAUSE_QUIT:

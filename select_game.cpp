@@ -56,7 +56,7 @@ void InitSelectGame(void)
 void LoadSelectGame(void)
 {
 	FILE *pFile;
-	char aData[MAX_MOJI];		//“Ç‚İ‚ñ‚¾•¶š‚ğŠi”[
+	char aData[MAX_CHAR];		//“Ç‚İ‚ñ‚¾•¶š‚ğŠi”[
 
 	pFile = fopen(SELECTGAME_INFO, "r");
 
