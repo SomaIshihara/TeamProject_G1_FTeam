@@ -375,7 +375,7 @@ void StateParticle(int nCount,VERTEX_3D *pVtx)
 
 		//ÉSÅ[ÉXÉgâª
 	case OBJECT_PLAYER_GHOST:
-		pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col = pVtx[VTX_LE_DO].col = pVtx[VTX_RI_DO].col = D3DXCOLOR(0.2f, 0.2f, 0.2f, 0.1f);
+		pVtx[VTX_LE_UP].col = pVtx[VTX_RI_UP].col = pVtx[VTX_LE_DO].col = pVtx[VTX_RI_DO].col = D3DXCOLOR(0.2f, 0.2f, 0.2f, 0.15f);
 		break;
 
 	case OBJECT_PLAYER_INVINCIBLE:

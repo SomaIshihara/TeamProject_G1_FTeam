@@ -10,6 +10,7 @@
 #include "main.h"
 #include "model.h"
 #include "PvP_player.h"
+#include "hdr_player.h"
 #include "input.h"
 
 //プレイヤーモデルの構造体

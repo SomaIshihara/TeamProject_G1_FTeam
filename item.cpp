@@ -221,6 +221,10 @@ void SetItem(void)
 						+ D3DXVECTOR3(NIL_F, (float)(rand() % 200), NIL_F);
 					//アイテムの種類を設定
 					g_Item[nCntItem].type = (ITEMTYPE)(rand() % (ITEMTYPE_MAX - g_nInvincibleItem));
+
+					//無敵アイテムならカウント増やす
+					(g_Item[nCntItem].type == ITEMTYPE_INVINCIBLE) ? g_nInvincibleItem++ : g_nInvincibleItem;
+
 					g_Item[nCntItem].DespawnLimit = 0;
 					bposuse[g_Item[nCntItem].RespawnPos] = true;
 					g_Item[nCntItem].buse = true;
@@ -288,7 +292,6 @@ void CollisionIP(int nPlayerNum)
 
 					case ITEMTYPE_INVINCIBLE:
 						pPlayer[nPlayerNum].nInvincibleTime = CONVERT_FPS(ITEMTIME_INV);
-						g_nInvincibleItem++;
 						break;
 					}
 				}
