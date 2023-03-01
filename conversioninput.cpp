@@ -141,15 +141,15 @@ void UpdateConvertionInput(void)
 			//Y
 			if (GetKeyboardPress(DIK_W) == true)
 			{//ç∂Ç…åXÇ¢ÇƒÇ¢ÇÈ
-				g_aConvStick[0].press.x = CONVSTICK_UP;
+				g_aConvStick[0].press.y = CONVSTICK_UP;
 			}
 			else if (GetKeyboardPress(DIK_S) == true)
 			{//âEÇ…åXÇ¢ÇƒÇ¢ÇÈ
-				g_aConvStick[0].press.x = CONVSTICK_DOWN;
+				g_aConvStick[0].press.y = CONVSTICK_DOWN;
 			}
 			else
 			{//åXÇ¢ÇƒÇ¢Ç»Ç¢
-				g_aConvStick[0].press.x = CONVSTICK_NEUTRAL;
+				g_aConvStick[0].press.y = CONVSTICK_NEUTRAL;
 			}
 		}
 	}
