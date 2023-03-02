@@ -28,6 +28,7 @@ D3DXMATRIX mtxWorldTime;
 
 int BonusLimit;
 bool bBonusUse;
+MODE g_mode_time;
 
 //===============================
 //タイムの初期化の処理 
@@ -125,22 +126,27 @@ void UninitTime(void)
 //===============================
 //タイムの更新処理
 //===============================
-void UpdateTime(void)
+void UpdateTime(MODE mode)
 {
-	//ボーナスの出現処理
-	if (g_aTime.nTime <= 90)
+	g_mode_time = mode;
+
+	if (g_mode_time == MODE_PvPGAME)
 	{
-		BonusLimit--;
-
-		if (bBonusUse == false)
+		//ボーナスの出現処理
+		if (g_aTime.nTime <= 90)
 		{
-			if (BonusLimit <= 0)
-			{
-				//ボーナスのセット処理
-				SetBonus();
+			BonusLimit--;
 
-				//ボーナスを使用できないようにする
-				bBonusUse = true;
+			if (bBonusUse == false)
+			{
+				if (BonusLimit <= 0)
+				{
+					//ボーナスのセット処理
+					SetBonus();
+
+					//ボーナスを使用できないようにする
+					bBonusUse = true;
+				}
 			}
 		}
 	}
@@ -151,7 +157,10 @@ void UpdateTime(void)
 	{//一定時間経過
 		g_aTime.nCounter = 0;		//カウンターを初期値に戻す
 
-		SetItem();
+		if (g_mode_time == MODE_PvPGAME)
+		{
+			SetItem();
+		}
 
 		AddTime(1);
 	}

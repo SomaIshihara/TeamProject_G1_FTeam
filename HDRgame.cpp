@@ -111,7 +111,7 @@ void UpdateHDRGame(void)
 		if (*GetHDR_Ready() == HDR_Ready_OK)
 		{
 			UpdateLight();			// ライトの更新処理
-			UpdateTime();			// タイマーの更新処理
+			UpdateTime(MODE_RaceGAME);			// タイマーの更新処理
 			UpdateBlock();			// ブロックの更新処理
 			UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
 
@@ -152,7 +152,7 @@ void UpdateHDRGame(void)
 			if (GetKeyboardTrigger(DIK_RIGHT))
 			{
 				UpdateLight();		// ライトの更新処理
-				UpdateTime();		//タイマーの更新処理
+				UpdateTime(MODE_RaceGAME);		//タイマーの更新処理
 			}
 		}
 	}

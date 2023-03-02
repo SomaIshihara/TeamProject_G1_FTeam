@@ -41,7 +41,7 @@ typedef struct
 //プロトタイプ宣言
 void InitTime(void);
 void UninitTime(void);
-void UpdateTime(void);
+void UpdateTime(MODE mode);
 void DrawTime(void);
 void SetTime(int nTime);
 void AddTime(int nValue);
