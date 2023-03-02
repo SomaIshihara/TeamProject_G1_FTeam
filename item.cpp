@@ -206,7 +206,7 @@ void DrawItem(void)
 		D3DXPLANE	plane;			//•½–Êî•ñ
 
 									//ƒ‰ƒCƒg‚ÌˆÊ’u‚ğİ’è
-		pDevice->GetLight(0, &light);
+		pDevice->GetLight(3, &light);
 		posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
 
 		//•½–Êî•ñ‚ğ¶¬
