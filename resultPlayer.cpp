@@ -6,17 +6,19 @@
 //==========================================
 #include "resultPlayer.h"
 #include "select_game.h"
+#include "VictoryStand.h"
 #include "color.h"
 
 //マクロ定義
+#define FALL_RES_PLAYER			(3.0f)		//リザルトプレイヤーの落下速度
 
 //グローバル変数
 Player_RESULT g_ResultPlayer[MAX_USE_GAMEPAD];				/*リザルト用プレイヤーの情報*/
 const D3DXVECTOR3 c_ResultPlayerPos[MAX_USE_GAMEPAD] = {	/*プレイヤーの初期位置設定*/
-	D3DXVECTOR3(-150.0f, 0.0f, 0.0f),
-	D3DXVECTOR3(-050.0f, 0.0f, 0.0f),
-	D3DXVECTOR3(+050.0f, 0.0f, 0.0f),
-	D3DXVECTOR3(+150.0f, 0.0f, 0.0f),
+	D3DXVECTOR3(-75.0f, 300.0f, 0.0f),
+	D3DXVECTOR3(-25.0f, 300.0f, 0.0f),
+	D3DXVECTOR3(+25.0f, 300.0f, 0.0f),
+	D3DXVECTOR3(+75.0f, 300.0f, 0.0f),
 };
 
 //========================
@@ -26,7 +28,7 @@ void InitPlayer_RESULT(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
 
-												//変数初期化
+	//変数初期化
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
 		//変数初期化
@@ -38,7 +40,16 @@ void InitPlayer_RESULT(void)
 		g_ResultPlayer[nCntPlayer].bHipDropSpin = false;
 		g_ResultPlayer[nCntPlayer].nHipDropWait = 0;
 
-		g_ResultPlayer[nCntPlayer].animal = ANIMAL_WILDBOAR;
+		//ゲームモードに応じて取得するものを変更
+		if (GetSelGameMode() == SelGameMode_PVP)
+		{
+			g_ResultPlayer[nCntPlayer].animal = GetPlayer()[nCntPlayer].animal;			//プレイヤーのモデルを取得
+		}
+		else if (GetSelGameMode() == SelGameMode_HDR)
+		{
+			g_ResultPlayer[nCntPlayer].animal = GetPlayer_HDR()[nCntPlayer].animal;
+		}
+
 		g_ResultPlayer[nCntPlayer].nRank = -1;
 
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
@@ -64,7 +75,17 @@ void UpdatePlayer_RESULT(void)
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
+		//対象のプレイヤーのポインタを取得
+		Player_RESULT *pPlayer = &g_ResultPlayer[nCntPlayer];
 
+		//前回の位置を記憶
+		pPlayer->posOld = pPlayer->pos;
+
+		//プレイヤーを落下させる
+		pPlayer->pos.y -= FALL_RES_PLAYER;
+
+		//表彰台への当たり判定
+		CollisionVictoryStand(&pPlayer->pos, &pPlayer->posOld, &pPlayer->move);
 	}
 }
 
@@ -84,17 +105,8 @@ void DrawPlayer_RESULT(void)
 	//プレイヤーの数だけ繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
-		Model useAnimal;
-
-		//ゲームモードに応じて取得するものを変更
-		if (GetSelGameMode() == SelGameMode_PVP)
-		{
-			useAnimal = GetAnimal(GetPlayer()[nCntPlayer].animal);
-		}
-		else if (GetSelGameMode() == SelGameMode_HDR)
-		{
-			useAnimal = GetAnimal(GetPlayer_HDR()[nCntPlayer].animal);
-		}
+		//プレイヤーのモデルを取得
+		Model useAnimal = GetAnimal(g_ResultPlayer[nCntPlayer].animal);
 
 		//"プレイヤーの"ワールドマトリックス初期化
 		D3DXMatrixIdentity(&g_ResultPlayer[nCntPlayer].mtxWorld);

@@ -14,6 +14,7 @@ Author:平澤詩苑
 #include "resultCamera.h"
 #include "VictoryStand.h"
 #include "resultCylinder.h"
+#include "meshfield.h"
 #include "conversioninput.h"
 
 #define NUM_RESULT			(1)		//リザルト画像の種類
@@ -42,10 +43,11 @@ void InitResultObject(void)
 {
 	InitFile();				//ファイル初期化
 	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
-	InitResultCylinder();	//背景の初期化処理
-	InitVictoryStand();		//表彰台の初期化処理
 	InitAnimalModel();		//動物モデル初期化
 	InitPlayer_RESULT();	//プレイヤーの初期化処理
+	InitMeshfield();		//地面の初期化処理
+	InitResultCylinder();	//背景の初期化処理
+	InitVictoryStand();		//表彰台の初期化処理
 	InitResultCamera();		//カメラの初期化処理
 }
 
@@ -82,6 +84,7 @@ void UninitResult(void)
 //------------------------------------------------
 void UninitResultObject(void)
 {
+	UninitMeshfield();			//地面の終了処理
 	UninitResultCylinder();		//背景の終了処理
 	UninitModel();				//動物モデル終了処理
 	UninitPlayer_RESULT();		//プレイヤーの終了処理
@@ -117,6 +120,7 @@ void UpdateResultObject(void)
 	UpdateResultCamera();		//カメラの更新処理
 	UpdateVictoryStand();		//表彰台の更新処理
 	UpdateResultCylinder();		//背景の更新処理
+	//UpdateMeshfield();			//地面の更新処理
 }
 
 //************************************************
@@ -138,6 +142,7 @@ void DrawResultObject(void)
 {
 	SetResultCamera();			//カメラの設定処理
 	DrawResultCylinder();		//背景の描画処理
+	DrawMeshfield();			//地面の描画処理
 	DrawPlayer_RESULT();		//プレイヤーの描画処理
 	DrawVictoryStand();			//表彰台の描画処理
 }
