@@ -175,7 +175,7 @@ void UpdatePvPGame(void)
 		}
 		UpdateParticle();	// パーティクルの更新処理
 		UpdateScore();		//スコアの更新処理
-		UpdateTime();		//タイマーの更新処理
+		UpdateTime(MODE_PvPGAME);		//タイマーの更新処理
 
 		ChangeNumCamera_PvP();	//カメラの数変更処理
 
@@ -232,7 +232,7 @@ void UpdatePvPGame(void)
 				}
 				UpdateParticle();	// パーティクルの更新処理
 				UpdateScore();		//スコアの更新処理
-				UpdateTime();		//タイマーの更新処理
+				UpdateTime(MODE_PvPGAME);		//タイマーの更新処理
 			}
 		}
 	}

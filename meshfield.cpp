@@ -10,6 +10,7 @@
 #include "file.h"
 #include "color.h"
 #include "input.h"
+#include "timer.h"
 
 //マクロ定義		ファイル読み込みに変える可能性あり
 #define NUM_MESHFIELD			(1)						//メッシュフィールド最大数
@@ -19,6 +20,7 @@
 #define MESHFIELD_ALL_INDEX		(MESHFIELD_SPLIT + 2)	//周辺の分割地点と中心・１周で重なる点
 #define MESHFIELD_MIN_RADIUS	(250.0f)				//最小半径
 #define MESHFIELD_SHRINK_SPEED	(0.1f)					//縮まるスピード
+#define MESHFIELD_SHRINK_TIME	(70)					//縮まり始める時間
 
 //グローバル変数
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshfield = NULL;		//頂点バッファのポインタ
@@ -162,8 +164,11 @@ void UninitMeshfield(void)
 //====================================================================
 void UpdateMeshfield(void)
 {
-	//半径を縮める
-	g_MeshField[0].fRadius -= MESHFIELD_SHRINK_SPEED;
+	//一定時間後半径を縮める
+	if (GetTime() <= MESHFIELD_SHRINK_TIME)
+	{//半径を縮める
+		g_MeshField[0].fRadius -= MESHFIELD_SHRINK_SPEED;
+	}
 
 	//最小半径よりも小さくなった
 	if (g_MeshField[0].fRadius < MESHFIELD_MIN_RADIUS)

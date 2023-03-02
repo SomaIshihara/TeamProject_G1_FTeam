@@ -1,7 +1,7 @@
 //==========================================
 //
 //タイマープログラム[timer.h]
-//Author:飯田洲暉
+//Author:飯田洲暉 石原颯馬
 //
 //==========================================
 #ifndef _TIMER_H_
@@ -41,11 +41,12 @@ typedef struct
 //プロトタイプ宣言
 void InitTime(void);
 void UninitTime(void);
-void UpdateTime(void);
+void UpdateTime(MODE mode);
 void DrawTime(void);
 void SetTime(int nTime);
 void AddTime(int nValue);
 void SetTimerDigit(void);
+int GetTime(void);
 
 
 #endif

@@ -21,8 +21,6 @@ Author:平澤詩苑
 #define TITLE_INFOFILE	"data/CSV/title.csv"				// タイトルの情報が入ったファイル名
 
 #define TITLE_POS		(D3DXVECTOR3(NIL_F, NIL_F, NIL_F))	//タイトルの位置
-#define TITLE_WIDTH		(510.0f)							//タイトルの幅
-#define TITLE_HEIGHT	(215.0f)							//タイトルの高さ
 
 //タイトルの情報構造体
 typedef struct
@@ -43,9 +41,9 @@ int nCntButtonEffect1, nCntButtonEffect2;
 
 //タイトル画面に使用するアイコンたちのパス
 const char *c_apTitleTexName[NUM_TITLE_TEX] = {
-	"data/TEXTURE/title000.png",
-	"data/TEXTURE/continue.png",
-	"data/TEXTURE/restart.png",
+	"data/TEXTURE/Title_Logo.png",
+	"data/TEXTURE/Title_Start.png",
+	"data/TEXTURE/Title_Exit.png",
 };
 
 //------------------------------------------------
