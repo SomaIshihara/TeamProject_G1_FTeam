@@ -18,7 +18,7 @@
 #define HIPDROP_RADIUS		(100.0f)	//落下回避ヒップドロップまでの距離
 #define HIPDROP_RAND_DIGIT	(100)		//ヒップドロップ回避確率桁数
 #define CHARGE_WAIT			(75)		//チャージする前の待機時間
-#define ONE_MORE_PUSH		(0.2f)		//プレイヤーを落とすためにするもう一押し
+#define ONE_MORE_PUSH		(0.31f)		//プレイヤーを落とすためにするもう一押し
 
 //プロト
 void ChargeAI(Player *pCom);
