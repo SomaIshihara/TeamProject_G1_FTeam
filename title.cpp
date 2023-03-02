@@ -9,13 +9,13 @@ Author:平澤詩苑
 #include "light.h"
 #include "titleCamera.h"
 #include "color.h"
-#include "input.h"
 #include "fade.h"
 #include "sound.h"
 #include "meshfield.h"
 #include "meshdome.h"
 #include "file.h"
 #include "conversioninput.h"
+#include "bonus.h"
 
 #define NUM_TITLE_TEX	(3)									// タイトルに使う画像の数
 #define TITLE_INFOFILE	"data/CSV/title.csv"				// タイトルの情報が入ったファイル名
@@ -132,6 +132,8 @@ void InitTitle(void)
 	InitTitleCamera();	//カメラの初期化処理
 	InitMeshDome();		//メッシュドームの初期化処理
 	InitMeshfield();	//ステージの初期化処理
+	InitBonus();		//ボーナス鳥の初期化処理
+	SetBonus();			//ボーナス鳥の設定処理
 }
 
 //タイトルの情報読み込み処理
@@ -189,6 +191,7 @@ void UninitTitle(void)
 	UninitTitleCamera();	//カメラの終了処理
 	UninitMeshDome();		//メッシュドームの終了処理	
 	UninitMeshfield();		//ステージの終了処理
+	UninitBonus();			//ボーナス鳥の終了処理
 	StopSound(SOUND_LABEL_BGM_TITLE);
 }
 
@@ -320,6 +323,8 @@ void UpdateTitle(void)
 
 	//カメラの更新処理
 	UpdateTitleCamera();
+
+	UpdateBonus();		//ボーナス鳥の更新処理
 }
 
 //------------------------------------------------
@@ -358,6 +363,7 @@ void DrawTitle(void)
 	SetTitleCamera();	// カメラの設定処理
 	DrawMeshDome();		// メッシュドームの描画処理
 	DrawMeshfield();	// ステージの描画処理
+	DrawBonus();		// ボーナス鳥の描画処理
 }
 //
 void DirecUpTitle(int NumPad)
