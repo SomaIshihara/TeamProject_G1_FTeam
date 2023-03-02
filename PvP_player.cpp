@@ -24,6 +24,7 @@
 #include "tremor_effect.h"
 #include "item.h"
 #include "meshfield.h"
+#include "meshdome.h"
 #include "bonus.h"
 #include "particle.h"
 #include "comai.h"
@@ -50,7 +51,6 @@
 #define DUMP_COEF				(0.04f)		//減衰係数
 #define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
-#define DOWN_HEIGHT				(-1200.0f)	//ダウン判定とする高さ
 #define HIPDROP_RADIUS			(60.0f)		//ヒップドロップ判定範囲
 #define REBOUND_RATIO			(0.15f)		//当たった後の自分の分の移動量割合
 
@@ -319,8 +319,9 @@ void UpdatePlayer(void)
 			}
 		}
 
-		if (g_aPlayerPvP[nCntPlayer].pos.y <= DOWN_HEIGHT)
-		{//落ち切った
+		if (fabsf(g_aPlayerPvP[nCntPlayer].pos.x) >= MESHDOME_RADIUS || fabsf(g_aPlayerPvP[nCntPlayer].pos.y) >= MESHDOME_RADIUS
+			|| fabsf(g_aPlayerPvP[nCntPlayer].pos.z) >= MESHDOME_RADIUS)
+		{//吹っ飛んだ
 			DownPlayer(nCntPlayer);
 		}
 
