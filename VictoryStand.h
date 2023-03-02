@@ -13,12 +13,13 @@ typedef struct
 	D3DXVECTOR3		pos;			// 位置
 	D3DXVECTOR3		rot;			// 向き
 	float			fLandheight;	// 着地する高さ
+	int				nRank;			// 何位か（モデル描画でも使用する
 	bool			bUse;			// 使用するかどうか
 }VictoryStand;
 
 void InitVictoryStand(void);
-void InitVicStdMeshMatrix(int nCntMetrix);		//metrix = "mesh" + "matrix" の造語
-void SearchVictoryStand_Land_Pos(int nCntVicStd, float *pfLandHeight);
+void InitVicStdModel_Tex(int nCntModex);	//modex = "model" + "tex" の造語
+void SearchVictoryStand_Land_Pos(void);
 void UninitVictoryStand(void);
 void UpdateVictoryStand(void);
 void DrawVictoryStand(void);
