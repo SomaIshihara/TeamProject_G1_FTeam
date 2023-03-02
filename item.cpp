@@ -53,7 +53,7 @@ void InitItem(void)
 	D3DXMATERIAL	  *pMat;					//マテリアルへのポインタ
 
 												//xファイルの読み込み
-	D3DXLoadMeshFromX({ "data/MODEL/item/itembox.x" },
+	D3DXLoadMeshFromX({ "data\\MODEL\\konpeito\\konpeito.x" },
 		D3DXMESH_SYSTEMMEM,
 		pDevice,
 		NULL,
