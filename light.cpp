@@ -10,7 +10,7 @@
 #include "color.h"
 
 //マクロ定義
-#define	NUM_LIGHT		(3)		//ライトの数
+#define	NUM_LIGHT		(4)		//ライトの数
 
 //グローバル変数
 D3DLIGHT9 g_aLight[NUM_LIGHT];
