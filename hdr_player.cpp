@@ -70,6 +70,7 @@ void InitPlayer_HDR(void)
 		g_aPlayerHDR[nCntPlayer].bHipDrop = false;
 		g_aPlayerHDR[nCntPlayer].bHipDropSpin = false;
 		g_aPlayerHDR[nCntPlayer].nHipDropWait = 0;
+		g_buse[nCntPlayer] = false;
 
 		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 
