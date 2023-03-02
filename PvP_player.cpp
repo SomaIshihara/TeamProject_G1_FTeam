@@ -319,8 +319,7 @@ void UpdatePlayer(void)
 			}
 		}
 
-		if (fabsf(g_aPlayerPvP[nCntPlayer].pos.x) >= MESHDOME_RADIUS || fabsf(g_aPlayerPvP[nCntPlayer].pos.y) >= MESHDOME_RADIUS
-			|| fabsf(g_aPlayerPvP[nCntPlayer].pos.z) >= MESHDOME_RADIUS)
+		if (D3DXVec3Length(&g_aPlayerPvP[nCntPlayer].pos) >= MESHDOME_RADIUS)
 		{//êÅÇ¡îÚÇÒÇæ
 			DownPlayer(nCntPlayer);
 		}
