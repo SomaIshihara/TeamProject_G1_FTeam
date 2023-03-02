@@ -8,7 +8,8 @@
 #include "color.h"
 #include "fade.h"
 
-#define POS_XY (150)
+#define POS_X (250)
+#define POS_Y (150)
 
 //****************************//
 //	   グローバル変数宣言     //
@@ -52,10 +53,10 @@ void InitRank(void)
 	for (int nCnt = 0; nCnt < MAX_RANK; nCnt++, pVtx += VTX_MAX)
 	{
 		//頂点座標の設定
-		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(g_aRank[nCnt].pos.x - POS_XY, g_aRank[nCnt].pos.y - POS_XY, NIL_F);
-		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(g_aRank[nCnt].pos.x + POS_XY, g_aRank[nCnt].pos.y - POS_XY, NIL_F);
-		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(g_aRank[nCnt].pos.x - POS_XY, g_aRank[nCnt].pos.y + POS_XY, NIL_F);
-		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(g_aRank[nCnt].pos.x + POS_XY, g_aRank[nCnt].pos.y + POS_XY, NIL_F);
+		pVtx[VTX_LE_UP].pos = D3DXVECTOR3(g_aRank[nCnt].pos.x - POS_X, g_aRank[nCnt].pos.y - POS_Y, NIL_F);
+		pVtx[VTX_RI_UP].pos = D3DXVECTOR3(g_aRank[nCnt].pos.x + POS_X, g_aRank[nCnt].pos.y - POS_Y, NIL_F);
+		pVtx[VTX_LE_DO].pos = D3DXVECTOR3(g_aRank[nCnt].pos.x - POS_X, g_aRank[nCnt].pos.y + POS_Y, NIL_F);
+		pVtx[VTX_RI_DO].pos = D3DXVECTOR3(g_aRank[nCnt].pos.x + POS_X, g_aRank[nCnt].pos.y + POS_Y, NIL_F);
 
 		//rhwの設定
 		pVtx[VTX_LE_UP].rhw = RHW;
