@@ -1,7 +1,7 @@
 //==========================================
 //
 //タイマープログラム[timer.cpp]
-//Author:飯田洲暉
+//Author:飯田洲暉 石原颯馬
 //
 //==========================================
 
@@ -279,4 +279,12 @@ void AddTime(int nValue)
 void SetTimerDigit(void)
 {
 	g_aTime.nDigit = (int)pow(10, NUM_PLACE);
+}
+
+//===============================
+//タイム取得処理
+//===============================
+int GetTime(void)
+{
+	return g_aTime.nTime;
 }

@@ -11,7 +11,7 @@
 #include "meshfield.h"
 
 //マクロ
-#define FENCE_FORCE			(70.0f)		//フェンスを中心に寄せる
+#define FENCE_RADIUS		(650.0f)	//フェンスの位置
 #define FENCE_MARGIN_SPACE	(10.0f)		//フェンスが倒れる際の後ろの余裕スペース
 #define FENCE_DESTROY_POS	(-800.0f)	//フェンスを消す位置
 #define FENCE_DROP_SPEED	(1.3f)		//フェンスの落下加速度
@@ -28,7 +28,7 @@ Fence g_aFence[MAX_USE_FENCE];
 void InitFence(void)
 {
 	//基本の半径の大きさを格納
-	float fRadius = GetMeshField()->fRadius - FENCE_FORCE;
+	float fRadius = FENCE_RADIUS;
 
 	//変数初期化
 	for (int nCntfence = 0; nCntfence < MAX_USE_FENCE; nCntfence++)

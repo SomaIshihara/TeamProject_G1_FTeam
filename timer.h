@@ -1,7 +1,7 @@
 //==========================================
 //
 //タイマープログラム[timer.h]
-//Author:飯田洲暉
+//Author:飯田洲暉 石原颯馬
 //
 //==========================================
 #ifndef _TIMER_H_
@@ -46,6 +46,7 @@ void DrawTime(void);
 void SetTime(int nTime);
 void AddTime(int nValue);
 void SetTimerDigit(void);
+int GetTime(void);
 
 
 #endif
