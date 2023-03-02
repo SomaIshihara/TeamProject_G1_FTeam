@@ -15,6 +15,6 @@
 void InitComAI(void);
 void UninitComAI(void);
 void SelectAIMove(Player *pCom);
-ComAIBrain *GetAI(void);
+ComAIBrain *GetAI(AIDIFF diff);
 
 #endif // !_COMAI_H_

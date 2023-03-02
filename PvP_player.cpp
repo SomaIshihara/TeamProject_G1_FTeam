@@ -176,7 +176,7 @@ void InitPlayer(void)
 		}
 		else if (c_aAIMove[nCntPlayer] == true)
 		{//AIは脳みそポインタもらって使用していることにする
-			g_aPlayerPvP[nCntPlayer].pAI = GetAI();
+			g_aPlayerPvP[nCntPlayer].pAI = GetAI(AIDIFF_NORMAL);
 			g_aPlayerPvP[nCntPlayer].bUsePlayer = true;
 		}
 	}

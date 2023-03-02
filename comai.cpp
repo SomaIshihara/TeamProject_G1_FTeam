@@ -24,7 +24,7 @@
 void ChargeAI(Player *pCom);
 
 //グローバル
-ComAIBrain g_aiCont[MAX_USE_GAMEPAD];
+ComAIBrain g_aAIBrain[MAX_USE_GAMEPAD];
 bool g_bUseAIPointer[MAX_USE_GAMEPAD];
 
 const AIParam c_aAIParam[AIDIFF_MAX] = 
@@ -44,11 +44,11 @@ void InitComAI(void)
 
 	for (int nCntAI = 0; nCntAI < MAX_USE_GAMEPAD; nCntAI++)
 	{//脳みそを空っぽにする
-		g_aiCont[nCntAI] = {};
-		g_aiCont[nCntAI].nCounterWaitTime = 0;
-		g_aiCont[nCntAI].difficulty = AIDIFF_NORMAL;
-		g_aiCont[nCntAI].bDoHipdrop = false;
-		g_aiCont[nCntAI].bHipdropped = false;
+		g_aAIBrain[nCntAI] = {};
+		g_aAIBrain[nCntAI].nCounterWaitTime = 0;
+		g_aAIBrain[nCntAI].difficulty = AIDIFF_NORMAL;
+		g_aAIBrain[nCntAI].bDoHipdrop = false;
+		g_aAIBrain[nCntAI].bHipdropped = false;
 		g_bUseAIPointer[nCntAI] = false;
 	}
 }
@@ -218,14 +218,15 @@ void ChargeAI(Player *pCom)
 //========================
 //選択処理
 //========================
-ComAIBrain *GetAI(void)
+ComAIBrain *GetAI(AIDIFF diff)
 {
 	for (int nCntAI = 0; nCntAI < MAX_USE_GAMEPAD; nCntAI++)
 	{
 		if (g_bUseAIPointer[nCntAI] == false)
 		{
 			g_bUseAIPointer[nCntAI] = true;
-			return &g_aiCont[nCntAI];
+			g_aAIBrain[nCntAI].difficulty = diff;
+			return &g_aAIBrain[nCntAI];
 		}
 	}
 	return NULL;
