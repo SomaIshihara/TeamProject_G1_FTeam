@@ -26,7 +26,7 @@
 #include "result.h"
 
 //マクロ定義
-#define WINDOW_NAME				"TeamProject_G1_FTeam"		//ウィンドウに表示される名前
+#define WINDOW_NAME				"Compete Animal"		//ウィンドウに表示される名前
 #define PROC_SPEED				(1000 / MAX_FPS)			//実行速度
 #define FPS_SPEED				(500)						//FPS計測速度（単位:ミリ秒）
 #define SHOWCURSOR_COUNTER		(2)							//カーソル表示非表示が正常にされるカウンタ
@@ -34,6 +34,8 @@
 //プロトタイプ宣言
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow);
+void SetFullScreen(bool bFullScreen);
+void ShowTaskBar(bool bShow);
 void Uninit(void);
 void Update(void);
 void Draw(void);
@@ -54,6 +56,8 @@ MODE			g_mode = MODE_TITLE;		// 現在のモード
 HWND g_hWnd;
 bool g_bShowCursor = true;
 bool g_bDebug = true;
+bool g_bFullScreen = true;
+bool g_bShowTaskbar = true;
 
 //========================
 //メイン関数
@@ -116,6 +120,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hInstancePrev, LPSTR lpCmdLine
 	{
 		return -1;
 	}
+
+	//全画面表示
+	SetFullScreen(g_bFullScreen);
 
 	//分解能設定
 	timeBeginPeriod(1);
@@ -365,10 +372,90 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 }
 
 //========================
+//全画面表示処理
+//========================
+void SetFullScreen(bool bFullScreen)
+{
+	HDC hDC = GetDC(GetDesktopWindow());			// デスクトップのハンドル
+	int nScrSizeX = GetDeviceCaps(hDC, HORZRES);	// デスクトップの画面サイズX
+	int nScrSizeY = GetDeviceCaps(hDC, VERTRES);	// デスクトップの画面サイズY
+
+	ReleaseDC(GetDesktopWindow(), hDC);// デスクトップのハンドルを手放す
+
+	if (bFullScreen)
+	{// 全画面フラグが真の時、
+	 // ウインドウの位置を設定
+		SetWindowPos(
+			g_hWnd,
+			HWND_TOPMOST,
+			0,
+			0,
+			nScrSizeX,
+			nScrSizeY,
+			SWP_SHOWWINDOW);
+
+		// ウインドウスタイルを変更
+		SetWindowLong(g_hWnd, GWL_STYLE, WS_POPUP);
+	}
+	else
+	{// 全画面フラグが偽の時、
+	 // ウインドウの位置を設定
+		SetWindowPos(
+			g_hWnd,
+			HWND_TOP,
+			(nScrSizeX / 2) - (SCREEN_WIDTH /2),
+			(nScrSizeY / 2) - (SCREEN_HEIGHT /2),
+			SCREEN_WIDTH,
+			SCREEN_HEIGHT,
+			SWP_SHOWWINDOW);
+
+		// ウインドウスタイルを変更
+		SetWindowLong(g_hWnd, GWL_STYLE, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX);
+	}
+
+	// ウインドウの表示状態を設定
+	ShowWindow(g_hWnd, SW_NORMAL);
+
+	// クライアント領域を更新
+	UpdateWindow(g_hWnd);
+
+	// タスクバーを表示/非表示
+	ShowTaskBar(!bFullScreen);
+}
+
+//========================================
+// ShowTaskBar関数 - タスクバーの表示/非表示を切り替える -
+//Author：RIKU NISHIMURA
+// 参考: https://dixq.net/forum/viewtopic.php?t=12505
+//========================================
+void ShowTaskBar(bool bShow)
+{
+	// タスクバーのハンドルを取得
+	HWND hTask = FindWindow((LPCSTR)"Shell_TrayWnd", NULL);
+
+	if (bShow)
+	{// 表示
+	 // タスクバーを表示
+		ShowWindow(hTask, SW_SHOW);
+
+		// ウインドウをアクティブにする
+		SetFocus(g_hWnd);
+	}
+	else
+	{// 非表示
+	 // タスクバーを非表示
+		ShowWindow(hTask, SW_HIDE);
+	}
+}
+
+//========================
 //終了処理
 //========================
 void Uninit(void)
 {
+	//タスクバーを表示
+	ShowTaskBar(true);
+
 	//終了処理（自分が作ったものを捨てる）
 	UninitTitle();		// タイトルの終了処理
 	UninitTutorial();	// チュートリアルの終了処理
@@ -424,8 +511,7 @@ void Update(void)
 	//マウスの更新
 	UpdateMouse();
 	//ゲームパッドの更新
-	UpdateGamePad();
-	
+	UpdateGamePad();	
 
 	//入力変換の更新
 	UpdateConvertionInput();
@@ -464,6 +550,15 @@ void Update(void)
 
 	//フェードの更新処理
 	UpdateFade();
+
+	//ウィンドウボタンが押されたら、タスクバーを表示する
+	if (GetKeyboardTrigger(DIK_HOME))
+	{
+		g_bShowTaskbar = false;
+	}
+
+	//タスクバーの表示 / 非表示
+	ShowTaskBar(g_bShowTaskbar);
 }
 
 //========================

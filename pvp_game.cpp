@@ -57,7 +57,7 @@ void InitPvPGame(void)
 	InitFile();											// ファイルの初期化処理（モデルビューワーファイル読み込み前に行うこと！）
 	LoadModelViewerFile("data\\model.txt");				// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
 	LoadModelOriginalFile("data\\originalmodel.txt");	// モデルオリジナルファイル読み込み
-	g_NumCamera_PvP = NumCamera_ONLY;					// 初期カメラの設定（現在はPlayer0を注視点としたカメラ　　画面分割ナシ）
+	g_NumCamera_PvP = NumCamera_FOUR_Separate;			// 初期カメラの設定（現在はPlayer0を注視点としたカメラ　　画面分割ナシ）
 	
 	InitBg();					// 背景の初期化処理
 	InitLight();				// ライト初期化処理

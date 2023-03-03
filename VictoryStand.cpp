@@ -6,6 +6,9 @@ Author:平澤詩苑
 ============================================================================================================================================================*/
 #include "main.h"
 #include "result.h"
+#include "color.h"
+#include "rank.h"
+#include "debugproc.h"
 #include "conversioninput.h"
 #include "VictoryStand.h"
 #include "resultPlayer.h"
@@ -27,9 +30,7 @@ LPD3DXBUFFER				g_pBuffMatVictoryStand[NUM_VICTORYSTAND];		// マテリアルへのポイ
 DWORD						g_dwNumMatVictoryStand[NUM_VICTORYSTAND];		// マテリアルの数
 VictoryStand				g_VictoryStand[NUM_VICTORYSTAND];				// 表彰台の情報
 float						g_fLandPoint[NUM_VICTORYSTAND];					// 表彰台ごとの着地点を代入（同率を考慮して）
-
-//テスト用の順位
-const int c_nTestRank[NUM_VICTORYSTAND] = { 1, 3, 2, 0 };
+int							g_RankStrage[RANK_MAX] = {2,2,3,3};
 
 //表彰台のⅩファイル名
 const char *c_apVicStdFilePath[NUM_VICTORYSTAND] = {
@@ -44,9 +45,6 @@ const char *c_apVicStdFilePath[NUM_VICTORYSTAND] = {
 //----------------------------------------------------
 void InitVictoryStand(void)
 {	
-	//順位を保存
-	int nRank;
-
 	//着地点設定
 	SearchVictoryStand_Land_Pos();
 
@@ -60,11 +58,47 @@ void InitVictoryStand(void)
 		pVicStand->pos.y = 0.0f;								// 高さ座標だけ０にする
 		pVicStand->rot = ZERO_SET;								// 向き初期化
 		pVicStand->bUse = true;									// 使われていないようにする
-		nRank = pVicStand->nRank = 0;		// 順位を初期化
-		pVicStand->fLandheight = g_fLandPoint[nRank];			// 着地点を初期化
+		int nRank = pVicStand->nRank = 
+			g_RankStrage[nCntVicStd] = rand() % RANK_MAX;	// 順位を初期化
+	}
+
+	//順位をソートする
+	RankingSort();
+}
+
+//同率も考慮してランキングを再ソート
+void RankingSort(void)
+{
+	//順位判定用
+	int nRanking[RANK_MAX] = { 0,0,0,0 };
+
+	for (int nCntRank = 0; nCntRank < RANK_MAX; nCntRank++)
+	{
+		for (int j = 0; j < nCntRank; j++)
+		{
+			if (g_VictoryStand[j].nRank < g_VictoryStand[nCntRank].nRank)
+			{
+				nRanking[nCntRank]++;	//大きいほうの順位を下げる
+			}
+
+			else if (g_VictoryStand[j].nRank > g_VictoryStand[nCntRank].nRank)
+			{
+				nRanking[j]++;		//＝のときは何もしない
+			}
+		}
+	}
+
+	for (int nCntPay = 0; nCntPay < RANK_MAX; nCntPay++)
+	{
+		int nRank = nRanking[nCntPay];
+
+		g_VictoryStand[nCntPay].nRank = nRank;
+		
+		// 着地点を初期化
+		g_VictoryStand[nCntPay].fLandheight = g_fLandPoint[nRank];	
 
 		//最初は地中に埋める
-		pVicStand->pos.y -= pVicStand->fLandheight + VICSTD_FILL_HEIGHT;
+		g_VictoryStand[nCntPay].pos.y -= g_VictoryStand[nCntPay].fLandheight + VICSTD_FILL_HEIGHT;
 	}
 }
 
@@ -136,15 +170,9 @@ void InitVicStdModel_Tex(int nCntModex)
 
 		if (pMat[nCntMat].pTextureFilename != NULL)
 		{//テクスチャファイルが存在する
-			for (int nCntTex = 0; nCntTex < VICTORYSTAND_TEX; nCntTex++)
-			{
-				if (g_pTextureVictoryStand[nCntTex] == NULL)
-				{
-					//テクスチャの読み込み
-					D3DXCreateTextureFromFile(pDevice, pMat[nCntMat].pTextureFilename, &g_pTextureVictoryStand[nCntTex]);
-					break;
-				}
-			}
+			//テクスチャの読み込み
+			D3DXCreateTextureFromFile(pDevice, pMat[nCntMat].pTextureFilename, &g_pTextureVictoryStand[nCntModex]);
+			break;
 		}
 	}
 }
@@ -206,6 +234,17 @@ void UpdateVictoryStand(void)
 			}
 		}
 	}
+
+	for (int nCntRank = 0; nCntRank < RANK_MAX; nCntRank++, pVicStd++)
+	{
+		PrintDebugProc("%d番目の順位 => 元：%d    今：%d    %d位\n", nCntRank + 1, g_RankStrage[nCntRank], g_VictoryStand[nCntRank].nRank, g_VictoryStand[nCntRank].nRank + 1);
+	}
+
+	if (GetKeyboardTrigger(DIK_BACKSPACE))
+	{
+		UninitVictoryStand();
+		InitVictoryStand();
+	}
 }
 
 //----------------------------------------------------
@@ -224,6 +263,9 @@ void DrawVictoryStand(void)
 		//使われている
 		if (pVicStd->bUse)
 		{
+			//順位格納
+			int nRank = pVicStd->nRank;
+
 			//ワールドマトリックスの初期化
 			D3DXMatrixIdentity(&g_mtxWorldVictoryStand);
 
@@ -244,19 +286,19 @@ void DrawVictoryStand(void)
 			pDevice->GetMaterial(&matDef);
 
 			//マテリアルデータへのポインタを取得
-			pMat = (D3DXMATERIAL *)g_pBuffMatVictoryStand[nCntVicStd]->GetBufferPointer();
+			pMat = (D3DXMATERIAL *)g_pBuffMatVictoryStand[nRank]->GetBufferPointer();
 
 			//マテリアル設定
-			for (int nCntMat = 0; nCntMat < (int)g_dwNumMatVictoryStand[nCntVicStd]; nCntMat++)
+			for (int nCntMat = 0; nCntMat < (int)g_dwNumMatVictoryStand[nRank]; nCntMat++)
 			{
 				//マテリアルの設定
 				pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 				//テクスチャの設定
-				pDevice->SetTexture(0, g_pTextureVictoryStand[nCntMat]);
+				pDevice->SetTexture(0, g_pTextureVictoryStand[nRank]);
 
 				//与えられた順位別のモデル(パーツ)の描画
-				g_pMeshVictoryStand[pVicStd->nRank]->DrawSubset(nCntMat);
+				g_pMeshVictoryStand[nRank]->DrawSubset(nCntMat);
 			}
 
 			//マテリアルを戻す

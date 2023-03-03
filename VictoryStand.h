@@ -17,6 +17,7 @@ typedef struct
 	bool			bUse;			// Žg—p‚·‚é‚©‚Ç‚¤‚©
 }VictoryStand;
 
+void RankingSort(void);
 void InitVictoryStand(void);
 void InitVicStdModel_Tex(int nCntModex);	//modex = "model" + "tex" ‚Ì‘¢Œê
 void SearchVictoryStand_Land_Pos(void);
