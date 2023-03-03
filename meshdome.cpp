@@ -11,7 +11,6 @@
 
 //マクロ
 #define NUM_MESHDOME				(1)						//メッシュドームの数
-#define MESHDOME_RADIS				(2000.0f)				//背景の半径
 #define MESHDOME_TEX_WIDTH			(1.0f)					//背景の解像度
 #define MESHDOME_TEX_HEIGHT			(1.0f)					//背景の解像度
 #define MESHDOME_SPLIT				(16)					//背景の横の分割数		線は垂直に引いて、左右に分ける
@@ -54,7 +53,7 @@ void InitMeshDome(void)
 	//ドーム情報の初期化
 	g_MeshDome.pos = ZERO_SET;
 	g_MeshDome.rot = ZERO_SET;
-	g_MeshDome.fRadius = MESHDOME_RADIS;
+	g_MeshDome.fRadius = MESHDOME_RADIUS;
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHDOME_ALL_VERTEX, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshDome, NULL);
@@ -94,7 +93,7 @@ void SetMeshDomeVertexBuffer(void)
 	float yRadian = 0.0f;		//縦で分割した時の横１周分のY座標が決まる角度
 	
 	//天面の出っ張り頂点の設定
-	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, MESHDOME_RADIS, 0.0f);
+	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, MESHDOME_RADIUS, 0.0f);
 	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	pVtx[nNumVtx].col = XCOL_WHITE;
 	pVtx[nNumVtx].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -143,7 +142,7 @@ void SetMeshDomeVertexBuffer(void)
 	}
 
 	//底面の出っ張り頂点の設定
-	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, -MESHDOME_RADIS, 0.0f);
+	pVtx[nNumVtx].pos = D3DXVECTOR3(0.0f, -MESHDOME_RADIUS, 0.0f);
 	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	pVtx[nNumVtx].col = XCOL_WHITE;
 	pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 1.0f);
