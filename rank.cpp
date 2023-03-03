@@ -8,8 +8,8 @@
 #include "color.h"
 #include "fade.h"
 
-#define POS_X (250)
-#define POS_Y (150)
+#define POS_X (200)
+#define POS_Y (100)
 
 //****************************//
 //	   グローバル変数宣言     //
@@ -32,7 +32,7 @@ void InitRank(void)
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * VTX_MAX * MAX_RANK, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffRank, NULL);
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/rank.png", &g_pTextureRank);
+	D3DXCreateTextureFromFile(pDevice, "data/TEXTURE/ranking.png", &g_pTextureRank);
 	
 	//ポインタを設定
 	VERTEX_2D *pVtx;
@@ -43,7 +43,7 @@ void InitRank(void)
 	//各情報読み込み
 	for (int nCnt = 0; nCnt < MAX_RANK; nCnt++)
 	{
-		g_aRank[nCnt].pos = D3DXVECTOR3(160.0f + nCnt * 320, 600.0f, 0.0f);
+		g_aRank[nCnt].pos = D3DXVECTOR3(150.0f + nCnt * 320, 600.0f, 0.0f);
 		g_aRank[nCnt].buse = false;
 	}
 
