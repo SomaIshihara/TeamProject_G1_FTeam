@@ -23,6 +23,18 @@
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 #define PLAYER_HIPSPIN_WAIT		(20)				//ヒップドロップスピンが終わって急降下するまでの時間
 
+//ヒップドロップレベルに必要な高さ（その値以上次のレベルの値以下）
+#define HIPDROP_HEIGHT_LEVEL_1		(10)				//レベル1
+#define HIPDROP_HEIGHT_LEVEL_2		(50)				//レベル2
+#define HIPDROP_HEIGHT_LEVEL_3		(100)				//レベル3
+#define HIPDROP_HEIGHT_LEVEL_MAX	(150)				//レベルMAX
+
+//ヒップドロップレベルに応じた強さ
+#define HIPDROP_POWER_LEVEL_1		(100)				//レベル1（100ダメージ）
+#define HIPDROP_POWER_LEVEL_2		(200)				//レベル2（200ダメージ）
+#define HIPDROP_POWER_LEVEL_3		(300)				//レベル3（300ダメージ）
+#define HIPDROP_POWER_LEVEL_MAX		(500)				//レベルMAX（500ダメージ）
+
 //グローバル変数
 Player_HDR g_aPlayerHDR[MAX_USE_GAMEPAD];
 int g_nIdxShadow_HDR = -1;
@@ -380,17 +392,21 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 	//ヒップドロップのパワーレベルを測定
 	g_aPlayerHDR[nHipDropPlayer].HipDropPower = g_aPlayerHDR[nHipDropPlayer].pos.y - g_aPlayerHDR[nHipDropPlayer].posOld.y;
 
-	if (g_aPlayerHDR[nHipDropPlayer].HipDropPower >= 150)
+	if (g_aPlayerHDR[nHipDropPlayer].HipDropPower >= HIPDROP_HEIGHT_LEVEL_MAX)
 	{
-		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 10;
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_MAX;
 	}
-	else if (g_aPlayerHDR[nHipDropPlayer].HipDropPower > 80)
+	else if (g_aPlayerHDR[nHipDropPlayer].HipDropPower > HIPDROP_HEIGHT_LEVEL_3)
 	{
-		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 4;
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_3;
 	}
-	else
+	else if (g_aPlayerHDR[nHipDropPlayer].HipDropPower > HIPDROP_HEIGHT_LEVEL_2)
 	{
-		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 1;
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_2;
+	}
+	else if (g_aPlayerHDR[nHipDropPlayer].HipDropPower > HIPDROP_HEIGHT_LEVEL_1)
+	{
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_1;
 	}
 
 	g_aPlayerHDR[nHipDropPlayer].move.y = 0.0f;						//通常の落下速度を０にする

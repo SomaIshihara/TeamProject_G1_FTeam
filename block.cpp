@@ -16,7 +16,9 @@
 #define INIT_POS_Y			(200.0f)	//初期のY位置
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
-#define BLOCK_LIFE			(1)			//体力
+
+//プロト
+BLOCKTYPE SelectBlock(void);
 
 //グローバル変数宣言     
 LPDIRECT3DTEXTURE9		g_pTextureBlock[MAX_BLOCK_TEX] = {};	//テクスチャへにポインタ
@@ -24,7 +26,14 @@ LPD3DXMESH				g_pMeshBlock = NULL;					//メッシュ(頂点情報)へのポインタ
 LPD3DXBUFFER			g_pBuffMatBlock = NULL;					//マテリアルへのポインタ
 DWORD					g_dwNumMatBlock = 0;					//マテリアルの数
 D3DXMATRIX				g_mtxWorldBlock;						//ワールドマトリックス
-Block					g_Block[MAX_BLOCK * MAX_PLAYER];						//ブロックの情報
+Block					g_Block[MAX_BLOCK * MAX_PLAYER];		//ブロックの情報
+int						g_aUseBlockNum[BLOCKTYPE_MAX];			//ブロック個数
+
+//ブロック体力
+const int				c_aBlockLife[BLOCKTYPE_MAX] = { 100,200,400 };
+
+//配置数
+const int				c_aBlockNum[BLOCKTYPE_MAX] = { 25,30,25 };
 
 //========================
 //初期化処理
@@ -60,19 +69,28 @@ void InitBlock(void)
 	}
 
 	//初期設定
+	//初期化
+	for (int nCntBlockType = 0; nCntBlockType < BLOCKTYPE_MAX; nCntBlockType++)
+	{
+		g_aUseBlockNum[nCntBlockType] = c_aBlockNum[nCntBlockType];
+	}
+
+	//ブロック情報設定
 	for (int nCntPlayer = 0; nCntPlayer < MAX_PLAYER; nCntPlayer++)
 	{
 		int nCount = 0;
 
-		for (int nCntBlock = 0 + (100 * nCntPlayer); nCntBlock < MAX_BLOCK * MAX_PLAYER; nCntBlock++)
+		for (int nCntBlock = 0 + (MAX_BLOCK * nCntPlayer); nCntBlock < MAX_BLOCK * MAX_PLAYER; nCntBlock++)
 		{
 			g_Block[nCntBlock].pos = D3DXVECTOR3(225.0f - 150 * nCntPlayer, 20.0f + nCount * 80, 0.0f);
+
+			g_Block[nCntBlock].type = SelectBlock();
 			g_Block[nCntBlock].fWidth = COLLISION_SIZE_XZ;
 			g_Block[nCntBlock].buse = false;
-			g_Block[nCntBlock].nLife = BLOCK_LIFE;
+			g_Block[nCntBlock].nLife = 0;
 			nCount++;
 
-			if (nCount == 100)
+			if (nCount == MAX_BLOCK)
 			{
 				break;
 			}
@@ -170,6 +188,31 @@ void DrawBlock(void)
 }
 
 //========================
+//ブロック選択処理
+//========================
+BLOCKTYPE SelectBlock(void)
+{
+	int nBlockType = rand() % BLOCKTYPE_MAX;
+
+	if (g_aUseBlockNum[nBlockType] == 0)
+	{//ブロックが配置上限に達している
+		//2つ前（ループする）にする
+		nBlockType = (nBlockType + (BLOCKTYPE_MAX - 1)) % BLOCKTYPE_MAX;
+
+		if (g_aUseBlockNum[nBlockType] == 0)
+		{//それも配置上限に達している
+			//2つ前（ループする）にする
+			nBlockType = (nBlockType + (BLOCKTYPE_MAX - 1)) % BLOCKTYPE_MAX;
+			//絶対に置けるので終わり
+		}
+	}
+
+	//置けるので設定
+	g_aUseBlockNum[nBlockType]--;
+	return (BLOCKTYPE)nBlockType;
+}
+
+//========================
 //設定処理
 //========================
 void SetBlock(void)
@@ -178,6 +221,7 @@ void SetBlock(void)
 	{
 		if (g_Block[nCntBlock].buse == false)
 		{
+			g_Block[nCntBlock].nLife = c_aBlockLife[g_Block[nCntBlock].type];
 			g_Block[nCntBlock].buse = true;
 		}
 	}
@@ -204,15 +248,16 @@ void CollisionBlock(int nPlayerNum)
 
 				if (pPlayer[nPlayerNum].bHipDrop == true)
 				{
-					pPlayer[nPlayerNum].HipDropPower -= g_Block[nCntBlock].nLife;
-
-					if (pPlayer[nPlayerNum].HipDropPower >= 0)
-					{
-						g_Block[nCntBlock].buse = false;	//対象のブロックを使用しない
-						PlaySound(SOUND_LABEL_SE_HIPDROP);	//ヒップドロップ音再生
+					if (pPlayer[nPlayerNum].HipDropPower >= g_Block[nCntBlock].nLife)
+					{//ブロックの体力よりパワー（ダメージ量）が大きい
+						//ブロックを消す
+						g_Block[nCntBlock].buse = false;								//対象のブロックを使用しない
+						pPlayer[nPlayerNum].HipDropPower -= g_Block[nCntBlock].nLife;	//使用した分のダメージを減らす
+						PlaySound(SOUND_LABEL_SE_HIPDROP);								//ヒップドロップ音再生
 					}
 					else
 					{
+						g_Block[nCntBlock].nLife -= pPlayer[nPlayerNum].HipDropPower;
 						pPlayer[nPlayerNum].HipDropPower = 0;
 						pPlayer[nPlayerNum].move.y = 0;
 						pPlayer[nPlayerNum].bHipDrop = false;
