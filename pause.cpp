@@ -13,6 +13,8 @@
 #include "input.h"
 #include "color.h"
 #include "sound.h"
+#include "conversioninput.h"
+
 //****************************//
 //		　 マクロ定義		  //
 //****************************//
@@ -296,7 +298,7 @@ void DrawPause(void)
 void SelectUpPause(int nPadNum)
 {
 	//キーボードの上方向キー　か　ゲームパッドの　十字上ボタン　が押された
-	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(nPadNum,XINPUT_GAMEPAD_DPAD_UP) == true)
+	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(nPadNum,XINPUT_GAMEPAD_DPAD_UP) == true || GetStick(nPadNum,INPUTTYPE_TRIGGER).y == CONVSTICK_UP)
 	{
 		PlaySound(SOUND_LABEL_SE_PAUSE_SELECTION);
 
@@ -354,7 +356,7 @@ void SelectUpPause(int nPadNum)
 void SelectDownPause(int nPadNum)
 {
 	//キーボードの下方向キー　か　ゲームパッドの　十字下ボタン　が押された
-	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(nPadNum, XINPUT_GAMEPAD_DPAD_DOWN) == true)
+	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(nPadNum, XINPUT_GAMEPAD_DPAD_DOWN) == true || GetStick(nPadNum, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN)
 	{
 		PlaySound(SOUND_LABEL_SE_PAUSE_SELECTION);
 
