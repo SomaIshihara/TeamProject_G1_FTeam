@@ -34,11 +34,12 @@ struct Player_HDR
 	D3DXVECTOR3 moveV0;		//初期移動量
 	D3DXVECTOR3 rot;		//向き
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
+	int nHipDropWait;		//ヒップドロップの「開始・着地」硬直カウンター
+	int HipDropPower;
 	bool bJump;				//ジャンプしているかどうか
 	bool bHipDrop;			//ヒップドロップしているかどうか
 	bool bHipDropSpin;		//ヒップドロップのスピンしたかどうか
-	int nHipDropWait;		//ヒップドロップの「開始・着地」硬直カウンター
-	int HipDropPower;
+	bool bGoal;				//ゴールしたか
 
 	//パラメータ類
 	ANIMAL animal;			//使用している動物

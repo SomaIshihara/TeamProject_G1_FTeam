@@ -8,7 +8,7 @@
 #include "HDRgame.h"
 #include "HDR_player.h"
 #include "model.h"
-#include "input.h"
+#include "conversioninput.h"
 #include "debugproc.h"
 #include "camera.h"
 #include <assert.h>
@@ -22,6 +22,7 @@
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)				//ヒップドロップスピンの回転値
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 #define PLAYER_HIPSPIN_WAIT		(20)				//ヒップドロップスピンが終わって急降下するまでの時間
+#define PLAYER_MOVE_SPEED	(5.0f)				//普通に移動するときの移動量
 
 //ヒップドロップレベルに必要な高さ（その値以上次のレベルの値以下）
 #define HIPDROP_HEIGHT_LEVEL_1		(10)				//レベル1
@@ -35,14 +36,24 @@
 #define HIPDROP_POWER_LEVEL_3		(300)				//レベル3（300ダメージ）
 #define HIPDROP_POWER_LEVEL_MAX		(500)				//レベルMAX（500ダメージ）
 
+//向き
+#define ROT_WA	(0.75f * D3DX_PI)	//左上
+#define ROT_WD	(-0.75f * D3DX_PI)	//右上
+#define ROT_SA	(0.25f * D3DX_PI)	//左下
+#define ROT_SD	(-0.25f * D3DX_PI)	//右下
+#define ROT_W	(-1.0f * D3DX_PI)	//上
+#define ROT_A	(0.5f * D3DX_PI)	//左
+#define ROT_S	(0.0f * D3DX_PI)	//下
+#define ROT_D	(-0.5f * D3DX_PI)	//右
+
 //グローバル変数
 Player_HDR g_aPlayerHDR[MAX_USE_GAMEPAD];
 int g_nIdxShadow_HDR = -1;
 bool g_buse[MAX_USE_GAMEPAD] = { false };
 
 //プロトタイプ宣言
-void ControllKeyboardPlayer_HDR(int nPlayerNum);
-void ControllGPadPlayer_HDR(int nPlayerNum);
+void ControllPlayer_HDR(int nPlayerNum);
+void MovePlayer(int nPadNum);
 
 void JumpPlayer_HDR(int nJumpPlayer);			//ジャンプの設定処理
 void HipDropPlayer_HDR(int nHipDropPlayer);		//ヒップドロップの設定処理
@@ -78,10 +89,11 @@ void InitPlayer_HDR(void)
 		g_aPlayerHDR[nCntPlayer].moveV0 = ZERO_SET;
 		g_aPlayerHDR[nCntPlayer].rot = ZERO_SET;
 		g_aPlayerHDR[nCntPlayer].jumpTime = 0;
+		g_aPlayerHDR[nCntPlayer].nHipDropWait = 0;
 		g_aPlayerHDR[nCntPlayer].bJump = false;
 		g_aPlayerHDR[nCntPlayer].bHipDrop = false;
 		g_aPlayerHDR[nCntPlayer].bHipDropSpin = false;
-		g_aPlayerHDR[nCntPlayer].nHipDropWait = 0;
+		g_aPlayerHDR[nCntPlayer].bGoal = false;
 		g_buse[nCntPlayer] = false;
 
 		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
@@ -131,13 +143,9 @@ void UpdatePlayer_HDR(void)
 			{
 				g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
 			}
-			else
-			{
-				ControllKeyboardPlayer_HDR(nCntPlayer);
-			}
 
 			//各プレイヤーの操作
-			ControllGPadPlayer_HDR(nCntPlayer);
+			ControllPlayer_HDR(nCntPlayer);
 		}
 
 		//ヒップドロップスピンの硬直中
@@ -163,14 +171,18 @@ void UpdatePlayer_HDR(void)
 			g_aPlayerHDR[nCntPlayer].bHipDrop = false;
 
 			if (g_buse[nCntPlayer] == false)
-			{
+			{//ゴール判定
+				g_aPlayerHDR[nCntPlayer].bGoal = true;
 				UpdateRank(nCntPlayer);
 				g_buse[nCntPlayer] = true;
 			}
 		}
 
-		//ブロックの当たり判定
-		CollisionBlock(nCntPlayer);
+		//ブロックの当たり判定（一旦ゴール後は当たり判定なし）
+		if (g_aPlayerHDR[nCntPlayer].bGoal == false)
+		{
+			CollisionBlock(nCntPlayer);
+		}
 	}
 }
 
@@ -326,49 +338,118 @@ void DrawPlayer_HDR(void)
 }
 
 //========================
-//プレイヤーのキーボード操作
+//プレイヤーのゲームパッド操作
 //========================
-void ControllKeyboardPlayer_HDR(int nPlayerNum)
+void ControllPlayer_HDR(int nPlayerNum)
 {
 	//ヒップドロップ中でなければ操作できる
 	if (g_aPlayerHDR[nPlayerNum].bHipDrop == false)
 	{
 		//ジャンプ・ヒップドロップ
-		if (GetKeyboardTrigger(DIK_RETURN) == true && g_aPlayerHDR[nPlayerNum].bHipDrop == false)
+		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true && g_aPlayerHDR[nPlayerNum].bHipDrop == false)
 		{
-			if (g_aPlayerHDR[nPlayerNum].bJump)
-			{
+			if (g_aPlayerHDR[nPlayerNum].bJump && g_aPlayerHDR[nPlayerNum].bGoal == false)
+			{//ジャンプ中であり、ゴールしていない
 				HipDropPlayer_HDR(nPlayerNum);		//プレイヤーのヒップドロップ処理
 			}
-			else
-			{
+			else if (g_aPlayerHDR[nPlayerNum].bJump == false)
+			{//ジャンプしていない
 				JumpPlayer_HDR(nPlayerNum);			//プレイヤーのジャンプ処理
 			}
 		}
+	}
+
+	//ゴール後の煽り行為
+	if (g_aPlayerHDR[nPlayerNum].bGoal == true)
+	{
+		MovePlayer(nPlayerNum);
 	}
 }
 
 //========================
-//プレイヤーのゲームパッド操作
+//プレイヤーが普通に移動する処理
 //========================
-void ControllGPadPlayer_HDR(int nPlayerNum)
+void MovePlayer(int nPadNum)
 {
-	//ヒップドロップ中でなければ操作できる
-	if (g_aPlayerHDR[nPlayerNum].bHipDrop == false)
-	{
-		//ジャンプ・ヒップドロップ
-		if (GetGamepadTrigger(nPlayerNum, XINPUT_GAMEPAD_A) == true && g_aPlayerHDR[nPlayerNum].bHipDrop == false)
+	//モデル移動
+	//ゲームパッド部
+	if (GetLStickX(nPadNum) > 0 || GetLStickX(nPadNum) < 0)
+	{//X方向のスティックが傾いている
+		if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
+		{//Y方向のスティックも傾いている
+			g_aPlayerHDR[nPadNum].rot.y = atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum));
+			g_aPlayerHDR[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * PLAYER_MOVE_SPEED;
+			g_aPlayerHDR[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * PLAYER_MOVE_SPEED;
+		}
+		else
 		{
-			if (g_aPlayerHDR[nPlayerNum].bJump)
-			{
-				HipDropPlayer_HDR(nPlayerNum);		//プレイヤーのヒップドロップ処理
-			}
-			else
-			{
-				JumpPlayer_HDR(nPlayerNum);			//プレイヤーのジャンプ処理
-			}
+			g_aPlayerHDR[nPadNum].rot.y = atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum));
+			g_aPlayerHDR[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * PLAYER_MOVE_SPEED;
 		}
 	}
+	else if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
+	{//Y方向のスティックだけ傾いている
+		g_aPlayerHDR[nPadNum].rot.y = atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum));
+		g_aPlayerHDR[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * PLAYER_MOVE_SPEED;
+	}
+	//キーボード部
+	else if (GetStick(nPadNum,INPUTTYPE_PRESS).y == CONVSTICK_UP)
+	{
+		if (GetStick(nPadNum, INPUTTYPE_PRESS).x == CONVSTICK_LEFT)
+		{
+			g_aPlayerHDR[nPadNum].rot.y = ROT_WA;
+		}
+		else if (GetStick(nPadNum, INPUTTYPE_PRESS).x == CONVSTICK_RIGHT)
+		{
+			g_aPlayerHDR[nPadNum].rot.y = ROT_WD;
+		}
+		else
+		{
+			g_aPlayerHDR[nPadNum].rot.y = ROT_W;
+		}
+	}
+	else if (GetStick(nPadNum, INPUTTYPE_PRESS).y == CONVSTICK_DOWN)
+	{
+		if (GetStick(nPadNum, INPUTTYPE_PRESS).x == CONVSTICK_LEFT)
+		{
+			g_aPlayerHDR[nPadNum].rot.y = ROT_SA;
+		}
+		else if (GetStick(nPadNum, INPUTTYPE_PRESS).x == CONVSTICK_RIGHT)
+		{
+			g_aPlayerHDR[nPadNum].rot.y = ROT_SD;
+		}
+		else
+		{
+			g_aPlayerHDR[nPadNum].rot.y = ROT_S;
+		}
+	}
+	else if (GetStick(nPadNum, INPUTTYPE_PRESS).x == CONVSTICK_LEFT)
+	{
+		g_aPlayerHDR[nPadNum].rot.y = ROT_A;
+	}
+	else if (GetStick(nPadNum, INPUTTYPE_PRESS).x == CONVSTICK_RIGHT)
+	{
+		g_aPlayerHDR[nPadNum].rot.y = ROT_D;
+	}
+
+	//キーが押されたら移動
+	if (GetStick(nPadNum, INPUTTYPE_PRESS).x != CONVSTICK_NEUTRAL || GetStick(nPadNum, INPUTTYPE_PRESS).y != CONVSTICK_NEUTRAL)
+	{
+		g_aPlayerHDR[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerHDR[nPadNum].rot.y + D3DX_PI))) * PLAYER_MOVE_SPEED;
+		g_aPlayerHDR[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerHDR[nPadNum].rot.y + D3DX_PI))) * PLAYER_MOVE_SPEED;
+	}
+	else
+	{//そうでないので終了
+		return;
+	}
+
+	//ボタン操作に応じてプレイヤー・カメラ視点・注視点移動
+	g_aPlayerHDR[nPadNum].pos.x += g_aPlayerHDR[nPadNum].move.x;
+	g_aPlayerHDR[nPadNum].pos.z += g_aPlayerHDR[nPadNum].move.z;
+
+	//移動量消す
+	g_aPlayerHDR[nPadNum].move.x = 0.0f;
+	g_aPlayerHDR[nPadNum].move.z = 0.0f;
 }
 
 //========================

@@ -16,7 +16,6 @@ Author:平澤詩苑
 #include "hdr_player.h"
 #include "model.h"
 #include "light.h"
-#include "timer.h"
 #include "sound.h"
 #include "bg.h"
 #include "block.h"
@@ -58,10 +57,8 @@ void InitHDRGame(void)
 	InitMeshfield();
 	InitMeshDome();
 	InitFence();
-	InitTime();						// タイマーの初期化処理
 	InitRank();
 
-	SetTime(LIMIT_TIMER);			// タイマーの設定処理
 
 	g_bPause_HDR = false;				// ポーズの初期化
 	g_bDisconnectPlayer_HDR = false;	//正常にコントローラーが接続されている状態とする
@@ -92,7 +89,6 @@ void UninitHDRGame(void)
 	UninitRank();
 
 	UninitCameraFrame();	// 画面分割の枠終了処理
-	UninitTime();			// タイマーの終了処理（ここは順番は問わない）
 
 	//ゲームBGM停止
 	StopSound(SOUND_LABEL_BGM_GAME);
@@ -113,7 +109,6 @@ void UpdateHDRGame(void)
 		if (*GetHDR_Ready() == HDR_Ready_OK)
 		{
 			UpdateLight();			// ライトの更新処理
-			UpdateTime(MODE_RaceGAME);			// タイマーの更新処理
 			UpdateBlock();			// ブロックの更新処理
 			UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
 
@@ -154,7 +149,6 @@ void UpdateHDRGame(void)
 			if (GetKeyboardTrigger(DIK_RIGHT))
 			{
 				UpdateLight();		// ライトの更新処理
-				UpdateTime(MODE_RaceGAME);		//タイマーの更新処理
 			}
 		}
 	}
@@ -204,7 +198,6 @@ void DrawHDRGame(void)
 		//ゲーム内オブジェクトの描画処理
 		SetHDRCamera(nCntCamera);	// カメラの設定処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
-		DrawTime();					//タイマーの描画処理
 		DrawBlock();				// ブロックの描画処理
 		DrawPlayer_HDR();
 		DrawMeshfield();
@@ -212,7 +205,7 @@ void DrawHDRGame(void)
 		DrawFence();
 		DrawRank();
 
-									//ポーズがON
+		//ポーズがON
 		if (g_bPause_HDR == true && g_bPhotoMode_HDR == false)
 		{
 			DrawPause();		//ポーズ画面描画処理
