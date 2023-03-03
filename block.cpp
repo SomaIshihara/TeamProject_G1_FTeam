@@ -80,6 +80,12 @@ void InitBlock(void)
 	{
 		int nCount = 0;
 
+		//‰Šú‰»
+		for (int nCntBlockType = 0; nCntBlockType < BLOCKTYPE_MAX; nCntBlockType++)
+		{
+			g_aUseBlockNum[nCntBlockType] = c_aBlockNum[nCntBlockType];
+		}
+
 		for (int nCntBlock = 0 + (MAX_BLOCK * nCntPlayer); nCntBlock < MAX_BLOCK * MAX_PLAYER; nCntBlock++)
 		{
 			g_Block[nCntBlock].pos = D3DXVECTOR3(225.0f - 150 * nCntPlayer, 20.0f + nCount * 80, 0.0f);

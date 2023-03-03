@@ -270,11 +270,8 @@ void UpdatePlayer(void)
 				}
 			}
 
-			//回転
-			if (GetButton(nCntPlayer, INPUTTYPE_PRESS, BUTTON_X) == false)
-			{//Xボタンが押されていない
-				RotatePlayer(nCntPlayer);
-			}
+			//回転（チャージ中でも回転可にした）
+			RotatePlayer(nCntPlayer);
 		}
 
 		//使用されているかにかかわらず行う
@@ -692,7 +689,7 @@ void ControllPlayer(int nPlayerNum)
 				JumpPlayer(nPlayerNum);			//プレイヤーのジャンプ処理
 			}
 
-			MovePlayer(nPlayerNum);
+			//MovePlayer(nPlayerNum);
 		}
 	}
 	//ヒップドロップ中
