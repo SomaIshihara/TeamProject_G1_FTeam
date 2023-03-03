@@ -49,7 +49,6 @@
 #define PLAYER_WEIGHT			(50)		//質量
 #define PLAYER_POWER_ADD		(0.025f)	//移動の強さの増加値
 #define DUMP_COEF				(0.04f)		//減衰係数
-#define DEBUG_PLAYER_MOVE_SPEED	(5.0f)		//[デバッグ用]普通に移動するときの移動量
 #define DECIMAL_PLACE			(1)			//小数点第何位まで移動していることにするか
 #define HIPDROP_RADIUS			(60.0f)		//ヒップドロップ判定範囲
 #define REBOUND_RATIO			(0.15f)		//当たった後の自分の分の移動量割合
@@ -72,14 +71,10 @@
 #define PLAYER_SIZE_DEPTH		(20.0f)
 
 //向き
-#define ROT_WA	(-0.75f * D3DX_PI)	//左上
-#define ROT_WD	(0.75f * D3DX_PI)	//右上
-#define ROT_SA	(-0.25f * D3DX_PI)	//左下
-#define ROT_SD	(0.25f * D3DX_PI)	//右下
-#define ROT_W	(1.0f * D3DX_PI)	//上
-#define ROT_A	(-0.5f * D3DX_PI)	//左
-#define ROT_S	(0.0f * D3DX_PI)	//下
-#define ROT_D	(0.5f * D3DX_PI)	//右
+#define ROT_P3	(-0.75f * D3DX_PI)	//左上
+#define ROT_P4	(0.75f * D3DX_PI)	//右上
+#define ROT_P1	(-0.25f * D3DX_PI)	//左下
+#define ROT_P2	(0.25f * D3DX_PI)	//右下
 
 //プロト
 void ControllPlayer(int nPlayerNum);
@@ -110,10 +105,10 @@ Player *g_pNotMove[MAX_USE_GAMEPAD];	//移動していないプレイヤー検知用ポインタ
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 {
-	{ D3DXVECTOR3(-50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,ROT_SA,0.0f) },
-	{ D3DXVECTOR3(50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,ROT_SD,0.0f) },
-	{ D3DXVECTOR3(-50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_WA,0.0f) },
-	{ D3DXVECTOR3(50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_WD,0.0f) },
+	{ D3DXVECTOR3(-50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,ROT_P1,0.0f) },
+	{ D3DXVECTOR3(50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,ROT_P2,0.0f) },
+	{ D3DXVECTOR3(-50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_P3,0.0f) },
+	{ D3DXVECTOR3(50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_P4,0.0f) },
 };
 
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
@@ -688,8 +683,6 @@ void ControllPlayer(int nPlayerNum)
 			{
 				JumpPlayer(nPlayerNum);			//プレイヤーのジャンプ処理
 			}
-
-			//MovePlayer(nPlayerNum);
 		}
 	}
 	//ヒップドロップ中
@@ -715,90 +708,6 @@ void ControllPlayer(int nPlayerNum)
 			g_aPlayerPvP[nPlayerNum].nHipDropWait--;		//硬直時間を減らしていく
 		}
 	}
-}
-
-//========================
-//[デバッグ用]プレイヤーの移動処理
-//========================
-void MovePlayer(int nPadNum)
-{
-	//モデル移動
-	//ゲームパッド部
-	if (GetLStickX(nPadNum) > 0 || GetLStickX(nPadNum) < 0)
-	{//X方向のスティックが傾いている
-		if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
-		{//Y方向のスティックも傾いている
-			g_aPlayerPvP[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
-			g_aPlayerPvP[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
-		}
-		else
-		{
-			g_aPlayerPvP[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
-		}
-	}
-	else if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
-	{//Y方向のスティックだけ傾いている
-		g_aPlayerPvP[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * DEBUG_PLAYER_MOVE_SPEED;
-	}
-	//キーボード部
-	else if (GetKeyboardPress(DIK_W) == true)
-	{
-		if (GetKeyboardPress(DIK_A) == true)
-		{
-			g_aPlayerPvP[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			g_aPlayerPvP[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		}
-		else if (GetKeyboardPress(DIK_D) == true)
-		{
-			g_aPlayerPvP[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			g_aPlayerPvP[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		}
-		else
-		{
-			g_aPlayerPvP[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			g_aPlayerPvP[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		}
-	}
-	else if (GetKeyboardPress(DIK_S) == true)
-	{
-		if (GetKeyboardPress(DIK_A) == true)
-		{
-			g_aPlayerPvP[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			g_aPlayerPvP[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		}
-		else if (GetKeyboardPress(DIK_D) == true)
-		{
-			g_aPlayerPvP[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			g_aPlayerPvP[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		}
-		else
-		{
-			g_aPlayerPvP[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-			g_aPlayerPvP[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		}
-	}
-	else if (GetKeyboardPress(DIK_A) == true)
-	{
-		g_aPlayerPvP[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		g_aPlayerPvP[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-	}
-	else if (GetKeyboardPress(DIK_D) == true)
-	{
-		g_aPlayerPvP[nPadNum].move.x = sinf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-		g_aPlayerPvP[nPadNum].move.z = cosf(FIX_ROT((g_aPlayerPvP[nPadNum].rot.y + D3DX_PI))) * DEBUG_PLAYER_MOVE_SPEED;
-	}
-	else
-	{
-		return;
-	}
-
-	//ボタン操作に応じてプレイヤー・カメラ視点・注視点移動
-	g_aPlayerPvP[nPadNum].pos.x += g_aPlayerPvP[nPadNum].move.x;
-	g_aPlayerPvP[nPadNum].pos.z += g_aPlayerPvP[nPadNum].move.z;
-
-	//移動量消す
-	g_aPlayerPvP[nPadNum].move.x = 0.0f;
-	g_aPlayerPvP[nPadNum].move.z = 0.0f;
 }
 
 //========================
@@ -835,39 +744,39 @@ void RotatePlayer(int nPadNum)
 		{
 			if (GetKeyboardPress(DIK_A) == true)
 			{
-				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WA);
+				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_P3);
 			}
 			else if (GetKeyboardPress(DIK_D) == true)
 			{
-				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_WD);
+				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_P4);
 			}
 			else
 			{
-				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_W);
+				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + (1.0f * D3DX_PI));
 			}
 		}
 		else if (GetKeyboardPress(DIK_S) == true)
 		{
 			if (GetKeyboardPress(DIK_A) == true)
 			{
-				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SA);
+				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_P1);
 			}
 			else if (GetKeyboardPress(DIK_D) == true)
 			{
-				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_SD);
+				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_P2);
 			}
 			else
 			{
-				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_S);
+				g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y);
 			}
 		}
 		else if (GetKeyboardPress(DIK_A) == true)
 		{
-			g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_A);
+			g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + (-0.5f * D3DX_PI));
 		}
 		else if (GetKeyboardPress(DIK_D) == true)
 		{
-			g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + ROT_D);
+			g_aPlayerPvP[nPadNum].rot.y = -FIX_ROT(GetCamera()->rot.y + (0.5f * D3DX_PI));
 		}
 		else
 		{
