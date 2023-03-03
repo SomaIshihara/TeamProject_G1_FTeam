@@ -10,6 +10,14 @@ Author:ì°å¥ó¥ãP
 #include "main.h"
 #include "time.h"
 
+typedef enum
+{
+	GAMESTATE_NONE = 0,
+	GAMESTATE_NORMAL,
+	GAMESTATE_END,
+	GAMESTATE_MAX
+}GAMESTATE;
+
 //ÉvÉçÉg
 void InitHDRGame(void);
 void UninitHDRGame(void);
@@ -21,5 +29,6 @@ int GetUseControllerNum_HDR(void);
 void SetEnablePause_HDR(bool pause);
 bool CheckUseController_HDR(CHECKMODE mode);
 void ChangeNumCamera_HDR(void);
+void SetGameState(GAMESTATE state, int nCounter);
 
 #endif

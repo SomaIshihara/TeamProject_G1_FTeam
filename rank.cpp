@@ -7,6 +7,7 @@
 #include "rank.h"
 #include "color.h"
 #include "fade.h"
+#include "HDRgame.h"
 
 #define POS_X (200)
 #define POS_Y (100)
@@ -124,10 +125,10 @@ void UpdateRank(int nPlayer)
 
 			g_Rank = (RANK)(g_Rank + 1);
 
-		/*	if (g_Rank == RANK_MAX)
+			if (g_Rank == RANK_MAX)
 			{
-				SetFade(MODE_RESULT);
-			}*/
+				SetGameState(GAMESTATE_END,120);
+			}
 		}
 	}
 
