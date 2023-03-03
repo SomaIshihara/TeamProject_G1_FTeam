@@ -26,11 +26,13 @@ Author:平澤詩苑
 #include "rank.h"
 
 //グローバル変数宣言
+GAMESTATE g_gameState = GAMESTATE_NONE;
 bool g_bPause_HDR = false;				// ポーズ
 int  g_nUseContNum_HDR;					// 使用しているコントローラーの数
 bool g_abUsePlayer_HDR[MAX_USE_GAMEPAD];// 使用しているプレイヤー（接続チェックに使用）
 bool g_bDisconnectPlayer_HDR;			// 接続が切れたことを確認する
 int  g_numGamePad_HDR;
+int  g_nCounterGameState;
 CHECKMODE	g_CheckMode_HDR;
 NumCamera	g_NumCamera_HDR;
 bool		g_bPhotoMode_HDR;			// フォトモード切替		true:ポーズ画面非表示	false:ボーズ画面表示
@@ -164,6 +166,28 @@ void UpdateHDRGame(void)
 	if (GetKeyboardTrigger(DIK_F9))
 	{
 		g_bPhotoMode_HDR = g_bPhotoMode_HDR ? false : true;
+	}
+
+	switch (g_gameState)
+	{
+	case GAMESTATE_NORMAL:					//通常状態
+		break;
+	case GAMESTATE_END:						//終了状態
+		g_nCounterGameState--;
+
+		FADE pFade;		//フェードへのポインタ
+		pFade = GetFade();
+
+		if (pFade == FADE_NONE)
+		{
+			if (g_nCounterGameState <= 0)
+			{
+				g_gameState = GAMESTATE_NONE;	//何もしていない状態に設定
+
+				SetFade(MODE_RESULT);
+			}
+		}
+		break;
 	}
 }
 
@@ -310,4 +334,12 @@ void ChangeNumCamera_HDR(void)
 		//カメラの種類を設定
 		Set_NumHDRCamera(g_NumCamera_HDR);
 	}
+}
+//================================================================
+//ゲームの状態の設定
+//================================================================
+void SetGameState(GAMESTATE state, int nCounter)
+{
+	g_gameState = state;
+	g_nCounterGameState = nCounter;
 }
