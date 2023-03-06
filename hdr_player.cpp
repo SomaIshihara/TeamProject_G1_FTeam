@@ -62,10 +62,10 @@ void HipSpinPlayer_HDR(int nHipSpinPlayer);		//ヒップスピンの処理
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 {
-	{ D3DXVECTOR3(-225.0f,8020.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
-	{ D3DXVECTOR3(-75.0f,8020.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
-	{ D3DXVECTOR3(75.0f,8020.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
-	{ D3DXVECTOR3(225.0f,8020.0f,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(-225.0f,MAX_BLOCK * COLLISION_SIZE_Y ,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(-75.0f,MAX_BLOCK * COLLISION_SIZE_Y ,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(75.0f,MAX_BLOCK * COLLISION_SIZE_Y ,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
+	{ D3DXVECTOR3(225.0f,MAX_BLOCK * COLLISION_SIZE_Y ,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
 };
 
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
@@ -76,30 +76,28 @@ const bool c_aAIMove[MAX_USE_GAMEPAD] = { false,true,true,true };
 //========================
 void InitPlayer_HDR(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
+	//デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	Player_HDR *pPlayer = &g_aPlayerHDR[0];
 
-												//変数初期化
-	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+	//変数初期化
+	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++, pPlayer++)
 	{
 		//変数初期化
-		g_aPlayerHDR[nCntPlayer].pos = c_aPosRot[nCntPlayer][0];
-		g_aPlayerHDR[nCntPlayer].pos.y = MAX_BLOCK * COLLISION_SIZE_Y;	//一番上のブロックの位置に設定
-		g_aPlayerHDR[nCntPlayer].posOld = g_aPlayerHDR[nCntPlayer].pos;
-		g_aPlayerHDR[nCntPlayer].move = ZERO_SET;
-		g_aPlayerHDR[nCntPlayer].moveV0 = ZERO_SET;
-		g_aPlayerHDR[nCntPlayer].rot = ZERO_SET;
-		g_aPlayerHDR[nCntPlayer].jumpTime = 0;
-		g_aPlayerHDR[nCntPlayer].nHipDropWait = 0;
-		g_aPlayerHDR[nCntPlayer].bJump = false;
-		g_aPlayerHDR[nCntPlayer].bHipDrop = false;
-		g_aPlayerHDR[nCntPlayer].bHipDropSpin = false;
-		g_aPlayerHDR[nCntPlayer].bGoal = false;
+		pPlayer->pos = pPlayer->posOld = c_aPosRot[nCntPlayer][0];
+		pPlayer->move = pPlayer->moveV0 = pPlayer->rot = ZERO_SET;
+		pPlayer->jumpTime = pPlayer->nHipDropWait = 0;
+		pPlayer->bJump = false;
+		pPlayer->bHipDrop = false;
+		pPlayer->bHipDropSpin = false;
+		pPlayer->bGoal = false;
+		pPlayer->nRank = RANK_4TH;
 		g_buse[nCntPlayer] = false;
 
-		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
-
-		g_aPlayerHDR[nCntPlayer].model = GetAnimal(g_aPlayerHDR[nCntPlayer].animal);
-		g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
+		pPlayer->animal = ANIMAL_WILDBOAR;
+		
+		pPlayer->model = GetAnimal(pPlayer->animal);
+		pPlayer->bUsePlayer = GetUseController_HDR(nCntPlayer);
 	}
 
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する

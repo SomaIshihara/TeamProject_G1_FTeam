@@ -9,6 +9,9 @@
 
 #include "main.h"
 
+//マクロ定義
+#define NUM_DUPLICATION	(1)		//重複数
+
 //*****************************************************************************
 // サウンド一覧
 //*****************************************************************************
@@ -41,7 +44,7 @@ typedef enum
 //*****************************************************************************
 HRESULT InitSound(HWND hWnd);
 void UninitSound(void);
-HRESULT PlaySound(SOUND_LABEL label);
+HRESULT PlaySound(SOUND_LABEL label/*, int nNumSound*/);
 void StopSound(SOUND_LABEL label);
 void StopSound(void);
 void PauseSound(SOUND_LABEL label);

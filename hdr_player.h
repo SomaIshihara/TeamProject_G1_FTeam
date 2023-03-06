@@ -29,7 +29,7 @@ struct Player_HDR
 	//位置類
 	D3DXVECTOR3 pos;		//位置
 	D3DXVECTOR3 posOld;		//前回の位置
-	D3DXVECTOR3 posOld_Coll;		//前回の位置
+	D3DXVECTOR3 posOld_Coll;//前回の位置
 	D3DXVECTOR3 move;		//移動量
 	D3DXVECTOR3 moveV0;		//初期移動量
 	D3DXVECTOR3 rot;		//向き
@@ -40,6 +40,7 @@ struct Player_HDR
 	bool bHipDrop;			//ヒップドロップしているかどうか
 	bool bHipDropSpin;		//ヒップドロップのスピンしたかどうか
 	bool bGoal;				//ゴールしたか
+	int nRank;				//順位
 
 	//パラメータ類
 	ANIMAL animal;			//使用している動物
