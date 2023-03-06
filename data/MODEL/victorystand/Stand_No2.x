@@ -177,7 +177,7 @@ Mesh {
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
    TextureFilename {
-    "C:\\Users\\student\\Source\\Repos\\TeamProject_G1_FTeam\\data\\TEXTURE\\No2.png";
+    "data\\TEXTURE\\No2.png";
    }
   }
  }

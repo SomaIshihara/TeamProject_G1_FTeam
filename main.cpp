@@ -380,7 +380,7 @@ void SetFullScreen(bool bFullScreen)
 	int nScrSizeX = GetDeviceCaps(hDC, HORZRES);	// デスクトップの画面サイズX
 	int nScrSizeY = GetDeviceCaps(hDC, VERTRES);	// デスクトップの画面サイズY
 
-	ReleaseDC(GetDesktopWindow(), hDC);// デスクトップのハンドルを手放す
+	ReleaseDC(GetDesktopWindow(), hDC);				// デスクトップのハンドルを手放す
 
 	if (bFullScreen)
 	{// 全画面フラグが真の時、
@@ -550,12 +550,6 @@ void Update(void)
 
 	//フェードの更新処理
 	UpdateFade();
-
-	//ウィンドウボタンが押されたら、タスクバーを表示する
-	if (GetKeyboardTrigger(DIK_HOME))
-	{
-		g_bShowTaskbar = false;
-	}
 
 	//タスクバーの表示 / 非表示
 	ShowTaskBar(g_bShowTaskbar);
