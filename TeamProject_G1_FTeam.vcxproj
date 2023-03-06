@@ -201,6 +201,7 @@
     <ClCompile Include="resultPlayer.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="select_game.cpp" />
+    <ClCompile Include="SelPlayer.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="title.cpp" />
@@ -255,6 +256,7 @@
     <ClInclude Include="resultPlayer.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="select_game.h" />
+    <ClInclude Include="SelPlayer.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="title.h" />
