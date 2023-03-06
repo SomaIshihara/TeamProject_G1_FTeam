@@ -11,6 +11,7 @@
 //マクロ
 #define REFRECT_WEAK	(2.3f)	//反射を弱める・強めるのに使う
 #define REFRECT_MAX		(50.0f)	//反射量最大値
+#define CHARGE_DOWN		(0.8f)	//チャージゲージ減少量
 
 //当たり判定範囲構造体
 typedef struct
@@ -572,7 +573,11 @@ bool HitPlayerToPlayer(Player *pATKPlayer, Player *pHitPlayer, D3DXVECTOR3 collP
 	bool bMove = false;
 	if (fabsf(pATKPlayer->move.x) > 0.0f || fabsf(pATKPlayer->move.z) > 0.0f)
 	{//動いてる
+		//そのフレームで当たったプレイヤーにする
 		pATKPlayer->nFrameAtkPlayer = pHitPlayer->nPlayerNum;
+
+		//チャージゲージ減少と最後に当たったプレイヤーにする
+		pHitPlayer->moveGauge *= CHARGE_DOWN;
 		pHitPlayer->nLastHitPlayer = pATKPlayer->nPlayerNum;
 
 		bMove = true;

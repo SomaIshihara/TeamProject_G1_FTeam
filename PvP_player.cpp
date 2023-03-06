@@ -666,10 +666,6 @@ void ControllPlayer(int nPlayerNum)
 				DashPlayer(nPlayerNum);
 			}
 		}
-		else
-		{
-			g_aPlayerPvP[nPlayerNum].moveGauge = 0;
-		}
 
 		//ジャンプ・ヒップドロップ
 		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)

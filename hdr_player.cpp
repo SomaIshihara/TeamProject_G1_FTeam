@@ -22,7 +22,7 @@
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)				//ヒップドロップスピンの回転値
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 #define PLAYER_HIPSPIN_WAIT		(20)				//ヒップドロップスピンが終わって急降下するまでの時間
-#define PLAYER_MOVE_SPEED	(5.0f)				//普通に移動するときの移動量
+#define PLAYER_MOVE_SPEED		(5.0f)				//普通に移動するときの移動量
 
 //ヒップドロップレベルに必要な高さ（その値以上次のレベルの値以下）
 #define HIPDROP_HEIGHT_LEVEL_1		(10)				//レベル1
