@@ -53,6 +53,8 @@ struct Player_RESULT
 
 //プロトタイプ宣言
 void InitPlayer_RESULT(void);
+void InitResultPlayerType_GAMEMODE_PVP(Player_RESULT *pResPlayer);
+void InitResultPlayerType_GAMEMODE_HDR(Player_RESULT *pResPlayer);
 void UninitPlayer_RESULT(void);
 void UpdatePlayer_RESULT(void);
 void DrawPlayer_RESULT(void);

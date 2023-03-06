@@ -9,6 +9,7 @@ Author:平澤詩苑
 #include "color.h"
 #include "rank.h"
 #include "debugproc.h"
+#include "select_game.h"
 #include "conversioninput.h"
 #include "VictoryStand.h"
 #include "resultPlayer.h"
@@ -30,7 +31,7 @@ LPD3DXBUFFER				g_pBuffMatVictoryStand[NUM_VICTORYSTAND];		// マテリアルへのポイ
 DWORD						g_dwNumMatVictoryStand[NUM_VICTORYSTAND];		// マテリアルの数
 VictoryStand				g_VictoryStand[NUM_VICTORYSTAND];				// 表彰台の情報
 float						g_fLandPoint[NUM_VICTORYSTAND];					// 表彰台ごとの着地点を代入（同率を考慮して）
-int							g_RankStrage[RANK_MAX] = {2,2,3,3};
+int							g_RankStrage[RANK_MAX] = {};
 
 //表彰台のⅩファイル名
 const char *c_apVicStdFilePath[NUM_VICTORYSTAND] = {
@@ -48,18 +49,21 @@ void InitVictoryStand(void)
 	//着地点設定
 	SearchVictoryStand_Land_Pos();
 
-	//表彰台の情報初期化
-	for (int nCntVicStd = 0; nCntVicStd < NUM_VICTORYSTAND; nCntVicStd++)
-	{
-		//対象の表彰台のポインタ取得
-		VictoryStand *pVicStand = &g_VictoryStand[nCntVicStd];
+	//対象の表彰台のポインタ取得
+	VictoryStand *pVicStand = &g_VictoryStand[0];
 
-		pVicStand->pos = GetPlayer_RESULT()[nCntVicStd].pos;	// 位置初期化
-		pVicStand->pos.y = 0.0f;								// 高さ座標だけ０にする
-		pVicStand->rot = ZERO_SET;								// 向き初期化
-		pVicStand->bUse = true;									// 使われていないようにする
-		int nRank = pVicStand->nRank = 
-			g_RankStrage[nCntVicStd] = rand() % RANK_MAX;	// 順位を初期化
+	//リザルト用プレイヤーのポインタ取得
+	Player_RESULT *pResPlayer = GetPlayer_RESULT();
+
+	//表彰台の情報初期化
+	for (int nCntVicStd = 0; nCntVicStd < NUM_VICTORYSTAND; nCntVicStd++, pVicStand++, pResPlayer++)
+	{
+		pVicStand->pos = pResPlayer->pos;		// 位置初期化
+		pVicStand->pos.y = 0.0f;				// 高さ座標だけ０にする
+		pVicStand->rot = ZERO_SET;				// 向き初期化
+		pVicStand->bUse = true;					// 使われていないようにする
+		pVicStand->nRank = g_RankStrage[nCntVicStd] = 
+			pResPlayer->nRank;	// 順位を初期化
 	}
 
 	//順位をソートする
@@ -70,29 +74,67 @@ void InitVictoryStand(void)
 void RankingSort(void)
 {
 	//順位判定用
-	int nRanking[RANK_MAX] = { 0,0,0,0 };
+	int nSortRanking[RANK_MAX] = { 0,0,0,0 };
 
-	for (int nCntRank = 0; nCntRank < RANK_MAX; nCntRank++)
+	//ランキングをソートする
+	//比較される方の配列番号を回す
+	for (int nCntComp = 0; nCntComp < RANK_MAX; nCntComp++)
 	{
-		for (int j = 0; j < nCntRank; j++)
+		//比較する方の番号を回す
+		for (int nCntJudge = 0; nCntJudge < nCntComp; nCntJudge++)
 		{
-			if (g_VictoryStand[j].nRank < g_VictoryStand[nCntRank].nRank)
+			switch (GetSelGameMode())
 			{
-				nRanking[nCntRank]++;	//大きいほうの順位を下げる
+				//=========================================
+				//昇順にソートする
+				//=========================================
+			case SelGameMode_PVP:
+			{
+				//比較「される」方のポイントのほうが大きい
+				if (g_VictoryStand[nCntJudge].nRank < g_VictoryStand[nCntComp].nRank)
+				{
+					nSortRanking[nCntJudge]++;//比較するほうの順位を下げる
+				}
+
+				//比較「する」方のポイントのほうが大きい
+				else if (g_VictoryStand[nCntJudge].nRank > g_VictoryStand[nCntComp].nRank)
+				{
+					nSortRanking[nCntComp]++;//比較されるほうの順位を下げる
+				}
+			}
+				break;
+
+				//=========================================
+				//降順にソートする
+				//=========================================
+			case SelGameMode_HDR:
+			{
+				//比較「される」方のポイントのほうが大きい
+				if (g_VictoryStand[nCntJudge].nRank < g_VictoryStand[nCntComp].nRank)
+				{
+					nSortRanking[nCntComp]++;//比較されるほうの順位を下げる
+				}
+
+				//比較「する」方のポイントのほうが大きい
+				else if (g_VictoryStand[nCntJudge].nRank > g_VictoryStand[nCntComp].nRank)
+				{
+					nSortRanking[nCntJudge]++;//比較するほうの順位を下げる
+				}
+			}
+				break;
 			}
 
-			else if (g_VictoryStand[j].nRank > g_VictoryStand[nCntRank].nRank)
-			{
-				nRanking[j]++;		//＝のときは何もしない
-			}
+			//*****************************
+			// ＝＝ の時は何もしない
+			//*****************************
 		}
 	}
 
+	//ソートしたランキングを代入する
 	for (int nCntPay = 0; nCntPay < RANK_MAX; nCntPay++)
 	{
-		int nRank = nRanking[nCntPay];
-
-		g_VictoryStand[nCntPay].nRank = nRank;
+		//順位　＆　文章削減用変数　に代入
+		int nRank = g_VictoryStand[nCntPay].nRank = nSortRanking[nCntPay];
 		
 		// 着地点を初期化
 		g_VictoryStand[nCntPay].fLandheight = g_fLandPoint[nRank];	

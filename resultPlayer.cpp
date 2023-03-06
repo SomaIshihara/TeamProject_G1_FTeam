@@ -28,34 +28,69 @@ void InitPlayer_RESULT(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
 
+	Player_RESULT *pResPlayer = &g_ResultPlayer[0];
+
 	//変数初期化
-	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++, pResPlayer++)
 	{
 		//変数初期化
-		g_ResultPlayer[nCntPlayer].pos = 
-		g_ResultPlayer[nCntPlayer].posOld = c_ResultPlayerPos[nCntPlayer];
-		g_ResultPlayer[nCntPlayer].move = ZERO_SET;
-		g_ResultPlayer[nCntPlayer].rot = ZERO_SET;
-		g_ResultPlayer[nCntPlayer].bHipDrop = false;
-		g_ResultPlayer[nCntPlayer].bHipDropSpin = false;
-		g_ResultPlayer[nCntPlayer].nHipDropWait = 0;
-
-		//ゲームモードに応じて取得するものを変更
-		if (GetSelGameMode() == SelGameMode_PVP)
-		{
-			g_ResultPlayer[nCntPlayer].animal = GetPlayer()[nCntPlayer].animal;			//プレイヤーのモデルを取得
-		}
-		else if (GetSelGameMode() == SelGameMode_HDR)
-		{
-			g_ResultPlayer[nCntPlayer].animal = GetPlayer_HDR()[nCntPlayer].animal;
-		}
-
-		g_ResultPlayer[nCntPlayer].nRank = -1;
+		pResPlayer->pos = 
+		pResPlayer->posOld = c_ResultPlayerPos[nCntPlayer];
+		pResPlayer->move = ZERO_SET;
+		pResPlayer->rot = ZERO_SET;
+		pResPlayer->bHipDrop = false;
+		pResPlayer->bHipDropSpin = false;
+		pResPlayer->nHipDropWait = 0;
 
 		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 		{
 			g_ResultPlayer[nCntPlayer].animalInst[nCntParts] = {};
 		}
+	}
+
+	//ポインタを再取得
+	pResPlayer = &g_ResultPlayer[0];
+
+	//ゲームモードに応じて取得するものを変更
+	switch (GetSelGameMode())
+	{
+	case SelGameMode_PVP:	//ゲームモード「PVP」の場合の初期化処理
+		InitResultPlayerType_GAMEMODE_PVP(pResPlayer);
+		break;
+
+	case SelGameMode_HDR:	//ゲームモード「HDR」の場合の初期化処理
+		InitResultPlayerType_GAMEMODE_HDR(pResPlayer);
+		break;
+	}
+}
+
+//========================
+//ゲームモードが PVP のときの初期化処理
+//========================
+void InitResultPlayerType_GAMEMODE_PVP(Player_RESULT *pResPlayer)
+{
+	//PVP プレイヤーのポインタ取得
+	Player *pPVPPlayer = GetPlayer();
+
+	for (int nCntPVP = 0; nCntPVP < MAX_USE_GAMEPAD; nCntPVP++, pPVPPlayer++, pResPlayer++)
+	{
+		//プレイヤーのスコアを取得
+		pResPlayer->nRank = pPVPPlayer->nScore;
+	}
+}
+
+//========================
+//ゲームモードが HDR のときの初期化処理
+//========================
+void InitResultPlayerType_GAMEMODE_HDR(Player_RESULT *pResPlayer)
+{
+	//HDR のプレイヤー情報取得
+	Player_HDR *pHDRPlayer = GetPlayer_HDR();
+
+	for (int nCntHDR = 0; nCntHDR < MAX_USE_GAMEPAD; nCntHDR++, pResPlayer++, pHDRPlayer++)
+	{
+		//プレイヤーの順位を取得
+		pResPlayer->nRank = pHDRPlayer->nRank;
 	}
 }
 

@@ -27,9 +27,9 @@
 
 //マクロ定義
 #define WINDOW_NAME				"Compete Animal"		//ウィンドウに表示される名前
-#define PROC_SPEED				(1000 / MAX_FPS)			//実行速度
-#define FPS_SPEED				(500)						//FPS計測速度（単位:ミリ秒）
-#define SHOWCURSOR_COUNTER		(2)							//カーソル表示非表示が正常にされるカウンタ
+#define PROC_SPEED				(1000 / MAX_FPS)		//実行速度
+#define FPS_SPEED				(500)					//FPS計測速度（単位:ミリ秒）
+#define SHOWCURSOR_COUNTER		(2)						//カーソル表示非表示が正常にされるカウンタ
 
 //プロトタイプ宣言
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -48,7 +48,7 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_RESULT;		// 現在のモード
+MODE			g_mode = MODE_PvPGAME;		// 現在のモード
 #else
 MODE			g_mode = MODE_TITLE;		// 現在のモード
 #endif
@@ -56,7 +56,7 @@ MODE			g_mode = MODE_TITLE;		// 現在のモード
 HWND g_hWnd;
 bool g_bShowCursor = true;
 bool g_bDebug = true;
-bool g_bFullScreen = true;
+bool g_bFullScreen = false;
 bool g_bShowTaskbar = true;
 
 //========================
