@@ -109,6 +109,12 @@
     <Filter Include="ソース ファイル\Game\Game_PvP\UI">
       <UniqueIdentifier>{33384698-b282-4e7c-b56e-316f6d94eef4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\SelectPlayer">
+      <UniqueIdentifier>{81df2eb6-b753-48ee-8bb3-c29d063660f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\SelPlayer">
+      <UniqueIdentifier>{7da7191e-fcdc-4891-bde8-5c22976b7ebb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -263,6 +269,9 @@
     </ClCompile>
     <ClCompile Include="VictoryStand.cpp">
       <Filter>ソース ファイル\Result</Filter>
+    </ClCompile>
+    <ClCompile Include="SelPlayer.cpp">
+      <Filter>ソース ファイル\SelectPlayer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -421,6 +430,9 @@
     </ClInclude>
     <ClInclude Include="rank.h">
       <Filter>ヘッダー ファイル\Result</Filter>
+    </ClInclude>
+    <ClInclude Include="SelPlayer.h">
+      <Filter>ヘッダー ファイル\SelPlayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
