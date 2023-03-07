@@ -59,7 +59,7 @@ struct Player
 	D3DXVECTOR3 moveV0;		//初期移動量
 	D3DXVECTOR3 rot;		//向き
 	float moveGauge;		//移動量(ダッシュ)
-	float fOldMoveGauge;		//前の移動量（アクション硬直に使用）
+	float fOldMoveGauge;	//前の移動量（アクション硬直に使用）
 	int jumpTime;			//ジャンプ開始からの時間[フレーム単位]
 	bool bJump;				//ジャンプしているかどうか
 	bool bHipDrop;			//ヒップドロップしているかどうか
@@ -109,5 +109,6 @@ void UninitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
 Player *GetPlayer(void);
+void SetPlayerType_PvP(int nPlayerNum, bool bUse, bool bAIUse);	//プレイヤー使用時AI使用するか指定しない場合AI使用
 
 #endif // !_PLAYER_H_

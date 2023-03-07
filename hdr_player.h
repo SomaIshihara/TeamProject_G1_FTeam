@@ -60,5 +60,6 @@ void UninitPlayer_HDR(void);
 void UpdatePlayer_HDR(void);
 void DrawPlayer_HDR(void);
 Player_HDR *GetPlayer_HDR(void);
+void SetPlayerType_HDR(int nPlayerNum, bool bUse, bool bAIUse);	//プレイヤー使用時AI使用するか指定しない場合AI使用
 
 #endif

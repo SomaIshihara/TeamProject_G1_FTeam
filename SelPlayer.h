@@ -9,15 +9,6 @@
 
 #include "main.h"
 
-//プレイヤー種類列挙
-typedef enum
-{
-	PLAYERTYPE_PLAYER = 0,
-	PLAYERTYPE_COM,
-	PLAYERTYPE_NONE,
-	PLAYERTYPE_MAX
-} PLAYERTYPE;
-
 //プロトタイプ宣言
 void InitSelPlayer(void);
 void UninitSelPlayer(void);

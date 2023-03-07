@@ -208,6 +208,7 @@
     <ClCompile Include="titleCamera.cpp" />
     <ClCompile Include="tremor_effect.cpp" />
     <ClCompile Include="tutorial.cpp" />
+    <ClCompile Include="TypeFrame.cpp" />
     <ClCompile Include="VictoryStand.cpp" />
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
@@ -263,6 +264,7 @@
     <ClInclude Include="titleCamera.h" />
     <ClInclude Include="tremor_effect.h" />
     <ClInclude Include="tutorial.h" />
+    <ClInclude Include="TypeFrame.h" />
     <ClInclude Include="VictoryStand.h" />
     <ClInclude Include="wall.h" />
   </ItemGroup>
