@@ -11,6 +11,7 @@
 #include "select_game.h"
 #include "PvP_player.h"
 #include "hdr_player.h"
+#include "color.h"
 
 //マクロ
 #define FRAME_USE_TEXTURE	(2)			//タイプ枠で使うテクスチャ数
@@ -265,6 +266,8 @@ void UninitTypeFrame(void)
 //========================
 void UpdateTypeFrame(void)
 {
+	VERTEX_2D *pVtx;	//設定用ポインタ
+
 	//プレイヤー選択
 	if (GetUseGamepad(0) == true)
 	{
@@ -348,6 +351,32 @@ void UpdateTypeFrame(void)
 			}
 		}
 	}
+
+	//タイプ枠頂点設定
+	//頂点バッファのロックと頂点情報へのポインタを取得
+	g_pVtxbuffTypeFrame->Lock(0, 0, (void **)&pVtx, 0);
+
+	for (int nCntTypeFrame = 0; nCntTypeFrame < MAX_USE_GAMEPAD; nCntTypeFrame++, pVtx += 8)	//偶数のみ変更のため8つずらしている
+	{
+		//頂点カラー
+		if (g_playerType[nCntTypeFrame] == PLAYERTYPE_PLAYER)
+		{//プレイヤーなら色付ける
+			pVtx[0].col = c_aColTypeFrameBG[nCntTypeFrame];
+			pVtx[1].col = c_aColTypeFrameBG[nCntTypeFrame];
+			pVtx[2].col = c_aColTypeFrameBG[nCntTypeFrame];
+			pVtx[3].col = c_aColTypeFrameBG[nCntTypeFrame];
+		}
+		else
+		{//COM・使用しないなら灰色
+			pVtx[0].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			pVtx[1].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			pVtx[2].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			pVtx[3].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+		}
+	}
+
+	//頂点バッファをアンロック
+	g_pVtxbuffTypeFrame->Unlock();
 }
 
 //========================
