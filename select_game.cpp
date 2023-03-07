@@ -231,7 +231,7 @@ void DecideGameMode(void)
 		}
 
 		//ƒ^ƒCƒgƒ‹Œˆ’è‰¹Ä¶
-		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE);
+		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE, 0);
 	}
 }
 

@@ -393,7 +393,7 @@ void UpdateGamePad(void)
 		//コントローラー接続が変化したら音鳴らす
 		if (g_gamePad[nCntGPad].bUse != bOldUseGPad)
 		{
-			PlaySound(SOUND_LABEL_SE_CONNECT);
+			PlaySound(SOUND_LABEL_SE_CONNECT, nCntGPad);
 		}
 	}
 }

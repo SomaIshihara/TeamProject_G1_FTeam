@@ -10,7 +10,7 @@
 #include "main.h"
 
 //マクロ定義
-#define NUM_DUPLICATION	(1)		//重複数
+#define NUM_DUPLICATION	(10)		//重複数
 
 //*****************************************************************************
 // サウンド一覧
@@ -25,9 +25,6 @@ typedef enum
 	SOUND_LABEL_SE_TITLE_DECIDE,	// タイトル画面の決定音
 	SOUND_LABEL_SE_COLLISION,		// プレイヤー同士の衝突音
 	SOUND_LABEL_SE_ENERGY_00,		// プレイヤー1のゲージ充填音
-	SOUND_LABEL_SE_ENERGY_01,		// プレイヤー2のゲージ充填音
-	SOUND_LABEL_SE_ENERGY_02,		// プレイヤー3のゲージ充填音
-	SOUND_LABEL_SE_ENERGY_03,		// プレイヤー4のゲージ充填音
 	SOUND_LABEL_SE_DROP,			// プレイヤーの落下音
 	SOUND_LABEL_SE_GRASSDASH,		// プレイヤーのダッシュ音
 	SOUND_LABEL_SE_HIPDROP,			// プレイヤーのヒップドロップ音
@@ -44,7 +41,7 @@ typedef enum
 //*****************************************************************************
 HRESULT InitSound(HWND hWnd);
 void UninitSound(void);
-HRESULT PlaySound(SOUND_LABEL label/*, int nNumSound*/);
+HRESULT PlaySound(SOUND_LABEL label, int nNumSound);
 void StopSound(SOUND_LABEL label);
 void StopSound(void);
 void PauseSound(SOUND_LABEL label);

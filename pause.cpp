@@ -300,7 +300,7 @@ void SelectUpPause(int nPadNum)
 	//キーボードの上方向キー　か　ゲームパッドの　十字上ボタン　が押された
 	if (GetKeyboardTrigger(DIK_UP) == true || GetGamepadTrigger(nPadNum,XINPUT_GAMEPAD_DPAD_UP) == true || GetStick(nPadNum,INPUTTYPE_TRIGGER).y == CONVSTICK_UP)
 	{
-		PlaySound(SOUND_LABEL_SE_PAUSE_SELECTION);
+		PlaySound(SOUND_LABEL_SE_PAUSE_SELECTION, nPadNum);
 
 		//ボタンを使用している状態にする
 		g_ButtonPush[0] = true;
@@ -358,7 +358,7 @@ void SelectDownPause(int nPadNum)
 	//キーボードの下方向キー　か　ゲームパッドの　十字下ボタン　が押された
 	if (GetKeyboardTrigger(DIK_DOWN) == true || GetGamepadTrigger(nPadNum, XINPUT_GAMEPAD_DPAD_DOWN) == true || GetStick(nPadNum, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN)
 	{
-		PlaySound(SOUND_LABEL_SE_PAUSE_SELECTION);
+		PlaySound(SOUND_LABEL_SE_PAUSE_SELECTION, nPadNum);
 
 		//ボタンを使用している状態にする
 		g_ButtonPush[1] = true;
@@ -516,7 +516,7 @@ void SwitchPause(void)
 	switch (g_Pause)
 	{
 	case PAUSE_CONTINUE:
-		PlaySound(SOUND_LABEL_SE_PAUSE_DECISION);
+		PlaySound(SOUND_LABEL_SE_PAUSE_DECISION, 0);
 
 		//再確認したけどコントローラーの数合ってない
 		if (CheckUseController_PvP(CHECKMODE_DISCONNOPAUSE) == true)
@@ -534,7 +534,7 @@ void SwitchPause(void)
 		break;
 
 	case PAUSE_RETRY:
-		PlaySound(SOUND_LABEL_SE_PAUSE_TRANSITION);
+		PlaySound(SOUND_LABEL_SE_PAUSE_TRANSITION, 0);
 
 		switch (g_gamemode)
 		{
@@ -556,7 +556,7 @@ void SwitchPause(void)
 		break;
 
 	case PAUSE_QUIT:
-		PlaySound(SOUND_LABEL_SE_PAUSE_TRANSITION);
+		PlaySound(SOUND_LABEL_SE_PAUSE_TRANSITION, 0);
 
 		//タイトル画面に遷移
 		SetFade(MODE_TITLE);

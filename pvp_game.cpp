@@ -97,7 +97,7 @@ void InitPvPGame(void)
 	g_bPhotoMode_PvP = false;			// フォトモード初期化
 	
 	//ゲームBGM開始
-	PlaySound(SOUND_LABEL_BGM_GAME);
+	PlaySound(SOUND_LABEL_BGM_GAME, 0);
 }
 
 //------------------------------------------------
@@ -188,7 +188,7 @@ void UpdatePvPGame(void)
 				//何番目のゲームパッドか保存する
 				g_numGamePad_PvP = nCntPause;
 
-				PlaySound(SOUND_LABEL_SE_PAUSE_DECISION);
+				PlaySound(SOUND_LABEL_SE_PAUSE_DECISION, 0);
 
 				//ポーズ状態にする
 				g_bPause_PvP = true;

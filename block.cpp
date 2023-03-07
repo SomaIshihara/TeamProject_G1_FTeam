@@ -259,7 +259,7 @@ void CollisionBlock(int nPlayerNum)
 						//ブロックを消す
 						g_Block[nCntBlock].buse = false;								//対象のブロックを使用しない
 						pPlayer[nPlayerNum].HipDropPower -= g_Block[nCntBlock].nLife;	//使用した分のダメージを減らす
-						PlaySound(SOUND_LABEL_SE_HIPDROP);								//ヒップドロップ音再生
+						PlaySound(SOUND_LABEL_SE_HIPDROP, nCntBlock);					//ヒップドロップ音再生
 					}
 					else
 					{

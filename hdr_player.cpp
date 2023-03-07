@@ -455,7 +455,7 @@ void MovePlayer(int nPadNum)
 //========================
 void JumpPlayer_HDR(int nJumpPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_JUMP);
+	PlaySound(SOUND_LABEL_SE_JUMP,nJumpPlayer);
 
 	g_aPlayerHDR[nJumpPlayer].posOld.y = g_aPlayerHDR[nJumpPlayer].pos.y;
 	g_aPlayerHDR[nJumpPlayer].moveV0.y = 7.7f;		//à⁄ìÆó ê›íË

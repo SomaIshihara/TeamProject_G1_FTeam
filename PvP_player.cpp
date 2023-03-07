@@ -296,7 +296,7 @@ void UpdatePlayer(void)
 					g_aPlayerPvP[nCntPlayer].bHipDrop = false;    //ヒップドロップしてない
 					g_aPlayerPvP[nCntPlayer].nActionRigor = PLAYER_HIPDROP_ACTIONRIGOR;
 					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
-					PlaySound(SOUND_LABEL_SE_HIPDROP);
+					PlaySound(SOUND_LABEL_SE_HIPDROP, nCntPlayer);
 				}
 				g_aPlayerPvP[nCntPlayer].bJump = false;
 				g_aPlayerPvP[nCntPlayer].moveV0.y = 0.0f;
@@ -573,7 +573,7 @@ void ChargePlayer(int nChargePlayer)
 	}
 	if (g_aPlayerPvP[nChargePlayer].moveGauge <= PLAYER_POWER_ADD)
 	{
-		PlaySound(SOUND_LABEL_SE_ENERGY_00);
+		PlaySound(SOUND_LABEL_SE_ENERGY_00, nChargePlayer);
 	}
 
 	g_aPlayerPvP[nChargePlayer].stat = PLAYERSTAT_CHARGE;
@@ -586,7 +586,7 @@ void ChargePlayer(int nChargePlayer)
 //========================
 void DashPlayer(int nDashPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_GRASSDASH);
+	PlaySound(SOUND_LABEL_SE_GRASSDASH, nDashPlayer);
 
 	//アクション硬直用にパワー移動
 	g_aPlayerPvP[nDashPlayer].fOldMoveGauge = g_aPlayerPvP[nDashPlayer].moveGauge;
@@ -619,7 +619,7 @@ void HipDropPlayer(int nHipDropPlayer)
 //========================
 void JumpPlayer(int nJumpPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_JUMP);
+	PlaySound(SOUND_LABEL_SE_JUMP, nJumpPlayer);
 
 	g_aPlayerPvP[nJumpPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 	g_aPlayerPvP[nJumpPlayer].jumpTime = 0;	//ジャンプ時間リセット
@@ -803,7 +803,7 @@ void DownPlayer(int nDownPlayerNum)
 		}
 	}
 
-	PlaySound(SOUND_LABEL_SE_DROP);
+	PlaySound(SOUND_LABEL_SE_DROP, nDownPlayerNum);
 
 	RespawnPlayer(nDownPlayerNum);
 }

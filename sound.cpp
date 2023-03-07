@@ -50,13 +50,10 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{ "data/SOUND/SE/Title_Decide.wav",			SOUND_ONCE, 0.6f,true },		// タイトルの決定SE
 	{ "data/SOUND/SE/Collision.wav",			SOUND_ONCE, 0.6f,true },		// プレイヤー同士の衝突音SE
 	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー1のゲージ充填音
-	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー2のゲージ充填音
-	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー3のゲージ充填音
-	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー4のゲージ充填音
 	{ "data/SOUND/SE/Drop000.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤーの落下音
 	{ "data/SOUND/SE/GrassDash000.wav",			SOUND_ONCE, 0.6f,true },		// プレイヤーのダッシュ音
 	{ "data/SOUND/SE/HipDrop_Attack_002.wav",	SOUND_ONCE, 0.6f,true },		// プレイヤーのヒップドロップ音
-	{ "data/SOUND/SE/Jamp001.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤーのジャンプ音
+	{ "data/SOUND/SE/Jamp001.wav",				SOUND_ONCE, 0.4f,true },		// プレイヤーのジャンプ音
 	{ "data/SOUND/SE/PauseDecision000.wav",		SOUND_ONCE, 0.6f,true },		// ポーズの決定音
 	{ "data/SOUND/SE/PauseSelection000.wav",	SOUND_ONCE, 0.6f,true },		// ポーズの選択音
 	{ "data/SOUND/SE/PauseTransition000.wav",	SOUND_ONCE, 0.6f,true },		// ポーズの遷移音
@@ -251,9 +248,10 @@ void UninitSound(void)
 //=============================================================================
 // セグメント再生(再生中なら停止)
 //=============================================================================
-HRESULT PlaySound(SOUND_LABEL label/*, int nNumSound*/)
+HRESULT PlaySound(SOUND_LABEL label, int nNumSound)
 {
-	int nNumSound = 0;
+	//サウンド番号を算出
+	nNumSound %= NUM_DUPLICATION;
 
 	//ラベルの再生がON		かつ		再生がON
 	if (g_aSoundInfo[label].bPlay == true && g_bPlay == true)
