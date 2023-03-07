@@ -58,10 +58,11 @@ void InitVictoryStand(void)
 	//表彰台の情報初期化
 	for (int nCntVicStd = 0; nCntVicStd < NUM_VICTORYSTAND; nCntVicStd++, pVicStand++, pResPlayer++)
 	{
-		pVicStand->pos = pResPlayer->pos;		// 位置初期化
-		pVicStand->pos.y = 0.0f;				// 高さ座標だけ０にする
-		pVicStand->rot = ZERO_SET;				// 向き初期化
-		pVicStand->bUse = true;					// 使われていないようにする
+		pVicStand->pos.x = pResPlayer->pos.x;		// Ｘ位置初期化
+		pVicStand->pos.z = pVicStand->pos.y = 0.0f;	// Ｚ位置と Ｙ座標を０にする
+
+		pVicStand->rot = ZERO_SET;					// 向き初期化
+		pVicStand->bUse = true;						// 使われていないようにする
 		pVicStand->nRank = g_RankStrage[nCntVicStd] = 
 			pResPlayer->nRank;	// 順位を初期化
 	}
@@ -277,11 +278,6 @@ void UpdateVictoryStand(void)
 		}
 	}
 
-	for (int nCntRank = 0; nCntRank < RANK_MAX; nCntRank++, pVicStd++)
-	{
-		PrintDebugProc("%d番目の順位 => 元：%d    今：%d    %d位\n", nCntRank + 1, g_RankStrage[nCntRank], g_VictoryStand[nCntRank].nRank, g_VictoryStand[nCntRank].nRank + 1);
-	}
-
 	if (GetKeyboardTrigger(DIK_BACKSPACE))
 	{
 		UninitVictoryStand();
@@ -350,7 +346,7 @@ void DrawVictoryStand(void)
 }
 
 //表彰台の当たり判定
-bool CollisionVictoryStand(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosold, D3DXVECTOR3 *pMove)
+bool CollisionVictoryStand(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosold)
 {
 	bool bCollision = false;		//当たったかどうかの判定
 

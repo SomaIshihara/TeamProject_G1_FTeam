@@ -25,7 +25,7 @@ void UninitVictoryStand(void);
 void UpdateVictoryStand(void);
 void DrawVictoryStand(void);
 
-bool CollisionVictoryStand(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosold, D3DXVECTOR3 *pMove);
+bool CollisionVictoryStand(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosold);
 void SetVictoryStand(D3DXVECTOR3 Setpos);
 
 #endif

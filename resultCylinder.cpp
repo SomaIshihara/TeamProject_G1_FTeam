@@ -9,7 +9,7 @@
 #include "color.h"
 
 //マクロ定義
-#define RESULTCYLINDER_HEIGHT				(300.0f)					// シリンダーの高さ
+#define RESULTCYLINDER_HEIGHT				(1000.0f)					// シリンダーの高さ
 #define RESULTCYLINDER_SPLIT				(32)						// シリンダーの分割数
 #define RESULTCYLINDER_TEX_RESOLUTION		(3.0f)						// シリンダーのテクスチャの幅
 #define NUM_RESULT_CYLINDER					(1)							// シリンダーの数
@@ -196,7 +196,7 @@ void DrawResultCylinder(void)
 	pDevice->SetTexture(0, g_pTextureResultCylinder);
 
 	//両面カリングをON
-	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
 	//アルファテストを有効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);

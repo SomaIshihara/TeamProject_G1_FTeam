@@ -1,24 +1,28 @@
 //==========================================
 //
-//ƒŠƒUƒ‹ƒgƒvƒŒƒCƒ„[ƒvƒƒOƒ‰ƒ€‚Ìˆ—[hdr_player.cpp]
+//ƒŠƒUƒ‹ƒgƒvƒŒƒCƒ„[ƒvƒƒOƒ‰ƒ€‚Ìˆ—[resultPlayer.cpp]
 //Author:•½àV‰‘@ÎŒ´éD”n
 //
 //==========================================
 #include "resultPlayer.h"
 #include "select_game.h"
 #include "VictoryStand.h"
+#include "debugproc.h"
 #include "color.h"
 
 //ƒ}ƒNƒ’è‹`
-#define FALL_RES_PLAYER			(3.0f)		//ƒŠƒUƒ‹ƒgƒvƒŒƒCƒ„[‚Ì—‰º‘¬“x
+#define JUMP_RES_PLAYER			(6.0f)		//ƒŠƒUƒ‹ƒgƒvƒŒƒCƒ„[‚ÌƒWƒƒƒ“ƒv—Ê
+#define ADVANCE_RES_PLAYER		(-2.4f)		//ƒŠƒUƒ‹ƒgƒvƒŒƒCƒ„[‚Ì‘Oi‘¬“x
+#define FALL_RES_PLAYER			(-4.0f)		//ƒŠƒUƒ‹ƒgƒvƒŒƒCƒ„[‚Ì—‰º‘¬“x
+#define GRAVITY_MAG				(0.03f)		//d—ÍŒvZ‚É—p‚¢‚é”{—¦
 
 //ƒOƒ[ƒoƒ‹•Ï”
-Player_RESULT g_ResultPlayer[MAX_USE_GAMEPAD];				/*ƒŠƒUƒ‹ƒg—pƒvƒŒƒCƒ„[‚Ìî•ñ*/
+Player_RESULT g_ResultPlayer[MAX_USE_GAMEPAD];			/*ƒŠƒUƒ‹ƒg—pƒvƒŒƒCƒ„[‚Ìî•ñ*/
 const D3DXVECTOR3 c_ResultPlayerPos[MAX_USE_GAMEPAD] = {	/*ƒvƒŒƒCƒ„[‚Ì‰ŠúˆÊ’uİ’è*/
-	D3DXVECTOR3(-75.0f, 300.0f, 0.0f),
-	D3DXVECTOR3(-25.0f, 300.0f, 0.0f),
-	D3DXVECTOR3(+25.0f, 300.0f, 0.0f),
-	D3DXVECTOR3(+75.0f, 300.0f, 0.0f),
+	D3DXVECTOR3(-75.0f, 700.0f, 80.0f),
+	D3DXVECTOR3(-25.0f, 700.0f, 80.0f),
+	D3DXVECTOR3(+25.0f, 700.0f, 80.0f),
+	D3DXVECTOR3(+75.0f, 700.0f, 80.0f),
 };
 
 //========================
@@ -26,26 +30,17 @@ const D3DXVECTOR3 c_ResultPlayerPos[MAX_USE_GAMEPAD] = {	/*ƒvƒŒƒCƒ„[‚Ì‰ŠúˆÊ’u
 //========================
 void InitPlayer_RESULT(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//ƒfƒoƒCƒX‚Ìæ“¾
+	//ƒfƒoƒCƒX‚Ìæ“¾
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
+	//ƒŠƒUƒ‹ƒg—pƒvƒŒƒCƒ„[‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾
 	Player_RESULT *pResPlayer = &g_ResultPlayer[0];
 
 	//•Ï”‰Šú‰»
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++, pResPlayer++)
 	{
 		//•Ï”‰Šú‰»
-		pResPlayer->pos = 
-		pResPlayer->posOld = c_ResultPlayerPos[nCntPlayer];
-		pResPlayer->move = ZERO_SET;
-		pResPlayer->rot = ZERO_SET;
-		pResPlayer->bHipDrop = false;
-		pResPlayer->bHipDropSpin = false;
-		pResPlayer->nHipDropWait = 0;
-
-		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
-		{
-			g_ResultPlayer[nCntPlayer].animalInst[nCntParts] = {};
-		}
+		*pResPlayer = ResetResultPlayerInfo(nCntPlayer);
 	}
 
 	//ƒ|ƒCƒ“ƒ^‚ğÄæ“¾
@@ -107,21 +102,65 @@ void UninitPlayer_RESULT(void)
 //========================
 void UpdatePlayer_RESULT(void)
 {
-	//ƒvƒŒƒCƒ„[l”•ªŒJ‚è•Ô‚·
-	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
-	{
-		//‘ÎÛ‚ÌƒvƒŒƒCƒ„[‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾
-		Player_RESULT *pPlayer = &g_ResultPlayer[nCntPlayer];
+	//‘ÎÛ‚ÌƒvƒŒƒCƒ„[‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾
+	Player_RESULT *pPlayer = &g_ResultPlayer[0];
 
+	//ƒvƒŒƒCƒ„[l”•ªŒJ‚è•Ô‚·
+	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++, pPlayer++)
+	{
 		//‘O‰ñ‚ÌˆÊ’u‚ğ‹L‰¯
 		pPlayer->posOld = pPlayer->pos;
 
-		//ƒvƒŒƒCƒ„[‚ğ—‰º‚³‚¹‚é
-		pPlayer->pos.y -= FALL_RES_PLAYER;
+		//ƒvƒŒƒCƒ„[‚Ìd—Íˆ—
+		UpdatePosPlayer_RESULT(pPlayer);
+
+		//’â~ˆ—
+		StopPlayer_RESULT(pPlayer);
 
 		//•\²‘ä‚Ö‚Ì“–‚½‚è”»’è
-		CollisionVictoryStand(&pPlayer->pos, &pPlayer->posOld, &pPlayer->move);
+		CollisionVictoryStand(&pPlayer->pos, &pPlayer->posOld);
 	}
+
+	if (GetKeyboardTrigger(DIK_BACKSPACE))
+	{
+		UninitPlayer_RESULT();
+		InitPlayer_RESULT();
+	}
+}
+
+//d—Íˆ—
+void UpdatePosPlayer_RESULT(Player_RESULT *pPlayer)
+{
+	//ƒvƒŒƒCƒ„[‚ªƒqƒbƒvƒhƒƒbƒvƒXƒsƒ“‚ğ‚µ‚Ä‚¢‚È‚¯‚ê‚Î
+	if (!pPlayer->bHipDropSpin)
+	{
+		//ƒvƒŒƒCƒ„[‚ª”ò‚Ñ‚ñ‚Å‚¢‚½‚ç
+		if (pPlayer->bDive)
+		{
+			//—‰º‘¬“xã¸
+			pPlayer->fFallSpeed += (FALL_RES_PLAYER - pPlayer->fFallSpeed) * GRAVITY_MAG;
+		}
+
+		//‚xÀ•WXV								//‚yÀ•WXV
+		pPlayer->pos.y += pPlayer->fFallSpeed;		pPlayer->pos.z += pPlayer->fAdvance;
+	}
+}
+
+//’â~ˆ—
+void StopPlayer_RESULT(Player_RESULT *pPlayer)
+{
+	//ƒvƒŒƒCƒ„[‚ª‚y‚ÌŒ´“_ˆÊ’u‚ğ’´‚¦‚Äè‘O‚É—ˆ‚½
+	if (pPlayer->pos.z <= 0.0f)
+	{
+		pPlayer->pos.z =			//Œ´“_ˆÊ’u‚É–ß‚·
+		pPlayer->fAdvance = 0.0f;	//‘Oi‘¬“x‚ğ‚O‚É‚·‚é
+	}
+}
+
+//ƒvƒŒƒCƒ„[‚Ìƒqƒbƒvƒhƒƒbƒvİ’è
+void SetHipDropResPlayer(int nHipDropPlayer)
+{
+
 }
 
 //========================
@@ -224,8 +263,49 @@ void DrawPlayer_RESULT(void)
 	pDevice->SetMaterial(&matDef);
 }
 
+//ƒvƒŒƒCƒ„[‚Ì”ò‚Ñ‚İŠJn
+void SetDivePlayer(void)
+{
+	//ƒvƒŒƒCƒ„[‚Ìƒ|ƒCƒ“ƒ^æ“¾
+	Player_RESULT *pPlayer = &g_ResultPlayer[0];
+
+	for (int nCntDive = 0; nCntDive < MAX_USE_GAMEPAD; nCntDive++, pPlayer++)
+	{
+		pPlayer->fFallSpeed = JUMP_RES_PLAYER;	// ‰Šú—‰º‘¬“xi”ò‚Ñ‚İ‚È‚Ì‚ÅA‘ã“ü’l‚ÍƒWƒƒƒ“ƒv—Ê‚Æ“¯‚¶j‚ğ‘ã“ü
+		pPlayer->fAdvance = ADVANCE_RES_PLAYER;	// ‘Oi‘¬“x‘ã“ü
+		pPlayer->bDive = true;					// ”ò‚Ñ‚Ş
+		pPlayer->bHipDropSpin = false;			// ƒqƒbƒvƒhƒƒbƒvƒXƒsƒ“‚ğ‚µ‚Ä‚¢‚È‚¢
+	}
+}
+
 //ƒŠƒUƒ‹ƒg—pƒvƒŒƒCƒ„[‚Ìî•ñ‚ğæ“¾
 Player_RESULT *GetPlayer_RESULT(void)
 {
 	return &g_ResultPlayer[0];
+}
+
+//ƒŠƒUƒ‹ƒg—pƒvƒŒƒCƒ„[‚Ì\‘¢‘Ì‰Šú‰»
+Player_RESULT ResetResultPlayerInfo(int nCntResetPlayer)
+{
+	return {
+		c_ResultPlayerPos[nCntResetPlayer],	// ˆÊ’u‰Šú‰»
+		c_ResultPlayerPos[nCntResetPlayer],	// ‘O‰ñˆÊ’u‰Šú‰»
+		ZERO_SET,	// Œü‚«‰Šú‰»
+		0.0f,		// —‰º‘¬“x‰Šú‰»
+		0.0f,		// ‘Oi‘¬“x‰Šú‰»
+		false,		// ”ò‚Ñ‚İ‰Šú‰»
+		false,		// ƒqƒbƒvƒhƒƒbƒv‰Šú‰»
+		false,		// ƒqƒbƒvƒhƒƒbƒvƒXƒsƒ“‰Šú‰»
+		0,			// ƒqƒbƒvƒhƒƒbƒvd’¼ƒJƒEƒ“ƒ^[‰Šú‰»
+		-1,			// ‡ˆÊ‰Šú‰»
+
+		ANIMAL_WILDBOAR,	// g—p‚µ‚Ä‚¢‚é“®•¨î•ñ‰Šú‰»
+
+		{},		// ƒ‚ƒfƒ‹î•ñ‰Šú‰»
+		{},		// ‘Ìƒp[ƒc‚Ìî•ñ‰Šú‰»
+		{},		// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒbƒNƒX‰Šú‰»
+		{},		// ƒvƒŒƒCƒ„[ƒ‚ƒfƒ‹‚Ì\‘¢‘Ì‰Šú‰»
+
+		false,	// ƒvƒŒƒCƒ„[g—pE•sg—p‰Šú‰»
+	};
 }

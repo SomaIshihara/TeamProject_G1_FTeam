@@ -29,35 +29,45 @@ typedef struct
 struct Player_RESULT
 {
 	//位置類
-	D3DXVECTOR3 pos;		//位置
-	D3DXVECTOR3 posOld;		//前回の位置
-	D3DXVECTOR3 move;		//移動量
-	D3DXVECTOR3 rot;		//向き
-	bool bHipDrop;			//ヒップドロップしているかどうか
-	bool bHipDropSpin;		//ヒップドロップのスピンしたかどうか
-	int nHipDropWait;		//ヒップドロップの「開始・着地」硬直カウンター
-	int nRank;				//順位を格納
+	D3DXVECTOR3 pos;	// 位置
+	D3DXVECTOR3 posOld;	// 前回の位置
+	D3DXVECTOR3 rot;	// 向き
+	float	fFallSpeed;	// 落下速度
+	float	fAdvance;	// 前進速度
+	bool bDive;			// 飛び込み
+	bool bHipDrop;		// ヒップドロップしているかどうか
+	bool bHipDropSpin;	// ヒップドロップのスピンしたかどうか
+	int nHipDropWait;	// ヒップドロップの「開始・着地」硬直カウンター
+	int nRank;			// 順位を格納
 
-	//パラメータ類
-	ANIMAL animal;			//使用している動物
+	//パラメータ類		 
+	ANIMAL animal;		// 使用している動物
 
-							//描画類
-	Model model;			//使用モデル
+						// 描画類
+	Model model;		// 使用モデル
 	AnimalInstance animalInst[MAX_PARTS];
-	D3DXMATRIX mtxWorld;	//ワールドマトリ
-	bool bUseShadow;		//影使用の有無
-	bool bUsePlayer;		//プレイヤー使用の有無
-
+	D3DXMATRIX mtxWorld;// ワールドマトリ
 	PlayModel_RESULT aPlaymodel[10];
+
+	bool bUsePlayer;	// プレイヤー使用の有無
 };
 
 //プロトタイプ宣言
-void InitPlayer_RESULT(void);
-void InitResultPlayerType_GAMEMODE_PVP(Player_RESULT *pResPlayer);
-void InitResultPlayerType_GAMEMODE_HDR(Player_RESULT *pResPlayer);
-void UninitPlayer_RESULT(void);
-void UpdatePlayer_RESULT(void);
-void DrawPlayer_RESULT(void);
-Player_RESULT *GetPlayer_RESULT(void);
+void InitPlayer_RESULT(void);											//基本情報初期化
+void InitResultPlayerType_GAMEMODE_PVP(Player_RESULT *pResPlayer);		//ゲームモードが "PvP" のときの初期化処理
+void InitResultPlayerType_GAMEMODE_HDR(Player_RESULT *pResPlayer);		//ゲームモードが "HDR" のときの初期化処理
+void UninitPlayer_RESULT(void);			//終了処理
+
+void UpdatePlayer_RESULT(void);							//更新処理
+void UpdatePosPlayer_RESULT(Player_RESULT *pPlayer);	//重力処理
+void StopPlayer_RESULT(Player_RESULT *pPlayer);			//停止処理
+void SetHipDropResPlayer(int nHipDropPlayer);			//ヒップドロッププレイヤー
+
+void DrawPlayer_RESULT(void);		//描画処理
+
+void SetDivePlayer(void);			//飛び込み開始処理
+
+Player_RESULT *GetPlayer_RESULT(void);						//プレイヤーの情報取得処理
+Player_RESULT ResetResultPlayerInfo(int nCntResetPlayer);	//プレイヤーの初期情報取得処理
 
 #endif
