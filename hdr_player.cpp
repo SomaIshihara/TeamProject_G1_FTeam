@@ -69,7 +69,7 @@ const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 };
 
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
-const bool c_aAIMove[MAX_USE_GAMEPAD] = { false,true,true,true };
+bool g_aAIMove_HDR[MAX_USE_GAMEPAD] = { true,true,true,true };
 
 //========================
 //初期化処理
@@ -519,6 +519,25 @@ void HipSpinPlayer_HDR(int nHipSpinPlayer)
 	else
 	{
 		g_aPlayerHDR[nHipSpinPlayer].nHipDropWait--;		//硬直時間を減らしていく
+	}
+}
+
+//========================
+//プレイヤー指定処理
+//========================
+void SetPlayerType_HDR(int nPlayerNum, bool bUse, bool bAIUse)
+{
+	//プレイヤー使用するか指定
+	g_aPlayerHDR[nPlayerNum].bUsePlayer = bUse;
+
+	//プレイヤー使用するならAI指定
+	if (g_aPlayerHDR[nPlayerNum].bUsePlayer == true)
+	{
+		g_aAIMove_HDR[nPlayerNum] = bAIUse;
+	}
+	else
+	{//使用しないならAIも使用しない
+		g_aAIMove_HDR[nPlayerNum] = false;
 	}
 }
 

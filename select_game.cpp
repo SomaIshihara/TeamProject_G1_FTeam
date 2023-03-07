@@ -216,7 +216,7 @@ void DecideGameMode(void)
 			//PVPが選択されている場合  もしくはバグで、何にも選択されていなかった場合
 		case SelGameMode_PVP:
 
-			SetFade(MODE_PvPGAME);					//チュートリアル画面に遷移
+			//SetFade(MODE_PvPGAME);					//チュートリアル画面に遷移
 			g_SelGameMode = SelGameMode_PVP;	//PVPゲームを選択
 
 			break;
@@ -224,11 +224,13 @@ void DecideGameMode(void)
 			//ヒップドロップレースが選択されている場合
 		case SelGameMode_HDR:
 
-			SetFade(MODE_RaceGAME);					//チュートリアル画面に遷移
+			//SetFade(MODE_RaceGAME);					//チュートリアル画面に遷移
 			g_SelGameMode = SelGameMode_HDR;	//ヒップドロップレースゲームを選択
 
 			break;
 		}
+
+		SetFade(MODE_SELECTPLAYER);					//チュートリアル画面に遷移
 
 		//タイトル決定音再生
 		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE, 0);

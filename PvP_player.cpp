@@ -112,7 +112,7 @@ const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 };
 
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
-const bool c_aAIMove[MAX_USE_GAMEPAD] = { false,true,true,true };
+bool g_aAIMove_PvP[MAX_USE_GAMEPAD] = { true,true,true,true };
 
 //========================
 //初期化処理
@@ -169,7 +169,7 @@ void InitPlayer(void)
 		{//プレイヤーは普通に使用していることにする
 			g_aPlayerPvP[nCntPlayer].bUsePlayer = true;
 		}
-		else if (c_aAIMove[nCntPlayer] == true)
+		else if (g_aAIMove_PvP[nCntPlayer] == true)
 		{//AIは脳みそポインタもらって使用していることにする
 			g_aPlayerPvP[nCntPlayer].pAI = GetAI(AIDIFF_NORMAL);
 			g_aPlayerPvP[nCntPlayer].bUsePlayer = true;
@@ -985,6 +985,25 @@ void UpdateMotion(int nPlayerNum)
 				SetMotion(nPlayerNum, MOTIONTYPE_NEUTRAL);
 			}
 		}
+	}
+}
+
+//========================
+//プレイヤー指定処理
+//========================
+void SetPlayerType_PvP(int nPlayerNum, bool bUse, bool bAIUse)
+{
+	//プレイヤー使用するか指定
+	g_aPlayerPvP[nPlayerNum].bUsePlayer = bUse;
+
+	//プレイヤー使用するならAI指定
+	if (g_aPlayerPvP[nPlayerNum].bUsePlayer == true)
+	{
+		g_aAIMove_PvP[nPlayerNum] = bAIUse;
+	}
+	else
+	{//使用しないならAIも使用しない
+		g_aAIMove_PvP[nPlayerNum] = false;
 	}
 }
 

@@ -24,6 +24,7 @@
 #include "meshfield.h"
 #include "meshdome.h"
 #include "result.h"
+#include "SelPlayer.h"
 
 //マクロ定義
 #define WINDOW_NAME				"Compete Animal"		//ウィンドウに表示される名前
@@ -535,6 +536,10 @@ void Update(void)
 			UpdateTutorial();
 			break;
 
+		case MODE_SELECTPLAYER:	//プレイヤー選択画面の更新
+			UpdateSelPlayer();
+			break;
+
 		case MODE_PvPGAME:		//PvPゲーム画面の更新
 			UpdatePvPGame();
 			break;
@@ -591,6 +596,10 @@ void Draw(void)
 
 		case MODE_TUTORIAL:		//チュートリアル画面描画
 			DrawTutorial();
+			break;
+
+		case MODE_SELECTPLAYER:	//プレイヤー選択画面描画
+			DrawSelPlayer();
 			break;
 
 		case MODE_PvPGAME:		//PvPゲーム画面描画
@@ -650,6 +659,10 @@ void SetMode(MODE mode)
 		UninitTutorial();
 		break;
 
+	case MODE_SELECTPLAYER:	//プレイヤー選択画面終了
+		UninitSelPlayer();
+		break;
+
 	case MODE_PvPGAME:		//PvPゲーム画面終了
 		UninitPvPGame();
 		break;
@@ -676,6 +689,10 @@ void SetMode(MODE mode)
 
 	case MODE_TUTORIAL:		//チュートリアル画面初期化
 		InitTutorial();
+		break;
+
+	case MODE_SELECTPLAYER:	//プレイヤー選択画面初期化
+		InitSelPlayer();
 		break;
 
 	case MODE_PvPGAME:		//PvPゲーム画面初期化

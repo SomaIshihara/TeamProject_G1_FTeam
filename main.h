@@ -32,6 +32,7 @@ typedef enum
 	MODE_TITLE,			//タイトル画面
 	MODE_SELECTGAME,	//ゲーム選択
 	MODE_TUTORIAL,		//チュートリアル
+	MODE_SELECTPLAYER,	//プレイヤー選択画面
 	MODE_PvPGAME,		//PvPゲーム画面
 	MODE_RaceGAME,		//レース画面
 	MODE_RESULT,		//リザルト画面
