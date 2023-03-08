@@ -14,6 +14,7 @@ typedef struct
 	D3DXVECTOR3		rot;			// 向き
 	float			fLandheight;	// 着地する高さ
 	int				nRank;			// 何位か（モデル描画でも使用する
+	bool			bAppear;		// 出現するかどうか
 	bool			bUse;			// 使用するかどうか
 }VictoryStand;
 
@@ -27,5 +28,6 @@ void DrawVictoryStand(void);
 
 bool CollisionVictoryStand(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosold);
 void SetVictoryStand(D3DXVECTOR3 Setpos);
+void SetAppearVictoryStand(void);
 
 #endif

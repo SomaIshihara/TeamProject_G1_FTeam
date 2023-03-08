@@ -12,6 +12,4 @@ void UninitResult(void);	void UninitResultObject(void);
 void UpdateResult(void);	void UpdateResultObject(void);
 void DrawResult(void);		void DrawResultObject(void);
 
-int nCounterResultTime(void);
-
 #endif

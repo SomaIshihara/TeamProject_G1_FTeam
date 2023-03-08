@@ -37,7 +37,7 @@ struct Player_RESULT
 	bool bDive;			// 飛び込み
 	bool bHipDrop;		// ヒップドロップしているかどうか
 	bool bHipDropSpin;	// ヒップドロップのスピンしたかどうか
-	int nHipDropWait;	// ヒップドロップの「開始・着地」硬直カウンター
+	int nHipDropWait;	// ヒップドロップの開始硬直カウンター
 	int nRank;			// 順位を格納
 
 	//パラメータ類		 
@@ -58,10 +58,10 @@ void InitResultPlayerType_GAMEMODE_PVP(Player_RESULT *pResPlayer);		//ゲームモー
 void InitResultPlayerType_GAMEMODE_HDR(Player_RESULT *pResPlayer);		//ゲームモードが "HDR" のときの初期化処理
 void UninitPlayer_RESULT(void);			//終了処理
 
-void UpdatePlayer_RESULT(void);							//更新処理
-void UpdatePosPlayer_RESULT(Player_RESULT *pPlayer);	//重力処理
-void StopPlayer_RESULT(Player_RESULT *pPlayer);			//停止処理
-void SetHipDropResPlayer(int nHipDropPlayer);			//ヒップドロッププレイヤー
+void UpdatePlayer_RESULT(void);									//更新処理
+void UpdatePosPlayer_RESULT(Player_RESULT *pPlayer);			//重力処理
+void StopPlayer_RESULT(Player_RESULT *pPlayer, int nCntPlayer);	//停止処理
+void HipSpinResPlayer(Player_RESULT *pPlayer);					//ヒップドロップスピン処理
 
 void DrawPlayer_RESULT(void);		//描画処理
 

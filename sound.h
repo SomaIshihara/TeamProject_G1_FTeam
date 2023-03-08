@@ -27,6 +27,7 @@ typedef enum
 	SOUND_LABEL_SE_ENERGY_00,		// プレイヤー1のゲージ充填音
 	SOUND_LABEL_SE_DROP,			// プレイヤーの落下音
 	SOUND_LABEL_SE_GRASSDASH,		// プレイヤーのダッシュ音
+	SOUND_LABEL_SE_HIPSPIN,			// プレイヤーのヒップドロップスピン音
 	SOUND_LABEL_SE_HIPDROP,			// プレイヤーのヒップドロップ音
 	SOUND_LABEL_SE_JUMP,			// プレイヤーのジャンプ音
 	SOUND_LABEL_SE_PAUSE_DECISION,	// ポーズの決定音

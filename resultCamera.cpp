@@ -4,10 +4,13 @@
 Author:平澤詩苑
 
 ============================================================================================================================================================*/
-#include "resultCamera.h"
 #include "debugproc.h"
+#include "resultCamera.h"
+#include "resultPlayer.h"
 #include "conversioninput.h"
+#include "VictoryStand.h"
 
+//マクロ定義
 #define POS_POSV			D3DXVECTOR3(0.0f, 400.0f, -200.0f)	//視点の初期位置
 #define POS_POSR			D3DXVECTOR3(0.0f, 300.0f, 0.0f)		//注視点の初期位置
 #define POS_VECU			D3DXVECTOR3(0.0f, 1.0f, 0.0f)		//上方向ベクトルの初期値
@@ -25,10 +28,16 @@ Author:平澤詩苑
 #define DRAW_LENGTH			(500.0f)							//オブジェクトを描画させてあげる範囲
 #define WAVE_CAMERA_INFO	"data\\CSV\\WaveCamera.csv"			//アニメーションカメラの情報ファイル
 
+//特殊演出のマクロ
+#define SP_PLAYER_DIVE_TIME		(80)		//プレイヤーが飛び込む時間（ウェーブ２の硬直フレーム中
+#define SP_WAVE_03_START_Y		(100.0f)	//ウェーブ３開始時のプレイヤーＹ位置調整
+#define SP_WAVE_LAST_START_Y	(100.0f)	//ウェーブ最後開始時のプレイヤーＹ位置調整
+
 //グローバル変数
 ResultCamera		g_ResultCamera;						//カメラの情報
 WAVECamera			g_WaveCamera;						//カメラのウェーブ情報
 AnimResCamera		g_AnimResCamera[WAVECamera_MAX];	//アニメーションカメラの情報
+int					g_nAnimTime = 0;					//上映時間を計算
 
 //------------------------------------------------
 //			リザルト用カメラの初期化処理
@@ -38,9 +47,10 @@ void InitResultCamera(void)
 	//アニメーション用カメラ情報の初期化
 	LoadWaveCamera();
 
-	g_ResultCamera.vecU = POS_VECU;						//上方向ベクトル
-	g_WaveCamera = WAVECamera_01_SideWays;				//ウェーブ情報初期化
-	SetNextWave(&g_ResultCamera, g_AnimResCamera[0]);	//初期位置設定
+	g_ResultCamera.vecU = POS_VECU;									//上方向ベクトル
+	g_WaveCamera = WAVECamera_01_SideWays;							//ウェーブ情報初期化
+	SetNextWave(&g_ResultCamera, g_AnimResCamera[0], g_WaveCamera);	//初期位置設定
+	g_nAnimTime = 0;					//上映時間を初期化
 
 	//---------------------------------
 	//カメラの角度や距離を算出
@@ -171,6 +181,9 @@ void UpdateResultCamera(void)
 
 	//カメラのウェーブ処理
 	WaveResultCamera();
+
+	//ウェーブ別の特別処理
+	SpecialWave();
 	
 	int nWave = g_WaveCamera;
 	ResultCamera Camera = g_ResultCamera;
@@ -178,7 +191,6 @@ void UpdateResultCamera(void)
 
 	if (GetKeyboardTrigger(DIK_BACKSPACE))
 	{
-		UninitResultCamera();
 		InitResultCamera();
 	}
 }
@@ -216,6 +228,7 @@ void WaveResultCamera(void)
 			//硬直フレーム加算
 			pAnimCamera->nWaitCount++;
 
+			//硬直フレームが終わった
 			if (pAnimCamera->WaitTime <= pAnimCamera->nWaitCount)
 			{
 				//次のウェーブへ
@@ -228,35 +241,106 @@ void WaveResultCamera(void)
 					pAnimCamera++;
 
 					//次のウェーブへ
-					SetNextWave(pCamera, *pAnimCamera);
+					SetNextWave(pCamera, *pAnimCamera, g_WaveCamera);
 				}
 			}
 		}
 
-		PrintDebugProc("\nウェーブ番号：%d\n", nWave);
+		PrintDebugProc("\nウェーブ番号：%d    上映時間:%d\n", nWave, g_nAnimTime++);
 		PrintDebugProc("経過フレーム：%d        硬直フレーム：%d\n", pAnimCamera->nFrameCounter, pAnimCamera->nWaitCount);
 		PrintDebugProc("全体フレーム：%d    全体硬直フレーム：%d\n\n", pAnimCamera->nWholeFrame, pAnimCamera->WaitTime);
-
-		PrintDebugProc("*******        現在        *******\n");
-		PrintDebugProc("視点Ⅹ位置：%f    注視点Ⅹ位置：%f\n", pCamera->posV.x, pCamera->posR.x);
-		PrintDebugProc("視点Ｙ位置：%f    注視点Ｙ位置：%f\n", pCamera->posV.y, pCamera->posR.y);
-		PrintDebugProc("視点Ｚ位置：%f    注視点Ｚ位置：%f\n\n", pCamera->posV.z, pCamera->posR.z);
-
-		PrintDebugProc("*******        目標        *******\n");
-		PrintDebugProc("視点Ⅹ位置：%f    注視点Ⅹ位置：%f\n", pAnimCamera->OffsetPosV.x, pAnimCamera->OffsetPosR.x);
-		PrintDebugProc("視点Ｙ位置：%f    注視点Ｙ位置：%f\n", pAnimCamera->OffsetPosV.y, pAnimCamera->OffsetPosR.y);
-		PrintDebugProc("視点Ｚ位置：%f    注視点Ｚ位置：%f\n", pAnimCamera->OffsetPosV.z, pAnimCamera->OffsetPosR.z);
-
 	}
 
 	else
 	{
-		PrintDebugProc("ウェーブ終了\n");
+		PrintDebugProc("ウェーブ終了    上映時間:%d（約%d秒）\n", g_nAnimTime, g_nAnimTime / MAX_FPS);
+	}
+}
+
+//ウェーブ別の特別処理
+void SpecialWave(void)
+{
+	int nWave = g_WaveCamera;							//現在のウェーブを取得
+	AnimResCamera AnimCamera = g_AnimResCamera[nWave];	//アニメーション用カメラのポインタ
+
+	//----------------------------------------------
+	//			ウェーブ別  特殊 設定
+	//----------------------------------------------
+	switch (g_WaveCamera)
+	{
+	//*******************************
+	//	ウェーブ２の場合の特殊処理
+	//*******************************
+	case WAVECamera_02_BirdEyes:
+	{
+		//--------------------------------------------
+		//			ウェーブ２の初期設定
+		// MEMO:硬直フレーム中　一定間隔でプレイヤーを飛び込ませる
+		//--------------------------------------------
+		//硬直フレームが飛び込み時間になった
+		if (AnimCamera.nWaitCount % SP_PLAYER_DIVE_TIME == 0 && AnimCamera.nWaitCount > 0)
+		{
+			//プレイヤーを１体ずつ飛び込ませる
+			SetDivePlayer();
+		}
+	}
+	break;
+
+	//*******************************
+	//	ウェーブ３の場合の特殊処理
+	//*******************************
+	case WAVECamera_03_SkyDiving:
+	{
+		//--------------------------------------------
+		//			ウェーブ３の初期設定
+		// MEMO:プレイヤーの開始位置を設定する
+		//--------------------------------------------
+		if (AnimCamera.nFrameCounter == 0)
+		{
+			//プレイヤーの初期位置を変える
+			for (int nCntSpWave = 0; nCntSpWave < MAX_USE_GAMEPAD; nCntSpWave++)
+			{
+				//注視点の開始位置　+　調整量　の場所にプレイヤーをセット
+				GetPlayer_RESULT()[nCntSpWave].pos.y = AnimCamera.StartPosR.y + SP_WAVE_03_START_Y;
+			}
+		}
+	}
+	break;
+
+	//*******************************
+	//	ウェーブ４の場合の特殊処理
+	//*******************************
+	case WAVECamera_LAST_VictoryStand:
+	{
+		//--------------------------------------------
+		//			ウェーブ４の初期設定
+		// MEMO:プレイヤーの開始位置を設定する
+		//--------------------------------------------
+		if (AnimCamera.nFrameCounter == 0)
+		{
+			//プレイヤーの初期位置を変える
+			for (int nCntSpWave = 0; nCntSpWave < MAX_USE_GAMEPAD; nCntSpWave++)
+			{
+				//注視点の開始位置　+　調整量　の場所にプレイヤーをセット
+				GetPlayer_RESULT()[nCntSpWave].pos.y = AnimCamera.StartPosR.y + SP_WAVE_LAST_START_Y;
+			}
+		}
+
+		//--------------------------------------------
+		//			ウェーブ最後の表彰台設定
+		//			MEMO:表彰台を登場させる
+		//--------------------------------------------
+		if (AnimCamera.nFrameCounter == AnimCamera.nWholeFrame)
+		{//硬直フレームが終わった
+			SetAppearVictoryStand();
+		}
+	}
+	break;
 	}
 }
 
 //次のウェーブへ
-void SetNextWave(ResultCamera *pCamera, AnimResCamera AnimCamera) 
+void SetNextWave(ResultCamera *pCamera, AnimResCamera AnimCamera, int nWave)
 {
 	//視点・注視点を初期位置へ
 	pCamera->posV = AnimCamera.StartPosV;

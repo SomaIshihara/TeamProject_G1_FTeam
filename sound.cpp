@@ -52,6 +52,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 	{ "data/SOUND/SE/Energy.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤー1のゲージ充填音
 	{ "data/SOUND/SE/Drop000.wav",				SOUND_ONCE, 0.6f,true },		// プレイヤーの落下音
 	{ "data/SOUND/SE/GrassDash000.wav",			SOUND_ONCE, 0.6f,true },		// プレイヤーのダッシュ音
+	{ "data/SOUND/SE/HipdropSpin_001.wav",		SOUND_ONCE, 0.6f,true },		// プレイヤーのヒップドロップスピン音
 	{ "data/SOUND/SE/HipDrop_Attack_002.wav",	SOUND_ONCE, 0.6f,true },		// プレイヤーのヒップドロップ音
 	{ "data/SOUND/SE/Jamp001.wav",				SOUND_ONCE, 0.4f,true },		// プレイヤーのジャンプ音
 	{ "data/SOUND/SE/PauseDecision000.wav",		SOUND_ONCE, 0.6f,true },		// ポーズの決定音

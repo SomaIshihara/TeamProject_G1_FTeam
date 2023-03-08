@@ -9,12 +9,17 @@
 #include "VictoryStand.h"
 #include "debugproc.h"
 #include "color.h"
+#include "sound.h"
 
 //マクロ定義
 #define JUMP_RES_PLAYER			(6.0f)		//リザルトプレイヤーのジャンプ量
 #define ADVANCE_RES_PLAYER		(-2.4f)		//リザルトプレイヤーの前進速度
 #define FALL_RES_PLAYER			(-4.0f)		//リザルトプレイヤーの落下速度
 #define GRAVITY_MAG				(0.03f)		//重力計算に用いる倍率
+#define PLAYER_HIPDROPWAIT		(10)		//ヒップドロップ開始の硬直フレーム
+#define PLAYER_HIPDROP_SPEED	(-8.0f)		//ヒップドロップ中の落下速度
+#define PLAYER_HIPSPIN_SPEED	(-0.5f)		//ヒップドロップスピンの回転値
+#define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 
 //グローバル変数
 Player_RESULT g_ResultPlayer[MAX_USE_GAMEPAD];			/*リザルト用プレイヤーの情報*/
@@ -115,7 +120,10 @@ void UpdatePlayer_RESULT(void)
 		UpdatePosPlayer_RESULT(pPlayer);
 
 		//停止処理
-		StopPlayer_RESULT(pPlayer);
+		StopPlayer_RESULT(pPlayer, nCntPlayer);
+
+		//ヒップドロップスピン処理
+		HipSpinResPlayer(pPlayer);
 
 		//表彰台への当たり判定
 		CollisionVictoryStand(&pPlayer->pos, &pPlayer->posOld);
@@ -141,26 +149,55 @@ void UpdatePosPlayer_RESULT(Player_RESULT *pPlayer)
 			pPlayer->fFallSpeed += (FALL_RES_PLAYER - pPlayer->fFallSpeed) * GRAVITY_MAG;
 		}
 
-		//Ｙ座標更新								//Ｚ座標更新
-		pPlayer->pos.y += pPlayer->fFallSpeed;		pPlayer->pos.z += pPlayer->fAdvance;
+		//ヒップドロップ硬直がある
+		if (0 < pPlayer->nHipDropWait)
+		{
+			//硬直フレーム減算
+			pPlayer->nHipDropWait--;
+		}
+
+		//ヒップドロップ硬直がない
+		else
+		{
+			//Ｙ座標更新								//Ｚ座標更新
+			pPlayer->pos.y += pPlayer->fFallSpeed;		pPlayer->pos.z += pPlayer->fAdvance;
+		}
 	}
 }
 
 //停止処理
-void StopPlayer_RESULT(Player_RESULT *pPlayer)
+void StopPlayer_RESULT(Player_RESULT *pPlayer, int nCntPlayer)
 {
-	//プレイヤーがＺの原点位置を超えて手前に来た
-	if (pPlayer->pos.z <= 0.0f)
+	//プレイヤーがＺの原点位置を超えて手前に来た and ヒップドロップしていない
+	if (pPlayer->pos.z <= 0.0f && !pPlayer->bHipDrop)
 	{
-		pPlayer->pos.z =			//原点位置に戻す
-		pPlayer->fAdvance = 0.0f;	//前進速度を０にする
+		pPlayer->pos.z =				//原点位置に戻す
+		pPlayer->fAdvance = 0.0f;		//前進速度を０にする
+		pPlayer->bHipDrop =				//ヒップドロップと
+		pPlayer->bHipDropSpin = true;	//ヒップドロップスピンを開始する
+		pPlayer->nHipDropWait = PLAYER_HIPDROPWAIT; //ヒップドロップの開始硬直を設定
+		pPlayer->fFallSpeed = PLAYER_HIPDROP_SPEED;	//ヒップドロップの初速を代入
+
+		PlaySound(SOUND_LABEL_SE_HIPSPIN, nCntPlayer);//ヒップドロップ音再生
 	}
 }
 
-//プレイヤーのヒップドロップ設定
-void SetHipDropResPlayer(int nHipDropPlayer)
+//ヒップドロップスピン処理
+void HipSpinResPlayer(Player_RESULT *pPlayer)
 {
+	//もしもプレイヤーがヒップドロップスピン中だったら
+	if (pPlayer->bHipDropSpin)
+	{
+		//回転値を加算
+		pPlayer->rot.x += PLAYER_HIPSPIN_SPEED;
 
+		//１周した
+		if (pPlayer->rot.x <= PLAYER_HIPSPIN_LAP)
+		{
+			pPlayer->rot.x = 0.0f;			//回転値を元に戻す
+			pPlayer->bHipDropSpin = false;	//スピンし終わった
+		}
+	}
 }
 
 //========================
@@ -271,10 +308,16 @@ void SetDivePlayer(void)
 
 	for (int nCntDive = 0; nCntDive < MAX_USE_GAMEPAD; nCntDive++, pPlayer++)
 	{
-		pPlayer->fFallSpeed = JUMP_RES_PLAYER;	// 初期落下速度（飛び込みなので、代入値はジャンプ量と同じ）を代入
-		pPlayer->fAdvance = ADVANCE_RES_PLAYER;	// 前進速度代入
-		pPlayer->bDive = true;					// 飛び込む
-		pPlayer->bHipDropSpin = false;			// ヒップドロップスピンをしていない
+		//プレイヤーがダイブしていない
+		if (!pPlayer->bDive)
+		{
+			pPlayer->fFallSpeed = JUMP_RES_PLAYER;	// 初期落下速度（飛び込みなので、代入値はジャンプ量と同じ）を代入
+			pPlayer->fAdvance = ADVANCE_RES_PLAYER;	// 前進速度代入
+			pPlayer->bDive = true;					// 飛び込む
+			pPlayer->bHipDropSpin = false;			// ヒップドロップスピンをしていない
+
+			break;	// 処理を終える
+		}
 	}
 }
 
@@ -296,7 +339,7 @@ Player_RESULT ResetResultPlayerInfo(int nCntResetPlayer)
 		false,		// 飛び込み初期化
 		false,		// ヒップドロップ初期化
 		false,		// ヒップドロップスピン初期化
-		0,			// ヒップドロップ硬直カウンター初期化
+		0,			// ヒップドロップ開始硬直初期化
 		-1,			// 順位初期化
 
 		ANIMAL_WILDBOAR,	// 使用している動物情報初期化

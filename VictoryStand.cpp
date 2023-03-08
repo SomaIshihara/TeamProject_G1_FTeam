@@ -62,7 +62,8 @@ void InitVictoryStand(void)
 		pVicStand->pos.z = pVicStand->pos.y = 0.0f;	// Ｚ位置と Ｙ座標を０にする
 
 		pVicStand->rot = ZERO_SET;					// 向き初期化
-		pVicStand->bUse = true;						// 使われていないようにする
+		pVicStand->bUse = true;						// 使われているようにする
+		pVicStand->bAppear = false;					// 現れないようにする
 		pVicStand->nRank = g_RankStrage[nCntVicStd] = 
 			pResPlayer->nRank;	// 順位を初期化
 	}
@@ -262,11 +263,12 @@ void UpdateVictoryStand(void)
 	//表彰台のポインタを取得
 	VictoryStand *pVicStd = &g_VictoryStand[0];
 
-	//リザルトが始まってから表彰台のあらわれる時間になったら
-	if (VICSTD_APPEAR_TIME <= nCounterResultTime())
+	for (int nCntVicStd = 0; nCntVicStd < NUM_VICTORYSTAND; nCntVicStd++, pVicStd++)
 	{
-		for (int nCntVicStd = 0; nCntVicStd < NUM_VICTORYSTAND; nCntVicStd++, pVicStd++)
+		//地面から現れてもよい
+		if (pVicStd->bAppear)
 		{
+			//地面から現れる
 			pVicStd->pos.y += VICSTD_APPEAR_SPEED;
 
 			//表彰台が地面から浮いてしまったら
@@ -389,5 +391,20 @@ void SetVictoryStand(D3DXVECTOR3 Setpos)
 			g_VictoryStand[nCntVicStd].bUse = true;		//使う
 			break;//処理を抜ける
 		}
+	}
+}
+
+//----------------------------------------------------
+//					表彰台の出現処理
+//----------------------------------------------------
+void SetAppearVictoryStand(void)
+{
+	//表彰台のポインタを取得
+	VictoryStand *pVicStd = &g_VictoryStand[0];
+
+	for (int nCntVicStd = 0; nCntVicStd < NUM_VICTORYSTAND; nCntVicStd++, pVicStd++)
+	{
+		//出現させる
+		pVicStd->bAppear = true;
 	}
 }

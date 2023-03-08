@@ -22,7 +22,7 @@ Author:平澤詩苑
 //グローバル変数宣言
 LPDIRECT3DVERTEXBUFFER9		g_pVtxBuffResult = NULL;			//頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9			g_pTextureResult[NUM_RESULT] = {};	//テクスチャのポインタ
-int							g_nCntResultTime = 0;				//リザルトの経過時間
+bool						g_bStop = false;					//リザルト一時停止
 
 //************************************************
 //				リザルトの初期化処理
@@ -33,7 +33,8 @@ void InitResult(void)
 	//リザルト用オブジェクトの初期化処理関数呼び出し
 	//----------------------------------------------=
 	InitResultObject();
-	g_nCntResultTime = 0;	//経過時間初期化
+
+	g_bStop = false;
 }
 
 //------------------------------------------------
@@ -97,8 +98,10 @@ void UninitResultObject(void)
 //************************************************
 void UpdateResult(void)
 {
-	//経過時間加算
-	g_nCntResultTime++;
+	if (GetKeyboardTrigger(DIK_P))
+	{
+		g_bStop ^= 1;
+	}
 
 	//----------------------------------------------=
 	//リザルト用オブジェクトの更新処理関数呼び出し
@@ -116,11 +119,14 @@ void UpdateResult(void)
 //------------------------------------------------
 void UpdateResultObject(void)
 {
-	UpdatePlayer_RESULT();		//プレイヤーの更新処理
-	UpdateResultCamera();		//カメラの更新処理
-	UpdateVictoryStand();		//表彰台の更新処理
-	UpdateResultCylinder();		//背景の更新処理
-	//UpdateMeshfield();			//地面の更新処理
+	//一時停止ではない　もしくは　一時停止中でも右矢印が押された
+	if (!g_bStop || (g_bStop && GetKeyboardTrigger(DIK_RIGHT)))
+	{
+		UpdatePlayer_RESULT();		//プレイヤーの更新処理
+		UpdateResultCamera();		//カメラの更新処理
+		UpdateVictoryStand();		//表彰台の更新処理
+		UpdateResultCylinder();		//背景の更新処理
+	}
 }
 
 //************************************************
@@ -145,10 +151,4 @@ void DrawResultObject(void)
 	DrawMeshfield();			//地面の描画処理
 	DrawPlayer_RESULT();		//プレイヤーの描画処理
 	DrawVictoryStand();			//表彰台の描画処理
-}
-
-//経過時間を返す
-int nCounterResultTime(void)
-{
-	return g_nCntResultTime;
 }
