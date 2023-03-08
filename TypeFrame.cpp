@@ -7,6 +7,7 @@
 #include "main.h"
 #include "TypeFrame.h"
 #include "input.h"
+#include "conversioninput.h"
 #include "fade.h"
 #include "select_game.h"
 #include "PvP_player.h"
@@ -22,7 +23,7 @@
 #define STR_OFFSET_HEIGHT	(29.0f)		//枠と文字の位置ずらし（高さ）
 #define STR_SIZE_WIDTH		(238.0f)	//文字のサイズ（幅）
 #define STR_SIZE_HEIGHT		(50.0f)		//文字のサイズ（高さ）
-#define INPUT_JUDGE			(STICK_MAX / 20)	//スティック入力をしたと判断するスティック移動量
+#define INPUT_JUDGE			(STICK_MAX / 5)	//スティック入力をしたと判断するスティック移動量
 
 //グローバル
 PLAYERTYPE g_playerType[MAX_USE_GAMEPAD];
@@ -271,21 +272,21 @@ void UpdateTypeFrame(void)
 	//プレイヤー選択
 	if (GetUseGamepad(0) == true)
 	{
-		if (GetLStickX(0) < INPUT_JUDGE || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) == true)
+		if (GetStick(0,INPUTTYPE_TRIGGER).x == CONVSTICK_LEFT || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) == true)
 		{//左に倒した
 			g_nSelectNum = (g_nSelectNum + (MAX_USE_GAMEPAD - 1)) % MAX_USE_GAMEPAD;
 		}
-		else if (GetLStickX(0) > INPUT_JUDGE || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) == true)
+		else if (GetStick(0, INPUTTYPE_TRIGGER).x == CONVSTICK_RIGHT || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) == true)
 		{//右に倒した
 			g_nSelectNum = (g_nSelectNum + 1) % MAX_USE_GAMEPAD;
 		}
 
 		//タイプ選択
-		if (GetLStickY(0) < INPUT_JUDGE || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_DOWN) == true)
+		else if (GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_DOWN) == true)
 		{//下に倒した
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
 		}
-		else if (GetLStickY(0) > INPUT_JUDGE || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_UP) == true)
+		else if (GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_UP || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_UP) == true)
 		{//上に倒した
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
 		}

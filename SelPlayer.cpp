@@ -11,7 +11,6 @@
 #include "file.h"
 
 #include "TypeFrame.h"
-#include "SelPlayer_bg.h"
 #include "SelPlayer_camera.h"
 #include "model.h"
 
