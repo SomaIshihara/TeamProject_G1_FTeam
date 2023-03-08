@@ -1,23 +1,16 @@
 //==========================================
 //
-//弾表示プログラムのヘッダ[bullet.h]
+//背景表示プログラムのヘッダ[SelPlayer_bg.h]
 //Author:石原颯馬
 //
 //==========================================
-#ifndef _BG_H_
-#define _BG_H_
-
-//マクロ
-#define BG_TEX_SPEED	(0.0025f)	//テクスチャの移動速度
-#define BG_TEX_HEIGHT	(360)		//テクスチャの幅
+#ifndef _SELPLAYER_BG_H_
+#define _SELPLAYER_BG_H_
 
 //プロトタイプ宣言
-void InitBg(void);
-void UninitBg(void);
-void UpdateBg(void);
-void DrawBg(void);
-void DrawTexU(void);
-void SetBGSpeed(int nSpeed);
-int GetBGSpeed(void);
+void InitSelPlayer_Bg(void);
+void UninitSelPlayer_Bg(void);
+void UpdateSelPlayer_Bg(void);
+void DrawSelPlayer_Bg(void);
 
 #endif // !_BG_H_
