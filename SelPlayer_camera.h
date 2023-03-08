@@ -25,11 +25,11 @@ typedef struct
 } Camera;
 
 //プロトタイプ宣言
-void InitSelPlayer_SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera);	//カメラの位置設定
+void InitSelPlayer_SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR);	//カメラの位置設定
 void InitSelPlayer_Camera(void);
 void UninitSelPlayer_Camera(void);				//終了処理
 void UpdateSelPlayer_Camera(void);				//更新処理
-void SetSelPlayer_Camera(int nIdx);				//設定処理
+void SetSelPlayer_Camera(void);				//設定処理
 void MoveSelPlayer_Camera(void);		//カメラの移動処理
 
 void UpdateSelPlayer_PosVCamera(void);	//視点の位置更新

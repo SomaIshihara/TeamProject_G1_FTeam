@@ -35,9 +35,6 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 //位置の差分を2乗
 #define DIFF_TIMES		(2.0f)		//2乗
 
-//カメラ単体の場合の視点座標
-#define ALONE_CAMERA_POS	(D3DXVECTOR3(0.0f, 400.0f, 500.0f))
-
 //３人称視点時のマクロ
 #define TPS_LENGTH		(150.0f)	//注視点～視点間の距離
 #define TPS_posV_HEIGHT	(100.0f)	//視点の高さ
@@ -50,7 +47,7 @@ Camera		g_SelPlayer_Camera;	//カメラの情報
 //カメラの位置設定処理
 //Author:石原颯馬
 //=========================================
-void InitSelPlayer_SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumCamera)
+void InitSelPlayer_SetCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR)
 {
 	//設定
 	g_SelPlayer_Camera.posV = posV;	//視点
@@ -105,34 +102,40 @@ void UpdateSelPlayer_Camera(void)
 //=========================================
 //カメラの設定処理
 //=========================================
-void SetSelPlayer_Camera(int nIdx)
+void SetSelPlayer_Camera(void)
 {
-	//カメラが使われている
-	if (g_SelPlayer_Camera.bUse == true)
-	{
-		LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-		//ビューポートの設定
-		pDevice->SetViewport(&g_SelPlayer_Camera.viewport);
+	//ビューポートの設定
+	g_SelPlayer_Camera.fMaxLength = MAX_DRAW;				//最大描画距離設定
 
-		//プロジェクションマトリックスの初期化
-		D3DXMatrixIdentity(&g_SelPlayer_Camera.mtxProjection);
+	g_SelPlayer_Camera.viewport.X = (DWORD)0.0f;			//原点Ⅹ位置代入
+	g_SelPlayer_Camera.viewport.Y = (DWORD)0.0f;			//原点Ｙ位置代入
+	g_SelPlayer_Camera.viewport.Width = SCREEN_WIDTH;		//画面幅初期化
+	g_SelPlayer_Camera.viewport.Height = SCREEN_HEIGHT;		//画面高さ初期化
+	g_SelPlayer_Camera.viewport.MinZ = 0.0f;
+	g_SelPlayer_Camera.viewport.MaxZ = 1.0f;
+	g_SelPlayer_Camera.bUse = true;
 
-		//プロジェクションマトリックスの作成
-		D3DXMatrixPerspectiveFovLH(&g_SelPlayer_Camera.mtxProjection, D3DXToRadian(ANGLE_OF_VIEW), (float)g_SelPlayer_Camera.viewport.Width / (float)g_SelPlayer_Camera.viewport.Height, MIN_DRAW, g_SelPlayer_Camera.fMaxLength);
+	pDevice->SetViewport(&g_SelPlayer_Camera.viewport);
 
-		//プロジェクションマトリックスの設定
-		pDevice->SetTransform(D3DTS_PROJECTION, &g_SelPlayer_Camera.mtxProjection);
+	//プロジェクションマトリックスの初期化
+	D3DXMatrixIdentity(&g_SelPlayer_Camera.mtxProjection);
 
-		//ビューマトリックスの初期化
-		D3DXMatrixIdentity(&g_SelPlayer_Camera.mtxView);
+	//プロジェクションマトリックスの作成
+	D3DXMatrixPerspectiveFovLH(&g_SelPlayer_Camera.mtxProjection, D3DXToRadian(ANGLE_OF_VIEW), (float)g_SelPlayer_Camera.viewport.Width / (float)g_SelPlayer_Camera.viewport.Height, MIN_DRAW, g_SelPlayer_Camera.fMaxLength);
 
-		//ビューマトリックスの作成
-		D3DXMatrixLookAtLH(&g_SelPlayer_Camera.mtxView, &g_SelPlayer_Camera.posV, &g_SelPlayer_Camera.posR, &g_SelPlayer_Camera.vecU);
+	//プロジェクションマトリックスの設定
+	pDevice->SetTransform(D3DTS_PROJECTION, &g_SelPlayer_Camera.mtxProjection);
 
-		//ビューマトリックスの設定
-		pDevice->SetTransform(D3DTS_VIEW, &g_SelPlayer_Camera.mtxView);
-	}
+	//ビューマトリックスの初期化
+	D3DXMatrixIdentity(&g_SelPlayer_Camera.mtxView);
+
+	//ビューマトリックスの作成
+	D3DXMatrixLookAtLH(&g_SelPlayer_Camera.mtxView, &g_SelPlayer_Camera.posV, &g_SelPlayer_Camera.posR, &g_SelPlayer_Camera.vecU);
+
+	//ビューマトリックスの設定
+	pDevice->SetTransform(D3DTS_VIEW, &g_SelPlayer_Camera.mtxView);
 }
 
 //カメラの移動処理
