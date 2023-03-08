@@ -276,6 +276,9 @@
     <ClCompile Include="TypeFrame.cpp">
       <Filter>ソース ファイル\SelectPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="SelPlayer_bg.cpp">
+      <Filter>ソース ファイル\SelectPlayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -438,6 +441,9 @@
       <Filter>ヘッダー ファイル\SelPlayer</Filter>
     </ClInclude>
     <ClInclude Include="TypeFrame.h">
+      <Filter>ヘッダー ファイル\SelPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="SelPlayer_bg.h">
       <Filter>ヘッダー ファイル\SelPlayer</Filter>
     </ClInclude>
   </ItemGroup>
