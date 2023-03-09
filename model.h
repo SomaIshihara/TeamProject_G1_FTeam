@@ -28,10 +28,10 @@ typedef enum
 typedef enum
 {
 	MOTIONTYPE_NEUTRAL = 0,	//ニュートラル
-	MOTIONTYPE_MOVE,		//移動
-	MOTIONTYPE_ACTION,		//アクション
+	MOTIONTYPE_DASH,		//ダッシュ
+	MOTIONTYPE_CHARGE,		//チャージ
 	MOTIONTYPE_JUMP,		//ジャンプ
-	MOTIONTYPE_LANDING,		//着地
+	MOTIONTYPE_LAND,		//着地
 	MOTIONTYPE_MAX
 } MOTIONTYPE;
 

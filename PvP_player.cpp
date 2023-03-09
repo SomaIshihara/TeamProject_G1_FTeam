@@ -160,7 +160,6 @@ void InitPlayer(void)
 		{
 			g_aPlayerPvP[nCntPlayer].animalInst[nCntParts] = {};
 		}
-		g_aPlayerPvP[nCntPlayer].bUsePlayer = GetUseController_PvP(nCntPlayer);
 
 		g_pNotMove[nCntPlayer] = &g_aPlayerPvP[nCntPlayer];
 
@@ -296,6 +295,14 @@ void UpdatePlayer(void)
 					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
 					PlaySound(SOUND_LABEL_SE_HIPDROP, nCntPlayer);
 				}
+				else if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_JUMP)
+				{
+					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_LAND;
+				}
+				else if(g_aPlayerPvP[nCntPlayer].stat != PLAYERSTAT_DASH && g_aPlayerPvP[nCntPlayer].stat != PLAYERSTAT_CHARGE)
+				{
+					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
+				}
 				g_aPlayerPvP[nCntPlayer].bJump = false;
 				g_aPlayerPvP[nCntPlayer].moveV0.y = 0.0f;
 				g_aPlayerPvP[nCntPlayer].move.y = 0.0f;
@@ -316,6 +323,55 @@ void UpdatePlayer(void)
 
 		//ボーナスの当たり判定
 		CollisionBonus(g_aPlayerPvP[nCntPlayer].pos, nCntPlayer);
+
+		//アニメーション設定
+		switch (g_aPlayerPvP[nCntPlayer].stat)
+		{
+		case PLAYERSTAT_WAIT:	//待機・落下・ヒップドロップは一緒
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_NEUTRAL)
+			{
+				SetMotion(nCntPlayer, MOTIONTYPE_NEUTRAL);
+			}
+			break;
+		case PLAYERSTAT_FALL:
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_NEUTRAL)
+			{
+				SetMotion(nCntPlayer, MOTIONTYPE_NEUTRAL);
+			}
+			break;
+		case PLAYERSTAT_HIPDROP:
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_NEUTRAL)
+			{
+				SetMotion(nCntPlayer, MOTIONTYPE_NEUTRAL);
+			}
+			break;
+		case PLAYERSTAT_CHARGE:
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_CHARGE)
+			{
+				SetMotion(nCntPlayer, MOTIONTYPE_CHARGE);
+			}
+			break;
+		case PLAYERSTAT_DASH:
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_DASH)
+			{
+				SetMotion(nCntPlayer, MOTIONTYPE_DASH);
+			}
+			break;
+		case PLAYERSTAT_JUMP:
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_JUMP)
+			{
+				SetMotion(nCntPlayer, MOTIONTYPE_JUMP);
+			}
+			break;
+		case PLAYERSTAT_LAND:
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_LAND)
+			{
+				SetMotion(nCntPlayer, MOTIONTYPE_LAND);
+			}
+			break;
+		}
+
+		UpdateMotion(nCntPlayer);
 	}
 
 	//移動量と衝突判定をもとに移動する
@@ -431,10 +487,6 @@ void DrawPlayer(void)
 				D3DXMATRIX mtxParent;					//親のマトリ
 
 				//ここ新仕様
-				//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
-				g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos = useAnimal.aParts[nCntParts].posOffset;
-				g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot = useAnimal.aParts[nCntParts].rotOffset;
-
 				//"モデルの"ワールドマトリックス初期化
 				D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
@@ -643,7 +695,7 @@ void ControllPlayer(int nPlayerNum)
 				g_aPlayerPvP[nPlayerNum].nActionRigor = PLAYER_DASH_ACTIONRIGOR * PLAYER_D_ACTRIGOR_CALC(g_aPlayerPvP[nPlayerNum].fOldMoveGauge);
 				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 			}
-			else
+			else if (g_aPlayerPvP[nPlayerNum].stat != PLAYERSTAT_JUMP)
 			{
 				g_aPlayerPvP[nPlayerNum].nActionRigor--;
 				if (g_aPlayerPvP[nPlayerNum].nActionRigor <= 0)
@@ -961,8 +1013,8 @@ void UpdateMotion(int nPlayerNum)
 			rotDiffZ * ((float)g_aPlayerPvP[nPlayerNum].motion.nCounterMotion / mi.aKeyInfo[nNowKey].nFrame);
 
 		//パーツの位置向き設定
-		g_aPlayerPvP[nPlayerNum].motionPos = g_aPlayerPvP[nPlayerNum].motionPosOffset + D3DXVECTOR3(posDemandX, posDemandY, posDemandZ);
-		g_aPlayerPvP[nPlayerNum].motionRot = g_aPlayerPvP[nPlayerNum].motionRotOffset + D3DXVECTOR3(rotDemandX, rotDemandY, rotDemandZ);
+		g_aPlayerPvP[nPlayerNum].animalInst[CntModel].pos = g_aPlayerPvP[nPlayerNum].motionPosOffset + D3DXVECTOR3(posDemandX, posDemandY, posDemandZ);
+		g_aPlayerPvP[nPlayerNum].animalInst[CntModel].rot = g_aPlayerPvP[nPlayerNum].motionRotOffset + D3DXVECTOR3(rotDemandX, rotDemandY, rotDemandZ);
 	}
 	g_aPlayerPvP[nPlayerNum].motion.nCounterMotion++;
 
