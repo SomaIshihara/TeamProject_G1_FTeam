@@ -164,23 +164,21 @@ void InitPlayer(void)
 
 		g_pNotMove[nCntPlayer] = &g_aPlayerPvP[nCntPlayer];
 
-		//プレイヤー・AI設定
-		if (GetUseController_PvP(nCntPlayer) == true)
-		{//プレイヤーは普通に使用していることにする
-			g_aPlayerPvP[nCntPlayer].bUsePlayer = true;
-		}
-		else if (g_aAIMove_PvP[nCntPlayer] == true)
+		//AI設定
+		if (g_aAIMove_PvP[nCntPlayer] == true)
 		{//AIは脳みそポインタもらって使用していることにする
 			g_aPlayerPvP[nCntPlayer].pAI = GetAI(AIDIFF_NORMAL);
 			g_aPlayerPvP[nCntPlayer].bUsePlayer = true;
 		}
 	}
 
+#ifdef _DEBUG
 	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
-	if (GetUseControllerNum_PvP() == 0) 
+	if (GetUseControllerNum_PvP() == 0)
 	{
 		g_aPlayerPvP[0].bUsePlayer = true;
 	}
+#endif // _DEBUG
 
 	//その他変数
 	g_bDebugMove = false;
