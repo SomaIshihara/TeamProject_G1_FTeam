@@ -488,6 +488,8 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_1;
 	}
 
+	PlaySound(SOUND_LABEL_SE_HIPSPIN, nHipDropPlayer);//ヒップドロップ音再生
+
 	g_aPlayerHDR[nHipDropPlayer].move.y = 0.0f;						//通常の落下速度を０にする
 	g_aPlayerHDR[nHipDropPlayer].moveV0.y = -15.0f;					//ヒップドロップの降下速度を代入
 	g_aPlayerHDR[nHipDropPlayer].jumpTime = 0;						//ジャンプ時間リセット
