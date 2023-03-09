@@ -301,7 +301,7 @@ void SpecialWave(void)
 			for (int nCntSpWave = 0; nCntSpWave < MAX_USE_GAMEPAD; nCntSpWave++)
 			{
 				//注視点の開始位置　+　調整量　の場所にプレイヤーをセット
-				GetPlayer_RESULT()[nCntSpWave].pos.y = AnimCamera.StartPosR.y + SP_WAVE_03_START_Y;
+				GetPlayer_RESULT()[nCntSpWave].pos.y = AnimCamera.StartPosR.y + SP_WAVE_03_START_Y + (nCntSpWave * SP_WAVE_03_START_Y);
 			}
 		}
 	}
@@ -322,7 +322,7 @@ void SpecialWave(void)
 			for (int nCntSpWave = 0; nCntSpWave < MAX_USE_GAMEPAD; nCntSpWave++)
 			{
 				//注視点の開始位置　+　調整量　の場所にプレイヤーをセット
-				GetPlayer_RESULT()[nCntSpWave].pos.y = AnimCamera.StartPosR.y + SP_WAVE_LAST_START_Y;
+				GetPlayer_RESULT()[nCntSpWave].pos.y = AnimCamera.StartPosR.y + SP_WAVE_LAST_START_Y + (nCntSpWave * SP_WAVE_LAST_START_Y);
 			}
 		}
 
@@ -331,7 +331,7 @@ void SpecialWave(void)
 		//			MEMO:表彰台を登場させる
 		//--------------------------------------------
 		if (AnimCamera.nFrameCounter == AnimCamera.nWholeFrame)
-		{//硬直フレームが終わった
+		{//全体フレームが終わった
 			SetAppearVictoryStand();
 		}
 	}
