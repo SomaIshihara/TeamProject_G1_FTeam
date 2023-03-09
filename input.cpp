@@ -9,12 +9,14 @@
 //==========================================================================================
 #include "input.h"
 #include "sound.h"
+#include "debugproc.h"
 
 //マクロ定義
 #define NUM_KEY_MAX			(256)	//キーの最大数
 #define REPEATE_TIME		(150)	//リピートの間隔
 #define GAMEPAD_BUTTON_NUM	(14)	//ゲームパッドのボタン数
 #define STICK_DEADZONE		(655)	//遊び
+#define PAD_VIBE_FADE		(200)	//振動の減少量
 
 //グローバル変数
 //キーボード部
@@ -24,6 +26,7 @@ Keyboard g_keyboard[NUM_KEY_MAX];	//キーボード構造体
 
 //ゲームパッド（XInput使用）部
 GamePad g_gamePad[MAX_USE_GAMEPAD];	//ゲームパッド情報
+
 
 //マウス部
 LPDIRECTINPUT8 g_pInputMouse = NULL;
@@ -336,6 +339,9 @@ void InitGamePad(void)
 		g_gamePad[nCntGPad].currentTime = 0;
 		g_gamePad[nCntGPad].execLastTime = timeGetTime();
 		g_gamePad[nCntGPad].bUse = false;
+		g_gamePad[nCntGPad].Vibe_State = VIBE_STATE_00_STOP;
+		g_gamePad[nCntGPad].wVibePower = 0;
+		g_gamePad[nCntGPad].nVibeTime = 0;
 	}
 }
 
@@ -344,6 +350,9 @@ void InitGamePad(void)
 //========================
 void UninitGamePad(void)
 {
+	//全コントローラーの振動停止
+	StopVibration();
+
 	//XInput終了
 	XInputEnable(false);
 }
@@ -383,6 +392,9 @@ void UpdateGamePad(void)
 
 			//プレス情報その他もろもろ設定
 			g_gamePad[nCntGPad].state = xInputState;
+
+			//コントローラーの振動状態更新
+			UpdateVibeGamePad(nCntGPad);
 		}
 		else
 		{
@@ -396,6 +408,87 @@ void UpdateGamePad(void)
 			PlaySound(SOUND_LABEL_SE_CONNECT, nCntGPad);
 		}
 	}
+}
+
+//========================
+//ゲームパッド振動状態の更新
+//========================
+void UpdateVibeGamePad(int nPadNum)
+{
+	//振動停止中
+	if (g_gamePad[nPadNum].nVibeTime <= 0)
+	{
+		g_gamePad[nPadNum].wVibePower = 0;					// 振動量    ０   に設定
+		g_gamePad[nPadNum].nVibeTime = 0;					//継続時間   ０   に設定
+		g_gamePad[nPadNum].Vibe_State = VIBE_STATE_00_STOP;	//  状態  「停止」に設定
+
+		StopVibration(nPadNum);	//対象のコントローラーの振動停止
+	}
+
+	//振動中
+	else
+	{
+		//継続時間減少
+		g_gamePad[nPadNum].nVibeTime--;
+
+		//バイブの状態が、徐々に弱まっていくものである
+		if (g_gamePad[nPadNum].Vibe_State == VIBE_STATE_02_FADE)
+		{
+			//振動量が最低値を下回ったら
+			if (g_gamePad[nPadNum].wVibePower <= VIBE_POWER_MIN)
+			{
+				//振動を止める
+				g_gamePad[nPadNum].wVibePower = 0;
+				g_gamePad[nPadNum].nVibeTime = 0;
+				g_gamePad[nPadNum].Vibe_State = VIBE_STATE_00_STOP;
+
+				StopVibration(nPadNum);	//対象のコントローラーの振動停止
+			}
+			else
+			{
+				//徐々に減少させる
+				g_gamePad[nPadNum].wVibePower -= PAD_VIBE_FADE;
+			}
+		}
+
+		XINPUT_VIBRATION Vibration;
+
+		Vibration.wLeftMotorSpeed = g_gamePad[nPadNum].wVibePower;	//左のモーターの回転速度を設定
+		Vibration.wRightMotorSpeed = g_gamePad[nPadNum].wVibePower;	//右のモーターの回転速度を設定
+
+		XInputSetState(nPadNum, &Vibration);	//対象のコントローラーに振動を設定
+
+		PrintDebugProc("振動量：%d    残り時間：%d\n", g_gamePad[nPadNum].wVibePower, g_gamePad[nPadNum].nVibeTime / MAX_FPS);
+	}
+}
+
+//========================
+//全ゲームパッドの振動停止
+//========================
+void StopVibration(void)
+{
+	XINPUT_VIBRATION Vibration;
+
+	//左右のモーターの回転速度を０に設定
+	Vibration.wLeftMotorSpeed = Vibration.wRightMotorSpeed = 0;
+
+	//全コントローラーの振動をOFFに
+	for (int nCntPad = 0; nCntPad < MAX_USE_GAMEPAD; nCntPad++)
+	{
+		//振動をOFF
+		XInputSetState(nCntPad, &Vibration);
+	}
+}
+
+//========================
+//対象のコントローラーの振動停止
+//========================
+void StopVibration(int nPadNum)
+{
+	XINPUT_VIBRATION Vibration = {0,0};
+
+	//対象のコントローラーの振動をOFF
+	XInputSetState(nPadNum, &Vibration);
 }
 
 //========================
@@ -487,7 +580,7 @@ SHORT GetLStickX(int nPadNum)
 }
 
 //========================
-//左スティックの横軸を返す処理
+//左スティックの縦軸を返す処理
 //=======================
 SHORT GetLStickY(int nPadNum)
 {
@@ -541,8 +634,9 @@ SHORT GetRStickX(int nPadNum)
 		return 0;
 	}
 }
+
 //========================
-//右スティックの横軸を返す処理
+//右スティックの縦軸を返す処理
 //=======================
 SHORT GetRStickY(int nPadNum)
 {
@@ -582,4 +676,21 @@ bool GetUseGamepad(int nPadNum)
 	{
 		return false;
 	}
+}
+
+//========================
+//ゲームパッド振動設定
+//========================
+void SetPadVibration(int nPadNum, WORD wPower, int nVibeTime, VIBE_STATE State)
+{
+	g_gamePad[nPadNum].wVibePower = wPower;		//強さ設定
+	g_gamePad[nPadNum].nVibeTime = nVibeTime;	//時間設定
+	g_gamePad[nPadNum].Vibe_State = State;		//状態設定
+
+	XINPUT_VIBRATION Vibration;
+
+	Vibration.wLeftMotorSpeed = wPower;		//左のモーターの回転速度を設定
+	Vibration.wRightMotorSpeed = wPower;	//右のモーターの回転速度を設定
+
+	XInputSetState(nPadNum, &Vibration);	//対象のコントローラーに振動を設定
 }

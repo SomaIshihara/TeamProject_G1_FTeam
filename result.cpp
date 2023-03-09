@@ -23,6 +23,8 @@ Author:平澤詩苑
 LPDIRECT3DVERTEXBUFFER9		g_pVtxBuffResult = NULL;			//頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9			g_pTextureResult[NUM_RESULT] = {};	//テクスチャのポインタ
 bool						g_bStop = false;					//リザルト一時停止
+bool						g_bVibe = false;
+int g_VibePow = VIBE_POWER_LEVEL_02;
 
 //************************************************
 //				リザルトの初期化処理
@@ -35,6 +37,7 @@ void InitResult(void)
 	InitResultObject();
 
 	g_bStop = false;
+	g_bVibe = false;
 }
 
 //------------------------------------------------
