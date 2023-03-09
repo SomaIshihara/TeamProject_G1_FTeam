@@ -65,7 +65,7 @@ void UpdateResultCamera(void);
 
 void WaveResultCamera(void);
 void SpecialWave(void);
-void SetNextWave(ResultCamera *pCamera,AnimResCamera AnimCamera, int nWave);
+void SetNextWave(int nWave);
 
 //ƒJƒƒ‰‚ÌˆÚ“®ˆ—
 void MoveResultCamera(D3DXVECTOR3 ParentPos, D3DXVECTOR3 *pChildPos, float CorRot);
@@ -77,6 +77,7 @@ void SpinResultPosV(void);
 void ResetResultCameraPos(void);
 void SetResultCamera(void);
 ResultCamera *GetResultCamera(void);
+WAVECamera *GetWaveCamera(void);
 void LengthResultCamera(void);
 
 #endif 

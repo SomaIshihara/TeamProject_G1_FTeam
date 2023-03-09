@@ -12,4 +12,7 @@ void UninitResult(void);	void UninitResultObject(void);
 void UpdateResult(void);	void UpdateResultObject(void);
 void DrawResult(void);		void DrawResultObject(void);
 
+void SkipResult(void);
+void MoveSkipShutter(void);
+void UpdateSkipUIVtx(void);
 #endif

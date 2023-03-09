@@ -47,10 +47,10 @@ void InitResultCamera(void)
 	//アニメーション用カメラ情報の初期化
 	LoadWaveCamera();
 
-	g_ResultCamera.vecU = POS_VECU;									//上方向ベクトル
-	g_WaveCamera = WAVECamera_01_SideWays;							//ウェーブ情報初期化
-	SetNextWave(&g_ResultCamera, g_AnimResCamera[0], g_WaveCamera);	//初期位置設定
-	g_nAnimTime = 0;					//上映時間を初期化
+	g_ResultCamera.vecU = POS_VECU;			//上方向ベクトル
+	g_WaveCamera = WAVECamera_01_SideWays;	//ウェーブ情報初期化
+	SetNextWave(WAVECamera_01_SideWays);	//初期位置設定
+	g_nAnimTime = 0;						//上映時間を初期化
 
 	//---------------------------------
 	//カメラの角度や距離を算出
@@ -241,19 +241,10 @@ void WaveResultCamera(void)
 					pAnimCamera++;
 
 					//次のウェーブへ
-					SetNextWave(pCamera, *pAnimCamera, g_WaveCamera);
+					SetNextWave(g_WaveCamera);
 				}
 			}
 		}
-
-		PrintDebugProc("\nウェーブ番号：%d    上映時間:%d\n", nWave, g_nAnimTime++);
-		PrintDebugProc("経過フレーム：%d        硬直フレーム：%d\n", pAnimCamera->nFrameCounter, pAnimCamera->nWaitCount);
-		PrintDebugProc("全体フレーム：%d    全体硬直フレーム：%d\n\n", pAnimCamera->nWholeFrame, pAnimCamera->WaitTime);
-	}
-
-	else
-	{
-		PrintDebugProc("ウェーブ終了    上映時間:%d（約%d秒）\n", g_nAnimTime, g_nAnimTime / MAX_FPS);
 	}
 }
 
@@ -318,11 +309,17 @@ void SpecialWave(void)
 		//--------------------------------------------
 		if (AnimCamera.nFrameCounter == 0)
 		{
-			//プレイヤーの初期位置を変える
-			for (int nCntSpWave = 0; nCntSpWave < MAX_USE_GAMEPAD; nCntSpWave++)
+			//プレイヤーの情報取得
+			Player_RESULT *pPlayer = GetPlayer_RESULT();
+
+			//プレイヤーの初期情報設定
+			for (int nCntSpWave = 0; nCntSpWave < MAX_USE_GAMEPAD; nCntSpWave++, pPlayer++)
 			{
 				//注視点の開始位置　+　調整量　の場所にプレイヤーをセット
-				GetPlayer_RESULT()[nCntSpWave].pos.y = AnimCamera.StartPosR.y + SP_WAVE_LAST_START_Y + (nCntSpWave * SP_WAVE_LAST_START_Y);
+				pPlayer->pos.y = AnimCamera.StartPosR.y + SP_WAVE_LAST_START_Y + (nCntSpWave * SP_WAVE_LAST_START_Y);
+				pPlayer->pos.z = 0.0f;
+				pPlayer->bDive = true;
+				pPlayer->bHipDrop = true;
 			}
 		}
 
@@ -340,8 +337,11 @@ void SpecialWave(void)
 }
 
 //次のウェーブへ
-void SetNextWave(ResultCamera *pCamera, AnimResCamera AnimCamera, int nWave)
+void SetNextWave(int nWave)
 {
+	ResultCamera *pCamera = &g_ResultCamera;
+	AnimResCamera AnimCamera = g_AnimResCamera[nWave];
+
 	//視点・注視点を初期位置へ
 	pCamera->posV = AnimCamera.StartPosV;
 	pCamera->posR = AnimCamera.StartPosR;
@@ -509,4 +509,10 @@ void SetResultCamera(void)
 ResultCamera *GetResultCamera(void)
 {
 	return &g_ResultCamera;
+}
+
+//ウェーブの状態を返す
+WAVECamera *GetWaveCamera(void)
+{
+	return &g_WaveCamera;
 }

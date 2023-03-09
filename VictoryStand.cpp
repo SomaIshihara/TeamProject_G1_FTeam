@@ -385,7 +385,7 @@ void SetVictoryStand(D3DXVECTOR3 Setpos)
 		//表彰台が使われていない
 		if (g_VictoryStand[nCntVicStd].bUse == false)
 		{
-			g_VictoryStand[nCntVicStd].pos = Setpos;		//位置設定
+			g_VictoryStand[nCntVicStd].pos = Setpos;	//位置設定
 			g_VictoryStand[nCntVicStd].rot = ZERO_SET;	//向き設定
 
 			g_VictoryStand[nCntVicStd].bUse = true;		//使う
@@ -406,5 +406,28 @@ void SetAppearVictoryStand(void)
 	{
 		//出現させる
 		pVicStd->bAppear = true;
+	}
+}
+
+//****************************************************
+//	表彰台、プレイヤーのリザルト演出スキップ時の処理
+//****************************************************
+void SkipVicStd_Player(void)
+{
+	VictoryStand *pVicStd = &g_VictoryStand[0];		//表彰台のポインタを取得
+	Player_RESULT *pPlayer = GetPlayer_RESULT();	//プレイヤーのポインタも取得
+
+	for (int nCntResSkip = 0; nCntResSkip < NUM_VICTORYSTAND; nCntResSkip++, pVicStd++, pPlayer++)
+	{
+		//-------------------
+		//表彰台の処理
+		//-------------------
+		pVicStd->pos.y = 0.0f;	//表彰台を地表に出す
+		pVicStd->bAppear = true;//出現させる
+
+		//-------------------
+		//プレイヤーの処理
+		//-------------------
+		pPlayer->pos.y = pVicStd->fLandheight;
 	}
 }
