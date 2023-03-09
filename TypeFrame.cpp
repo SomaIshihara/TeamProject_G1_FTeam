@@ -15,7 +15,7 @@
 #include "color.h"
 
 //マクロ
-#define FRAME_USE_TEXTURE	(2)			//タイプ枠で使うテクスチャ数
+#define FRAME_USE_TEXTURE	(3)			//タイプ枠で使うテクスチャ数
 #define STR_USE_TEXTURE		(3)			//タイプ文字で使うテクスチャ数
 #define FRAME_SIZE_WIDTH	(312.0f)	//枠のサイズ（幅）
 #define FRAME_SIZE_HEIGHT	(108.0f)	//枠のサイズ（高さ）
@@ -37,7 +37,8 @@ int g_nSelectNum = 0;
 const char *c_apFilePathTypeFrame[FRAME_USE_TEXTURE] =
 {
 	"data\\TEXTURE\\SelPlayer_Frame_02.png",
-	"data\\TEXTURE\\SelPlayer_Frame_01.png"
+	"data\\TEXTURE\\SelPlayer_Frame_01.png",
+	"data\\TEXTURE\\SelPlayer_Frame_03.png"
 };
 
 //タイプ枠の位置
@@ -52,7 +53,7 @@ const D3DXVECTOR3 c_aPosTypeFrame[MAX_USE_GAMEPAD] =
 //タイプ枠背景の色
 const D3DXCOLOR c_aColTypeFrameBG[MAX_USE_GAMEPAD] =
 {
-	D3DXCOLOR(1.0f,0.5f,0.5f,1.0f),
+	D3DXCOLOR(1.0f,0.7f,0.7f,1.0f),
 	D3DXCOLOR(0.24f,0.72f,0.92f,1.0f),
 	D3DXCOLOR(0.72f,0.9f,0.73f,1.0f),
 	D3DXCOLOR(1.0f,0.95f,0.67f,1.0f)
@@ -94,8 +95,8 @@ void InitTypeFrame(void)
 			&g_pTextureTypeFrame[nCntTypeFrame]);
 	}
 
-	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * MAX_USE_GAMEPAD * FRAME_USE_TEXTURE,
+	//頂点バッファの生成(+1は選択中の枠用）
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4 * (MAX_USE_GAMEPAD * (FRAME_USE_TEXTURE - 1) + 1),
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -126,20 +127,21 @@ void InitTypeFrame(void)
 	//頂点バッファのロックと頂点情報へのポインタを取得
 	g_pVtxbuffTypeFrame->Lock(0, 0, (void **)&pVtx, 0);
 
-	for (int nCntTypeFrame = 0; nCntTypeFrame < MAX_USE_GAMEPAD * FRAME_USE_TEXTURE; nCntTypeFrame++, pVtx += 4)
+	//位置固定枠
+	for (int nCntTypeFrame = 0; nCntTypeFrame < MAX_USE_GAMEPAD * (FRAME_USE_TEXTURE - 1); nCntTypeFrame++, pVtx += 4)
 	{
 		//頂点座標の設定
-		pVtx[0].pos.x = c_aPosTypeFrame[nCntTypeFrame / FRAME_USE_TEXTURE].x;
-		pVtx[0].pos.y = c_aPosTypeFrame[nCntTypeFrame / FRAME_USE_TEXTURE].y;
+		pVtx[0].pos.x = c_aPosTypeFrame[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)].x;
+		pVtx[0].pos.y = c_aPosTypeFrame[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)].y;
 		pVtx[0].pos.z = 0.0f;
-		pVtx[1].pos.x = c_aPosTypeFrame[nCntTypeFrame / FRAME_USE_TEXTURE].x + FRAME_SIZE_WIDTH;
-		pVtx[1].pos.y = c_aPosTypeFrame[nCntTypeFrame / FRAME_USE_TEXTURE].y;
+		pVtx[1].pos.x = c_aPosTypeFrame[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)].x + FRAME_SIZE_WIDTH;
+		pVtx[1].pos.y = c_aPosTypeFrame[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)].y;
 		pVtx[1].pos.z = 0.0f;
-		pVtx[2].pos.x = c_aPosTypeFrame[nCntTypeFrame / FRAME_USE_TEXTURE].x;
-		pVtx[2].pos.y = c_aPosTypeFrame[nCntTypeFrame / FRAME_USE_TEXTURE].y + FRAME_SIZE_HEIGHT;
+		pVtx[2].pos.x = c_aPosTypeFrame[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)].x;
+		pVtx[2].pos.y = c_aPosTypeFrame[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)].y + FRAME_SIZE_HEIGHT;
 		pVtx[2].pos.z = 0.0f;
-		pVtx[3].pos.x = c_aPosTypeFrame[nCntTypeFrame / FRAME_USE_TEXTURE].x + FRAME_SIZE_WIDTH;
-		pVtx[3].pos.y = c_aPosTypeFrame[nCntTypeFrame / FRAME_USE_TEXTURE].y + FRAME_SIZE_HEIGHT;
+		pVtx[3].pos.x = c_aPosTypeFrame[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)].x + FRAME_SIZE_WIDTH;
+		pVtx[3].pos.y = c_aPosTypeFrame[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)].y + FRAME_SIZE_HEIGHT;
 		pVtx[3].pos.z = 0.0f;
 
 		//座標変換用係数設定
@@ -152,10 +154,10 @@ void InitTypeFrame(void)
 		//もし偶数（背景）なら色変える
 		if (nCntTypeFrame % 2 == 0)
 		{
-			pVtx[0].col = c_aColTypeFrameBG[nCntTypeFrame / FRAME_USE_TEXTURE];
-			pVtx[1].col = c_aColTypeFrameBG[nCntTypeFrame / FRAME_USE_TEXTURE];
-			pVtx[2].col = c_aColTypeFrameBG[nCntTypeFrame / FRAME_USE_TEXTURE];
-			pVtx[3].col = c_aColTypeFrameBG[nCntTypeFrame / FRAME_USE_TEXTURE];
+			pVtx[0].col = c_aColTypeFrameBG[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)];
+			pVtx[1].col = c_aColTypeFrameBG[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)];
+			pVtx[2].col = c_aColTypeFrameBG[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)];
+			pVtx[3].col = c_aColTypeFrameBG[nCntTypeFrame / (FRAME_USE_TEXTURE - 1)];
 		}
 		else
 		{
@@ -171,6 +173,39 @@ void InitTypeFrame(void)
 		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 	}
+
+	//位置可変枠
+	//頂点座標の設定
+	pVtx[0].pos.x = c_aPosTypeFrame[0].x;
+	pVtx[0].pos.y = c_aPosTypeFrame[0].y;
+	pVtx[0].pos.z = 0.0f;
+	pVtx[1].pos.x = c_aPosTypeFrame[0].x + FRAME_SIZE_WIDTH;
+	pVtx[1].pos.y = c_aPosTypeFrame[0].y;
+	pVtx[1].pos.z = 0.0f;
+	pVtx[2].pos.x = c_aPosTypeFrame[0].x;
+	pVtx[2].pos.y = c_aPosTypeFrame[0].y + FRAME_SIZE_HEIGHT;
+	pVtx[2].pos.z = 0.0f;
+	pVtx[3].pos.x = c_aPosTypeFrame[0].x + FRAME_SIZE_WIDTH;
+	pVtx[3].pos.y = c_aPosTypeFrame[0].y + FRAME_SIZE_HEIGHT;
+	pVtx[3].pos.z = 0.0f;
+
+	//座標変換用係数設定
+	pVtx[0].rhw = 1.0f;
+	pVtx[1].rhw = 1.0f;
+	pVtx[2].rhw = 1.0f;
+	pVtx[3].rhw = 1.0f;
+
+	//頂点カラー
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//テクスチャ座標の設定
+	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
 	//頂点バッファをアンロック
 	g_pVtxbuffTypeFrame->Unlock();
@@ -272,17 +307,17 @@ void UpdateTypeFrame(void)
 	//プレイヤー選択
 	if (GetUseGamepad(0) == true)
 	{
-		if (GetStick(0,INPUTTYPE_TRIGGER).x == CONVSTICK_LEFT || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) == true)
-		{//左に倒した
-			g_nSelectNum = (g_nSelectNum + (MAX_USE_GAMEPAD - 1)) % MAX_USE_GAMEPAD;
-		}
-		else if (GetStick(0, INPUTTYPE_TRIGGER).x == CONVSTICK_RIGHT || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) == true)
-		{//右に倒した
+		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_A) == true || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) == true)
+		{//次のプレイヤー
 			g_nSelectNum = (g_nSelectNum + 1) % MAX_USE_GAMEPAD;
+		}
+		else if (GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) == true)
+		{//戻る
+			g_nSelectNum = (g_nSelectNum + (MAX_USE_GAMEPAD - 1)) % MAX_USE_GAMEPAD;
 		}
 
 		//タイプ選択
-		else if (GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_DOWN) == true)
+		if (GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_DOWN) == true)
 		{//下に倒した
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
 		}
@@ -292,7 +327,7 @@ void UpdateTypeFrame(void)
 		}
 
 		//決定
-		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_A) == true)
+		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_START) == true)
 		{
 			SetFade(MODE_PvPGAME);
 			if (GetSelGameMode() == SelGameMode_PVP)
@@ -335,9 +370,9 @@ void UpdateTypeFrame(void)
 		//決定
 		if (GetKeyboardTrigger(DIK_RETURN) == true)
 		{
-			SetFade(MODE_PvPGAME);
 			if (GetSelGameMode() == SelGameMode_PVP)
 			{
+				SetFade(MODE_PvPGAME);
 				for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 				{
 					SetPlayerType_PvP(nCntPlayer, (g_playerType[nCntPlayer] != PLAYERTYPE_NONE ? true : false), (g_playerType[nCntPlayer] == PLAYERTYPE_COM ? true : false));
@@ -345,6 +380,7 @@ void UpdateTypeFrame(void)
 			}
 			else if (GetSelGameMode() == SelGameMode_HDR)
 			{
+				SetFade(MODE_RaceGAME);
 				for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 				{
 					SetPlayerType_HDR(nCntPlayer, (g_playerType[nCntPlayer] != PLAYERTYPE_NONE ? true : false), (g_playerType[nCntPlayer] == PLAYERTYPE_COM ? true : false));
@@ -376,6 +412,21 @@ void UpdateTypeFrame(void)
 		}
 	}
 
+	//位置可変部
+	//頂点座標の設定
+	pVtx[0].pos.x = c_aPosTypeFrame[g_nSelectNum].x;
+	pVtx[0].pos.y = c_aPosTypeFrame[g_nSelectNum].y;
+	pVtx[0].pos.z = 0.0f;
+	pVtx[1].pos.x = c_aPosTypeFrame[g_nSelectNum].x + FRAME_SIZE_WIDTH;
+	pVtx[1].pos.y = c_aPosTypeFrame[g_nSelectNum].y;
+	pVtx[1].pos.z = 0.0f;
+	pVtx[2].pos.x = c_aPosTypeFrame[g_nSelectNum].x;
+	pVtx[2].pos.y = c_aPosTypeFrame[g_nSelectNum].y + FRAME_SIZE_HEIGHT;
+	pVtx[2].pos.z = 0.0f;
+	pVtx[3].pos.x = c_aPosTypeFrame[g_nSelectNum].x + FRAME_SIZE_WIDTH;
+	pVtx[3].pos.y = c_aPosTypeFrame[g_nSelectNum].y + FRAME_SIZE_HEIGHT;
+	pVtx[3].pos.z = 0.0f;
+
 	//頂点バッファをアンロック
 	g_pVtxbuffTypeFrame->Unlock();
 }
@@ -385,6 +436,7 @@ void UpdateTypeFrame(void)
 //========================
 void DrawTypeFrame(void)
 {
+	int nCntTypeFrame;
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
 
 	//頂点フォーマットの設定
@@ -394,14 +446,20 @@ void DrawTypeFrame(void)
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxbuffTypeFrame, 0, sizeof(VERTEX_2D));
 
-	for (int nCntTypeFrame = 0; nCntTypeFrame < MAX_USE_GAMEPAD * FRAME_USE_TEXTURE; nCntTypeFrame++)
+	for (nCntTypeFrame = 0; nCntTypeFrame < MAX_USE_GAMEPAD * (FRAME_USE_TEXTURE - 1); nCntTypeFrame++)
 	{
 		//テクスチャ設定
-		pDevice->SetTexture(0, g_pTextureTypeFrame[nCntTypeFrame % FRAME_USE_TEXTURE]);
+		pDevice->SetTexture(0, g_pTextureTypeFrame[nCntTypeFrame % (FRAME_USE_TEXTURE - 1)]);
 
 		//描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntTypeFrame, 2);
 	}
+
+	//テクスチャ設定
+	pDevice->SetTexture(0, g_pTextureTypeFrame[2]);
+
+	//描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntTypeFrame, 2);
 
 
 	//アイコン
