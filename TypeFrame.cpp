@@ -272,17 +272,17 @@ void UpdateTypeFrame(void)
 	//プレイヤー選択
 	if (GetUseGamepad(0) == true)
 	{
-		if (GetStick(0,INPUTTYPE_TRIGGER).x == CONVSTICK_LEFT || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) == true)
-		{//左に倒した
-			g_nSelectNum = (g_nSelectNum + (MAX_USE_GAMEPAD - 1)) % MAX_USE_GAMEPAD;
-		}
-		else if (GetStick(0, INPUTTYPE_TRIGGER).x == CONVSTICK_RIGHT || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) == true)
-		{//右に倒した
+		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_A) == true || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) == true)
+		{//次のプレイヤー
 			g_nSelectNum = (g_nSelectNum + 1) % MAX_USE_GAMEPAD;
+		}
+		else if (GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) == true)
+		{//戻る
+			g_nSelectNum = (g_nSelectNum + (MAX_USE_GAMEPAD - 1)) % MAX_USE_GAMEPAD;
 		}
 
 		//タイプ選択
-		else if (GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_DOWN) == true)
+		if (GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_DOWN) == true)
 		{//下に倒した
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
 		}
@@ -292,7 +292,7 @@ void UpdateTypeFrame(void)
 		}
 
 		//決定
-		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_A) == true)
+		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_START) == true)
 		{
 			SetFade(MODE_PvPGAME);
 			if (GetSelGameMode() == SelGameMode_PVP)
@@ -335,9 +335,9 @@ void UpdateTypeFrame(void)
 		//決定
 		if (GetKeyboardTrigger(DIK_RETURN) == true)
 		{
-			SetFade(MODE_PvPGAME);
 			if (GetSelGameMode() == SelGameMode_PVP)
 			{
+				SetFade(MODE_PvPGAME);
 				for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 				{
 					SetPlayerType_PvP(nCntPlayer, (g_playerType[nCntPlayer] != PLAYERTYPE_NONE ? true : false), (g_playerType[nCntPlayer] == PLAYERTYPE_COM ? true : false));
@@ -345,6 +345,7 @@ void UpdateTypeFrame(void)
 			}
 			else if (GetSelGameMode() == SelGameMode_HDR)
 			{
+				SetFade(MODE_RaceGAME);
 				for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 				{
 					SetPlayerType_HDR(nCntPlayer, (g_playerType[nCntPlayer] != PLAYERTYPE_NONE ? true : false), (g_playerType[nCntPlayer] == PLAYERTYPE_COM ? true : false));
