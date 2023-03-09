@@ -21,6 +21,13 @@
 #define MAX_USE_GAMEPAD		(4)		//ゲームパッド使用可能台数
 #define MOUSE_BUTTON_MAX	(3)		//マウスボタンの最大数
 
+#define VIBE_POWER_MIN			(7000)	//最低振動量
+#define VIBE_POWER_LEVEL_01		(10000)	//弱めの振動
+#define VIBE_POWER_LEVEL_02		(23000)	//中くらいの振動
+#define VIBE_POWER_LEVEL_03		(37000)	//強めの振動
+#define VIBE_POWER_LEVEL_04		(50000)	//かなり強めの振動
+#define VIBE_POWER_LEVEL_05		(65535)	//最大振動
+
 //==========================================================================================
 //構造体定義
 //==========================================================================================
@@ -35,16 +42,28 @@ typedef struct
 	DWORD execLastTime;	//最後にtrueにした時間
 } Keyboard;
 
+//ゲームパッドの振動状態
+typedef enum
+{
+	VIBE_STATE_00_STOP,	//停止
+	VIBE_STATE_01_LOOP,	//ずっと同じ振動
+	VIBE_STATE_02_FADE,	//徐々に落ち着いていく
+	VIBE_STATE_MAX
+}VIBE_STATE;
+
 //ゲームパッド
 typedef struct
 {
-	XINPUT_STATE state;	//状態全部（およびプレス情報）
-	WORD trigger;		//トリガー情報
-	WORD release;		//リリース情報
-	WORD repeate;		//リピート情報
-	DWORD currentTime;	//現在の時間
-	DWORD execLastTime;	//最後にtrueにした時間
-	bool bUse;			//使用の有無
+	XINPUT_STATE state;		//状態全部（およびプレス情報）
+	WORD trigger;			//トリガー情報
+	WORD release;			//リリース情報
+	WORD repeate;			//リピート情報
+	DWORD currentTime;		//現在の時間
+	DWORD execLastTime;		//最後にtrueにした時間
+	VIBE_STATE Vibe_State;	//振動の状態
+	WORD wVibePower;		//振動の強さ
+	int nVibeTime;			//振動させる時間
+	bool bUse;				//使用の有無
 } GamePad;
 
 //マウスのボタン部
@@ -119,6 +138,14 @@ SHORT GetLStickX(int nPadNum);
 SHORT GetLStickY(int nPadNum);
 SHORT GetRStickX(int nPadNum);
 SHORT GetRStickY(int nPadNum);
+
+//=============================
+//振動
+//=============================
+void UpdateVibeGamePad(int nPadNum);
+void StopVibration(void);
+void StopVibration(int nPadNum);
+void SetPadVibration(int nPadNum, WORD wPower, int nVibeTime, VIBE_STATE State);
 
 //=============================
 //使用の有無

@@ -57,7 +57,7 @@ MODE			g_mode = MODE_TITLE;		// åªç›ÇÃÉÇÅ[Éh
 HWND g_hWnd;
 bool g_bShowCursor = true;
 bool g_bDebug = true;
-bool g_bFullScreen = true;
+bool g_bFullScreen = false;
 bool g_bShowTaskbar = true;
 
 //========================

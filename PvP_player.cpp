@@ -602,6 +602,8 @@ void DashPlayer(int nDashPlayer)
 //========================
 void HipDropPlayer(int nHipDropPlayer)
 {
+	PlaySound(SOUND_LABEL_SE_HIPSPIN, nHipDropPlayer);//ヒップドロップ音再生
+
 	g_aPlayerPvP[nHipDropPlayer].moveV0.y = PLAYER_HIPDROP_POWER;		//ヒップドロップの降下速度を代入
 	g_aPlayerPvP[nHipDropPlayer].move.x = 0.0f;							//X・Zの移動量消す
 	g_aPlayerPvP[nHipDropPlayer].move.z = 0.0f;
