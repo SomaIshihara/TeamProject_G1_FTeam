@@ -329,9 +329,9 @@ void UpdateTypeFrame(void)
 		//Œˆ’è
 		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_START) == true)
 		{
-			SetFade(MODE_PvPGAME);
 			if (GetSelGameMode() == SelGameMode_PVP)
 			{
+				SetFade(MODE_PvPGAME);
 				for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 				{
 					SetPlayerType_PvP(nCntPlayer, (g_playerType[nCntPlayer] != PLAYERTYPE_NONE ? true : false), (g_playerType[nCntPlayer] == PLAYERTYPE_COM ? true : false));
@@ -339,6 +339,7 @@ void UpdateTypeFrame(void)
 			}
 			else if (GetSelGameMode() == SelGameMode_HDR)
 			{
+				SetFade(MODE_PvPGAME);
 				for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 				{
 					SetPlayerType_HDR(nCntPlayer, (g_playerType[nCntPlayer] != PLAYERTYPE_NONE ? true : false), (g_playerType[nCntPlayer] == PLAYERTYPE_COM ? true : false));
