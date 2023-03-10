@@ -282,6 +282,9 @@
     <ClCompile Include="SelPlayer_bg.cpp">
       <Filter>ソース ファイル\SelectPlayer</Filter>
     </ClCompile>
+    <ClCompile Include="HDR_comai.cpp">
+      <Filter>ソース ファイル\AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -451,6 +454,9 @@
     </ClInclude>
     <ClInclude Include="SelPlayer_bg.h">
       <Filter>ヘッダー ファイル\SelPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="HDR_comai.h">
+      <Filter>ヘッダー ファイル\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
