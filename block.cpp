@@ -5,8 +5,8 @@
 //
 //==========================================
 #include "main.h"
-#include "Block.h"
 #include "HDR_player.h"
+#include "Block.h"
 #include "sound.h"
 
 //マクロ定義
@@ -17,10 +17,12 @@
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 
+#define PLAYER_BODY_SIZE	(35.0f)		//プレイヤーの胴体サイズ
+
 //プロト
 BLOCKTYPE SelectBlock(void);
 
-//グローバル変数宣言     
+//グローバル変数宣言
 LPDIRECT3DTEXTURE9		g_pTextureBlock[MAX_BLOCK_TEX] = {};	//テクスチャへにポインタ
 LPD3DXMESH				g_pMeshBlock = NULL;					//メッシュ(頂点情報)へのポインタ
 LPD3DXBUFFER			g_pBuffMatBlock = NULL;					//マテリアルへのポインタ
@@ -78,32 +80,24 @@ void InitBlock(void)
 	//ブロック情報設定
 	for (int nCntPlayer = 0; nCntPlayer < MAX_PLAYER; nCntPlayer++)
 	{
-		int nCount = 0;
+		int nSetCount = 0;			//配置した数
+		float PlayerPos_X = GetPlayer_HDR()[nCntPlayer].pos.x;	//プレイヤーのⅩ座標を格納
 
-		//初期化
-		for (int nCntBlockType = 0; nCntBlockType < BLOCKTYPE_MAX; nCntBlockType++)
+		for (int nCntBlock = MAX_BLOCK * nCntPlayer; nCntBlock < MAX_BLOCK * MAX_PLAYER; nCntBlock++)
 		{
-			g_aUseBlockNum[nCntBlockType] = c_aBlockNum[nCntBlockType];
-		}
+			g_Block[nCntBlock].pos = D3DXVECTOR3(PlayerPos_X, (float)nSetCount * COLLISION_SIZE_Y, 0.0f);	//位置を設定
+			g_Block[nCntBlock].type = SelectBlock();							//固さ設定
+			g_Block[nCntBlock].nLife = c_aBlockLife[g_Block[nCntBlock].type];	//体力設定
+			g_Block[nCntBlock].buse = true;										//使う
+			nSetCount++;	//設定した数加算
 
-		for (int nCntBlock = 0 + (MAX_BLOCK * nCntPlayer); nCntBlock < MAX_BLOCK * MAX_PLAYER; nCntBlock++)
-		{
-			g_Block[nCntBlock].pos = D3DXVECTOR3(225.0f - 150 * nCntPlayer, 20.0f + nCount * 80, 0.0f);
-
-			g_Block[nCntBlock].type = SelectBlock();
-			g_Block[nCntBlock].fWidth = COLLISION_SIZE_XZ;
-			g_Block[nCntBlock].buse = false;
-			g_Block[nCntBlock].nLife = 0;
-			nCount++;
-
-			if (nCount == MAX_BLOCK)
-			{
+			//設定した数が一人分の上限に達した
+			if (nSetCount == MAX_BLOCK)
+			{//処理を止める
 				break;
 			}
 		}
 	}
-
-	SetBlock();
 }
 
 //========================
@@ -236,48 +230,103 @@ void SetBlock(void)
 //========================
 //アイテムとプレイヤーの当たり判定処理
 //========================
-void CollisionBlock(int nPlayerNum)
+void CollisionBlock(Player_HDR *pPlayer)
 {
-	Player_HDR *pPlayer = GetPlayer_HDR();//プレイヤー情報取得
+	Block *pBlock = &g_Block[0];						//ブロックの情報取得
 
-	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK* MAX_PLAYER; nCntBlock++)
+	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK* MAX_PLAYER; nCntBlock++, pBlock++)
 	{
-		if (g_Block[nCntBlock].buse == true)
-		{
-			if (pPlayer[nPlayerNum].pos.x >= g_Block[nCntBlock].pos.x - COLLISION_SIZE_XZ
-				&&pPlayer[nPlayerNum].pos.x <= g_Block[nCntBlock].pos.x + COLLISION_SIZE_XZ
-				&&pPlayer[nPlayerNum].pos.z >= g_Block[nCntBlock].pos.z - COLLISION_SIZE_XZ
-				&&pPlayer[nPlayerNum].pos.z <= g_Block[nCntBlock].pos.z + COLLISION_SIZE_XZ
-				&&pPlayer[nPlayerNum].pos.y >= g_Block[nCntBlock].pos.y - COLLISION_SIZE_Y
-				&&pPlayer[nPlayerNum].pos.y <= g_Block[nCntBlock].pos.y + COLLISION_SIZE_Y)
-			{//プレイヤーがの範囲内に入ったとき
+		float
+		Block_L = pBlock->pos.x - COLLISION_SIZE_XZ,	//左端
+		Block_R = pBlock->pos.x + COLLISION_SIZE_XZ,	//右端
+		Block_F = pBlock->pos.z - COLLISION_SIZE_XZ,	//手前
+		Block_D = pBlock->pos.z + COLLISION_SIZE_XZ,	// 奥 
+		Block_U = pBlock->pos.y - COLLISION_SIZE_Y,		// 底 
+		Block_B = pBlock->pos.y + COLLISION_SIZE_Y;		//天面
 
-				if (pPlayer[nPlayerNum].bHipDrop == true)
+		//ブロックが使われている
+		if (pBlock->buse == true)
+		{
+			if (pPlayer->pos.x + PLAYER_BODY_SIZE >= Block_L	&&	//左端より 右 にいる
+				pPlayer->pos.x - PLAYER_BODY_SIZE <= Block_R	&&	//右端より 左 にいる
+				pPlayer->pos.z + PLAYER_BODY_SIZE >= Block_F	&&	//手前より 奥 にいる
+				pPlayer->pos.z - PLAYER_BODY_SIZE <= Block_D	&&	// 奥 より手前にいる
+				pPlayer->pos.y >= Block_U	&&	// 底 より 上 にいる
+				pPlayer->pos.y <= Block_B)		//天面より 下 にいる
+			{
+				//プレイヤーがヒップドロップ中
+				if (pPlayer->bHipDrop == true)
 				{
-					if (pPlayer[nPlayerNum].HipDropPower >= g_Block[nCntBlock].nLife)
-					{//ブロックの体力よりパワー（ダメージ量）が大きい
-						//ブロックを消す
-						g_Block[nCntBlock].buse = false;								//対象のブロックを使用しない
-						pPlayer[nPlayerNum].HipDropPower -= g_Block[nCntBlock].nLife;	//使用した分のダメージを減らす
-						PlaySound(SOUND_LABEL_SE_HIPDROP, nCntBlock);					//ヒップドロップ音再生
+					//ブロックの体力よりパワー（ダメージ量）が大きいければブロックを消す
+					if (pPlayer->HipDropPower >= pBlock->nLife)
+					{
+						pBlock->buse = false;					//対象のブロックを使用しない
+						//pPlayer->HipDropPower -= pBlock->nLife;	//使用した分のダメージを減らす
+						PlaySound(SOUND_LABEL_SE_HIPDROP, nCntBlock);	//ヒップドロップ音再生
 					}
 					else
 					{
-						g_Block[nCntBlock].nLife -= pPlayer[nPlayerNum].HipDropPower;
-						pPlayer[nPlayerNum].HipDropPower = 0;
-						pPlayer[nPlayerNum].move.y = 0;
-						pPlayer[nPlayerNum].bHipDrop = false;
-						pPlayer[nPlayerNum].nAICT = c_aAIParamHDR[pPlayer[nPlayerNum].aiDiff].nAICT;
+						g_Block[nCntBlock].nLife -= pPlayer->HipDropPower;
+						pPlayer->HipDropPower = 0;
+						pPlayer->move.y = 0;
+						pPlayer->bHipDrop = false;
+						pPlayer->nAICT = c_aAIParamHDR[pPlayer->aiDiff].nAICT;
 					}
 				}
 				else
 				{
-					pPlayer[nPlayerNum].pos.y = g_Block[nCntBlock].pos.y + COLLISION_SIZE_Y;
-					pPlayer[nPlayerNum].move.y = 0;
-					pPlayer[nPlayerNum].moveV0.y = 0;
-					pPlayer[nPlayerNum].jumpTime = 0;
-					pPlayer[nPlayerNum].bJump = false;
-					pPlayer[nPlayerNum].bHipDrop = false;
+					//プレイヤーがまだゴールしていない
+					if (!pPlayer->bGoal)
+					{
+						pPlayer->pos.y = g_Block[nCntBlock].pos.y + COLLISION_SIZE_Y;
+						pPlayer->move.y = 0;
+						pPlayer->moveV0.y = 0;
+						pPlayer->jumpTime = 0;
+						pPlayer->bJump = false;
+						pPlayer->bHipDrop = false;
+					}
+				}
+
+				//====================================
+				//			Xの当たり判定
+				//====================================
+				//左から当たった場合
+				if (pPlayer->posOld.x + PLAYER_BODY_SIZE <= Block_L &&	//前回ではプレイヤーが左に居て、
+					pPlayer->pos.x + PLAYER_BODY_SIZE >= Block_L)		//現在ではブロックが左にいる
+				{
+					pPlayer->pos.x = Block_L - PLAYER_BODY_SIZE;	//ブロックの左端に戻す
+					pPlayer->move.x = 0.0f;		//Ⅹの移動量を消す
+					pPlayer->moveV0.x = 0.0f;	//Ⅹの移動量を消す
+				}
+
+				//右から当たった場合
+				if (Block_R <= pPlayer->posOld.x - PLAYER_BODY_SIZE &&	//前回ではプレイヤーが右に居て、
+					Block_R >= pPlayer->pos.x - PLAYER_BODY_SIZE)		//現在ではブロックが右にいる
+				{
+					pPlayer->pos.x = Block_R + PLAYER_BODY_SIZE;	//ブロックの右端に戻す
+					pPlayer->move.x = 0.0f;		//Ⅹの移動量を消す
+					pPlayer->moveV0.x = 0.0f;	//Ⅹの移動量を消す
+				}
+
+				//====================================
+				//			Zの当たり判定
+				//====================================
+				//手前から当たった場合
+				if (pPlayer->posOld.z + PLAYER_BODY_SIZE <= Block_F &&	//前回ではプレイヤーが手前に居て、
+					pPlayer->pos.z + PLAYER_BODY_SIZE >= Block_F)		//現在ではブロックが手前にいる
+				{
+					pPlayer->pos.z = Block_F - PLAYER_BODY_SIZE;	//ブロックの手前に戻す
+					pPlayer->move.z = 0.0f;		//Ｚの移動量を消す
+					pPlayer->moveV0.z = 0.0f;	//Ｚの移動量を消す
+				}
+
+				//奥から当たった場合
+				if (Block_D <= pPlayer->posOld.z - PLAYER_BODY_SIZE &&	//前回ではプレイヤーが奥に居て、
+					Block_D >= pPlayer->pos.z - PLAYER_BODY_SIZE)		//現在ではブロックが奥にいる
+				{
+					pPlayer->pos.z = Block_D + PLAYER_BODY_SIZE;	//ブロックの奥に戻す
+					pPlayer->move.z = 0.0f;		//Ｚの移動量を消す
+					pPlayer->moveV0.z = 0.0f;	//Ｚの移動量を消す
 				}
 			}
 		}

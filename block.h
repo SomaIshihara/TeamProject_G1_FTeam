@@ -27,9 +27,8 @@ typedef struct
 {
 	D3DXVECTOR3 pos;			//位置
 	BLOCKTYPE	type;			//種類
-	float		fWidth;			//
-	int			nLife;			//
-	bool        buse;			//使用しているかどうか
+	int			nLife;			//体力
+	bool		buse;			//使用しているかどうか
 }Block;
 
 //プロトタイプ宣言

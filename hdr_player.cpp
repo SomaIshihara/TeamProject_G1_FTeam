@@ -129,7 +129,8 @@ void UpdatePlayer_HDR(void)
 		for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 		{
 			//前回の位置を保存
-			g_aPlayerHDR[nCntPlayer].posOld = g_aPlayerHDR[nCntPlayer].pos;
+			g_aPlayerHDR[nCntPlayer].posOld.x = g_aPlayerHDR[nCntPlayer].pos.x;
+			g_aPlayerHDR[nCntPlayer].posOld.z = g_aPlayerHDR[nCntPlayer].pos.z;
 
 			//ジャンプ時間を増やす
 			g_aPlayerHDR[nCntPlayer].jumpTime++;
@@ -181,7 +182,7 @@ void UpdatePlayer_HDR(void)
 			}
 
 			//ブロックの当たり判定
-			CollisionBlock(nCntPlayer);
+			CollisionBlock(&g_aPlayerHDR[nCntPlayer]);
 		}
 	}
 }

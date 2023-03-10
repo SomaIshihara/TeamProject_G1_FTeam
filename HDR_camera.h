@@ -55,17 +55,17 @@ void UpdateHDRCamera(void);					//更新処理
 void SetHDRCamera(int nIdx);				//設定処理
 void MoveHDRCamera(int nCntHDRCamera);		//カメラの移動処理
 
-void SetUpHDRCamera(int nSetUpCamera);			//カメラのセットアップ処理（ゲーム開始画面の演出用
-void SetUpCheckHDRCamera(void);					//カメラのセットアップ完了状態検査
-void SetPosRHDRCamera(int nCntHDRCamera);		//注視点設定
-void UpdatePosVHDRCamera(int nCntHDRCamera);	//視点の位置更新
-HDRCamera *GetHDRCamera(void);					//カメラの取得
-HDR_Ready *GetHDR_Ready(void);					//カメラが準備OKか
+void SetUpHDRCamera(HDRCamera *pCamera, float PlayerPosY);	//カメラのセットアップ処理（ゲーム開始画面の演出用
+void SetUpCheckHDRCamera(void);								//カメラのセットアップ完了状態検査
+void SetPosRHDRCamera(int nCntHDRCamera);					//注視点設定
+void UpdatePosVHDRCamera(int nCntHDRCamera);				//視点の位置更新
+HDRCamera *GetHDRCamera(void);								//カメラの取得
+HDR_Ready *GetHDR_Ready(void);								//カメラが準備OKか
 
 //=========================================
 //カメラの台数別　設定処理
 //=========================================
 void Set_NumHDRCamera(NumCamera type);
-void SPS_ChaseHDRCamera(int nCntHDRCamera, D3DXVECTOR3 rot);
+void SPS_ChaseHDRCamera(int nCntHDRCamera);
 
 #endif

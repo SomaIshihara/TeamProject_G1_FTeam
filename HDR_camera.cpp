@@ -43,8 +43,6 @@ Author:飯田洲暉 (大宮愛羅  平澤詩苑  石原颯馬)
 HDRCamera	g_HDRCamera[NUM_HDRCAMERA];	//カメラの情報
 NumCamera	g_NumHDRCameraType;			//カメラ分割の情報
 HDR_Ready	g_HDR_Ready;				//カメラ準備情報
-bool		g_bChase_HDR = true;		//プレイヤーに注視点を置くかどうか				TRUE：追いかける　　false：原点を見る
-bool		g_bSPS = false;				//２人称か、定点カメラか ただし、４分割時のみ	TRUE：２人称		false：定点カメラ
 
 //=========================================
 //カメラの位置設定処理
@@ -55,24 +53,11 @@ void InitSetHDRCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumHDRCamera)
 	//カメラのポインタ取得
 	HDRCamera *pCamera = &g_HDRCamera[nNumHDRCamera];
 
-	//設定
 	pCamera->posV = posV;	//視点
 	pCamera->posR = posR;	//注視点
 
 	//上方向ベクトルだけ固定
 	pCamera->vecU = VECU_OVER;
-
-	//それぞれの位置の差分を格納する変数
-	float PosDiffX, PosDiffZ;
-
-	PosDiffX = powf(pCamera->posR.x - pCamera->posV.x, DIFF_TIMES);
-	PosDiffZ = powf(pCamera->posR.z - pCamera->posV.z, DIFF_TIMES);
-
-	//長さの算出
-	pCamera->fLength = sqrtf(PosDiffX + PosDiffZ);
-
-	//角度を算出
-	pCamera->rot.y = atan2f(PosDiffX, PosDiffZ);
 
 	//視点の位置更新
 	UpdatePosVHDRCamera(nNumHDRCamera);
@@ -83,33 +68,19 @@ void InitSetHDRCameraPos(D3DXVECTOR3 posV, D3DXVECTOR3 posR, int nNumHDRCamera)
 //=========================================
 void InitHDRCamera(NumCamera type)
 {
-	Set_NumHDRCamera(type);	//カメラの数によるカメラ情報の初期化
-	g_bChase_HDR = true;	//プレイヤーを追いかける
-	g_bSPS = true;			//２人称カメラに設定
+	Set_NumHDRCamera(type);	//カメラ分割の初期化
 	g_HDR_Ready = HDR_Ready_SETUP;//カメラ準備中
+	HDRCamera *pCamera = &g_HDRCamera[0];
 
-	for (int nCntHDRCamera = 0; nCntHDRCamera < NUM_HDRCAMERA; nCntHDRCamera++)
-	{
-		//それぞれの位置の差分を格納する変数
-		float PosDiffX, PosDiffZ;
-
-		//カメラのポインタ取得
-		HDRCamera *pCamera = &g_HDRCamera[nCntHDRCamera];
-
-		PosDiffX = powf(pCamera->posR.x - pCamera->posV.x, DIFF_TIMES);	//２乗
-		PosDiffZ = powf(pCamera->posR.z - pCamera->posV.z, DIFF_TIMES);	//２乗
-
-		//長さの算出
-		pCamera->fLength = sqrtf(PosDiffX + PosDiffZ);
-
-		//角度を算出
-		pCamera->rot.y = atan2f(PosDiffX, PosDiffZ);
+	//カメラの情報初期化処理
+	for (int nCntHDRCamera = 0; nCntHDRCamera < NUM_HDRCAMERA; nCntHDRCamera++, pCamera++)
+	{	
+		pCamera->ready = HDR_Ready_SETUP;	//カメラを準備中に
+		pCamera->posV.x = 0.0f;				//視点は原点にとどまる
+		pCamera->posR.x = GetPlayer_HDR()[nCntHDRCamera].pos.x;	//注視点を各プレイヤーに
 
 		//視点の位置更新
 		UpdatePosVHDRCamera(nCntHDRCamera);
-
-		//カメラ準備中
-		pCamera->ready = HDR_Ready_SETUP;
 	}
 }
 
@@ -126,50 +97,29 @@ void UninitHDRCamera(void)
 //=========================================
 void UpdateHDRCamera(void)
 {
-	//追従  ON / OFF 切り替え
-	if (GetKeyboardTrigger(DIK_F4))
-	{
-		g_bChase_HDR = g_bChase_HDR ? false : true;
+	Player_HDR *pPlayer = GetPlayer_HDR();	//プレイヤーのポインターを取得
+	HDRCamera *pCamera = &g_HDRCamera[0];	//カメラのポインターも取得
 
-		//追従がOFF
-		if (g_bChase_HDR == false)
-		{
-			//注視点を０にする
-			for (int nCntHDRCamera = 0; nCntHDRCamera < NUM_HDRCAMERA; nCntHDRCamera++)
-			{
-				g_HDRCamera[nCntHDRCamera].posR = ZERO_SET;
-			}
-		}
-	}
-
-	//２人称　ON / OFF 切り替え
-	if (GetKeyboardTrigger(DIK_F6))
-	{
-		g_bSPS = g_bSPS ? false : true;
-	}
-	
 	for (int nCntHDRCamera = 0; nCntHDRCamera < NUM_HDRCAMERA; nCntHDRCamera++)
 	{
-		g_HDRCamera[nCntHDRCamera].posV.x =
-		g_HDRCamera[nCntHDRCamera].posR.x = GetPlayer_HDR()[nCntHDRCamera].pos.x;	//注視点
-		g_HDRCamera[nCntHDRCamera].posR.z = GetPlayer_HDR()[nCntHDRCamera].pos.z;	//注視点
+		pCamera->posR.x = GetPlayer_HDR()[nCntHDRCamera].pos.x;	//注視点
+		pCamera->posR.z = GetPlayer_HDR()[nCntHDRCamera].pos.z;	//注視点
 		
 		//カメラが準備中
 		if (g_HDR_Ready == HDR_Ready_SETUP)
 		{
 			//カメラ準備
-			SetUpHDRCamera(nCntHDRCamera);
+			SetUpHDRCamera(pCamera, pPlayer->pos.y);
 		}
 
 		//カメラが使われている
-		else if (g_HDRCamera[nCntHDRCamera].bUse == true)
+		else if (pCamera->bUse == true)
 		{
 			//カメラの移動処理
 			MoveHDRCamera(nCntHDRCamera);
 		}
 
-		UpdatePosVCamera(nCntHDRCamera);
-
+		UpdatePosVHDRCamera(nCntHDRCamera);
 	}
 
 	//セットアップ完了かどうか検査
@@ -177,21 +127,18 @@ void UpdateHDRCamera(void)
 }
 
 //カメラ準備処理
-void SetUpHDRCamera(int nSetUpCamera)
+void SetUpHDRCamera(HDRCamera *pCamera, float PlayerPosY) 
 {
-	//プレイヤーのY座標を取得
-	float Player_Pos_Y = GetPlayer_HDR()[nSetUpCamera].pos.y;
-
 	//視点・注視点を上昇
-	g_HDRCamera[nSetUpCamera].posR.y += SETUP_FLOAT_SPEED;
-	g_HDRCamera[nSetUpCamera].posV.y += SETUP_FLOAT_SPEED;
+	pCamera->posR.y += SETUP_FLOAT_SPEED;
+	pCamera->posV.y += SETUP_FLOAT_SPEED;
 
 	//プレイヤーの位置より、注視点が上に行った
-	if (Player_Pos_Y <= g_HDRCamera[nSetUpCamera].posR.y)
+	if (PlayerPosY <= pCamera->posR.y)
 	{
-		g_HDRCamera[nSetUpCamera].posR.y = Player_Pos_Y + SPS_posR_HEIGHT;	//注視点の位置修正
-		g_HDRCamera[nSetUpCamera].posV.y = Player_Pos_Y + SPS_posV_HEIGHT;	//視点の位置修正
-		g_HDRCamera[nSetUpCamera].ready = HDR_Ready_OK;						//準備OK
+		pCamera->posR.y = PlayerPosY + SPS_posR_HEIGHT;	//注視点の位置修正
+		pCamera->posV.y = PlayerPosY + SPS_posV_HEIGHT;	//視点の位置修正
+		pCamera->ready = HDR_Ready_OK;					//準備OK
 	}
 }
 
@@ -284,47 +231,37 @@ void MoveHDRCamera(int nCntHDRCamera)
 //注視点の位置設定
 void SetPosRHDRCamera(int nCntHDRCamera)
 {
-	//追従 または ２人称が  ON
-	if (g_bChase_HDR == true || g_bSPS == true)
+	//プレイヤーのＹ座標を格納
+	float PlayerPos_Y = GetPlayer_HDR()[nCntHDRCamera].pos.y;
+
+	//プレイヤーの位置が、注視点よりも高かった場合
+	if (PlayerPos_Y < g_HDRCamera[nCntHDRCamera].posR.y - SPS_posR_HEIGHT && g_HDR_Ready == HDR_Ready_OK)
 	{
-		//プレイヤーのＹ座標を格納
-		float PlayerPos_Y = GetPlayer_HDR()[nCntHDRCamera].pos.y;
-
-		//プレイヤーの位置が、注視点よりも高かった場合
-		if (PlayerPos_Y < g_HDRCamera[nCntHDRCamera].posR.y - SPS_posR_HEIGHT && g_HDR_Ready == HDR_Ready_OK)
-		{
-			g_HDRCamera[nCntHDRCamera].posR.y =	PlayerPos_Y + SPS_posR_HEIGHT;	//対象のプレイヤーに注視点を合わせる
-			g_HDRCamera[nCntHDRCamera].posV.y = PlayerPos_Y + SPS_posV_HEIGHT;	//対象のプレイヤーに視点を合わせる
-		}
-
-		//２人称視点
-		if (g_bSPS)
-		{
-			//２人称視点設定
-			SPS_ChaseHDRCamera(nCntHDRCamera, ZERO_SET);
-		}
+		g_HDRCamera[nCntHDRCamera].posR.y = PlayerPos_Y + SPS_posR_HEIGHT;	//対象のプレイヤーに注視点を合わせる
+		g_HDRCamera[nCntHDRCamera].posV.y = PlayerPos_Y + SPS_posV_HEIGHT;	//対象のプレイヤーに視点を合わせる
 	}
 }
 
 //２人称視点
-void SPS_ChaseHDRCamera(int nCntHDRCamera, D3DXVECTOR3 rot)
+void SPS_ChaseHDRCamera(int nCntHDRCamera)
 {
-	//ポインタを取得
-	HDRCamera *pCamera = &g_HDRCamera[nCntHDRCamera];
-
-	//プレイヤーの角度の逆に設定
-	pCamera->rot.y = rot.y;
-
-	//角度修正
-	FIX_ROT(pCamera->rot.y);
-
-	//カメラの距離設定
-	//pCamera->fLength = pCamera->fLength <= SPS_LENGTH ? pCamera->fLength : SPS_LENGTH;
+	//プレイヤーの正面に向くように徐々に角度を補正
+	g_HDRCamera[nCntHDRCamera].rot.y -= (0.0f - g_HDRCamera[nCntHDRCamera].rot.y) * 0.3f;
 }
 
 //視点の位置更新
 void UpdatePosVHDRCamera(int nCntHDRCamera)
 {
+	//それぞれの位置の差分を算出
+	float PosDiffX = powf(g_HDRCamera[nCntHDRCamera].posR.x - g_HDRCamera[nCntHDRCamera].posV.x, DIFF_TIMES);
+	float PosDiffZ = powf(g_HDRCamera[nCntHDRCamera].posR.z - g_HDRCamera[nCntHDRCamera].posV.z, DIFF_TIMES);
+
+	//長さの算出
+	g_HDRCamera[nCntHDRCamera].fLength = sqrtf(PosDiffX + PosDiffZ);
+
+	//角度を算出
+	g_HDRCamera[nCntHDRCamera].rot.y = atan2f(PosDiffX, PosDiffZ);
+
 	//視点の位置更新
 	g_HDRCamera[nCntHDRCamera].posV.x = g_HDRCamera[nCntHDRCamera].posR.x + sinf(D3DX_PI - g_HDRCamera[nCntHDRCamera].rot.y) * g_HDRCamera[nCntHDRCamera].fLength;
 	g_HDRCamera[nCntHDRCamera].posV.z = g_HDRCamera[nCntHDRCamera].posR.z + cosf(D3DX_PI - g_HDRCamera[nCntHDRCamera].rot.y) * g_HDRCamera[nCntHDRCamera].fLength;
