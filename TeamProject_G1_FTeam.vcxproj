@@ -177,7 +177,6 @@
     <ClCompile Include="fence.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="GaugeFrame.cpp" />
-    <ClCompile Include="HDR_comai.cpp" />
     <ClCompile Include="hdr_player.cpp" />
     <ClCompile Include="HDR_camera.cpp" />
     <ClCompile Include="pvp_game.cpp" />
@@ -237,7 +236,6 @@
     <ClInclude Include="file.h" />
     <ClInclude Include="GaugeFrame.h" />
     <ClInclude Include="HDR_camera.h" />
-    <ClInclude Include="HDR_comai.h" />
     <ClInclude Include="hdr_player.h" />
     <ClInclude Include="pvp_game.h" />
     <ClInclude Include="gauge.h" />

@@ -11,12 +11,14 @@
 #include "conversioninput.h"
 #include "debugproc.h"
 #include "camera.h"
+#include "HDR_camera.h"
 #include <assert.h>
 #include "color.h"
 #include "sound.h"
 #include "meshfield.h"
 #include "block.h"
 #include "rank.h"
+#include "ai.h"
 
 //マクロ定義
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)				//ヒップドロップスピンの回転値
@@ -68,9 +70,6 @@ const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 	{ D3DXVECTOR3(225.0f,MAX_BLOCK * COLLISION_SIZE_Y ,0.0f) ,D3DXVECTOR3(0.0f,1.57f,0.0f) },
 };
 
-//[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
-bool g_aAIMove_HDR[MAX_USE_GAMEPAD] = { true,true,true,true };
-
 //========================
 //初期化処理
 //========================
@@ -78,32 +77,29 @@ void InitPlayer_HDR(void)
 {
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	Player_HDR *pPlayer = &g_aPlayerHDR[0];
 
 	//変数初期化
-	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++, pPlayer++)
+	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
 		//変数初期化
-		pPlayer->pos = pPlayer->posOld = c_aPosRot[nCntPlayer][0];
-		pPlayer->move = pPlayer->moveV0 = pPlayer->rot = ZERO_SET;
-		pPlayer->jumpTime = pPlayer->nHipDropWait = 0;
-		pPlayer->bJump = false;
-		pPlayer->bHipDrop = false;
-		pPlayer->bHipDropSpin = false;
-		pPlayer->bGoal = false;
-		pPlayer->nRank = RANK_4TH;
+		g_aPlayerHDR[nCntPlayer].pos = g_aPlayerHDR[nCntPlayer].posOld = c_aPosRot[nCntPlayer][0];
+		g_aPlayerHDR[nCntPlayer].move = g_aPlayerHDR[nCntPlayer].moveV0 = g_aPlayerHDR[nCntPlayer].rot = ZERO_SET;
+		g_aPlayerHDR[nCntPlayer].jumpTime = g_aPlayerHDR[nCntPlayer].nHipDropWait = 0;
+		g_aPlayerHDR[nCntPlayer].bJump = false;
+		g_aPlayerHDR[nCntPlayer].bHipDrop = false;
+		g_aPlayerHDR[nCntPlayer].bHipDropSpin = false;
+		g_aPlayerHDR[nCntPlayer].bGoal = false;
+		g_aPlayerHDR[nCntPlayer].nRank = RANK_4TH;
 		g_buse[nCntPlayer] = false;
 
-		pPlayer->animal = ANIMAL_WILDBOAR;
-		
-		pPlayer->model = GetAnimal(pPlayer->animal);
-		pPlayer->bUsePlayer = GetUseController_HDR(nCntPlayer);
-	}
+		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 
-	//[デバッグ]コントローラーが接続されていなければ1Pのみ有効化する
-	if (GetUseControllerNum_HDR() == 0)
-	{
-		g_aPlayerHDR[0].bUsePlayer = true;
+		//g_aPlayerHDR[nCntPlayer].bUseAI = g_aAIMove_HDR[nCntPlayer];
+		g_aPlayerHDR[nCntPlayer].nAIPower = 0;
+		g_aPlayerHDR[nCntPlayer].aiDiff = AIDIFF_NORMAL;
+		g_aPlayerHDR[nCntPlayer].nAICT = 20;
+		
+		g_aPlayerHDR[nCntPlayer].model = GetAnimal(g_aPlayerHDR[nCntPlayer].animal);
 	}
 }
 
@@ -127,58 +123,64 @@ void UninitPlayer_HDR(void)
 //========================
 void UpdatePlayer_HDR(void)
 {
-	//プレイヤー人数分繰り返す
-	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+	if (*GetHDR_Ready() == HDR_Ready_OK)
 	{
-		//ジャンプ時間を増やす
-		g_aPlayerHDR[nCntPlayer].jumpTime++;
+		//プレイヤー人数分繰り返す
+		for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+		{
+			//前回の位置を保存
+			g_aPlayerHDR[nCntPlayer].posOld = g_aPlayerHDR[nCntPlayer].pos;
 
-		if (g_aPlayerHDR[nCntPlayer].bUsePlayer == true)
-		{//使用時のみ行う
+			//ジャンプ時間を増やす
+			g_aPlayerHDR[nCntPlayer].jumpTime++;
 
-			//接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
-			if (GetUseControllerNum_HDR() != 0)
+			//AIのクールタイムを減らす
+			g_aPlayerHDR[nCntPlayer].nAICT--;
+
+			if (g_aPlayerHDR[nCntPlayer].bUsePlayer == true)
+			{//使用時のみ行う
+			 //プレイヤーであるか確認
+			 //接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
+				if (g_aPlayerHDR[nCntPlayer].bUseAI == false && GetUseControllerNum_HDR() != 0)
+				{
+					g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
+				}
+
+				//各プレイヤーの操作
+				ControllPlayer_HDR(nCntPlayer);
+			}
+
+			//ヒップドロップスピンの硬直中
+			if (0 < g_aPlayerHDR[nCntPlayer].nHipDropWait)
 			{
-				g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
+				HipSpinPlayer_HDR(nCntPlayer);
+			}
+			//硬直中で無ければ落下速度を代入
+			else
+			{
+				g_aPlayerHDR[nCntPlayer].move.y = g_aPlayerHDR[nCntPlayer].moveV0.y - (9.8f * g_aPlayerHDR[nCntPlayer].jumpTime / MAX_FPS);
 			}
 
-			//各プレイヤーの操作
-			ControllPlayer_HDR(nCntPlayer);
-		}
+			//移動
+			g_aPlayerHDR[nCntPlayer].pos += g_aPlayerHDR[nCntPlayer].move;
 
-		//ヒップドロップスピンの硬直中
-		if (0 < g_aPlayerHDR[nCntPlayer].nHipDropWait)
-		{
-			HipSpinPlayer_HDR(nCntPlayer);
-		}
-		//硬直中で無ければ落下速度を代入
-		else
-		{
-			g_aPlayerHDR[nCntPlayer].move.y = g_aPlayerHDR[nCntPlayer].moveV0.y - (9.8f * g_aPlayerHDR[nCntPlayer].jumpTime / MAX_FPS);
-		}
+			//プレイヤーが地面を突き抜けてしまった
+			if (g_aPlayerHDR[nCntPlayer].pos.y < 0.0f)
+			{
+				g_aPlayerHDR[nCntPlayer].pos.y = 0.0f;
+				g_aPlayerHDR[nCntPlayer].move.y = 0.0f;
+				g_aPlayerHDR[nCntPlayer].bJump = false;
+				g_aPlayerHDR[nCntPlayer].bHipDrop = false;
 
-		//移動
-		g_aPlayerHDR[nCntPlayer].pos += g_aPlayerHDR[nCntPlayer].move;
-
-		//プレイヤーが地面を突き抜けてしまった
-		if (g_aPlayerHDR[nCntPlayer].pos.y < 0.0f)
-		{
-			g_aPlayerHDR[nCntPlayer].pos.y = 0.0f;
-			g_aPlayerHDR[nCntPlayer].move.y = 0.0f;
-			g_aPlayerHDR[nCntPlayer].bJump = false;
-			g_aPlayerHDR[nCntPlayer].bHipDrop = false;
-
-			if (g_buse[nCntPlayer] == false)
-			{//ゴール判定
-				g_aPlayerHDR[nCntPlayer].bGoal = true;
-				UpdateRank(nCntPlayer);
-				g_buse[nCntPlayer] = true;
+				if (g_buse[nCntPlayer] == false)
+				{//ゴール判定
+					g_aPlayerHDR[nCntPlayer].bGoal = true;
+					UpdateRank(nCntPlayer);
+					g_buse[nCntPlayer] = true;
+				}
 			}
-		}
 
-		//ブロックの当たり判定（一旦ゴール後は当たり判定なし）
-		if (g_aPlayerHDR[nCntPlayer].bGoal == false)
-		{
+			//ブロックの当たり判定
 			CollisionBlock(nCntPlayer);
 		}
 	}
@@ -344,15 +346,58 @@ void ControllPlayer_HDR(int nPlayerNum)
 	if (g_aPlayerHDR[nPlayerNum].bHipDrop == false)
 	{
 		//ジャンプ・ヒップドロップ
-		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true && g_aPlayerHDR[nPlayerNum].bHipDrop == false)
+		if (g_aPlayerHDR[nPlayerNum].bUseAI == false)
+		{//プレイヤー
+			if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true && g_aPlayerHDR[nPlayerNum].bHipDrop == false)
+			{
+				if (g_aPlayerHDR[nPlayerNum].bJump && g_aPlayerHDR[nPlayerNum].bGoal == false)
+				{//ジャンプ中であり、ゴールしていない
+					HipDropPlayer_HDR(nPlayerNum);		//プレイヤーのヒップドロップ処理
+				}
+				else if (g_aPlayerHDR[nPlayerNum].bJump == false)
+				{//ジャンプしていない
+					JumpPlayer_HDR(nPlayerNum);			//プレイヤーのジャンプ処理
+				}
+			}
+		}
+		else if (g_aPlayerHDR[nPlayerNum].nAICT <= 0)
 		{
 			if (g_aPlayerHDR[nPlayerNum].bJump && g_aPlayerHDR[nPlayerNum].bGoal == false)
 			{//ジャンプ中であり、ゴールしていない
-				HipDropPlayer_HDR(nPlayerNum);		//プレイヤーのヒップドロップ処理
+				//ジャンプ量が一定に達しているか確認する
+				if (g_aPlayerHDR[nPlayerNum].pos.y - g_aPlayerHDR[nPlayerNum].posOld.y >= g_aPlayerHDR[nPlayerNum].nAIPower)
+				{
+					HipDropPlayer_HDR(nPlayerNum);		//プレイヤーのヒップドロップ処理
+				}
 			}
 			else if (g_aPlayerHDR[nPlayerNum].bJump == false)
 			{//ジャンプしていない
 				JumpPlayer_HDR(nPlayerNum);			//プレイヤーのジャンプ処理
+				if (g_aPlayerHDR[nPlayerNum].bUseAI == true)
+				{//AIのジャンプレベル指定処理
+					AIDIFF aiDiff = g_aPlayerHDR[nPlayerNum].aiDiff;
+					int nRandAll = c_aAIParamHDR[aiDiff].nHDLevel_1 + c_aAIParamHDR[aiDiff].nHDLevel_2 +
+						c_aAIParamHDR[aiDiff].nHDLevel_3 + c_aAIParamHDR[aiDiff].nHDLevel_Max;
+					int nJumpRand = rand() % nRandAll;
+
+					//どのレベルか判別する処理
+					if (nJumpRand < c_aAIParamHDR[aiDiff].nHDLevel_1)
+					{
+						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_HEIGHT_LEVEL_1;
+					}
+					else if (nJumpRand < c_aAIParamHDR[aiDiff].nHDLevel_2)
+					{
+						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_HEIGHT_LEVEL_2;
+					}
+					else if (nJumpRand < c_aAIParamHDR[aiDiff].nHDLevel_3)
+					{
+						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_HEIGHT_LEVEL_3;
+					}
+					else
+					{
+						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_HEIGHT_LEVEL_MAX;
+					}
+				}
 			}
 		}
 	}
@@ -535,11 +580,13 @@ void SetPlayerType_HDR(int nPlayerNum, bool bUse, bool bAIUse)
 	//プレイヤー使用するならAI指定
 	if (g_aPlayerHDR[nPlayerNum].bUsePlayer == true)
 	{
-		g_aAIMove_HDR[nPlayerNum] = bAIUse;
+		g_aPlayerHDR[nPlayerNum].bUseAI = bAIUse;
+		//g_aAIMove_HDR[nPlayerNum] = bAIUse;
 	}
 	else
 	{//使用しないならAIも使用しない
-		g_aAIMove_HDR[nPlayerNum] = false;
+		g_aPlayerHDR[nPlayerNum].bUseAI = false;
+		//g_aAIMove_HDR[nPlayerNum] = false;
 	}
 }
 

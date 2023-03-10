@@ -10,6 +10,7 @@
 #include "main.h"
 #include "model.h"
 #include "input.h"
+#include "ai.h"
 
 //プレイヤーモデルの構造体
 typedef struct
@@ -45,6 +46,12 @@ struct Player_HDR
 	//パラメータ類
 	ANIMAL animal;			//使用している動物
 
+	//AI
+	AIDIFF aiDiff;			//AI難易度
+	bool bUseAI;			//AI使用するかどうか
+	int nAIPower;			//ジャンプ量
+	int nAICT;				//AIのクールタイム
+
 	//描画類
 	Model model;			//使用モデル
 	D3DXMATRIX mtxWorld;	//ワールドマトリ
@@ -61,5 +68,14 @@ void UpdatePlayer_HDR(void);
 void DrawPlayer_HDR(void);
 Player_HDR *GetPlayer_HDR(void);
 void SetPlayerType_HDR(int nPlayerNum, bool bUse, bool bAIUse);	//プレイヤー使用時AI使用するか指定しない場合AI使用
+
+//ヒップドロップ割合
+const AIParam_HDR c_aAIParamHDR[AIDIFF_MAX] =
+{
+	{ 1,2,0,0,40 },	//EASY
+	{ 2,3,1,0,30 },	//NORMAL
+	{ 0,1,2,1,20 },	//HARD
+	{ 1,1,1,1,20 }	//VIEW
+};
 
 #endif
