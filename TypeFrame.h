@@ -23,5 +23,6 @@ void InitTypeFrame(void);
 void UninitTypeFrame(void);
 void UpdateTypeFrame(void);
 void DrawTypeFrame(void);
+bool GetUsePlayer(int nPlayerNum);
 
 #endif // !_TYPEFRAME_H_

@@ -15,20 +15,26 @@
 #include "color.h"
 
 //マクロ
-#define FRAME_USE_TEXTURE	(3)			//タイプ枠で使うテクスチャ数
-#define STR_USE_TEXTURE		(3)			//タイプ文字で使うテクスチャ数
-#define FRAME_SIZE_WIDTH	(312.0f)	//枠のサイズ（幅）
-#define FRAME_SIZE_HEIGHT	(108.0f)	//枠のサイズ（高さ）
-#define STR_OFFSET_WIDTH	(37.0f)		//枠と文字の位置ずらし（幅）
-#define STR_OFFSET_HEIGHT	(29.0f)		//枠と文字の位置ずらし（高さ）
-#define STR_SIZE_WIDTH		(238.0f)	//文字のサイズ（幅）
-#define STR_SIZE_HEIGHT		(50.0f)		//文字のサイズ（高さ）
+#define FRAME_USE_TEXTURE	(3)				//タイプ枠で使うテクスチャ数
+#define STR_USE_TEXTURE		(3)				//タイプ文字で使うテクスチャ数
+#define FRAME_SIZE_WIDTH	(312.0f)		//枠のサイズ（幅）
+#define FRAME_SIZE_HEIGHT	(108.0f)		//枠のサイズ（高さ）
+#define STR_OFFSET_WIDTH	(37.0f)			//枠と文字の位置ずらし（幅）
+#define STR_OFFSET_HEIGHT	(29.0f)			//枠と文字の位置ずらし（高さ）
+#define STR_SIZE_WIDTH		(238.0f)		//文字のサイズ（幅）
+#define STR_SIZE_HEIGHT		(50.0f)			//文字のサイズ（高さ）
 #define INPUT_JUDGE			(STICK_MAX / 5)	//スティック入力をしたと判断するスティック移動量
+#define MIN_PLAYER			(2)				//プレイヤーの最低人数
+
+//プロトタイプ宣言
+bool CheckMinPlayer(void);
 
 //グローバル
 PLAYERTYPE g_playerType[MAX_USE_GAMEPAD];
+
 LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffTypeFrame;					//タイプ枠の頂点バッファポインタ
 LPDIRECT3DTEXTURE9 g_pTextureTypeFrame[FRAME_USE_TEXTURE];		//タイプ枠のテクスチャポインタ
+
 LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffTypeStr;						//タイプ文字の頂点バッファポインタ
 LPDIRECT3DTEXTURE9 g_pTextureTypeStr[STR_USE_TEXTURE];			//タイプ文字のテクスチャポインタ
 int g_nSelectNum = 0;
@@ -319,11 +325,25 @@ void UpdateTypeFrame(void)
 		//タイプ選択
 		if (GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_DOWN || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_DOWN) == true)
 		{//下に倒した
+			//いったん減らす
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
+
+			//最低人数を下回るならもう一回
+			if (CheckMinPlayer() == false)
+			{
+				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
+			}
 		}
 		else if (GetStick(0, INPUTTYPE_TRIGGER).y == CONVSTICK_UP || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_UP) == true)
 		{//上に倒した
+			//いったん減らす
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
+
+			//最低人数を下回るならもう一回
+			if (CheckMinPlayer() == false)
+			{
+				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
+			}
 		}
 
 		//決定
@@ -361,11 +381,25 @@ void UpdateTypeFrame(void)
 		//タイプ選択
 		if (GetKeyboardTrigger(DIK_DOWN) == true)
 		{//下に倒した
+			//いったん減らす
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
+
+			//最低人数を下回るならもう一回
+			if (CheckMinPlayer() == false)
+			{
+				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
+			}
 		}
 		else if (GetKeyboardTrigger(DIK_UP) == true)
 		{//上に倒した
+			 //いったん減らす
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
+
+			//最低人数を下回るならもう一回
+			if (CheckMinPlayer() == false)
+			{
+				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
+			}
 		}
 
 		//決定
@@ -475,4 +509,32 @@ void DrawTypeFrame(void)
 		//描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 4 * nCntTypeStr, 2);
 	}
+}
+
+//========================
+//プレイヤーが最低人数を下回らないか確認する処理
+//========================
+bool CheckMinPlayer(void)
+{
+	int nUsePlayer = 0;
+
+	//現在の使用人数確認
+	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
+	{
+		if (g_playerType[nCntPlayer] != PLAYERTYPE_NONE)
+		{
+			nUsePlayer++;
+		}
+	}
+
+	//下回らない場合は減らしてもOK
+	return nUsePlayer >= MIN_PLAYER ? true : false;
+}
+
+//========================
+//プレイヤー使用取得処理
+//========================
+bool GetUsePlayer(int nPlayerNum)
+{
+	return g_playerType[nPlayerNum] != PLAYERTYPE_NONE ? true : false;
 }

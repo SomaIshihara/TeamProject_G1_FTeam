@@ -463,142 +463,145 @@ void DrawPlayer(void)
 	//プレイヤーの数だけ繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
-		Model useAnimal = GetAnimal(g_aPlayerPvP[nCntPlayer].animal);
-
-		//"プレイヤーの"ワールドマトリックス初期化
-		D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].mtxWorld);
-
-		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_aPlayerPvP[nCntPlayer].rot.y, g_aPlayerPvP[nCntPlayer].rot.x, g_aPlayerPvP[nCntPlayer].rot.z);
-		D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].mtxWorld, &g_aPlayerPvP[nCntPlayer].mtxWorld, &mtxRot);
-
-		//位置反映
-		D3DXMatrixTranslation(&mtxTrans, g_aPlayerPvP[nCntPlayer].pos.x, g_aPlayerPvP[nCntPlayer].pos.y, g_aPlayerPvP[nCntPlayer].pos.z);
-		D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].mtxWorld, &g_aPlayerPvP[nCntPlayer].mtxWorld, &mtxTrans);
-
-		//"プレイヤーの"ワールドマトリックス設定
-		pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerPvP[nCntPlayer].mtxWorld);
-
-		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
+		if (g_aPlayerPvP[nCntPlayer].bUsePlayer == true)
 		{
-			if (useAnimal.aParts[nCntParts].bUse == true)
+			Model useAnimal = GetAnimal(g_aPlayerPvP[nCntPlayer].animal);
+
+			//"プレイヤーの"ワールドマトリックス初期化
+			D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].mtxWorld);
+
+			//向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_aPlayerPvP[nCntPlayer].rot.y, g_aPlayerPvP[nCntPlayer].rot.x, g_aPlayerPvP[nCntPlayer].rot.z);
+			D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].mtxWorld, &g_aPlayerPvP[nCntPlayer].mtxWorld, &mtxRot);
+
+			//位置反映
+			D3DXMatrixTranslation(&mtxTrans, g_aPlayerPvP[nCntPlayer].pos.x, g_aPlayerPvP[nCntPlayer].pos.y, g_aPlayerPvP[nCntPlayer].pos.z);
+			D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].mtxWorld, &g_aPlayerPvP[nCntPlayer].mtxWorld, &mtxTrans);
+
+			//"プレイヤーの"ワールドマトリックス設定
+			pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerPvP[nCntPlayer].mtxWorld);
+
+			for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 			{
-				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
-				D3DXMATRIX mtxParent;					//親のマトリ
-
-				//ここ新仕様
-				//"モデルの"ワールドマトリックス初期化
-				D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
-
-				//向きを反映
-				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.y, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.x, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.z);
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxRotModel);
-
-				//位置反映
-				D3DXMatrixTranslation(&mtxTransModel, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.x, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.y, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.z);
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxTransModel);
-
-				//パーツの親マトリ設定
-				if (useAnimal.aParts[nCntParts].mIdxModelParent != -1)
+				if (useAnimal.aParts[nCntParts].bUse == true)
 				{
-					mtxParent = g_aPlayerPvP[nCntPlayer].animalInst[useAnimal.aParts[nCntParts].mIdxModelParent].mtxWorld;
-				}
-				else
-				{
-					mtxParent = g_aPlayerPvP[nCntPlayer].mtxWorld;
-				}
+					D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
+					D3DXMATRIX mtxParent;					//親のマトリ
 
-				//パーツのマトリと親マトリをかけ合わせる
-				D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxParent);
+															//ここ新仕様
+															//"モデルの"ワールドマトリックス初期化
+					D3DXMatrixIdentity(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
-				//"モデルの"ワールドマトリックス設定
-				pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
+					//向きを反映
+					D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.y, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.x, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].rot.z);
+					D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxRotModel);
 
-				//マテリアルデータへのポインタ取得
-				pMat = (D3DXMATERIAL*)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
+					//位置反映
+					D3DXMatrixTranslation(&mtxTransModel, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.x, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.y, g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].pos.z);
+					D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxTransModel);
 
-				for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
-				{
-					//ゴースト用
-					D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
-					
-					//ゴースト状態なら消す
-					if (g_aPlayerPvP[nCntPlayer].nGhostItemTime > 0)
+					//パーツの親マトリ設定
+					if (useAnimal.aParts[nCntParts].mIdxModelParent != -1)
 					{
-						//アルファテストを有効にする
-						pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-						pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-						pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
-						matChange.Diffuse.a = 0.0f;
+						mtxParent = g_aPlayerPvP[nCntPlayer].animalInst[useAnimal.aParts[nCntParts].mIdxModelParent].mtxWorld;
 					}
-					else if(nCntParts == MAX_PARTS - 1)
-					{//ゼッケンの時は色変更
-						matChange.Diffuse = c_aColPlayer[nCntPlayer];
+					else
+					{
+						mtxParent = g_aPlayerPvP[nCntPlayer].mtxWorld;
 					}
 
-					//マテリアル設定
-					pDevice->SetMaterial(&matChange);
+					//パーツのマトリと親マトリをかけ合わせる
+					D3DXMatrixMultiply(&g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxParent);
 
-					//テクスチャ設定
-					pDevice->SetTexture(0, useAnimal.aParts[nCntParts].apTexture[nCntMat]);
+					//"モデルの"ワールドマトリックス設定
+					pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld);
 
-					//モデル描画
-					useAnimal.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
-				}
-
-				//アルファテストを無効にする
-				pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-				pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-				pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
-
-				/*------------------------------------------------------------------
-				影の描画		Author:平澤詩苑 石原颯馬
-				--------------------------------------------------------------------*/
-				if (g_aPlayerPvP[nCntPlayer].pos.y >= 0.0f)
-				{
-					D3DXMATRIX	mtxShadow;		//シャドウマトリックス
-					D3DLIGHT9	light;			//ライト情報
-					D3DXVECTOR4	posLight;		//ライトの位置
-					D3DXVECTOR3	pos, normal;	//平面上の任意の点、法線ベクトル
-					D3DXPLANE	plane;			//平面情報
-
-												//ライトの位置を設定
-					pDevice->GetLight(0, &light);
-					posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
-
-					//平面情報を生成
-					pos = ZERO_SET;
-					normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-					D3DXPlaneFromPointNormal(&plane, &pos, &normal);
-
-					//シャドウマトリックスの初期化
-					D3DXMatrixIdentity(&mtxShadow);
-
-					//シャドウマトリックスの作成
-					D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
-					D3DXMatrixMultiply(&mtxShadow, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxShadow);
-
-					//シャドウマトリックスの設定
-					pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
-
-					//マテリアルデータへのポインタを取得
-					pMat = (D3DXMATERIAL *)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
+					//マテリアルデータへのポインタ取得
+					pMat = (D3DXMATERIAL*)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
 
 					for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
 					{
-						D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
+						//ゴースト用
+						D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
 
-						//黒色に設定						//自己発光を無くす
-						MatCopy.Diffuse = XCOL_BLACKSHADOW;	MatCopy.Emissive = XCOL_BLACK;
+						//ゴースト状態なら消す
+						if (g_aPlayerPvP[nCntPlayer].nGhostItemTime > 0)
+						{
+							//アルファテストを有効にする
+							pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+							pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+							pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+							matChange.Diffuse.a = 0.0f;
+						}
+						else if (nCntParts == MAX_PARTS - 1)
+						{//ゼッケンの時は色変更
+							matChange.Diffuse = c_aColPlayer[nCntPlayer];
+						}
 
 						//マテリアル設定
-						pDevice->SetMaterial(&MatCopy);
+						pDevice->SetMaterial(&matChange);
 
 						//テクスチャ設定
-						pDevice->SetTexture(0, NULL);
+						pDevice->SetTexture(0, useAnimal.aParts[nCntParts].apTexture[nCntMat]);
 
 						//モデル描画
 						useAnimal.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+					}
+
+					//アルファテストを無効にする
+					pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+					pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+					pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+
+					/*------------------------------------------------------------------
+					影の描画		Author:平澤詩苑 石原颯馬
+					--------------------------------------------------------------------*/
+					if (g_aPlayerPvP[nCntPlayer].pos.y >= 0.0f)
+					{
+						D3DXMATRIX	mtxShadow;		//シャドウマトリックス
+						D3DLIGHT9	light;			//ライト情報
+						D3DXVECTOR4	posLight;		//ライトの位置
+						D3DXVECTOR3	pos, normal;	//平面上の任意の点、法線ベクトル
+						D3DXPLANE	plane;			//平面情報
+
+													//ライトの位置を設定
+						pDevice->GetLight(0, &light);
+						posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
+
+						//平面情報を生成
+						pos = ZERO_SET;
+						normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+						D3DXPlaneFromPointNormal(&plane, &pos, &normal);
+
+						//シャドウマトリックスの初期化
+						D3DXMatrixIdentity(&mtxShadow);
+
+						//シャドウマトリックスの作成
+						D3DXMatrixShadow(&mtxShadow, &posLight, &plane);
+						D3DXMatrixMultiply(&mtxShadow, &g_aPlayerPvP[nCntPlayer].animalInst[nCntParts].mtxWorld, &mtxShadow);
+
+						//シャドウマトリックスの設定
+						pDevice->SetTransform(D3DTS_WORLD, &mtxShadow);
+
+						//マテリアルデータへのポインタを取得
+						pMat = (D3DXMATERIAL *)useAnimal.aParts[nCntParts].pBuffMat->GetBufferPointer();
+
+						for (int nCntMat = 0; nCntMat < (int)useAnimal.aParts[nCntParts].dwNumMatModel; nCntMat++)
+						{
+							D3DMATERIAL9 MatCopy = pMat[nCntMat].MatD3D;	//マテリアルデータ複製
+
+																			//黒色に設定						//自己発光を無くす
+							MatCopy.Diffuse = XCOL_BLACKSHADOW;	MatCopy.Emissive = XCOL_BLACK;
+
+							//マテリアル設定
+							pDevice->SetMaterial(&MatCopy);
+
+							//テクスチャ設定
+							pDevice->SetTexture(0, NULL);
+
+							//モデル描画
+							useAnimal.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+						}
 					}
 				}
 			}

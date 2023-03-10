@@ -202,6 +202,7 @@
     <ClCompile Include="score.cpp" />
     <ClCompile Include="select_game.cpp" />
     <ClCompile Include="SelPlayer.cpp" />
+    <ClCompile Include="SelPlayer_bg.cpp" />
     <ClCompile Include="SelPlayer_camera.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="timer.cpp" />
@@ -259,6 +260,7 @@
     <ClInclude Include="score.h" />
     <ClInclude Include="select_game.h" />
     <ClInclude Include="SelPlayer.h" />
+    <ClInclude Include="SelPlayer_bg.h" />
     <ClInclude Include="SelPlayer_camera.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="timer.h" />
