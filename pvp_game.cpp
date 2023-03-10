@@ -20,7 +20,6 @@ Author:平澤詩苑
 #include "meshdome.h"
 #include "meshfield.h"
 #include "meshfault.h"
-#include "meshcylinder.h"
 #include "gauge.h"
 #include "score.h"
 #include "bonus.h"
@@ -64,7 +63,6 @@ void InitPvPGame(void)
 	InitMeshDome();				// メッシュドーム初期化処理
 	InitMeshfield();			// ステージ初期化処理
 	InitMeshFault();			// メッシュの断面初期化処理
-	InitMeshCylinder();			// メッシュシリンダー初期化処理
 	InitModel();				// モデルの初期化処理（モデルを使用する初期化の前に行うこと！）
 	InitFence();				// フェンスの初期化処理
 	InitComAI();				// コンピューターAIの初期化処理（プレイヤーの前に行うこと）
@@ -113,7 +111,6 @@ void UninitPvPGame(void)
 	UninitBg();				// 背景の終了処理
 	UninitLight();			// ライト終了処理
 	UninitMeshfield();		// ステージ終了処理
-	UninitMeshCylinder();	// メッシュシリンダー終了処理
 	UninitMeshDome();		// メッシュドーム終了処理
 	UninitMeshFault();		// メッシュの断面終了処理
 	UninitFence();			// フェンスの終了処理（形式上置いておいただけ）
@@ -156,7 +153,6 @@ void UpdatePvPGame(void)
 		UpdateBg();				// 背景の更新処理
 		UpdateLight();			// ライトの更新処理
 		UpdateMeshfield();		// ステージ更新処理
-		UpdateMeshCylinder();	// メッシュシリンダー更新処理
 		UpdateMeshDome();		// メッシュドーム更新処理
 		UpdateMeshFault();		// メッシュの断面更新処理
 		UpdateFence();			// フェンスの更新処理
@@ -215,7 +211,6 @@ void UpdatePvPGame(void)
 				UpdateBg();				// 背景の更新処理
 				UpdateLight();			// ライトの更新処理
 				UpdateMeshfield();		// ステージ更新処理
-				UpdateMeshCylinder();	// メッシュシリンダー更新処理
 				UpdateMeshDome();		// メッシュドーム更新処理
 				UpdateMeshFault();		// メッシュの断面更新処理
 				UpdateFence();			// フェンスの更新処理

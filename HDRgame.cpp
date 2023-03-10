@@ -21,6 +21,7 @@ Author:平澤詩苑
 #include "block.h"
 #include "meshfield.h"
 #include "meshdome.h"
+#include "meshcylinder.h"
 #include "fence.h"
 #include "rank.h"
 
@@ -54,11 +55,11 @@ void InitHDRGame(void)
 	InitHDRCamera(g_NumCamera_HDR);	// カメラの初期化処理
 	InitPause();					// ポーズ画面の初期化処理
 	InitBlock();					// ブロックの初期化処理
-	InitMeshfield();
-	InitMeshDome();
-	InitFence();
-	InitRank();
-
+	InitMeshDome();					// ドームの初期化処理
+	InitMeshfield();				// フィールドの初期化処理
+	InitMeshCylinder();				// メッシュシリンダー初期化処理
+	InitFence();					// フェンスの初期化処理
+	InitRank();						// ランキングの初期化処理
 
 	g_bPause_HDR = false;				// ポーズの初期化
 	g_bDisconnectPlayer_HDR = false;	//正常にコントローラーが接続されている状態とする
@@ -80,13 +81,14 @@ void UninitHDRGame(void)
 	UninitLight();			// ライト終了処理
 	UninitHDRCamera();		// カメラの終了処理
 	UninitPause();			// ポーズ画面の終了処理
-	UninitPlayer_HDR();
+	UninitPlayer_HDR();		// プレイヤーの終了処理
 	UninitModel();			// モデルの終了処理
 	UninitBlock();			// ブロックの終了処理
-	UninitMeshfield();
-	UninitMeshDome();
-	UninitFence();
-	UninitRank();
+	UninitMeshfield();		// フィールドの終了処理
+	UninitMeshDome();		// ドームの終了処理
+	UninitMeshCylinder();	// メッシュシリンダー終了処理
+	UninitFence();			// フェンスの終了処理
+	UninitRank();			// ランキングの終了処理
 
 	UninitCameraFrame();	// 画面分割の枠終了処理
 
@@ -111,6 +113,7 @@ void UpdateHDRGame(void)
 			UpdateLight();			// ライトの更新処理
 			UpdateBlock();			// ブロックの更新処理
 			UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
+			UpdateMeshCylinder();	// メッシュシリンダー更新処理
 
 			ChangeNumCamera_HDR();	//カメラの数変更処理
 		}
@@ -148,7 +151,10 @@ void UpdateHDRGame(void)
 			//1フレームだけ更新する
 			if (GetKeyboardTrigger(DIK_RIGHT))
 			{
-				UpdateLight();		// ライトの更新処理
+				UpdateLight();			// ライトの更新処理
+				UpdateBlock();			// ブロックの更新処理
+				UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
+				UpdateMeshCylinder();	// メッシュシリンダー更新処理
 			}
 		}
 	}
@@ -199,11 +205,12 @@ void DrawHDRGame(void)
 		SetHDRCamera(nCntCamera);	// カメラの設定処理
 		DrawCameraFrame();			// 画面分割の枠描画処理
 		DrawBlock();				// ブロックの描画処理
-		DrawPlayer_HDR();
-		DrawMeshfield();
-		DrawMeshDome();
-		DrawFence();
-		DrawRank();
+		DrawPlayer_HDR();			// プレイヤーの描画処理
+		DrawMeshfield();			// フィールドの描画処理
+		DrawMeshCylinder();			// 背景の描画処理
+		DrawMeshDome();				// ドームの描画処理
+		DrawFence();				// フェンスの描画処理
+		DrawRank();					// ランキングの描画処理
 
 		//ポーズがON
 		if (g_bPause_HDR == true && g_bPhotoMode_HDR == false)

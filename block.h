@@ -38,6 +38,6 @@ void UninitBlock(void);
 void UpdateBlock(void);
 void DrawBlock(void);
 void SetBlock(void);
-void CollisionBlock(int nPlayerNum);//ブロックの当たり判定
+void CollisionBlock(Player_HDR *pPlayer);//ブロックの当たり判定
 
 #endif

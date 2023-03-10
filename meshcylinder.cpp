@@ -24,7 +24,7 @@ void InitMeshCylinder(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//テクスチャーの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureMeshCylinder);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky002.png", &g_pTextureMeshCylinder);
 
 	//ポリゴンの初期化
 	g_posMeshCylinder = 

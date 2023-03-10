@@ -49,7 +49,7 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_RESULT;		// 現在のモード
+MODE			g_mode = MODE_RaceGAME;		// 現在のモード
 #else
 MODE			g_mode = MODE_TITLE;		// 現在のモード
 #endif
@@ -57,7 +57,7 @@ MODE			g_mode = MODE_TITLE;		// 現在のモード
 HWND g_hWnd;
 bool g_bShowCursor = true;
 bool g_bDebug = true;
-bool g_bFullScreen = true;
+bool g_bFullScreen = false;
 bool g_bShowTaskbar = true;
 
 //========================

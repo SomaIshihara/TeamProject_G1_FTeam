@@ -11,20 +11,10 @@ Author:飯田洲暉 (大宮愛羅  平澤詩苑  石原颯馬)
 #include "camera_frame.h"
 #include "input.h"
 
-//注視点情報
-#define POSR_SPEED		(10.0f)		//注視点の移動速度
-#define POSR_WIDTH		(0.0f)		//注視点の幅
-#define POSR_HEIGHT		(0.0f)		//注視点の高さ
-#define POSR_DEPTH		(0.0f)		//注視点の奥行き
-
 //視点情報
 #define POSV_ROTSPEED	(0.05f)		//視点の回転速度
 #define POSV_SPEED		(10.0f)		//視点の移動速度
 #define POSR_ADD		(8.0f)		//注視点の上下移動
-#define POSV_DISTANCE	(100.0f)	//視点の距離
-#define POSV_WIDTH		(0.0f)		//視点の幅
-#define POSV_HEIGHT		(1050.0f)	//視点の高さ
-#define POSV_DEPTH		(1000.0f)	//視点の奥行き
 
 //上方向ベクトル情報
 #define VECU_OVER		(D3DXVECTOR3(0.0f, 1.0f, 0.0f))	//上方向ベクトル
@@ -43,8 +33,8 @@ Author:飯田洲暉 (大宮愛羅  平澤詩苑  石原颯馬)
 #define ALONE_CAMERA_POS	(D3DXVECTOR3(0.0f, 400.0f, 500.0f))
 
 //２人称視点時のマクロ
-#define SPS_posR_HEIGHT	(30.0f)		//注視点の高さ
-#define SPS_posV_HEIGHT	(70.0f)		//視点の高さ
+#define SPS_posR_HEIGHT	(100.0f)		//注視点の高さ
+#define SPS_posV_HEIGHT	(140.0f)		//視点の高さ
 
 //カメラ準備におけるマクロ定義
 #define SETUP_FLOAT_SPEED		(30.0f)		//カメラの上昇量	(float は「浮く」という意味
@@ -160,9 +150,8 @@ void UpdateHDRCamera(void)
 	
 	for (int nCntHDRCamera = 0; nCntHDRCamera < NUM_HDRCAMERA; nCntHDRCamera++)
 	{
-		g_HDRCamera[nCntHDRCamera].posV.x = 
+		g_HDRCamera[nCntHDRCamera].posV.x =
 		g_HDRCamera[nCntHDRCamera].posR.x = GetPlayer_HDR()[nCntHDRCamera].pos.x;	//注視点
-
 		g_HDRCamera[nCntHDRCamera].posR.z = GetPlayer_HDR()[nCntHDRCamera].pos.z;	//注視点
 		
 		//カメラが準備中
@@ -178,6 +167,9 @@ void UpdateHDRCamera(void)
 			//カメラの移動処理
 			MoveHDRCamera(nCntHDRCamera);
 		}
+
+		UpdatePosVCamera(nCntHDRCamera);
+
 	}
 
 	//セットアップ完了かどうか検査
