@@ -1001,9 +1001,9 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 					{
 						pSprit = strtok(&aCode[0], " =\n");	//処理内容の部分消す
 
-															//ループ可否読み取り
+						//ループ可否読み取り
 						pSprit = strtok(NULL, " =\n");
-						g_motionInfo[g_counterMotionInfo].bLoop = atoi(pSprit) ? true : false;
+						g_motionInfo[g_counterMotionInfo].bLoop = atoi(pSprit) == 1 ? true : false;
 					}
 					else if (strncmp(&aCode[0], CODE_NUM_KEY, sizeof CODE_NUM_KEY / sizeof(char) - 1) == 0)
 					{
