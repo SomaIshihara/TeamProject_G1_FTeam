@@ -11,6 +11,7 @@
 #include "file.h"
 
 #include "TypeFrame.h"
+#include "SelPlayer_bg.h"
 #include "SelPlayer_camera.h"
 #include "model.h"
 
@@ -37,8 +38,9 @@ void InitSelPlayer(void)
 	InitAnimalModel();		//動物モデル初期化
 
 	InitTypeFrame();
+	InitSelPlayer_Bg();
 	InitSelPlayer_Camera();
-	InitSelPlayer_SetCameraPos(D3DXVECTOR3(0.0f, 20.0f, 150.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	InitSelPlayer_SetCameraPos(D3DXVECTOR3(0.0f, 50.0f, 150.0f), D3DXVECTOR3(0.0f, 20.0f, 0.0f));
 }
 
 //========================
@@ -47,6 +49,7 @@ void InitSelPlayer(void)
 void UninitSelPlayer(void)
 {
 	UninitSelPlayer_Camera();
+	UninitSelPlayer_Bg();
 	UninitTypeFrame();
 
 	UninitModel();				//動物モデル終了処理
@@ -58,6 +61,7 @@ void UninitSelPlayer(void)
 void UpdateSelPlayer(void)
 {
 	UpdateTypeFrame();
+	UpdateSelPlayer_Bg();
 	UpdateSelPlayer_Camera();
 }
 
@@ -70,6 +74,12 @@ void DrawSelPlayer(void)
 	D3DXMATRIX mtxRot, mtxTrans;	//計算用
 	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
 	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
+
+	//Zバッファ有効化
+	pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+
+	//背景
+	DrawSelPlayer_Bg();
 
 	//タイプ枠
 	DrawTypeFrame();
@@ -162,4 +172,7 @@ void DrawSelPlayer(void)
 
 	//マテリアルを戻す
 	pDevice->SetMaterial(&matDef);
+
+	//Zバッファ無効化
+	pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 }

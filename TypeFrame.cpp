@@ -15,20 +15,22 @@
 #include "color.h"
 
 //マクロ
-#define FRAME_USE_TEXTURE	(3)			//タイプ枠で使うテクスチャ数
-#define STR_USE_TEXTURE		(3)			//タイプ文字で使うテクスチャ数
-#define FRAME_SIZE_WIDTH	(312.0f)	//枠のサイズ（幅）
-#define FRAME_SIZE_HEIGHT	(108.0f)	//枠のサイズ（高さ）
-#define STR_OFFSET_WIDTH	(37.0f)		//枠と文字の位置ずらし（幅）
-#define STR_OFFSET_HEIGHT	(29.0f)		//枠と文字の位置ずらし（高さ）
-#define STR_SIZE_WIDTH		(238.0f)	//文字のサイズ（幅）
-#define STR_SIZE_HEIGHT		(50.0f)		//文字のサイズ（高さ）
+#define FRAME_USE_TEXTURE	(3)				//タイプ枠で使うテクスチャ数
+#define STR_USE_TEXTURE		(3)				//タイプ文字で使うテクスチャ数
+#define FRAME_SIZE_WIDTH	(312.0f)		//枠のサイズ（幅）
+#define FRAME_SIZE_HEIGHT	(108.0f)		//枠のサイズ（高さ）
+#define STR_OFFSET_WIDTH	(37.0f)			//枠と文字の位置ずらし（幅）
+#define STR_OFFSET_HEIGHT	(29.0f)			//枠と文字の位置ずらし（高さ）
+#define STR_SIZE_WIDTH		(238.0f)		//文字のサイズ（幅）
+#define STR_SIZE_HEIGHT		(50.0f)			//文字のサイズ（高さ）
 #define INPUT_JUDGE			(STICK_MAX / 5)	//スティック入力をしたと判断するスティック移動量
 
 //グローバル
 PLAYERTYPE g_playerType[MAX_USE_GAMEPAD];
+
 LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffTypeFrame;					//タイプ枠の頂点バッファポインタ
 LPDIRECT3DTEXTURE9 g_pTextureTypeFrame[FRAME_USE_TEXTURE];		//タイプ枠のテクスチャポインタ
+
 LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffTypeStr;						//タイプ文字の頂点バッファポインタ
 LPDIRECT3DTEXTURE9 g_pTextureTypeStr[STR_USE_TEXTURE];			//タイプ文字のテクスチャポインタ
 int g_nSelectNum = 0;
