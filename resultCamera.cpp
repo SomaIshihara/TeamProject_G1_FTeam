@@ -11,8 +11,8 @@ Author:平澤詩苑
 #include "VictoryStand.h"
 
 //マクロ定義
-#define POS_POSV			D3DXVECTOR3(0.0f, 400.0f, -200.0f)	//視点の初期位置
-#define POS_POSR			D3DXVECTOR3(0.0f, 300.0f, 0.0f)		//注視点の初期位置
+#define POS_POSV			D3DXVECTOR3(0.0f, 30.0f, -200.0f)	//視点の初期位置
+#define POS_POSR			D3DXVECTOR3(0.0f, 30.0f, 0.0f)		//注視点の初期位置
 #define POS_VECU			D3DXVECTOR3(0.0f, 1.0f, 0.0f)		//上方向ベクトルの初期値
 #define VIEW_ANGLE			(45.0f)								//視野角
 #define MOVE_CAMERA_SPEED	(3.0f)								//カメラ・注視点座標の移動量
@@ -56,21 +56,14 @@ void InitResultCamera(void)
 	//カメラの角度や距離を算出
 	//---------------------------------
 	{
-		D3DXVECTOR3 fDiffPos = g_ResultCamera.posR - g_ResultCamera.posV;	//視点と注視点の位置の差
-		fDiffPos.x = powf(fDiffPos.x, 2.0f);					//視点同士の位置の差を２乗
-		fDiffPos.z = powf(fDiffPos.z, 2.0f);					//視点同士の位置の差を２乗
-
-		g_ResultCamera.rot.y = -atan2f(fDiffPos.x, fDiffPos.z);		// Y方向の角度を計算
+		g_ResultCamera.rot.y = 0.0f;// 角度設定
 
 		float PosDiffX, PosDiffZ;
 
-		PosDiffX = powf(g_ResultCamera.posR.x - g_ResultCamera.posV.x, 2.0f);	//2乗
-		PosDiffZ = powf(g_ResultCamera.posR.z - g_ResultCamera.posV.z, 2.0f);	//2乗
+		PosDiffX = powf(POS_POSR.x - POS_POSV.x, 2.0f);	//2乗
+		PosDiffZ = powf(POS_POSR.z - POS_POSV.z, 2.0f);	//2乗
 
 		g_ResultCamera.fLength = sqrtf(PosDiffX + PosDiffZ);	//長さを算出
-
-		//位置設定
-		MoveResultCamera(g_ResultCamera.posR, &g_ResultCamera.posV, D3DX_PI);
 	}
 }
 
@@ -168,16 +161,17 @@ void UninitResultCamera(void)
 void UpdateResultCamera(void)
 {
 	//カメラの移動処理（今は使用しない
-#if 0
-	//視点移動		//注視点移動	//視点回転
-	MovePosV();		MovePosR();		SpinPosV();
+	if (g_WaveCamera == WAVECamera_MAX)
+	{
+		//視点移動		//注視点移動	//視点回転
+		MovePosV();		MovePosR();		SpinPosV();
 
-	//長さ切り替え
-	LengthCamera();
+		//長さ切り替え
+		LengthCamera();
 
-	//位置設定
-	MoveResultCamera(g_ResultCamera.posR, &g_ResultCamera.posV, D3DX_PI);
-#endif
+		//位置設定
+		MoveResultCamera(g_ResultCamera.posR, &g_ResultCamera.posV, D3DX_PI);
+	}
 
 	//カメラのウェーブ処理
 	WaveResultCamera();

@@ -11,7 +11,7 @@
 //マクロ定義
 #define RESULTCYLINDER_HEIGHT				(1000.0f)					// シリンダーの高さ
 #define RESULTCYLINDER_SPLIT				(32)						// シリンダーの分割数
-#define RESULTCYLINDER_TEX_RESOLUTION		(3.0f)						// シリンダーのテクスチャの幅
+#define RESULTCYLINDER_TEX_RESOLUTION		(1.0f)						// シリンダーのテクスチャの幅
 #define NUM_RESULT_CYLINDER					(1)							// シリンダーの数
 #define RESULTCYLINDER_ALL_VTX		(RESULTCYLINDER_SPLIT * 2 + 2)		// シリンダーの最大頂点・インデックス数
 #define RESULT_MAX_RADIUS					(400.0f)					// 最大半径
@@ -41,7 +41,7 @@ void InitResultCylinder(void)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
 	//テクスチャーの読み込み
-	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky001.png", &g_pTextureResultCylinder);
+	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky002.png", &g_pTextureResultCylinder);
 
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * RESULTCYLINDER_ALL_VTX * NUM_RESULT_CYLINDER, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffResultCylinder, NULL);

@@ -138,9 +138,6 @@
     <ClCompile Include="file.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="meshcylinder.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
-    </ClCompile>
     <ClCompile Include="meshfield.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
@@ -278,6 +275,9 @@
     </ClCompile>
     <ClCompile Include="SelPlayer_camera.cpp">
       <Filter>ソース ファイル\SelectPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="meshcylinder.cpp">
+      <Filter>ソース ファイル\Game\Game_HDR</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
