@@ -366,6 +366,11 @@ void UpdateTypeFrame(void)
 				}
 			}
 		}
+		//–ß‚é
+		else if (GetGamepadTrigger(0, XINPUT_GAMEPAD_B) == true)
+		{
+			SetFade(MODE_SELECTGAME);
+		}
 	}
 	else
 	{
@@ -421,6 +426,11 @@ void UpdateTypeFrame(void)
 					SetPlayerType_HDR(nCntPlayer, (g_playerType[nCntPlayer] != PLAYERTYPE_NONE ? true : false), (g_playerType[nCntPlayer] == PLAYERTYPE_COM ? true : false));
 				}
 			}
+		}
+		//–ß‚é
+		else if (GetKeyboardTrigger(DIK_BACKSPACE) == true)
+		{
+			SetFade(MODE_SELECTGAME);
 		}
 	}
 

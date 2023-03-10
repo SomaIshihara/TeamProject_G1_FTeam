@@ -22,7 +22,7 @@ void InitSelPlayer_Bg(void)
 
 	//背景読み込み
 	D3DXCreateTextureFromFile(pDevice,
-		"data\\TEXTURE\\title000.png",
+		"data\\TEXTURE\\PlayerSelect_BG.png",
 		&g_apTextureBg);
 
 	//頂点バッファの生成
