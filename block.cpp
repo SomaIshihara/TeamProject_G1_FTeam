@@ -267,6 +267,7 @@ void CollisionBlock(int nPlayerNum)
 						pPlayer[nPlayerNum].HipDropPower = 0;
 						pPlayer[nPlayerNum].move.y = 0;
 						pPlayer[nPlayerNum].bHipDrop = false;
+						pPlayer[nPlayerNum].nAICT = c_aAIParamHDR[pPlayer[nPlayerNum].aiDiff].nAICT;
 					}
 				}
 				else

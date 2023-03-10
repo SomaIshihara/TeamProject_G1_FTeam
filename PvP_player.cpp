@@ -138,6 +138,7 @@ void InitPlayer(void)
 		g_aPlayerPvP[nCntPlayer].nHipDropWait = 0;
 		g_aPlayerPvP[nCntPlayer].bNotMove = true;
 		g_aPlayerPvP[nCntPlayer].nRespawnPosNum = nCntPlayer;
+		g_aPlayerPvP[nCntPlayer].bAnimed = false;
 
 		g_aPlayerPvP[nCntPlayer].faceCollider[0] = D3DXVECTOR3(PLAYER_SIZE_WIDTH, 0.0f, PLAYER_SIZE_WIDTH);
 		g_aPlayerPvP[nCntPlayer].faceCollider[1] = D3DXVECTOR3(-PLAYER_SIZE_WIDTH, 0.0f, PLAYER_SIZE_WIDTH);
@@ -298,10 +299,12 @@ void UpdatePlayer(void)
 				else if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_JUMP)
 				{
 					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_LAND;
+					g_aPlayerPvP[nCntPlayer].bAnimed = false;
 				}
-				else if(g_aPlayerPvP[nCntPlayer].stat != PLAYERSTAT_DASH && g_aPlayerPvP[nCntPlayer].stat != PLAYERSTAT_CHARGE)
+				else if(g_aPlayerPvP[nCntPlayer].stat != PLAYERSTAT_DASH && g_aPlayerPvP[nCntPlayer].stat != PLAYERSTAT_CHARGE && g_aPlayerPvP[nCntPlayer].bAnimed == true)
 				{
 					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
+					g_aPlayerPvP[nCntPlayer].bAnimed = false;
 				}
 				g_aPlayerPvP[nCntPlayer].bJump = false;
 				g_aPlayerPvP[nCntPlayer].moveV0.y = 0.0f;
@@ -331,40 +334,43 @@ void UpdatePlayer(void)
 			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_NEUTRAL)
 			{
 				SetMotion(nCntPlayer, MOTIONTYPE_NEUTRAL);
+				g_aPlayerPvP[nCntPlayer].bAnimed = false;
 			}
 			break;
 		case PLAYERSTAT_FALL:
 			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_NEUTRAL)
 			{
 				SetMotion(nCntPlayer, MOTIONTYPE_NEUTRAL);
+				g_aPlayerPvP[nCntPlayer].bAnimed = false;
 			}
 			break;
 		case PLAYERSTAT_HIPDROP:
 			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_NEUTRAL)
 			{
 				SetMotion(nCntPlayer, MOTIONTYPE_NEUTRAL);
+				g_aPlayerPvP[nCntPlayer].bAnimed = false;
 			}
 			break;
 		case PLAYERSTAT_CHARGE:
-			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_CHARGE)
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_CHARGE && g_aPlayerPvP[nCntPlayer].bAnimed == false)
 			{
 				SetMotion(nCntPlayer, MOTIONTYPE_CHARGE);
 			}
 			break;
 		case PLAYERSTAT_DASH:
-			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_DASH)
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_DASH && g_aPlayerPvP[nCntPlayer].bAnimed == false)
 			{
 				SetMotion(nCntPlayer, MOTIONTYPE_DASH);
 			}
 			break;
 		case PLAYERSTAT_JUMP:
-			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_JUMP)
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_JUMP && g_aPlayerPvP[nCntPlayer].bAnimed == false)
 			{
 				SetMotion(nCntPlayer, MOTIONTYPE_JUMP);
 			}
 			break;
 		case PLAYERSTAT_LAND:
-			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_LAND)
+			if (g_aPlayerPvP[nCntPlayer].motion.motionType != MOTIONTYPE_LAND && g_aPlayerPvP[nCntPlayer].bAnimed == false)
 			{
 				SetMotion(nCntPlayer, MOTIONTYPE_LAND);
 			}
@@ -698,7 +704,7 @@ void ControllPlayer(int nPlayerNum)
 				g_aPlayerPvP[nPlayerNum].nActionRigor = PLAYER_DASH_ACTIONRIGOR * PLAYER_D_ACTRIGOR_CALC(g_aPlayerPvP[nPlayerNum].fOldMoveGauge);
 				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 			}
-			else if (g_aPlayerPvP[nPlayerNum].stat != PLAYERSTAT_JUMP)
+			else if (g_aPlayerPvP[nPlayerNum].stat != PLAYERSTAT_JUMP && g_aPlayerPvP[nPlayerNum].stat !=  PLAYERSTAT_LAND)
 			{
 				g_aPlayerPvP[nPlayerNum].nActionRigor--;
 				if (g_aPlayerPvP[nPlayerNum].nActionRigor <= 0)
@@ -1038,6 +1044,7 @@ void UpdateMotion(int nPlayerNum)
 			else
 			{//’Êí‚ÍNEUTRALó‘Ô‚É‚·‚é
 				SetMotion(nPlayerNum, MOTIONTYPE_NEUTRAL);
+				g_aPlayerPvP[nPlayerNum].bAnimed = true;
 			}
 		}
 	}

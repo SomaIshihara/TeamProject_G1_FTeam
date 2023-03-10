@@ -73,6 +73,7 @@ struct Player
 	Motion motion;				//ƒ‚[ƒVƒ‡ƒ“î•ñ
 	D3DXVECTOR3 motionPos, motionPosOffset;	//ˆÊ’u
 	D3DXVECTOR3 motionRot, motionRotOffset;	//Œü‚«
+	bool bAnimed;
 
 	//Õ“ËŠÖŒW
 	D3DXVECTOR3 faceCollider[2];	//“–‚½‚è”»’è

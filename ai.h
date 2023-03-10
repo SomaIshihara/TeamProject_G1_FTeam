@@ -29,6 +29,16 @@ typedef struct
 	int nHipdropTime;		//ジャンプ→ヒップドロップまでの時間
 } AIParam;
 
+//AI（HDR）のパラメーター
+typedef struct
+{
+	int nHDLevel_1;
+	int nHDLevel_2;
+	int nHDLevel_3;
+	int nHDLevel_Max;
+	int nAICT;
+} AIParam_HDR;
+
 //コンピューターAIのパラメータ構造体
 typedef struct
 {
