@@ -75,9 +75,6 @@ void DrawSelPlayer(void)
 	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
 	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
 
-	//Zバッファ有効化
-	pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
-
 	//背景
 	DrawSelPlayer_Bg();
 
@@ -175,7 +172,4 @@ void DrawSelPlayer(void)
 
 	//マテリアルを戻す
 	pDevice->SetMaterial(&matDef);
-
-	//Zバッファ無効化
-	pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 }
