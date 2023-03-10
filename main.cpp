@@ -388,7 +388,7 @@ void SetFullScreen(bool bFullScreen)
 	 // ウインドウの位置を設定
 		SetWindowPos(
 			g_hWnd,
-			HWND_TOPMOST,
+			HWND_TOP,
 			0,
 			0,
 			nScrSizeX,

@@ -306,6 +306,7 @@ void SpecialWave(void)
 		//--------------------------------------------
 		//			ウェーブ４の初期設定
 		// MEMO:プレイヤーの開始位置を設定する
+		//		表彰台を登場させる
 		//--------------------------------------------
 		if (AnimCamera.nFrameCounter == 0)
 		{
@@ -321,14 +322,8 @@ void SpecialWave(void)
 				pPlayer->bDive = true;
 				pPlayer->bHipDrop = true;
 			}
-		}
 
-		//--------------------------------------------
-		//			ウェーブ最後の表彰台設定
-		//			MEMO:表彰台を登場させる
-		//--------------------------------------------
-		if (AnimCamera.nFrameCounter == AnimCamera.nWholeFrame)
-		{//全体フレームが終わった
+			//表彰台を登場させる
 			SetAppearVictoryStand();
 		}
 	}

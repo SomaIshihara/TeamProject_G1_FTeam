@@ -17,11 +17,13 @@ Author:平澤詩苑
 #include "hdr_player.h"
 #include "sound.h"
 
-#define VICTORYSTAND_TEX	(10)				// 表彰台のテクスチャの最大数
-#define NUM_VICTORYSTAND	(4)					// 表彰台の総数
-#define VICSTD_FILL_HEIGHT	(2.0f)				// 初期埋め立て量補正値
+#define VICTORYSTAND_TEX		(10)			// 表彰台のテクスチャの最大数
+#define NUM_VICTORYSTAND		(4)				// 表彰台の総数
+#define VICSTD_FILL_HEIGHT		(2.0f)			// 初期埋め立て量補正値
+#define VICSTD_STAIRS_HEIGHT	(8.0f)			// 表彰台を階段のように埋め立てる
+
 #define VICSTD_APPEAR_TIME	(CONVERT_FPS(5))	// 表彰台のあらわれる時間
-#define VICSTD_APPEAR_SPEED	(0.3f)				// 表彰台のあらわれるスピード
+#define VICSTD_APPEAR_SPEED		(0.8f)			// 表彰台のあらわれるスピード
 
 //グローバル変数
 LPDIRECT3DTEXTURE9			g_pTextureVictoryStand[VICTORYSTAND_TEX] = {};	// テクスチャへのポインタ
@@ -127,7 +129,7 @@ void RankingSort(void)
 			}
 
 			//*****************************
-			// ＝＝ の時は何もしない
+			//同点の時は何もしない
 			//*****************************
 		}
 	}
@@ -141,8 +143,8 @@ void RankingSort(void)
 		// 着地点を初期化
 		g_VictoryStand[nCntPay].fLandheight = g_fLandPoint[nRank];	
 
-		//最初は地中に埋める
-		g_VictoryStand[nCntPay].pos.y -= g_VictoryStand[nCntPay].fLandheight + VICSTD_FILL_HEIGHT;
+		//最初は地中に埋める（左から順番に埋め立てる深さを増やしていく
+		g_VictoryStand[nCntPay].pos.y -= g_VictoryStand[nCntPay].fLandheight + VICSTD_FILL_HEIGHT * (nCntPay * VICSTD_STAIRS_HEIGHT);
 	}
 }
 
