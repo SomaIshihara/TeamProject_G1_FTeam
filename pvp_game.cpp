@@ -37,6 +37,10 @@ Author:平澤詩苑
 #include "fence.h"
 #include "GaugeFrame.h"
 
+//マクロ
+#define FENCE_DROPPED_TIME		(48)	//フェンス落下注意効果音鳴らす時間
+#define COUNTDOWN_TIME			(6)		//カウントダウン効果音鳴らす時間
+
 //グローバル変数宣言
 bool g_bPause_PvP = false;				// ポーズ
 int  g_nUseContNum_PvP;					// 使用しているコントローラーの数
@@ -46,6 +50,8 @@ int  g_numGamePad_PvP;
 CHECKMODE	g_CheckMode_PvP;
 NumCamera	g_NumCamera_PvP;
 bool		g_bPhotoMode_PvP;			// フォトモード切替		true:ポーズ画面非表示	false:ボーズ画面表示
+bool g_bDroppedFence = false;			// フェンス落下注意効果音鳴らしたか
+bool g_bCountDowned = false;			// カウントダウン効果音鳴らしたか
 
 //------------------------------------------------
 //				ゲームの初期化処理
@@ -91,8 +97,10 @@ void InitPvPGame(void)
 	SetScore(0,4);				// スコアの設定処理
 
 	g_bPause_PvP = false;				// ポーズの初期化
-	g_bDisconnectPlayer_PvP = false;	//正常にコントローラーが接続されている状態とする
+	g_bDisconnectPlayer_PvP = false;	// 正常にコントローラーが接続されている状態とする
 	g_bPhotoMode_PvP = false;			// フォトモード初期化
+	g_bDroppedFence = false;			// 効果音系初期化
+	g_bCountDowned = false;
 	
 	//ゲームBGM開始
 	PlaySound(SOUND_LABEL_BGM_GAME_PVP, 0);
@@ -193,6 +201,20 @@ void UpdatePvPGame(void)
 				//ポーズしたコントローラーをpause.cppに渡す
 				SetPadPause(false, nCntPause);
 			}
+		}
+
+		//フェンス落下注意効果音鳴らすかどうか
+		if (GetTime() < FENCE_DROPPED_TIME && g_bDroppedFence == false)
+		{
+			PlaySound(SOUND_LABEL_SE_WARNING, 0);
+			g_bDroppedFence = true;
+		}
+
+		//カウントダウン効果音鳴らすかどうか
+		if (GetTime() < COUNTDOWN_TIME && g_bCountDowned == false)
+		{
+			PlaySound(SOUND_LABEL_SE_COUNTDOWN, 0);
+			g_bCountDowned = true;
 		}
 	}
 
