@@ -292,7 +292,7 @@ void Set_NumCamera(NumCamera type)
 			g_Camera[nCntCamera].bUse = true;
 
 			//注視点の位置更新
-			UpdatePosVHDRCamera(nCntCamera);
+			UpdatePosVCamera(nCntCamera);
 		}
 	}
 	}

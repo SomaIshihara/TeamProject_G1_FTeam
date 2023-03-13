@@ -185,7 +185,7 @@ void DrawEffect(void)
 	//アルファテストを有効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-	pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 
 	for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
 	{
@@ -214,7 +214,7 @@ void DrawEffect(void)
 	//アルファテストを無効にする
 	pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_ALWAYS);
-	pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
+	pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 }
 
 //エフェクトの位置設定
