@@ -185,6 +185,7 @@ void UpdatePvPGame(void)
 				g_numGamePad_PvP = nCntPause;
 
 				PlaySound(SOUND_LABEL_SE_PAUSE_DECISION, 0);
+				PauseSound(SOUND_LABEL_BGM_GAME_PVP);
 
 				//É|Å[ÉYèÛë‘Ç…Ç∑ÇÈ
 				g_bPause_PvP = true;

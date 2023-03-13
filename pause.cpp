@@ -528,6 +528,7 @@ void SwitchPause(void)
 				break;
 			}
 		}
+		RestartSound(SOUND_LABEL_BGM_GAME_PVP);
 		CheckUseController_PvP(CHECKMODE_REMOVE);
 		SetEnablePause_PvP(false);
 		SetEnablePause_HDR(false);

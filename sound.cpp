@@ -352,6 +352,7 @@ void PauseSound(SOUND_LABEL label)
 		{// Ä¶’†
 		 // ˆê’â~
 			g_apSourceVoice[label][nCntDupl]->Stop(0);
+			break;
 		}
 	}
 }
@@ -371,6 +372,7 @@ void RestartSound(SOUND_LABEL label)
 		{// ˆê’â~’†
 		 // Ä¶
 			g_apSourceVoice[label][nCntDupl]->Start(0);
+			break;
 		}
 	}
 }
