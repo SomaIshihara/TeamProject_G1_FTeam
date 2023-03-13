@@ -10,6 +10,7 @@ Author:平澤詩苑
 #include "file.h"
 #include "color.h"
 #include "fade.h"
+#include "preview.h"
 #include "HDR_camera.h"
 #include "camera_frame.h"
 #include "HipDropRankUI.h"
@@ -61,6 +62,7 @@ void InitHDRGame(void)
 	InitMeshCylinder();				// メッシュシリンダー初期化処理
 	InitFence();					// フェンスの初期化処理
 	InitRank();						// ランキングの初期化処理
+	InitPreview();					// プレビューの初期化処理
 	InitHipDropRankUI();			// ヒップドロップランクUI初期化処理
 
 	g_bPause_HDR = false;				// ポーズの初期化
@@ -91,6 +93,7 @@ void UninitHDRGame(void)
 	UninitMeshCylinder();	// メッシュシリンダー終了処理
 	UninitFence();			// フェンスの終了処理
 	UninitRank();			// ランキングの終了処理
+	UninitPreview();		// プレビューの終了処理
 	UninitHipDropRankUI();	// ヒップドロップランクUI終了処理
 
 	UninitCameraFrame();	// 画面分割の枠終了処理
@@ -117,6 +120,7 @@ void UpdateHDRGame(void)
 			UpdateBlock();			// ブロックの更新処理
 			UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
 			UpdateMeshCylinder();	// メッシュシリンダー更新処理
+			UpdatePreview();		// プレビューの更新処理
 			UpdateHipDropRankUI();	// ヒップドロップランクUI更新処理
 
 			ChangeNumCamera_HDR();	//カメラの数変更処理
@@ -159,6 +163,7 @@ void UpdateHDRGame(void)
 				UpdateBlock();			// ブロックの更新処理
 				UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
 				UpdateMeshCylinder();	// メッシュシリンダー更新処理
+				UpdatePreview();		// プレビューの更新処理
 				UpdateHipDropRankUI();	// ヒップドロップランクUI更新処理
 			}
 		}
@@ -216,6 +221,7 @@ void DrawHDRGame(void)
 		DrawMeshDome();				// ドームの描画処理
 		DrawFence();				// フェンスの描画処理
 		DrawRank();					// ランキングの描画処理
+		DrawPreview();				// プレビューの描画処理
 		DrawHipDropRankUI();		// ヒップドロップランクUI描画処理
 
 		//ポーズがON

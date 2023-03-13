@@ -285,6 +285,9 @@
     <ClCompile Include="HipDropRankUI.cpp">
       <Filter>ソース ファイル\Game\Game_HDR</Filter>
     </ClCompile>
+    <ClCompile Include="preview.cpp">
+      <Filter>ソース ファイル\Game\Game_HDR</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -456,6 +459,9 @@
       <Filter>ヘッダー ファイル\SelPlayer</Filter>
     </ClInclude>
     <ClInclude Include="HipDropRankUI.h">
+      <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="preview.h">
       <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
     </ClInclude>
   </ItemGroup>

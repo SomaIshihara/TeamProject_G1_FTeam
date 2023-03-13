@@ -28,7 +28,7 @@ typedef enum
 	HIPDROP_RANK_GREAT,
 	HIPDROP_RANK_PERFECT,
 	HIPDROP_RANK_MAX
-};
+}HIPDROP_RANK;
 
 //ƒ‰ƒ“ƒNUI‚Ì\‘¢‘Ì
 typedef struct

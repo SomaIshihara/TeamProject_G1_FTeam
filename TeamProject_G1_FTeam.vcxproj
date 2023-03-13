@@ -180,6 +180,7 @@
     <ClCompile Include="hdr_player.cpp" />
     <ClCompile Include="HDR_camera.cpp" />
     <ClCompile Include="HipDropRankUI.cpp" />
+    <ClCompile Include="preview.cpp" />
     <ClCompile Include="pvp_game.cpp" />
     <ClCompile Include="gauge.cpp" />
     <ClCompile Include="HDRgame.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="HDR_camera.h" />
     <ClInclude Include="hdr_player.h" />
     <ClInclude Include="HipDropRankUI.h" />
+    <ClInclude Include="preview.h" />
     <ClInclude Include="pvp_game.h" />
     <ClInclude Include="gauge.h" />
     <ClInclude Include="HDRgame.h" />
