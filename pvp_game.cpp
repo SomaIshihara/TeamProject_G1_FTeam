@@ -136,7 +136,7 @@ void UninitPvPGame(void)
 	UninitTime();			// タイマーの終了処理（ここは順番は問わない）
 
 	//ゲームBGM停止
-	StopSound(SOUND_LABEL_BGM_GAME_HDR);
+	StopSound(SOUND_LABEL_BGM_GAME_PVP);
 }
 
 //------------------------------------------------
@@ -256,7 +256,7 @@ void DrawPvPGame(void)
 		SetCamera(nCntCamera);		// カメラの設定処理
 
 		DrawMeshfield();			// ステージの描画処理
-									//DrawMeshCylinder();	// メッシュシリンダーの描画処理
+		//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 		DrawMeshDome();				// メッシュドームの描画処理	
 		DrawMeshFault();			// メッシュの断面描画処理
 		DrawFence();				// フェンスの描画処理
