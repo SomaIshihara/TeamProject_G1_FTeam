@@ -347,7 +347,7 @@ void CollisionIP(int nPlayerNum)
 		
 				//égÇÌÇÍÇƒÇ¢Ç»Ç¢èÛë‘Ç…Ç∑ÇÈ
 				g_Item[nCntItem].RespawnDelay = 3;
-				g_Item[nCntItem].fAlpha = 0.2f;
+				g_Item[nCntItem].fAlpha = 1.0f;
 				g_Item[nCntItem].buse = false;
 			}
 		}
