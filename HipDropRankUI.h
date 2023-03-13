@@ -14,10 +14,10 @@ Author:平澤詩苑
 #define HIPDROP_HEIGHT_PERFECT	(0.5f)			//レベルMAX
 
 //ヒップドロップレベルに応じた強さ
-#define HIPDROP_POWER_NICE		(100)			//レベル1（100ダメージ）
-#define HIPDROP_POWER_GOOD		(200)			//レベル2（200ダメージ）
-#define HIPDROP_POWER_GREAT		(300)			//レベル3（300ダメージ）
-#define HIPDROP_POWER_PERFECT	(500)			//レベルMAX（500ダメージ）
+#define HIPDROP_POWER_NICE		( 100)			//レベル1  （ 100ダメージ）
+#define HIPDROP_POWER_GOOD		( 300)			//レベル2  （ 300ダメージ）
+#define HIPDROP_POWER_GREAT		( 600)			//レベル3  （ 600ダメージ）
+#define HIPDROP_POWER_PERFECT	(1000)			//レベルMAX（1000ダメージ）
 
 //ヒップドロップレベル列挙型
 typedef enum

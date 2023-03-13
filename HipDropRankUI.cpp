@@ -49,7 +49,7 @@ void InitHipDropRankUI(void)
 		g_HDRankUI[nCntRankUI].nLife = RANK_UI_LIFE;			// 寿命初期化
 		g_HDRankUI[nCntRankUI].fWidth = RANK_UI_WIDTH;			// 幅初期化
 		g_HDRankUI[nCntRankUI].fHeight = RANK_UI_HEIGHT;		// 高さ初期化
-		g_HDRankUI[nCntRankUI].bDisp = true;					// 表示するか否か
+		g_HDRankUI[nCntRankUI].bDisp = false;					// 表示するか否か
 	}
 
 	//頂点バッファの生成
