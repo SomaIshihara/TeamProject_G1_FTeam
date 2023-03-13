@@ -1,7 +1,7 @@
 //=============================================================================
 //
 // サウンド処理 [sound.cpp]
-// Author : 石原颯馬
+// Author : 石原颯馬  平澤詩苑
 //
 //=============================================================================
 #include "sound.h"
@@ -37,7 +37,7 @@ IXAudio2MasteringVoice *g_pMasteringVoice = NULL;			// マスターボイス
 IXAudio2SourceVoice *g_apSourceVoice[SOUND_LABEL_MAX][NUM_DUPLICATION] = { {} };	// ソースボイス
 BYTE *g_apDataAudio[SOUND_LABEL_MAX][NUM_DUPLICATION] = { {} };	// オーディオデータ
 DWORD g_aSizeAudio[SOUND_LABEL_MAX][NUM_DUPLICATION] = { {} };	// オーディオデータサイズ
-bool g_bPlay = true;											// 再生するかどうか
+bool g_bPlay = false;											// 再生するかどうか
 
 // サウンドの情報
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
@@ -339,7 +339,7 @@ void StopSound(void)
 //=============================================================================
 // セグメント一時停止(ラベル指定)
 //=============================================================================
-void PauseSound(SOUND_LABEL label) 
+void PauseSound(SOUND_LABEL label)
 {
 	for (int nCntDupl = 0; nCntDupl < NUM_DUPLICATION; nCntDupl++)
 	{

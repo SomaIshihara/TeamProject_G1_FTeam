@@ -12,10 +12,12 @@
 #include "debugproc.h"
 #include "camera.h"
 #include "HDR_camera.h"
+#include "collision.h"
 #include <assert.h>
 #include "color.h"
 #include "sound.h"
 #include "meshfield.h"
+#include "HipDropRankUI.h"
 #include "block.h"
 #include "rank.h"
 #include "ai.h"
@@ -25,27 +27,17 @@
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 #define PLAYER_HIPSPIN_WAIT		(20)				//ヒップドロップスピンが終わって急降下するまでの時間
 #define PLAYER_MOVE_SPEED		(5.0f)				//普通に移動するときの移動量
-
-//ヒップドロップレベルに必要な高さ（その値以上次のレベルの値以下）
-#define HIPDROP_HEIGHT_LEVEL_1		(10)				//レベル1
-#define HIPDROP_HEIGHT_LEVEL_2		(50)				//レベル2
-#define HIPDROP_HEIGHT_LEVEL_3		(100)				//レベル3
-#define HIPDROP_HEIGHT_LEVEL_MAX	(150)				//レベルMAX
-
-//ヒップドロップレベルに応じた強さ
-#define HIPDROP_POWER_LEVEL_1		(100)				//レベル1（100ダメージ）
-#define HIPDROP_POWER_LEVEL_2		(200)				//レベル2（200ダメージ）
-#define HIPDROP_POWER_LEVEL_3		(300)				//レベル3（300ダメージ）
-#define HIPDROP_POWER_LEVEL_MAX		(500)				//レベルMAX（500ダメージ）
+#define PLAYER_NORMAL_JUMP		(7.0f)				//プレイヤーの通常ジャンプ量
+#define PLAYER_GOAL_JUMP		(4.3f)				//ゴール後のジャンプ量
 
 //向き
-#define ROT_WA	(0.75f * D3DX_PI)	//左上
+#define ROT_WA	(+0.75f * D3DX_PI)	//左上
 #define ROT_WD	(-0.75f * D3DX_PI)	//右上
-#define ROT_SA	(0.25f * D3DX_PI)	//左下
+#define ROT_SA	(+0.25f * D3DX_PI)	//左下
 #define ROT_SD	(-0.25f * D3DX_PI)	//右下
 #define ROT_W	(-1.0f * D3DX_PI)	//上
-#define ROT_A	(0.5f * D3DX_PI)	//左
-#define ROT_S	(0.0f * D3DX_PI)	//下
+#define ROT_A	(+0.5f * D3DX_PI)	//左
+#define ROT_S	(+0.0f * D3DX_PI)	//下
 #define ROT_D	(-0.5f * D3DX_PI)	//右
 
 //グローバル変数
@@ -183,6 +175,9 @@ void UpdatePlayer_HDR(void)
 
 			//ブロックの当たり判定
 			CollisionBlock(&g_aPlayerHDR[nCntPlayer]);
+
+			//フェンスとの当たり判定
+			
 		}
 	}
 }
@@ -384,19 +379,19 @@ void ControllPlayer_HDR(int nPlayerNum)
 					//どのレベルか判別する処理
 					if (nJumpRand < c_aAIParamHDR[aiDiff].nHDLevel_1)
 					{
-						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_HEIGHT_LEVEL_1;
+						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_POWER_NICE;
 					}
 					else if (nJumpRand < c_aAIParamHDR[aiDiff].nHDLevel_2)
 					{
-						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_HEIGHT_LEVEL_2;
+						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_POWER_GOOD;
 					}
 					else if (nJumpRand < c_aAIParamHDR[aiDiff].nHDLevel_3)
 					{
-						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_HEIGHT_LEVEL_3;
+						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_POWER_GREAT;
 					}
 					else
 					{
-						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_HEIGHT_LEVEL_MAX;
+						g_aPlayerHDR[nPlayerNum].nAIPower = HIPDROP_POWER_PERFECT;
 					}
 				}
 			}
@@ -504,9 +499,19 @@ void JumpPlayer_HDR(int nJumpPlayer)
 	PlaySound(SOUND_LABEL_SE_JUMP,nJumpPlayer);
 
 	g_aPlayerHDR[nJumpPlayer].posOld.y = g_aPlayerHDR[nJumpPlayer].pos.y;
-	g_aPlayerHDR[nJumpPlayer].moveV0.y = 7.7f;		//移動量設定
-	g_aPlayerHDR[nJumpPlayer].jumpTime = 0;			//ジャンプ時間リセット
+	g_aPlayerHDR[nJumpPlayer].jumpTime = 0;						//ジャンプ時間リセット
 	g_aPlayerHDR[nJumpPlayer].bJump = true;
+
+	//ゴールしていた時のジャンプ量
+	if (g_aPlayerHDR[nJumpPlayer].bGoal)
+	{
+		g_aPlayerHDR[nJumpPlayer].moveV0.y = PLAYER_GOAL_JUMP;
+	}
+	//まだゴールしていないときのジャンプ量
+	else
+	{
+		g_aPlayerHDR[nJumpPlayer].moveV0.y = PLAYER_NORMAL_JUMP;
+	}
 }
 
 //========================
@@ -514,26 +519,44 @@ void JumpPlayer_HDR(int nJumpPlayer)
 //========================
 void HipDropPlayer_HDR(int nHipDropPlayer)
 {
-	//ヒップドロップのパワーレベルを測定
-	g_aPlayerHDR[nHipDropPlayer].HipDropPower = g_aPlayerHDR[nHipDropPlayer].pos.y - g_aPlayerHDR[nHipDropPlayer].posOld.y;
+	//プレイヤーのジャンプ量を保存
+	float fJumpSpeed = fabsf(g_aPlayerHDR[nHipDropPlayer].move.y);
 
-	if (g_aPlayerHDR[nHipDropPlayer].HipDropPower >= HIPDROP_HEIGHT_LEVEL_MAX)
+	//ヒップドロップ量最大
+	if (fJumpSpeed <= HIPDROP_HEIGHT_PERFECT)
 	{
-		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_MAX;
-	}
-	else if (g_aPlayerHDR[nHipDropPlayer].HipDropPower > HIPDROP_HEIGHT_LEVEL_3)
-	{
-		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_3;
-	}
-	else if (g_aPlayerHDR[nHipDropPlayer].HipDropPower > HIPDROP_HEIGHT_LEVEL_2)
-	{
-		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_2;
-	}
-	else if (g_aPlayerHDR[nHipDropPlayer].HipDropPower > HIPDROP_HEIGHT_LEVEL_1)
-	{
-		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_LEVEL_1;
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_PERFECT;	//最大パワー代入
+		SetRankUI(nHipDropPlayer, HIPDROP_RANK_PERFECT);					//UI設定
 	}
 
+	//ヒップドロップ量準最大
+	else if (fJumpSpeed <= HIPDROP_HEIGHT_GREAT)
+	{
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_GREAT;	//準最大パワー代入
+		SetRankUI(nHipDropPlayer, HIPDROP_RANK_GREAT);						//UI設定
+	}
+
+	//ヒップドロップ量弱め
+	else if (fJumpSpeed <= HIPDROP_HEIGHT_GOOD)
+	{
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_GOOD;	//弱めのパワー代入
+		SetRankUI(nHipDropPlayer, HIPDROP_RANK_GOOD);					//UI設定
+	}
+
+	//ヒップドロップ量かなり弱め
+	else if	(fJumpSpeed <= HIPDROP_HEIGHT_NICE)
+	{
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_NICE;	//最弱パワー代入
+		SetRankUI(nHipDropPlayer, HIPDROP_RANK_NICE);					//UI設定
+	}
+
+	//ヒップドロップ量ナシ
+	else
+	{
+		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 0;	//威力ナシ
+		SetRankUI(nHipDropPlayer, HIPDROP_RANK_BAD);	//UI設定
+	}
+	
 	PlaySound(SOUND_LABEL_SE_HIPSPIN, nHipDropPlayer);//ヒップドロップ音再生
 
 	g_aPlayerHDR[nHipDropPlayer].move.y = 0.0f;						//通常の落下速度を０にする
