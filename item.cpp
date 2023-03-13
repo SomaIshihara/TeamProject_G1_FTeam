@@ -85,7 +85,7 @@ void InitItem(void)
 		g_Item[nCntItem].move = ZERO_SET;
 		g_Item[nCntItem].DespawnLimit = 0;
 		g_Item[nCntItem].fWidth = COLLISION_SIZE_XZ;
-		g_Item[nCntItem].fAlpha = 0.2f;					//ìßñæìxÇÃê›íË
+		g_Item[nCntItem].fAlpha = 1.0f;					//ìßñæìxÇÃê›íË
 		g_Item[nCntItem].buse = false;
 	}
 

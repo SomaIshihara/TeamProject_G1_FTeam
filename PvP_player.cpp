@@ -41,6 +41,7 @@
 #define PLAYER_HIPSPIN_LAP		(2.0f * -D3DX_PI)	//ヒップドロップスピンしたときの１周判定をとる値
 #define PLAYER_HIPDROP_ACTIONRIGOR	(45)		//ヒップドロップのアクション硬直の時間
 #define PLAYER_DASH_ACTIONRIGOR	(20)		//ダッシュのアクション硬直のベースの時間
+#define PLAYER_JUMP_ACTIONRIGOR	(30)		//ジャンプのアクション硬直時間
 #define PLAYER_D_ACTRIGOR_CALC(x)	(powf((x - 0.75f), 2) + 1)
 
 //移動量関係
@@ -298,6 +299,7 @@ void UpdatePlayer(void)
 				}
 				else if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_JUMP)
 				{
+					g_aPlayerPvP[nCntPlayer].nActionRigor = PLAYER_JUMP_ACTIONRIGOR;
 					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_LAND;
 					g_aPlayerPvP[nCntPlayer].bAnimed = false;
 				}
@@ -728,7 +730,7 @@ void ControllPlayer(int nPlayerNum)
 		}
 
 		//ジャンプ・ヒップドロップ
-		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false)
+		if (GetButton(nPlayerNum, INPUTTYPE_TRIGGER, BUTTON_A) == true && g_aPlayerPvP[nPlayerNum].bHipDrop == false && g_aPlayerPvP[nPlayerNum].nActionRigor <= 0)
 		{
 			if (g_aPlayerPvP[nPlayerNum].bJump)
 			{
