@@ -13,6 +13,7 @@
 #include "PvP_player.h"
 #include "hdr_player.h"
 #include "color.h"
+#include "sound.h"
 
 //マクロ
 #define FRAME_USE_TEXTURE	(3)				//タイプ枠で使うテクスチャ数
@@ -349,6 +350,8 @@ void UpdateTypeFrame(void)
 		//決定
 		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_START) == true)
 		{
+			//タイトル決定音再生
+			PlaySound(SOUND_LABEL_SE_TITLE_DECIDE, 0);
 			if (GetSelGameMode() == SelGameMode_PVP)
 			{
 				SetFade(MODE_PvPGAME);
@@ -410,6 +413,8 @@ void UpdateTypeFrame(void)
 		//決定
 		if (GetKeyboardTrigger(DIK_RETURN) == true)
 		{
+			//タイトル決定音再生
+			PlaySound(SOUND_LABEL_SE_TITLE_DECIDE, 0);
 			if (GetSelGameMode() == SelGameMode_PVP)
 			{
 				SetFade(MODE_PvPGAME);

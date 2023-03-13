@@ -44,6 +44,7 @@ SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =
 {
 	{ "data/SOUND/BGM/Title.wav",				SOUND_LOOP, 0.5f,true },		// タイトル音
 	{ "data/SOUND/BGM/Tutorial.wav",			SOUND_LOOP, 0.5f,true },		// チュートリアル音
+	{ "data/SOUND/BGM/PvP_Game_Mixed.wav",		SOUND_LOOP, 0.5f,true },		// ゲーム音
 	{ "data/SOUND/BGM/Game000.wav",				SOUND_LOOP, 0.5f,true },		// ゲーム音
 	{ "data/SOUND/BGM/Result.wav",				SOUND_LOOP, 0.5f,true },		// リザルト音
 	{ "data/SOUND/SE/Uribou.wav",				SOUND_ONCE, 0.5f,true },		// コントローラー接続SE

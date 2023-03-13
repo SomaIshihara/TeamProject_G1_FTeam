@@ -95,7 +95,7 @@ void InitPvPGame(void)
 	g_bPhotoMode_PvP = false;			// フォトモード初期化
 	
 	//ゲームBGM開始
-	PlaySound(SOUND_LABEL_BGM_GAME, 0);
+	PlaySound(SOUND_LABEL_BGM_GAME_PVP, 0);
 }
 
 //------------------------------------------------
@@ -136,7 +136,7 @@ void UninitPvPGame(void)
 	UninitTime();			// タイマーの終了処理（ここは順番は問わない）
 
 	//ゲームBGM停止
-	StopSound(SOUND_LABEL_BGM_GAME);
+	StopSound(SOUND_LABEL_BGM_GAME_HDR);
 }
 
 //------------------------------------------------
