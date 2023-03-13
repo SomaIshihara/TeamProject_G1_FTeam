@@ -714,17 +714,16 @@ void ControllPlayer(int nPlayerNum)
 					 //プレイヤーのチャージ処理
 						ChargePlayer(nPlayerNum);
 					}
+					else if (GetButton(nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X) == true)
+					{//Xボタンが離された
+					 //プレイヤーのダッシュ処理
+						DashPlayer(nPlayerNum);
+					}
 					else
 					{
 						g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 					}
 				}
-			}
-
-			if (GetButton(nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X) == true)
-			{//Xボタンが離された
-			 //プレイヤーのダッシュ処理
-				DashPlayer(nPlayerNum);
 			}
 		}
 

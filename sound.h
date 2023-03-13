@@ -19,7 +19,8 @@ typedef enum
 {
 	SOUND_LABEL_BGM_TITLE = 0,		// タイトル音
 	SOUND_LABEL_BGM_TUTORIAL,		// チュートリアル音
-	SOUND_LABEL_BGM_GAME,			// ゲーム音
+	SOUND_LABEL_BGM_GAME_PVP,		// ゲーム音(PVP)
+	SOUND_LABEL_BGM_GAME_HDR,		// ゲーム音(HDR)
 	SOUND_LABEL_BGM_RESULT,			// リザルト音
 	SOUND_LABEL_SE_CONNECT,			// コントローラー接続時の効果音
 	SOUND_LABEL_SE_TITLE_DECIDE,	// タイトル画面の決定音
