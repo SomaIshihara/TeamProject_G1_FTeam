@@ -5,19 +5,23 @@ Author:平澤詩苑
 
 ============================================================================================================================================================*/
 #include "main.h"
+#include "select_game.h"
 #include "tutorial.h"
 #include "fade.h"
 #include "input.h"
 #include "color.h"
 #include "sound.h"
-#include "sound.h"
-
-//マクロ定義
-#define TUTORIAL_TEX_NAME		"data/TEXTURE/tutorial.png"		//チュートリアル画像のファイル名
 
 //グローバル変数宣言
-LPDIRECT3DTEXTURE9		g_pTextureTutorial = NULL;	//テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pTextureTutorial[SelGameMode_MAX] = {};	//テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffTutorial = NULL;	//頂点バッファへのポインタ
+
+//ファイルパス
+const char* c_aFilePathTutorial[SelGameMode_MAX] =
+{
+	"data/TEXTURE/Tutorial001.png",
+	"data/TEXTURE/Tutorial002.png"
+};
 
 //------------------------------------------------
 //				チュートリアル初期化処理
@@ -41,7 +45,10 @@ void InitTutorial(void)
 	//チュートリアル情報の初期化
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, TUTORIAL_TEX_NAME, &g_pTextureTutorial);
+	for (int nCntTexture = 0; nCntTexture < SelGameMode_MAX; nCntTexture++)
+	{
+		D3DXCreateTextureFromFile(pDevice, c_aFilePathTutorial[nCntTexture], &g_pTextureTutorial[nCntTexture]);
+	}
 	
 	//頂点座標の設定
 	pVtx[VTX_LE_UP].pos = D3DXVECTOR3(NIL_F, NIL_F, NIL_F);
@@ -77,10 +84,13 @@ void InitTutorial(void)
 void UninitTutorial(void)
 {
 	//テクスチャの破棄
-	if (g_pTextureTutorial != NULL)
+	for (int nCntTexture = 0; nCntTexture < SelGameMode_MAX; nCntTexture++)
 	{
-		g_pTextureTutorial->Release();
-		g_pTextureTutorial = NULL;
+		if (g_pTextureTutorial[nCntTexture] != NULL)
+		{
+			g_pTextureTutorial[nCntTexture]->Release();
+			g_pTextureTutorial[nCntTexture] = NULL;
+		}
 	}
 
 	//頂点バッファの破棄
@@ -103,7 +113,7 @@ void UpdateTutorial(void)
 	if ((GetKeyboardTrigger(DIK_RETURN) || GetGamepadTrigger(0, XINPUT_GAMEPAD_A) || GetGamepadTrigger(0, XINPUT_GAMEPAD_START)))
 	{
 		//モード設定（ゲーム画面に遷移)
-		SetFade(MODE_RaceGAME);
+		SetFade(MODE_SELECTPLAYER);
 	}
 }
 
@@ -122,7 +132,7 @@ void DrawTutorial(void)
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	//テクスチャの設定
-	pDevice->SetTexture(0, g_pTextureTutorial);
+	pDevice->SetTexture(0, g_pTextureTutorial[GetSelGameMode()]);
 
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
