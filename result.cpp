@@ -19,10 +19,10 @@ Author:平澤詩苑
 
 #define NUM_RESULT_UI		(3)		//スキップ時に上下から挟む用の幕（２つ）とスキップ表示UIの　計３つ
 #define SKIP_UI_TEX			"data\\TEXTURE\\ResultSKipUI.png"		//スキップ表示UIのテクスチャパス
-#define SKIP_UI_POSX		(1000.0f)	//スキップ表示UIのX位置
+#define SKIP_UI_POSX		(1050.0f)	//スキップ表示UIのX位置
 #define SKIP_UI_POSY		(650.0f)	//スキップ表示UIのY位置
-#define SKIP_UI_WIDTH		(100.0f)	//スキップ表示UIの幅
-#define SKIP_UI_HEIGHT		(40.0f)		//スキップ表示UIの高さ
+#define SKIP_UI_WIDTH		(200.0f)	//スキップ表示UIの幅
+#define SKIP_UI_HEIGHT		(100.0f)		//スキップ表示UIの高さ
 
 #define HALF_SCREEN_HEIGHT	(SCREEN_HEIGHT / 2)	//画面半分の高さ
 #define SKIP_SHUTTER_HEIGHT	(SCREEN_HEIGHT / 4)	//シャッターの高さ（画面の半分の半分

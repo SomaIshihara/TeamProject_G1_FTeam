@@ -34,7 +34,7 @@
 
 //テキストの情報
 #define TEXT_WIDTH				(200.0f)							//テキストの横幅
-#define TEXT_HEIGHT				(70.0f)								//テキストの高さ
+#define TEXT_HEIGHT				(90.0f)								//テキストの高さ
 
 //ボタンの情報
 #define NUM_BUTTON				(2)									//ボタンの数
