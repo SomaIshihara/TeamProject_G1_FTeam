@@ -206,7 +206,7 @@ void DrawTime(void)
 void SetTime(int nTime)
 {
 	//タイムの保存
-	g_aTime.nTemp = g_aTime.nTime = 2;
+	g_aTime.nTemp = g_aTime.nTime = nTime;
 
 	VERTEX_2D *pVtx;
 	//頂点バッファをロックし、頂点情報へのポインタを取得

@@ -22,6 +22,5 @@ void UpdatePreview(void);
 void DrawPreview(void);
 
 void FixPlayerUIHeight(int nNumPreview);
-void FixPlayerUIVtxPos(VERTEX_2D *pVtx);
 
 #endif
