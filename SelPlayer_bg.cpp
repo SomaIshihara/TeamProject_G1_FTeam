@@ -71,8 +71,6 @@ void InitSelPlayer_Bg(void)
 //========================
 void UninitSelPlayer_Bg(void)
 {
-	int nCntTexBG;	//カウンタ
-
 	//テクスチャの破棄
 	if (g_apTextureBg != NULL)
 	{
@@ -114,5 +112,6 @@ void DrawSelPlayer_Bg(void)
 	//テクスチャ設定
 	pDevice->SetTexture(0, g_apTextureBg);
 	
+	//ポリゴン描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }

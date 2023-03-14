@@ -30,6 +30,7 @@ typedef enum
 	WAVECamera_02_BirdEyes,			//俯瞰視点	（俯瞰視点を訳すと「bird's eys」というらしい...
 	WAVECamera_03_SkyDiving,		//飛び降りの空撮
 	WAVECamera_LAST_VictoryStand,	//表彰式
+	WAVECamera_FINISH,				//全ウェーブ終了
 	WAVECamera_MAX
 }WAVECamera;
 

@@ -29,7 +29,7 @@ typedef enum
 #define PREVIEW_COURSE_WIDTH		(60.0f)		//コースUIの幅
 #define PREVIEW_COURSE_HEIGHT		(400.0f)	//コースUIの高さ
 
-#define PREVIEW_PLAYER_INIT_POS_Y	(200.0f)	//プレイヤーUIの初期高さ
+#define PREVIEW_PLAYER_UI_FIX_Y		(400.0f)	//プレイヤーUIの初期高さ
 #define PREVIEW_PLAYER_MARGIN_WIDTH	(35.0f)		//プレイヤーUの左にずらす余白
 #define PREVIEW_PLAYER_SIZE			(20.0f)		//プレイヤーUIのサイズ（正方形
 #define PREVIEW_PLAYER_TEX_WIDTH	(0.25f)		//プレイヤーUIのテクスチャ幅（４分割
@@ -70,6 +70,8 @@ void InitPreview(void)
 		pPreview->pos = D3DXVECTOR3(
 			(float)(PREVIEW_HOR_SEP + PREVIEW_HOR_SEP * nCntVtx), //画面を縦に４等分して、その分割点から左に少しずらす
 			PREVIEW_POS_Y, 0.0f);
+		pPreview->fPlayerUIHeight = PREVIEW_PLAYER_UI_FIX_Y;//プレイヤーUIの表示する高さ
+		pPreview->fHeightPer = 1.0f;						//プレイヤーUIの表示する高さのパーセンテージ
 
 		/*******************************************************************
 							コースとプレイヤーUIを同時に設定
@@ -94,10 +96,10 @@ void InitPreview(void)
 		//			プレイヤーUIの頂点座標・テクスチャ座標の設定
 		//=================================================================
 		//頂点座標の設定
-		pVtx[4].pos = D3DXVECTOR3(pPreview->pos.x - PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, PREVIEW_PLAYER_INIT_POS_Y - PREVIEW_PLAYER_SIZE, 0.0f);
-		pVtx[5].pos = D3DXVECTOR3(pPreview->pos.x + PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, PREVIEW_PLAYER_INIT_POS_Y - PREVIEW_PLAYER_SIZE, 0.0f);
-		pVtx[6].pos = D3DXVECTOR3(pPreview->pos.x - PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, PREVIEW_PLAYER_INIT_POS_Y + PREVIEW_PLAYER_SIZE, 0.0f);
-		pVtx[7].pos = D3DXVECTOR3(pPreview->pos.x + PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, PREVIEW_PLAYER_INIT_POS_Y + PREVIEW_PLAYER_SIZE, 0.0f);
+		pVtx[4].pos = D3DXVECTOR3(pPreview->pos.x - PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_MARGIN_WIDTH, 0.0f);
+		pVtx[5].pos = D3DXVECTOR3(pPreview->pos.x + PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_MARGIN_WIDTH, 0.0f);
+		pVtx[6].pos = D3DXVECTOR3(pPreview->pos.x - PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) + PREVIEW_PLAYER_MARGIN_WIDTH, 0.0f);
+		pVtx[7].pos = D3DXVECTOR3(pPreview->pos.x + PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) + PREVIEW_PLAYER_MARGIN_WIDTH, 0.0f);
 
 		//テクスチャの幅
 		float aTexU = PREVIEW_PLAYER_TEX_WIDTH * nCntVtx;
@@ -147,8 +149,25 @@ void UninitPreview(void)
 //--------------------------------------
 void UpdatePreview(void)
 {
+	for (int nCntPreview = 0; nCntPreview < NUM_PREVIEW; nCntPreview++)
+	{
+		//プレイヤーUIの表示する高さを算出
+		FixPlayerUIHeight(nCntPreview);
+	}
+}
+
+//プレイヤーUIの表示する高さを修正
+void FixPlayerUIHeight(int nNumPreview)
+{
 
 }
+
+//プレイヤーUIの頂点座標の修正
+void FixPlayerUIVtxPos(VERTEX_2D *pVtx)
+{
+
+}
+
 
 //--------------------------------------
 //			プレビュー描画処理

@@ -70,11 +70,6 @@ void UpdateSelPlayer(void)
 //========================
 void DrawSelPlayer(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
-	D3DXMATRIX mtxRot, mtxTrans;	//計算用
-	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
-	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
-
 	//背景
 	DrawSelPlayer_Bg();
 
@@ -83,6 +78,11 @@ void DrawSelPlayer(void)
 
 	//カメラ設定
 	SetSelPlayer_Camera();
+
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();	//デバイスの取得
+	D3DXMATRIX mtxRot, mtxTrans;	//計算用
+	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
+	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
 
 	//モデル描画
 	//現在のマテリアル取得

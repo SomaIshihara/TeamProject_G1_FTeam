@@ -82,7 +82,7 @@ void LoadWaveCamera(void)
 	{
 		fscanf(pFile, "%s", &aData[0]);	//最初のセルの項目名読み込み
 
-		for (int nCntWave = 0; nCntWave < WAVECamera_MAX; nCntWave++, pAnimCamera++)
+		for (int nCntWave = 0; nCntWave < WAVECamera_FINISH; nCntWave++, pAnimCamera++)
 		{
 			//一行読み込み
 			fscanf(pFile, "%s", &aData[0]);
@@ -161,7 +161,7 @@ void UninitResultCamera(void)
 void UpdateResultCamera(void)
 {
 	//カメラの移動処理（今は使用しない
-	if (g_WaveCamera == WAVECamera_MAX)
+	if (g_WaveCamera == WAVECamera_FINISH)
 	{
 		//視点移動		//注視点移動	//視点回転
 		MovePosV();		MovePosR();		SpinPosV();
@@ -193,7 +193,7 @@ void UpdateResultCamera(void)
 void WaveResultCamera(void)
 {
 	//ウェーブが終了していない
-	if (g_WaveCamera != WAVECamera_MAX)
+	if (g_WaveCamera != WAVECamera_FINISH)
 	{
 		int nWave = g_WaveCamera;								//現在のウェーブを取得
 		ResultCamera *pCamera = &g_ResultCamera;				//カメラのポインタ取得
@@ -229,7 +229,7 @@ void WaveResultCamera(void)
 				g_WaveCamera = (WAVECamera)(g_WaveCamera + 1);
 
 				//ウェーブが終了していない
-				if (g_WaveCamera != WAVECamera_MAX)
+				if (g_WaveCamera != WAVECamera_FINISH)
 				{
 					//次のアニメーションカメラへ
 					pAnimCamera++;

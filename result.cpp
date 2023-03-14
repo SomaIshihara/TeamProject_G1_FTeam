@@ -27,7 +27,7 @@ Author:平澤詩苑
 #define HALF_SCREEN_HEIGHT	(SCREEN_HEIGHT / 2)	//画面半分の高さ
 #define SKIP_SHUTTER_HEIGHT	(SCREEN_HEIGHT / 4)	//シャッターの高さ（画面の半分の半分
 #define SKIP_SHUTTER_POS_X	(SCREEN_WIDTH / 2)	//シャッターのX位置(画面の半分
-#define SHUTTER_SPEED		(100.0f)				//シャッターの開閉速度
+#define SHUTTER_SPEED		(100.0f)			//シャッターの開閉速度
 
 //リザルトスキップの構造体
 typedef struct
@@ -41,7 +41,6 @@ typedef struct
 //グローバル変数宣言
 LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffResult = NULL;	//頂点バッファへのポインタ
 LPDIRECT3DTEXTURE9		g_pTextureResult = NULL;	//テクスチャのポインタ
-bool					g_bStop = false;			//リザルト一時停止
 SkipUI					g_SkipUI;					//リザルトスキップ時の情報
 
 //************************************************
@@ -126,7 +125,6 @@ void InitResult(void)
 	//----------------------------------------------=
 	InitResultObject();
 
-	g_bStop = false;
 	g_SkipUI.bShutter = true;	//シャッターを開ける
 	g_SkipUI.bUI_Disp = true;	//スキップ表示UIを描画する
 }
@@ -151,7 +149,7 @@ void InitResultObject(void)
 //************************************************
 void UninitResult(void)
 {
-	//テクスチャ(２枚)の破棄
+	//テクスチャの破棄
 	if (g_pTextureResult != NULL)
 	{
 		g_pTextureResult->Release();
@@ -189,16 +187,6 @@ void UninitResultObject(void)
 //************************************************
 void UpdateResult(void)
 {
-	if (GetKeyboardTrigger(DIK_P))
-	{
-		g_bStop ^= 1;
-	}
-
-	//----------------------------------------------=
-	//リザルト用オブジェクトの更新処理関数呼び出し
-	//----------------------------------------------=
-	UpdateResultObject();
-
 	//リザルトを飛ばす
 	if (GetKeyboardTrigger(DIK_RETURN))
 	{
@@ -210,6 +198,11 @@ void UpdateResult(void)
 
 	//スキップUIの頂点情報の更新
 	UpdateSkipUIVtx();
+
+	//----------------------------------------------=
+	//リザルト用オブジェクトの更新処理関数呼び出し
+	//----------------------------------------------=
+	UpdateResultObject();
 }
 
 //リザルトを飛ばす
@@ -223,7 +216,7 @@ void SkipResult(void)
 		//------------------
 		//	全ウェーブ終了
 		//------------------
-	case WAVECamera_MAX:
+	case WAVECamera_FINISH:
 		SetFade(MODE_TITLE);	//タイトル画面へ
 		break;
 
@@ -284,7 +277,7 @@ void MoveSkipShutter(void)
 				//-----------------
 			case WAVECamera_LAST_VictoryStand:
 				SkipVicStd_Player();		//表彰台の登場を終わらせて、プレイヤーを表彰台に立たせる
-				*pWave = WAVECamera_MAX;	//ウェーブ終了
+				*pWave = WAVECamera_FINISH;	//ウェーブ終了
 				break;
 
 				//------------------
@@ -330,14 +323,11 @@ void UpdateSkipUIVtx(void)
 //------------------------------------------------
 void UpdateResultObject(void)
 {
-	//一時停止ではない　もしくは　一時停止中でも右矢印が押された
-	if (!g_bStop || (g_bStop && GetKeyboardTrigger(DIK_RIGHT)))
-	{
-		UpdatePlayer_RESULT();		//プレイヤーの更新処理
-		UpdateResultCamera();		//カメラの更新処理
-		UpdateVictoryStand();		//表彰台の更新処理
-		UpdateResultCylinder();		//背景の更新処理
-	}
+	UpdatePlayer_RESULT();	//プレイヤーの更新処理
+	UpdateResultCamera();	//カメラの更新処理
+	UpdateVictoryStand();	//表彰台の更新処理
+	UpdateResultCylinder();	//背景の更新処理
+	UpdateMeshfield();
 }
 
 //************************************************
@@ -362,8 +352,16 @@ void DrawResult(void)
 
 	for (int nCntResult = 0; nCntResult < NUM_RESULT_UI; nCntResult++)
 	{
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_pTextureResult);
+		if (nCntResult == 0)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_pTextureResult);
+		}
+		else
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, NULL);
+		}
 
 		//ポリゴンの描画
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntResult * VTX_MAX, 2);

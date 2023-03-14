@@ -205,18 +205,14 @@ void DrawTime(void)
 //===============================
 void SetTime(int nTime)
 {
-	int nCntTime;
-	VERTEX_2D * pVtx;
-
-	g_aTime.nTime = nTime;
-
 	//タイムの保存
-	g_aTime.nTemp = g_aTime.nTime;
+	g_aTime.nTemp = g_aTime.nTime = 2;
 
+	VERTEX_2D *pVtx;
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffTime->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++, pVtx += VTX_MAX)
+	for (int nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++, pVtx += VTX_MAX)
 	{
 		int aTexU = g_aTime.nTime % g_aTime.nDigit / (g_aTime.nDigit / 10);
 
@@ -228,6 +224,7 @@ void SetTime(int nTime)
 
 		g_aTime.nDigit /= 10;
 	}
+
 	//頂点バッファをアンロックする
 	g_pVtxBuffTime->Unlock();
 
@@ -240,21 +237,20 @@ void SetTime(int nTime)
 //===============================
 void AddTime(int nValue)
 {
-	int nCntTime;
-	VERTEX_2D * pVtx;
-
 	g_aTime.nTime -= nValue;
 
-	//制限時間が0になったらゲームオーバー
-	if (g_aTime.nTime == 0)
+	//制限時間が0になったらゲーム終了
+	if (g_aTime.nTime <= 0)
 	{
 		SetFade(MODE_RESULT);
 	}
 
+	VERTEX_2D *pVtx;
+
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffTime->Lock(0, 0, (void**)&pVtx, 0);
 
-	for (nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++, pVtx += VTX_MAX)
+	for (int nCntTime = 0; nCntTime < NUM_PLACE; nCntTime++, pVtx += VTX_MAX)
 	{
 		int aTexU = g_aTime.nTime % g_aTime.nDigit / (g_aTime.nDigit / 10);
 
@@ -266,6 +262,7 @@ void AddTime(int nValue)
 
 		g_aTime.nDigit /= 10;
 	}
+
 	//頂点バッファをアンロックする
 	g_pVtxBuffTime->Unlock();
 

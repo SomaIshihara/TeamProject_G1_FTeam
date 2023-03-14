@@ -37,7 +37,7 @@ IXAudio2MasteringVoice *g_pMasteringVoice = NULL;			// マスターボイス
 IXAudio2SourceVoice *g_apSourceVoice[SOUND_LABEL_MAX][NUM_DUPLICATION] = { {} };	// ソースボイス
 BYTE *g_apDataAudio[SOUND_LABEL_MAX][NUM_DUPLICATION] = { {} };	// オーディオデータ
 DWORD g_aSizeAudio[SOUND_LABEL_MAX][NUM_DUPLICATION] = { {} };	// オーディオデータサイズ
-bool g_bPlay = true;											// 再生するかどうか
+bool g_bPlay = false;											// 再生するかどうか
 
 // サウンドの情報
 SOUNDINFO g_aSoundInfo[SOUND_LABEL_MAX] =

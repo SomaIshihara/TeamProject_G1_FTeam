@@ -12,8 +12,7 @@
 #include "input.h"
 #include "timer.h"
 
-//マクロ定義		ファイル読み込みに変える可能性あり
-#define NUM_MESHFIELD			(1)						//メッシュフィールド最大数
+//マクロ定義
 #define MESHFIELD_SPLIT			(64)					//分割数
 #define CENTER_AND_ONELAP		(2)						//中心点と１周で重なる点
 #define MESHFIELD_ALL_VERTEX	(MESHFIELD_SPLIT + 1)	//周辺の分割地点と中心
@@ -27,7 +26,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffMeshfield = NULL;		//頂点バッファのポインタ
 LPDIRECT3DTEXTURE9		g_pTextureMeshfield = NULL;		//テクスチャのポインタ
 LPDIRECT3DINDEXBUFFER9	g_pIdxBuffMeshField = NULL;		//インデックスバッファへのポインタ
 D3DXMATRIX				g_mtxWorldMeshfield;			//ワールドマトリックス
-MESHFIELD				g_MeshField[NUM_MESHFIELD];
+MESHFIELD				g_MeshField;
 
 //====================================================================
 //メッシュフィールドの初期化処理
@@ -36,31 +35,14 @@ void InitMeshfield(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
 
-	//設定類は外部ファイルに移動
-#if 0
-	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, GetTextureFilePath(0), &g_pTextureMeshfield);
-
-	//構造体を初期化
-	for (int nCntfield = 0; nCntfield < MAX_FIELD; nCntfield++)
-	{
-		g_MeshField[nCntfield].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_MeshField[nCntfield].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_MeshField[nCntfield].fLength_X = BESIDE_LENGTH;
-		g_MeshField[nCntfield].fLength_Z = VERTICAL_LENGTH;
-		g_MeshField[nCntfield].nBlock_X = BESIDE;
-		g_MeshField[nCntfield].nBlock_Z = VERTICAL;
-	}
-#endif
-
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHFIELD_ALL_VERTEX * NUM_MESHFIELD, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshfield, NULL);
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * MESHFIELD_ALL_VERTEX, D3DUSAGE_WRITEONLY, FVF_VERTEX_3D, D3DPOOL_MANAGED, &g_pVtxBuffMeshfield, NULL);
 
 	//頂点情報設定
 	SetFieldVertex();
 
 	//インデックスバッファの生成
-	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHFIELD_ALL_INDEX * NUM_MESHFIELD, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED,	&g_pIdxBuffMeshField, NULL);
+	pDevice->CreateIndexBuffer(sizeof(WORD) * MESHFIELD_ALL_INDEX, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED,	&g_pIdxBuffMeshField, NULL);
 
 	//インデックス情報を設定
 	SetFieldIndex();
@@ -77,35 +59,32 @@ void SetFieldVertex(void)
 	//頂点番号
 	int nNumVtx = 0;
 
-	for (int nCntField = 0; nCntField < NUM_MESHFIELD; nCntField++)
+	float Rot = D3DX_PI;	//角度
+
+	pVtx[nNumVtx].pos = ZERO_SET;				//中心座標代入
+	pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);	//法線
+	pVtx[nNumVtx].col = XCOL_WHITE;
+	pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 0.5f);
+	nNumVtx++;
+
+	//周辺の頂点情報の設定
+	for (int nCntVtx = 0; nCntVtx < MESHFIELD_SPLIT; nCntVtx++, nNumVtx++)
 	{
-		float Rot = D3DX_PI;	//角度
+		pVtx[nNumVtx].pos = D3DXVECTOR3(
+			sinf(Rot) * g_MeshField.fRadius,	//Xの位置
+			0.0f,								//Yの位置
+			cosf(Rot) * g_MeshField.fRadius);	//Zの位置
 
-		pVtx[nNumVtx].pos = ZERO_SET;				//中心座標代入
-		pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);	//法線
+		pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		pVtx[nNumVtx].col = XCOL_WHITE;
-		pVtx[nNumVtx].tex = D3DXVECTOR2(0.5f, 0.5f);
-		nNumVtx++;
 
-		//周辺の頂点情報の設定
-		for (int nCntVtx = 0; nCntVtx < MESHFIELD_SPLIT; nCntVtx++, nNumVtx++)
-		{
-			pVtx[nNumVtx].pos = D3DXVECTOR3(
-				sinf(Rot) * g_MeshField[nCntField].fRadius,	//Xの位置
-				0.0f,										//Yの位置
-				cosf(Rot) * g_MeshField[nCntField].fRadius);//Zの位置
+		float aTexU = 0.5f - 0.5f * sinf(Rot);	//テクスチャ幅
+		float aTexV = 0.5f - 0.5f * cosf(Rot);	//テクスチャ高さ
 
-			pVtx[nNumVtx].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pVtx[nNumVtx].col = XCOL_WHITE;
+		pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, aTexV);
 
-			float aTexU = 0.5f - 0.5f * sinf(Rot);	//テクスチャ幅
-			float aTexV = 0.5f - 0.5f * cosf(Rot);	//テクスチャ高さ
-
-			pVtx[nNumVtx].tex = D3DXVECTOR2(aTexU, aTexV);
-
-			//角度を　全体の角度÷分割数で割った答え分、引く
-			Rot -= ONE_LAP / MESHFIELD_SPLIT;
-		}
+		//角度を　全体の角度÷分割数で割った答え分、引く
+		Rot -= ONE_LAP / MESHFIELD_SPLIT;
 	}
 
 	//蝶バッファをアンロック
@@ -115,17 +94,14 @@ void SetFieldVertex(void)
 //メッシュフィールドのインデックス情報を設定
 void SetFieldIndex(void)
 {
-	WORD *pIdx;					//インデックス情報へのポインタ
+	//インデックス情報へのポインタ
+	WORD *pIdx;
 
 	//インデックスバッファをロックし頂点情報へのポインタを取得
 	g_pIdxBuffMeshField->Lock(0, 0, (void**)&pIdx, 0);
 
-	//頂点番号データの設定
-	int nNumIdx = 0;
-
-	for (nNumIdx = 0; nNumIdx < MESHFIELD_ALL_INDEX; nNumIdx++)
+	for (int nNumIdx = 0; nNumIdx < MESHFIELD_ALL_INDEX; nNumIdx++)
 	{
-		int nTest = (nNumIdx / (MESHFIELD_ALL_INDEX - 1)) + (nNumIdx % (MESHFIELD_ALL_INDEX - 1));
 		//下の計算式では、　ちょうど1周するときに答えが1になる　　それ以外では、カウンター÷分割数　の余りが番号として設定される
 		pIdx[nNumIdx] = (nNumIdx / (MESHFIELD_ALL_INDEX - 1)) + (nNumIdx % (MESHFIELD_ALL_INDEX - 1));
 	}
@@ -167,14 +143,14 @@ void UpdateMeshfield(void)
 	//一定時間後半径を縮める
 	if (GetTime() <= MESHFIELD_SHRINK_TIME)
 	{//半径を縮める
-		g_MeshField[0].fRadius -= MESHFIELD_SHRINK_SPEED;
+		g_MeshField.fRadius -= MESHFIELD_SHRINK_SPEED;
 	}
 
 	//最小半径よりも小さくなった
-	if (g_MeshField[0].fRadius < MESHFIELD_MIN_RADIUS)
+	if (g_MeshField.fRadius < MESHFIELD_MIN_RADIUS)
 	{
 		//最小半径に直す
-		g_MeshField[0].fRadius = MESHFIELD_MIN_RADIUS;
+		g_MeshField.fRadius = MESHFIELD_MIN_RADIUS;
 	}
 
 	//頂点座標設定
@@ -193,39 +169,36 @@ void DrawMeshfield(void)
 	//両面カリングをON
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
-	for (int nCntfield = 0; nCntfield < NUM_MESHFIELD; nCntfield++)
-	{
-		//ワールドマトリックスの初期化
-		D3DXMatrixIdentity(&g_mtxWorldMeshfield);
+	//ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&g_mtxWorldMeshfield);
 
-		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_MeshField[nCntfield].rot.y, g_MeshField[nCntfield].rot.x, g_MeshField[nCntfield].rot.z);
+	//向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, g_MeshField.rot.y, g_MeshField.rot.x, g_MeshField.rot.z);
 
-		D3DXMatrixMultiply(&g_mtxWorldMeshfield, &g_mtxWorldMeshfield, &mtxRot);
+	D3DXMatrixMultiply(&g_mtxWorldMeshfield, &g_mtxWorldMeshfield, &mtxRot);
 
-		//位置を反映
-		D3DXMatrixTranslation(&mtxTrans, g_MeshField[nCntfield].pos.x, g_MeshField[nCntfield].pos.y, g_MeshField[nCntfield].pos.z);
+	//位置を反映
+	D3DXMatrixTranslation(&mtxTrans, g_MeshField.pos.x, g_MeshField.pos.y, g_MeshField.pos.z);
 
-		D3DXMatrixMultiply(&g_mtxWorldMeshfield, &g_mtxWorldMeshfield, &mtxTrans);
+	D3DXMatrixMultiply(&g_mtxWorldMeshfield, &g_mtxWorldMeshfield, &mtxTrans);
 
-		//ワールドマトリックスの設定
-		pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldMeshfield);
+	//ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorldMeshfield);
 
-		//頂点バッファをデータストリームに設定
-		pDevice->SetStreamSource(0, g_pVtxBuffMeshfield, 0, sizeof(VERTEX_3D));
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, g_pVtxBuffMeshfield, 0, sizeof(VERTEX_3D));
 
-		//インデックスバッファをデータストリームに設定
-		pDevice->SetIndices(g_pIdxBuffMeshField);
+	//インデックスバッファをデータストリームに設定
+	pDevice->SetIndices(g_pIdxBuffMeshField);
 
-		//頂点フォーマットの設定
-		pDevice->SetFVF(FVF_VERTEX_3D);
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
 
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_pTextureMeshfield);
+	//テクスチャの設定
+	pDevice->SetTexture(0, g_pTextureMeshfield);
 
-		//描画
-		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN, 0, 0, MESHFIELD_ALL_VERTEX, 0, MESHFIELD_SPLIT);
-	}
+	//描画
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN, 0, 0, MESHFIELD_ALL_VERTEX, 0, MESHFIELD_SPLIT);
 
 	//普通のカリングモードにする
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
@@ -245,7 +218,8 @@ void SetMeshField(int nTexNum, MESHFIELD mf)
 		GetTextureFilePath(nTexNum),
 		&g_pTextureMeshfield);
 
-	g_MeshField[0] = mf;
+	//情報代入
+	g_MeshField = mf;
 }
 
 //====================================================================
@@ -256,26 +230,22 @@ void SetMeshField(int nTexNum, MESHFIELD mf)
 //====================================================================
 bool LandMeshfield(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove)
 {
-	for (int nCntField = 0; nCntField < NUM_MESHFIELD; nCntField++)
+	//現在・前回の位置とフィールドの中心位置の差を格納
+	D3DXVECTOR2 PosDiff;
+
+	PosDiff.x = powf(g_MeshField.pos.x - pPos->x, 2.0f);	//現在のＸ座標の差の２乗
+	PosDiff.y = powf(g_MeshField.pos.z - pPos->z, 2.0f);	//現在のＺ座標の差の２乗	変数は  "Ｙ" だけど、Ｚ座標の差を入れます 
+
+	float fLength = sqrtf(PosDiff.x + PosDiff.y);	//現在のＸ・Ｚの長さを取得
+
+	//中心位置からの距離がフィールドの半径以下だった
+	if (fLength <= g_MeshField.fRadius)
 	{
-		//現在・前回の位置とフィールドの中心位置の差を格納
-		D3DXVECTOR2 PosDiff;
-
-		PosDiff.x = powf(g_MeshField[nCntField].pos.x - pPos->x, 2.0f);	//現在のＸ座標の差の２乗
-		PosDiff.y = powf(g_MeshField[nCntField].pos.z - pPos->z, 2.0f);	//現在のＺ座標の差の２乗	変数は  "Ｙ" だけど、Ｚ座標の差を入れます 
-
-		float fLength	= sqrtf(PosDiff.x + PosDiff.y);					//現在のＸ・Ｚの長さを取得
-
-		//中心位置からの距離がフィールドの半径以下だった
-		if (fLength <= g_MeshField[nCntField].fRadius)
+		if (g_MeshField.pos.y <= pPosOld->y &&	//前回はフィールドから上に居て、
+			g_MeshField.pos.y >= pPos->y)		//現在はフィールドから下にいる
 		{
-			if (g_MeshField[nCntField].pos.y <= pPosOld->y &&	//前回はフィールドから上に居て、
-				g_MeshField[nCntField].pos.y >= pPos->y)		//現在はフィールドから下にいる
-			{
-				pPos->y = g_MeshField[nCntField].pos.y;			//フィールドの高さに戻す
-
-				return true;									//乗った判定を返して終了
-			}
+			pPos->y = g_MeshField.pos.y;	//フィールドの高さに戻す
+			return true;					//乗った判定を返して終了			
 		}
 	}
 
@@ -286,5 +256,5 @@ bool LandMeshfield(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove)
 //メッシュフィールドの情報取得
 MESHFIELD *GetMeshField(void)
 {
-	return &g_MeshField[0];
+	return &g_MeshField;
 }
