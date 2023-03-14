@@ -11,6 +11,7 @@
 #include "light.h"
 #include "model.h"
 #include "meshfault.h"
+#include "object.h"
 #include <stdio.h>
 #include <assert.h>
 
@@ -588,7 +589,7 @@ void LoadModelViewerFile(const char *path)
 				case READSTAT_MODELSET:		//ÉÇÉfÉãèÓïÒéÊìæ
 					if (strncmp(&aCode[0], CODE_END_MODELSET, sizeof CODE_END_MODELSET / sizeof(char) - 1) == 0)
 					{
-						
+						SetObject(g_readmodel.pos, g_readmodel.rot, (OBJECTTYPE)g_readmodel.modelType);
 						g_readStat = READSTAT_NONE;
 					}
 					else if (strncmp(&aCode[0], CODE_TYPE, sizeof CODE_TYPE / sizeof(char) - 1) == 0)

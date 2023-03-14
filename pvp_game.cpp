@@ -36,6 +36,7 @@ Author:平澤詩苑
 #include "comai.h"
 #include "fence.h"
 #include "GaugeFrame.h"
+#include "object.h"
 
 //マクロ
 #define FENCE_DROPPED_TIME		(48)	//フェンス落下注意効果音鳴らす時間
@@ -60,6 +61,7 @@ void InitPvPGame(void)
 {
 	g_nUseContNum_PvP = SetUseController_PvP();			// コントローラーの使用設定
 	InitFile();											// ファイルの初期化処理（モデルビューワーファイル読み込み前に行うこと！）
+	InitObject();										// オブジェクト初期化
 	LoadModelViewerFile("data\\model.txt");				// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
 	LoadModelOriginalFile("data\\originalmodel.txt");	// モデルオリジナルファイル読み込み
 	g_NumCamera_PvP = NumCamera_FOUR_Separate;			// 初期カメラの設定（現在はPlayer0を注視点としたカメラ　　画面分割ナシ）
@@ -121,6 +123,7 @@ void UninitPvPGame(void)
 	UninitMeshfield();		// ステージ終了処理
 	UninitMeshDome();		// メッシュドーム終了処理
 	UninitMeshFault();		// メッシュの断面終了処理
+	UninitObject();			// オブジェクト終了処理
 	UninitFence();			// フェンスの終了処理（形式上置いておいただけ）
 	UninitCamera();			// カメラの終了処理
 	UninitComAI();			// コンピューターAIの終了処理
@@ -164,6 +167,7 @@ void UpdatePvPGame(void)
 		UpdateMeshDome();		// メッシュドーム更新処理
 		UpdateMeshFault();		// メッシュの断面更新処理
 		UpdateFence();			// フェンスの更新処理
+		UpdateObject();			// オブジェクト更新処理
 		UpdatePlayer();			// プレイヤーの更新処理
 		UpdateBonus();			// ボーナスの更新処理
 		UpdateItem();			// アイテムの更新処理
@@ -237,6 +241,7 @@ void UpdatePvPGame(void)
 				UpdateMeshDome();		// メッシュドーム更新処理
 				UpdateMeshFault();		// メッシュの断面更新処理
 				UpdateFence();			// フェンスの更新処理
+				UpdateObject();			// オブジェクト更新処理
 				UpdatePlayer();			// プレイヤーの更新処理
 				UpdateBonus();			// ボーナスの更新処理
 				UpdateItem();			// アイテムの更新処理
@@ -283,6 +288,7 @@ void DrawPvPGame(void)
 		DrawMeshDome();				// メッシュドームの描画処理	
 		DrawMeshFault();			// メッシュの断面描画処理
 		DrawFence();				// フェンスの描画処理
+		DrawObject();				// オブジェクト描画処理
 		{// エフェクトの描画処理
 			DrawChargeEffect();		//チャージエフェクト
 			DrawChargeCylinder();	//チャージエフェクト(しりんだー)
