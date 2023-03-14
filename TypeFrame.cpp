@@ -314,11 +314,11 @@ void UpdateTypeFrame(void)
 	//プレイヤー選択
 	if (GetUseGamepad(0) == true)
 	{
-		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_A) == true || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) == true)
+		if (GetGamepadTrigger(0, XINPUT_GAMEPAD_A) == true || GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) == true)
 		{//次のプレイヤー
 			g_nSelectNum = (g_nSelectNum + 1) % MAX_USE_GAMEPAD;
 		}
-		else if (GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_RIGHT) == true)
+		else if (GetGamepadTrigger(0, XINPUT_GAMEPAD_DPAD_LEFT) == true)
 		{//戻る
 			g_nSelectNum = (g_nSelectNum + (MAX_USE_GAMEPAD - 1)) % MAX_USE_GAMEPAD;
 		}

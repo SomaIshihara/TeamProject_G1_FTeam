@@ -416,19 +416,19 @@ void MovePlayer(int nPadNum)
 	{//X方向のスティックが傾いている
 		if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
 		{//Y方向のスティックも傾いている
-			g_aPlayerHDR[nPadNum].rot.y = atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum));
+			g_aPlayerHDR[nPadNum].rot.y = FIX_ROT(atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum)) + D3DX_PI);
 			g_aPlayerHDR[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * PLAYER_MOVE_SPEED;
 			g_aPlayerHDR[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * PLAYER_MOVE_SPEED;
 		}
 		else
 		{
-			g_aPlayerHDR[nPadNum].rot.y = atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum));
+			g_aPlayerHDR[nPadNum].rot.y = FIX_ROT(atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum)) + D3DX_PI);
 			g_aPlayerHDR[nPadNum].move.x = (float)GetLStickX(nPadNum) / STICK_MAX * PLAYER_MOVE_SPEED;
 		}
 	}
 	else if (GetLStickY(nPadNum) > 0 || GetLStickY(nPadNum) < 0)
 	{//Y方向のスティックだけ傾いている
-		g_aPlayerHDR[nPadNum].rot.y = atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum));
+		g_aPlayerHDR[nPadNum].rot.y = FIX_ROT(atan2f((float)GetLStickX(nPadNum), (float)GetLStickY(nPadNum)) + D3DX_PI);
 		g_aPlayerHDR[nPadNum].move.z = (float)GetLStickY(nPadNum) / STICK_MAX * PLAYER_MOVE_SPEED;
 	}
 	//キーボード部
