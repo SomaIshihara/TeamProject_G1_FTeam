@@ -115,6 +115,12 @@
     <Filter Include="ヘッダー ファイル\SelPlayer">
       <UniqueIdentifier>{7da7191e-fcdc-4891-bde8-5c22976b7ebb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Model">
+      <UniqueIdentifier>{f90a5929-5332-49cf-aab3-88191a4312a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Model">
+      <UniqueIdentifier>{a11e2c19-5247-417d-9dbf-972be293a4e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debucproc.cpp">
@@ -143,9 +149,6 @@
     </ClCompile>
     <ClCompile Include="meshfield.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="model.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
     </ClCompile>
     <ClCompile Include="wall.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
@@ -288,6 +291,9 @@
     <ClCompile Include="preview.cpp">
       <Filter>ソース ファイル\Game\Game_HDR</Filter>
     </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>ソース ファイル\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -319,9 +325,6 @@
     </ClInclude>
     <ClInclude Include="light.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
-      <Filter>ヘッダー ファイル\Game\Game_PvP\Player</Filter>
     </ClInclude>
     <ClInclude Include="tutorial.h">
       <Filter>ヘッダー ファイル\Tutorial</Filter>
@@ -463,6 +466,9 @@
     </ClInclude>
     <ClInclude Include="preview.h">
       <Filter>ヘッダー ファイル\Game\Game_HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>ヘッダー ファイル\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
