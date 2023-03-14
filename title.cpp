@@ -51,7 +51,7 @@ const char *c_apTitleTexName[NUM_TITLE_TEX] = {
 //------------------------------------------------
 void InitTitle(void)
 {
-	PlaySound(SOUND_LABEL_BGM_TITLE, 0);
+	PlaySoundBGM(SOUND_LABEL_BGM_TITLE);
 
 	//デバイスへのポインタ + 取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -192,7 +192,7 @@ void UninitTitle(void)
 	UninitMeshDome();		//メッシュドームの終了処理	
 	UninitMeshfield();		//ステージの終了処理
 	UninitBonus();			//ボーナス鳥の終了処理
-	StopSound(SOUND_LABEL_BGM_TITLE);
+	StopSoundBGM(SOUND_LABEL_BGM_TITLE);
 }
 
 //------------------------------------------------
@@ -294,7 +294,7 @@ void UpdateTitle(void)
 		}
 		
 		//タイトル決定音再生
-		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE, 0);
+		PlaySoundSE(SOUND_LABEL_SE_TITLE_DECIDE, 0);
 	}
 
 	if (g_Title[TITLE_START].bUseButtom == true)

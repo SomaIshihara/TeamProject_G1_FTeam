@@ -22,6 +22,11 @@ typedef enum
 	SOUND_LABEL_BGM_GAME_PVP,		// ゲーム音(PVP)
 	SOUND_LABEL_BGM_GAME_HDR,		// ゲーム音(HDR)
 	SOUND_LABEL_BGM_RESULT,			// リザルト音
+	SOUND_LABEL_BGM_MAX,
+} SOUND_LABEL_BGM;
+
+typedef enum
+{
 	SOUND_LABEL_SE_WARNING,			// フェンス落下注意効果音
 	SOUND_LABEL_SE_COUNTDOWN,		// ゲーム終了カウントダウン
 	SOUND_LABEL_SE_CONNECT,			// コントローラー接続時の効果音
@@ -37,18 +42,23 @@ typedef enum
 	SOUND_LABEL_SE_PAUSE_SELECTION,	// ポーズの選択音
 	SOUND_LABEL_SE_PAUSE_TRANSITION,// ポーズの遷移音
 	SOUND_LABEL_SE_ROAR,			// ポーズの咆哮音
-	SOUND_LABEL_MAX,
-} SOUND_LABEL;
+	SOUND_LABEL_SE_MAX,
+} SOUND_LABEL_SE;
 
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
 HRESULT InitSound(HWND hWnd);
 void UninitSound(void);
-HRESULT PlaySound(SOUND_LABEL label, int nNumSound);
-void StopSound(SOUND_LABEL label);
-void StopSound(void);
-void PauseSound(SOUND_LABEL label);
-void RestartSound(SOUND_LABEL label);
+
+HRESULT PlaySoundBGM(SOUND_LABEL_BGM label);
+void StopSoundBGM(SOUND_LABEL_BGM label);
+void StopSoundBGM(void);
+void PauseSound(SOUND_LABEL_BGM label);
+void RestartSound(SOUND_LABEL_BGM label);
+
+HRESULT PlaySoundSE(SOUND_LABEL_SE label, int nNumSound);
+void StopSoundSE(SOUND_LABEL_SE label);
+void StopSoundSE(void);
 
 #endif

@@ -172,7 +172,7 @@ void StopPlayer_RESULT(Player_RESULT *pPlayer, int nCntPlayer)
 		pPlayer->nHipDropWait = PLAYER_HIPDROPWAIT; //ヒップドロップの開始硬直を設定
 		pPlayer->fFallSpeed = PLAYER_HIPDROP_SPEED;	//ヒップドロップの初速を代入
 
-		PlaySound(SOUND_LABEL_SE_HIPSPIN, nCntPlayer);//ヒップドロップ音再生
+		PlaySoundSE(SOUND_LABEL_SE_HIPSPIN, nCntPlayer);//ヒップドロップ音再生
 	}
 }
 

@@ -28,7 +28,7 @@ const char* c_aFilePathTutorial[SelGameMode_MAX] =
 //------------------------------------------------
 void InitTutorial(void)
 {
-	PlaySound(SOUND_LABEL_BGM_TUTORIAL,0);
+	PlaySoundBGM(SOUND_LABEL_BGM_TUTORIAL);
 
 	//デバイス取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
@@ -101,7 +101,7 @@ void UninitTutorial(void)
 	}
 
 	//タイトルBGM停止
-	StopSound(SOUND_LABEL_BGM_TUTORIAL);
+	StopSoundBGM(SOUND_LABEL_BGM_TUTORIAL);
 }
 
 //------------------------------------------------
