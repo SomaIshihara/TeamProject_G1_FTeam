@@ -20,7 +20,7 @@
 //****************************//
 
 //テクスチャの情報
-#define NUM_TEXTURE				(6)									//テクスチャの最大数
+#define NUM_TEXTURE				(7)									//テクスチャの最大数
 
 //各座標
 #define CENTER_POS_MENU			(D3DXVECTOR3(640.0f,360.0f,0.0f))	//メニューの中心の位置
@@ -34,7 +34,7 @@
 
 //テキストの情報
 #define TEXT_WIDTH				(200.0f)							//テキストの横幅
-#define TEXT_HEIGHT				(90.0f)								//テキストの高さ
+#define TEXT_HEIGHT				(140.0f)								//テキストの高さ
 
 //ボタンの情報
 #define NUM_BUTTON				(2)									//ボタンの数
@@ -52,6 +52,7 @@ const char *c_pFileNamePause[] =
 	"data/TEXTURE/pause.png",
 	"data/TEXTURE/continue.png",
 	"data/TEXTURE/restart.png",
+	"data/TEXTURE/modeselect.png",
 	"data/TEXTURE/quit.png",
 	"data/TEXTURE/sankaku.png",
 	"data/TEXTURE/sankaku.png"
@@ -66,6 +67,7 @@ const D3DXVECTOR3 g_CenterPos[] = {
 	CENTER_POS_MENU,								//ポーズ画面の位置
 	CENTER_POS_TEXT,								//コンテニューの位置
 	CENTER_POS_TEXT,								//リトライの位置
+	CENTER_POS_TEXT,								//リトライの位置
 	CENTER_POS_TEXT,								//終了の位置
 	CENTER_POS_DIRE_UP,								//上ボタンの位置
 	CENTER_POS_DIRE_DOWN							//下ボタンの位置
@@ -76,6 +78,7 @@ const float g_Width[] = {
 	HALF_WIDTH,										//ポーズ画面の幅
 	TEXT_WIDTH,										//コンテニューの幅
 	TEXT_WIDTH,										//リトライの幅
+	TEXT_WIDTH,										//リトライの幅
 	TEXT_WIDTH,										//終了の幅
 	DIRE_WIDTH_UP,									//上ボタンの幅
 	DIRE_WIDTH_DOWN									//下ボタンの幅
@@ -85,6 +88,7 @@ const float g_Width[] = {
 const float g_Height[] = {
 	HALF_HEIGHT,									//ポーズ画面の高さ
 	TEXT_HEIGHT,									//コンテニューの高さ
+	TEXT_HEIGHT,									//リトライの高さ
 	TEXT_HEIGHT,									//リトライの高さ
 	TEXT_HEIGHT,									//終了の高さ
 	DIRE_HEIGHT_UP,									//上ボタンの高さ
@@ -314,7 +318,7 @@ void SelectUpPause(int nPadNum)
 		//頂点バッファをロックし、頂点情報へのポインタを取得
 		g_pVtxBuffPause->Lock(0, 0, (void* *)&pVtx, 0);
 
-		pVtx += VTX_MAX * 4;
+		pVtx += VTX_MAX * 5;
 
 		//頂点カラーの設定
 		pVtx[VTX_LE_UP].col = XCOL_YELLOW;
@@ -341,10 +345,17 @@ void SelectUpPause(int nPadNum)
 
 			break;
 
-		case PAUSE_QUIT:
+		case PAUSE_MODESELECT:
 
 			//リトライボタンに設定
 			g_Pause = PAUSE_RETRY;
+
+			break;
+
+		case PAUSE_QUIT:
+
+			//モード選択ボタンに設定
+			g_Pause = PAUSE_MODESELECT;
 
 			break;
 		}
@@ -372,7 +383,7 @@ void SelectDownPause(int nPadNum)
 		//頂点バッファをロックし、頂点情報へのポインタを取得
 		g_pVtxBuffPause->Lock(0, 0, (void* *)&pVtx, 0);
 
-		pVtx += VTX_MAX * 5;
+		pVtx += VTX_MAX * 6;
 
 		//頂点カラーの設定
 		pVtx[VTX_LE_UP].col = XCOL_YELLOW;
@@ -393,6 +404,13 @@ void SelectDownPause(int nPadNum)
 			break;
 
 		case PAUSE_RETRY:
+
+			//モード選択ボタンに設定
+			g_Pause = PAUSE_MODESELECT;
+
+			break;
+
+		case PAUSE_MODESELECT:
 
 			//終了ボタンに設定
 			g_Pause = PAUSE_QUIT;
@@ -439,7 +457,7 @@ void UIStatePause(void)
 			pVtx[VTX_LE_DO].col = RGBA_WHITE;
 			pVtx[VTX_RI_DO].col = RGBA_WHITE;
 		}
-		else if (nCnt != 0 && nCnt <= 3)
+		else if (nCnt != 0 && nCnt <= 4)
 		{
 			//頂点カラーの設定
 			pVtx[VTX_LE_UP].col = XCOL_NONE;
@@ -447,9 +465,9 @@ void UIStatePause(void)
 			pVtx[VTX_LE_DO].col = XCOL_NONE;
 			pVtx[VTX_RI_DO].col = XCOL_NONE;
 		}
-		else if (nCnt >= 4)
+		else if (nCnt >= 5)
 		{
-			if (g_nCnt[0] <= 0 && nCnt == 4)
+			if (g_nCnt[0] <= 0 && nCnt == 5)
 			{
 				//白に設定
 				pVtx[VTX_LE_UP].col = RGBA_WHITE;
@@ -463,7 +481,7 @@ void UIStatePause(void)
 				//カウントの再設定
 				g_nCnt[0] = COUNT_BUTTON;
 			}
-			else if (g_nCnt[1] <= 0 && nCnt == 5)
+			else if (g_nCnt[1] <= 0 && nCnt == 6)
 			{
 				//白に設定
 				pVtx[VTX_LE_UP].col = RGBA_WHITE;
@@ -553,6 +571,13 @@ void SwitchPause(void)
 
 			break;
 		}
+
+		break;
+
+	case PAUSE_MODESELECT:
+
+		//ゲーム選択画面に遷移
+		SetFade(MODE_SELECTGAME);
 
 		break;
 
