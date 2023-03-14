@@ -362,7 +362,7 @@ void UpdateTypeFrame(void)
 			}
 			else if (GetSelGameMode() == SelGameMode_HDR)
 			{
-				SetFade(MODE_PvPGAME);
+				SetFade(MODE_RaceGAME);
 				for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 				{
 					SetPlayerType_HDR(nCntPlayer, (g_playerType[nCntPlayer] != PLAYERTYPE_NONE ? true : false), (g_playerType[nCntPlayer] == PLAYERTYPE_COM ? true : false));

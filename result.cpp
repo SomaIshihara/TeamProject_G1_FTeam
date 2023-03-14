@@ -186,9 +186,15 @@ void UninitResultObject(void)
 void UpdateResult(void)
 {
 	//リザルトを飛ばす
-	if (GetKeyboardTrigger(DIK_RETURN))
+	for (int nCntPad = 0; nCntPad < MAX_USE_GAMEPAD; nCntPad++)
 	{
-		SkipResult();
+		//キーボードの　ENTERキー　または、接続されているコントローラーのAボタンが押された
+		if (GetKeyboardTrigger(DIK_RETURN) || GetButton(nCntPad, INPUTTYPE_TRIGGER, BUTTON_A))
+		{
+			//リザルトを飛ばす処理へ
+			SkipResult();
+			break;
+		}
 	}
 
 	//シャッターを閉じるか開けるか

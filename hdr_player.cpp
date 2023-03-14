@@ -43,7 +43,6 @@
 //グローバル変数
 Player_HDR g_aPlayerHDR[MAX_USE_GAMEPAD];
 int g_nIdxShadow_HDR = -1;
-bool g_buse[MAX_USE_GAMEPAD] = { false };
 
 //プロトタイプ宣言
 void ControllPlayer_HDR(int nPlayerNum);
@@ -80,9 +79,8 @@ void InitPlayer_HDR(void)
 		g_aPlayerHDR[nCntPlayer].bJump = false;
 		g_aPlayerHDR[nCntPlayer].bHipDrop = false;
 		g_aPlayerHDR[nCntPlayer].bHipDropSpin = false;
+		g_aPlayerHDR[nCntPlayer].nRank = RANKING_4TH;
 		g_aPlayerHDR[nCntPlayer].bGoal = false;
-		g_aPlayerHDR[nCntPlayer].nRank = RANK_4TH;
-		g_buse[nCntPlayer] = false;
 
 		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 
@@ -165,11 +163,11 @@ void UpdatePlayer_HDR(void)
 				g_aPlayerHDR[nCntPlayer].bJump = false;
 				g_aPlayerHDR[nCntPlayer].bHipDrop = false;
 
-				if (g_buse[nCntPlayer] == false)
-				{//ゴール判定
-					g_aPlayerHDR[nCntPlayer].bGoal = true;
-					UpdateRank(nCntPlayer);
-					g_buse[nCntPlayer] = true;
+				//まだゴールしていない
+				if (!g_aPlayerHDR[nCntPlayer].bGoal)
+				{
+					g_aPlayerHDR[nCntPlayer].bGoal = true;	//ゴールした
+					g_aPlayerHDR[nCntPlayer].nRank = SetRank(nCntPlayer);//順位設定
 				}
 			}
 
@@ -177,7 +175,7 @@ void UpdatePlayer_HDR(void)
 			CollisionBlock(&g_aPlayerHDR[nCntPlayer]);
 
 			//フェンスとの当たり判定
-			
+			//CollisionFenceForHDR(&g_aPlayerHDR[nCntPlayer]);
 		}
 	}
 }

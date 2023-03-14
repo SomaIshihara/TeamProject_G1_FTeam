@@ -33,7 +33,7 @@ LPD3DXBUFFER				g_pBuffMatVictoryStand[NUM_VICTORYSTAND];		// マテリアルへのポイ
 DWORD						g_dwNumMatVictoryStand[NUM_VICTORYSTAND];		// マテリアルの数
 VictoryStand				g_VictoryStand[NUM_VICTORYSTAND];				// 表彰台の情報
 float						g_fLandPoint[NUM_VICTORYSTAND];					// 表彰台ごとの着地点を代入（同率を考慮して）
-int							g_RankStrage[RANK_MAX] = {};
+int							g_RankStrage[RANKING_MAX] = {};
 
 //表彰台のⅩファイル名
 const char *c_apVicStdFilePath[NUM_VICTORYSTAND] = {
@@ -78,11 +78,11 @@ void InitVictoryStand(void)
 void RankingSort(void)
 {
 	//順位判定用
-	int nSortRanking[RANK_MAX] = { 0,0,0,0 };
+	int nSortRanking[RANKING_MAX] = { 0,0,0,0 };
 
 	//ランキングをソートする
 	//比較される方の配列番号を回す
-	for (int nCntComp = 0; nCntComp < RANK_MAX; nCntComp++)
+	for (int nCntComp = 0; nCntComp < RANKING_MAX; nCntComp++)
 	{
 		//比較する方の番号を回す
 		for (int nCntJudge = 0; nCntJudge < nCntComp; nCntJudge++)
@@ -135,7 +135,7 @@ void RankingSort(void)
 	}
 
 	//ソートしたランキングを代入する
-	for (int nCntPay = 0; nCntPay < RANK_MAX; nCntPay++)
+	for (int nCntPay = 0; nCntPay < RANKING_MAX; nCntPay++)
 	{
 		//順位　＆　文章削減用変数　に代入
 		int nRank = g_VictoryStand[nCntPay].nRank = nSortRanking[nCntPay];
@@ -175,23 +175,17 @@ void SearchVictoryStand_Land_Pos(void)
 		//頂点バッファをロック
 		g_pMeshVictoryStand[nCntLandPos]->LockVertexBuffer(D3DLOCK_READONLY, (void* *)&pVtxBuff);
 
-		//頂点座標の代入
-		D3DXVECTOR3 vtx = *(D3DXVECTOR3 *)pVtxBuff;
-
-		//頂点フォーマットのサイズ分、ポインタを進める
-		pVtxBuff += dwSizeFVF;
-
 		//当たり判定に使う頂点の最小・最大位置を取得
 		for (int nCntVtx = 0; nCntVtx < nNumVtx; nCntVtx++)
 		{
-			// 現在表彰台の取得した頂点座標のＹ座標が、変数に代入されている着地位置より高ければ、上書きする
-			g_fLandPoint[nCntLandPos] = g_fLandPoint[nCntLandPos] < vtx.y ? vtx.y : g_fLandPoint[nCntLandPos];
+			//頂点座標の代入
+			D3DXVECTOR3 vtx = *(D3DXVECTOR3 *)pVtxBuff;
 
 			//頂点フォーマットのサイズ分、ポインタを進める
 			pVtxBuff += dwSizeFVF;
 
-			//頂点座標の代入
-			vtx = *(D3DXVECTOR3 *)pVtxBuff;
+			// 現在表彰台の取得した頂点座標のＹ座標が、変数に代入されている着地位置より高ければ、上書きする
+			g_fLandPoint[nCntLandPos] = g_fLandPoint[nCntLandPos] < vtx.y ? vtx.y : g_fLandPoint[nCntLandPos];
 		}
 
 		//頂点バッファをアンロック

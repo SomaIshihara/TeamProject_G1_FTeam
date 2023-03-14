@@ -15,25 +15,28 @@
 //アイテム種類列挙型
 typedef enum
 {
-	RANK_1ST = 0,
-	RANK_2ND,
-	RANK_3RD,
-	RANK_4TH,
-	RANK_MAX
-}RANK;
+	RANKING_1ST = 0,
+	RANKING_2ND,
+	RANKING_3RD,
+	RANKING_4TH,
+	RANKING_MAX
+}RANKING;
 
 //アイテムの構造体を定義
 typedef struct
 {
-	D3DXVECTOR3 pos;			//位置
-	RANK        rank;			//種類
-	bool        buse;			//使用しているかどうか
+	D3DXVECTOR3 pos;	//位置
+	bool		bDisp;	//表示するかどうか
 }Rank;
 
 //プロトタイプ宣言
 void InitRank(void);
 void UninitRank(void);
-void UpdateRank(int nPlayer);
+void UpdateRank(void);
 void DrawRank(void);
+
+void UpperRank(void);
+int JoinPlayer(void);
+int SetRank(int nCntPlayer);
 
 #endif

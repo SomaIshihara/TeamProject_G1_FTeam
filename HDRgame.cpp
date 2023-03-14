@@ -27,8 +27,19 @@ Author:平澤詩苑
 #include "fence.h"
 #include "rank.h"
 
+#define HIPDROP_BUFF_COUNTER_50SEC	(CONVERT_FPS(50))	//５０秒経過
+#define HIPDROP_BUFF_COUNTER_LAST	(CONVERT_FPS(100))	//１００秒経過
+#define HIPDROP_BUFF_START		(1.0f)	//最初のヒップドロップのバフ
+#define HIPDROP_BUFF_50Second	(1.5f)	//５０秒経過後のヒップドロップバフ（1.5倍
+#define HIPDROP_BUFF_LAST		(2.0f)	//１００秒経過後のヒップドロップバフ（2倍
+
+typedef struct
+{
+	int nCounterHDR;		//HDRゲームの経過時間
+	float fHipDropBuff;		//ヒップドロップのバフ
+}HDRInfo;
+
 //グローバル変数宣言
-GAMESTATE g_gameState = GAMESTATE_NONE;
 bool g_bPause_HDR = false;				// ポーズ
 int  g_nUseContNum_HDR;					// 使用しているコントローラーの数
 bool g_abUsePlayer_HDR[MAX_USE_GAMEPAD];// 使用しているプレイヤー（接続チェックに使用）
@@ -37,6 +48,7 @@ int  g_numGamePad_HDR;
 int  g_nCounterGameState;
 CHECKMODE	g_CheckMode_HDR;
 NumCamera	g_NumCamera_HDR;
+HDRInfo		g_HDRInfo;
 bool		g_bPhotoMode_HDR;			// フォトモード切替		true:ポーズ画面非表示	false:ボーズ画面表示
 
 //------------------------------------------------
@@ -65,6 +77,8 @@ void InitHDRGame(void)
 	InitPreview();					// プレビューの初期化処理
 	InitHipDropRankUI();			// ヒップドロップランクUI初期化処理
 
+	g_HDRInfo.nCounterHDR = 0;
+	g_HDRInfo.fHipDropBuff = HIPDROP_BUFF_START;
 	g_bPause_HDR = false;				// ポーズの初期化
 	g_bDisconnectPlayer_HDR = false;	//正常にコントローラーが接続されている状態とする
 	g_bPhotoMode_HDR = false;			// フォトモード初期化
@@ -116,9 +130,25 @@ void UpdateHDRGame(void)
 
 		if (*GetHDR_Ready() == HDR_Ready_OK)
 		{
+			//経過時間加算
+			g_HDRInfo.nCounterHDR++;
+
+			//１００秒経過
+			if (g_HDRInfo.nCounterHDR >= HIPDROP_BUFF_COUNTER_LAST)
+			{
+				g_HDRInfo.fHipDropBuff = HIPDROP_BUFF_LAST;
+			}
+
+			//５０秒経過
+			if (g_HDRInfo.nCounterHDR >= HIPDROP_BUFF_COUNTER_LAST)
+			{
+				g_HDRInfo.fHipDropBuff = HIPDROP_BUFF_50Second;
+			}
+
 			UpdateLight();			// ライトの更新処理
 			UpdateBlock();			// ブロックの更新処理
 			UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
+			UpdateRank();			// 順位の更新処理
 			UpdateMeshCylinder();	// メッシュシリンダー更新処理
 			UpdatePreview();		// プレビューの更新処理
 			UpdateHipDropRankUI();	// ヒップドロップランクUI更新処理
@@ -162,6 +192,7 @@ void UpdateHDRGame(void)
 				UpdateLight();			// ライトの更新処理
 				UpdateBlock();			// ブロックの更新処理
 				UpdatePlayer_HDR();		// ヒップドロップレース用プレイヤーの更新処理
+				UpdateRank();			// 順位の更新処理
 				UpdateMeshCylinder();	// メッシュシリンダー更新処理
 				UpdatePreview();		// プレビューの更新処理
 				UpdateHipDropRankUI();	// ヒップドロップランクUI更新処理
@@ -176,28 +207,6 @@ void UpdateHDRGame(void)
 	if (GetKeyboardTrigger(DIK_F9))
 	{
 		g_bPhotoMode_HDR = g_bPhotoMode_HDR ? false : true;
-	}
-
-	switch (g_gameState)
-	{
-	case GAMESTATE_NORMAL:					//通常状態
-		break;
-	case GAMESTATE_END:						//終了状態
-		g_nCounterGameState--;
-
-		FADE pFade;		//フェードへのポインタ
-		pFade = GetFade();
-
-		if (pFade == FADE_NONE)
-		{
-			if (g_nCounterGameState <= 0)
-			{
-				g_gameState = GAMESTATE_NONE;	//何もしていない状態に設定
-
-				SetFade(MODE_RESULT);
-			}
-		}
-		break;
 	}
 }
 
@@ -347,11 +356,12 @@ void ChangeNumCamera_HDR(void)
 		Set_NumHDRCamera(g_NumCamera_HDR);
 	}
 }
-//================================================================
-//ゲームの状態の設定
-//================================================================
-void SetGameState(GAMESTATE state, int nCounter)
+
+//------------------------------------------------
+//	ヒップドロップのバフ係数を返す
+//		Author:平澤詩苑
+//------------------------------------------------
+float HipDropBuff(void)
 {
-	g_gameState = state;
-	g_nCounterGameState = nCounter;
+	return g_HDRInfo.fHipDropBuff;
 }
