@@ -262,7 +262,7 @@ void CollisionBlock(Player_HDR *pPlayer)
 					{
 						pBlock->buse = false;					//対象のブロックを使用しない
 						pPlayer->HipDropPower -= pBlock->nLife;	//使用した分のダメージを減らす
-						PlaySound(SOUND_LABEL_SE_HIPDROP, nCntBlock);	//ヒップドロップ音再生
+						PlaySoundSE(SOUND_LABEL_SE_HIPDROP, nCntBlock);	//ヒップドロップ音再生
 					}
 					else
 					{

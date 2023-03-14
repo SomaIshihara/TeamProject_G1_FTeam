@@ -295,7 +295,7 @@ void UpdatePlayer(void)
 					g_aPlayerPvP[nCntPlayer].bHipDrop = false;    //ヒップドロップしてない
 					g_aPlayerPvP[nCntPlayer].nActionRigor = PLAYER_HIPDROP_ACTIONRIGOR;
 					g_aPlayerPvP[nCntPlayer].stat = PLAYERSTAT_WAIT;
-					PlaySound(SOUND_LABEL_SE_HIPDROP, nCntPlayer);
+					PlaySoundSE(SOUND_LABEL_SE_HIPDROP, nCntPlayer);
 				}
 				else if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_JUMP)
 				{
@@ -630,11 +630,11 @@ void ChargePlayer(int nChargePlayer)
 	if (g_aPlayerPvP[nChargePlayer].moveGauge >= PLAYER_POWER_MAX)
 	{
 		g_aPlayerPvP[nChargePlayer].moveGauge = PLAYER_POWER_MAX;
-		StopSound(SOUND_LABEL_SE_ENERGY_00);
+		StopSoundSE(SOUND_LABEL_SE_ENERGY_00);
 	}
 	if (g_aPlayerPvP[nChargePlayer].moveGauge <= PLAYER_POWER_ADD)
 	{
-		PlaySound(SOUND_LABEL_SE_ENERGY_00, nChargePlayer);
+		PlaySoundSE(SOUND_LABEL_SE_ENERGY_00, nChargePlayer);
 	}
 
 	g_aPlayerPvP[nChargePlayer].stat = PLAYERSTAT_CHARGE;
@@ -647,7 +647,7 @@ void ChargePlayer(int nChargePlayer)
 //========================
 void DashPlayer(int nDashPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_GRASSDASH, nDashPlayer);
+	PlaySoundSE(SOUND_LABEL_SE_GRASSDASH, nDashPlayer);
 
 	//アクション硬直用にパワー移動
 	g_aPlayerPvP[nDashPlayer].fOldMoveGauge = g_aPlayerPvP[nDashPlayer].moveGauge;
@@ -665,7 +665,7 @@ void DashPlayer(int nDashPlayer)
 //========================
 void HipDropPlayer(int nHipDropPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_HIPSPIN, nHipDropPlayer);//ヒップドロップ音再生
+	PlaySoundSE(SOUND_LABEL_SE_HIPSPIN, nHipDropPlayer);//ヒップドロップ音再生
 
 	g_aPlayerPvP[nHipDropPlayer].moveV0.y = PLAYER_HIPDROP_POWER;		//ヒップドロップの降下速度を代入
 	g_aPlayerPvP[nHipDropPlayer].move.x = 0.0f;							//X・Zの移動量消す
@@ -682,7 +682,7 @@ void HipDropPlayer(int nHipDropPlayer)
 //========================
 void JumpPlayer(int nJumpPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_JUMP, nJumpPlayer);
+	PlaySoundSE(SOUND_LABEL_SE_JUMP, nJumpPlayer);
 
 	g_aPlayerPvP[nJumpPlayer].moveV0.y = PLAYER_JUMP_SPEED;//移動量設定
 	g_aPlayerPvP[nJumpPlayer].jumpTime = 0;	//ジャンプ時間リセット
@@ -878,7 +878,7 @@ void DownPlayer(int nDownPlayerNum)
 		}
 	}
 
-	PlaySound(SOUND_LABEL_SE_DROP, nDownPlayerNum);
+	PlaySoundSE(SOUND_LABEL_SE_DROP, nDownPlayerNum);
 
 	RespawnPlayer(nDownPlayerNum);
 }

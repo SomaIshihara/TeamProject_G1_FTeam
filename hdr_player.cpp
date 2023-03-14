@@ -496,7 +496,7 @@ void MovePlayer(int nPadNum)
 //========================
 void JumpPlayer_HDR(int nJumpPlayer)
 {
-	PlaySound(SOUND_LABEL_SE_JUMP,nJumpPlayer);
+	PlaySoundSE(SOUND_LABEL_SE_JUMP,nJumpPlayer);
 
 	g_aPlayerHDR[nJumpPlayer].posOld.y = g_aPlayerHDR[nJumpPlayer].pos.y;
 	g_aPlayerHDR[nJumpPlayer].jumpTime = 0;						//ジャンプ時間リセット
@@ -557,7 +557,7 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 		SetRankUI(nHipDropPlayer, HIPDROP_RANK_BAD);	//UI設定
 	}
 	
-	PlaySound(SOUND_LABEL_SE_HIPSPIN, nHipDropPlayer);//ヒップドロップ音再生
+	PlaySoundSE(SOUND_LABEL_SE_HIPSPIN, nHipDropPlayer);//ヒップドロップ音再生
 
 	g_aPlayerHDR[nHipDropPlayer].move.y = 0.0f;						//通常の落下速度を０にする
 	g_aPlayerHDR[nHipDropPlayer].moveV0.y = -15.0f;					//ヒップドロップの降下速度を代入

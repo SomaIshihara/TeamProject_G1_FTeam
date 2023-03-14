@@ -231,7 +231,7 @@ void DecideGameMode(void)
 		SetFade(MODE_TUTORIAL);					//チュートリアル画面に遷移
 
 		//タイトル決定音再生
-		PlaySound(SOUND_LABEL_SE_TITLE_DECIDE, 0);
+		PlaySoundSE(SOUND_LABEL_SE_TITLE_DECIDE, 0);
 	}
 }
 

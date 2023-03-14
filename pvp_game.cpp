@@ -103,7 +103,7 @@ void InitPvPGame(void)
 	g_bCountDowned = false;
 	
 	//ゲームBGM開始
-	PlaySound(SOUND_LABEL_BGM_GAME_PVP, 0);
+	PlaySoundBGM(SOUND_LABEL_BGM_GAME_PVP);
 }
 
 //------------------------------------------------
@@ -144,7 +144,7 @@ void UninitPvPGame(void)
 	UninitTime();			// タイマーの終了処理（ここは順番は問わない）
 
 	//ゲームBGM停止
-	StopSound(SOUND_LABEL_BGM_GAME_PVP);
+	StopSoundBGM(SOUND_LABEL_BGM_GAME_PVP);
 }
 
 //------------------------------------------------
@@ -192,7 +192,7 @@ void UpdatePvPGame(void)
 				//何番目のゲームパッドか保存する
 				g_numGamePad_PvP = nCntPause;
 
-				PlaySound(SOUND_LABEL_SE_PAUSE_DECISION, 0);
+				PlaySoundSE(SOUND_LABEL_SE_PAUSE_DECISION, 0);
 				PauseSound(SOUND_LABEL_BGM_GAME_PVP);
 
 				//ポーズ状態にする
@@ -206,14 +206,14 @@ void UpdatePvPGame(void)
 		//フェンス落下注意効果音鳴らすかどうか
 		if (GetTime() < FENCE_DROPPED_TIME && g_bDroppedFence == false)
 		{
-			PlaySound(SOUND_LABEL_SE_WARNING, 0);
+			PlaySoundSE(SOUND_LABEL_SE_WARNING, 0);
 			g_bDroppedFence = true;
 		}
 
 		//カウントダウン効果音鳴らすかどうか
 		if (GetTime() < COUNTDOWN_TIME && g_bCountDowned == false)
 		{
-			PlaySound(SOUND_LABEL_SE_COUNTDOWN, 0);
+			PlaySoundSE(SOUND_LABEL_SE_COUNTDOWN, 0);
 			g_bCountDowned = true;
 		}
 	}
