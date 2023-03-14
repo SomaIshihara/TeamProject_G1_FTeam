@@ -182,11 +182,6 @@ void UpdateResultCamera(void)
 	int nWave = g_WaveCamera;
 	ResultCamera Camera = g_ResultCamera;
 	AnimResCamera AnimCam = g_AnimResCamera[nWave];
-
-	if (GetKeyboardTrigger(DIK_BACKSPACE))
-	{
-		InitResultCamera();
-	}
 }
 
 //カメラのアニメーション処理

@@ -40,7 +40,7 @@ void InitResultCylinder(void)
 	//デバイスの取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	//テクスチャーの読み込み
+	//テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\sky002.png", &g_pTextureResultCylinder);
 
 	//頂点バッファの生成
@@ -195,7 +195,7 @@ void DrawResultCylinder(void)
 	//テクスチャの設定
 	pDevice->SetTexture(0, g_pTextureResultCylinder);
 
-	//両面カリングをON
+	//裏面カリングをON
 	pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 
 	//アルファテストを有効にする

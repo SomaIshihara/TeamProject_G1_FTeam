@@ -17,12 +17,12 @@ Author:平澤詩苑
 #include "meshfield.h"
 #include "conversioninput.h"
 
-#define NUM_RESULT_UI		(3)		//スキップ時に上下から挟む用の幕（２つ）とスキップ表示UIの　計３つ
+#define NUM_RESULT_UI		(3)			//スキップ時に上下から挟む用の幕（２つ）とスキップ表示UIの　計３つ
 #define SKIP_UI_TEX			"data\\TEXTURE\\ResultSKipUI.png"		//スキップ表示UIのテクスチャパス
 #define SKIP_UI_POSX		(1050.0f)	//スキップ表示UIのX位置
 #define SKIP_UI_POSY		(650.0f)	//スキップ表示UIのY位置
 #define SKIP_UI_WIDTH		(200.0f)	//スキップ表示UIの幅
-#define SKIP_UI_HEIGHT		(100.0f)		//スキップ表示UIの高さ
+#define SKIP_UI_HEIGHT		(100.0f)	//スキップ表示UIの高さ
 
 #define HALF_SCREEN_HEIGHT	(SCREEN_HEIGHT / 2)	//画面半分の高さ
 #define SKIP_SHUTTER_HEIGHT	(SCREEN_HEIGHT / 4)	//シャッターの高さ（画面の半分の半分
@@ -34,7 +34,6 @@ typedef struct
 {
 	D3DXVECTOR3 pos[NUM_RESULT_UI];	//各UIの原点位置
 	bool bShutter;					//シャッターの開閉ON/OFF
-	bool bUI_Disp;					//UIを表示するか
 	int nUI_DispCounter;			//UIの表示時間
 }SkipUI;
 
@@ -51,6 +50,9 @@ void InitResult(void)
 	//デバイスへのポインタ + 取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
+	//テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice, SKIP_UI_TEX, &g_pTextureResult);
+
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * VTX_MAX * NUM_RESULT_UI, D3DUSAGE_WRITEONLY, FVF_VERTEX_2D, D3DPOOL_MANAGED, &g_pVtxBuffResult, NULL);
 
@@ -59,9 +61,6 @@ void InitResult(void)
 
 	//頂点バッファをロックし、頂点情報へのポインタを取得
 	g_pVtxBuffResult->Lock(0, 0, (void* *)&pVtx, 0);
-
-	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice, SKIP_UI_TEX, &g_pTextureResult);
 
 	for (int nCntResult = 0; nCntResult < NUM_RESULT_UI; nCntResult++, pVtx += VTX_MAX)
 	{
@@ -126,7 +125,6 @@ void InitResult(void)
 	InitResultObject();
 
 	g_SkipUI.bShutter = true;	//シャッターを開ける
-	g_SkipUI.bUI_Disp = true;	//スキップ表示UIを描画する
 }
 
 //------------------------------------------------
@@ -134,14 +132,14 @@ void InitResult(void)
 //------------------------------------------------
 void InitResultObject(void)
 {
-	InitFile();				//ファイル初期化
+	InitFile();				// ファイル初期化
 	LoadModelViewerFile("data\\model.txt");	// モデルビューワーファイル読み込み（各オブジェクト初期化前に行うこと！）
-	InitAnimalModel();		//動物モデル初期化
-	InitPlayer_RESULT();	//プレイヤーの初期化処理
-	InitMeshfield();		//地面の初期化処理
-	InitResultCylinder();	//背景の初期化処理
-	InitVictoryStand();		//表彰台の初期化処理
-	InitResultCamera();		//カメラの初期化処理
+	InitAnimalModel();		// 動物モデル初期化
+	InitPlayer_RESULT();	// プレイヤーの初期化処理
+	InitMeshfield();		// 地面の初期化処理
+	InitResultCylinder();	// 背景の初期化処理
+	InitVictoryStand();		// 表彰台の初期化処理
+	InitResultCamera();		// カメラの初期化処理
 }
 
 //************************************************
@@ -203,6 +201,12 @@ void UpdateResult(void)
 	//リザルト用オブジェクトの更新処理関数呼び出し
 	//----------------------------------------------=
 	UpdateResultObject();
+
+	if (GetKeyboardTrigger(DIK_BACKSPACE))
+	{
+		UninitResult();
+		InitResult();
+	}
 }
 
 //リザルトを飛ばす
@@ -306,11 +310,11 @@ void UpdateSkipUIVtx(void)
 	{
 		if (nCntShutter != 0)
 		{
-			//頂点座標の設定（原点から上下左右に頂点を設定する
-			pVtx[0].pos = D3DXVECTOR3(SKIP_SHUTTER_POS_X - SKIP_SHUTTER_POS_X, g_SkipUI.pos[nCntShutter].y - SKIP_SHUTTER_HEIGHT, 0.0f);
-			pVtx[1].pos = D3DXVECTOR3(SKIP_SHUTTER_POS_X + SKIP_SHUTTER_POS_X, g_SkipUI.pos[nCntShutter].y - SKIP_SHUTTER_HEIGHT, 0.0f);
-			pVtx[2].pos = D3DXVECTOR3(SKIP_SHUTTER_POS_X - SKIP_SHUTTER_POS_X, g_SkipUI.pos[nCntShutter].y + SKIP_SHUTTER_HEIGHT, 0.0f);
-			pVtx[3].pos = D3DXVECTOR3(SKIP_SHUTTER_POS_X + SKIP_SHUTTER_POS_X, g_SkipUI.pos[nCntShutter].y + SKIP_SHUTTER_HEIGHT, 0.0f);
+			//頂点座標の設定（高さしか変わらないので、Ｙ座標の設定だけ
+			pVtx[0].pos.y = g_SkipUI.pos[nCntShutter].y - SKIP_SHUTTER_HEIGHT;
+			pVtx[1].pos.y = g_SkipUI.pos[nCntShutter].y - SKIP_SHUTTER_HEIGHT;
+			pVtx[2].pos.y = g_SkipUI.pos[nCntShutter].y + SKIP_SHUTTER_HEIGHT;
+			pVtx[3].pos.y = g_SkipUI.pos[nCntShutter].y + SKIP_SHUTTER_HEIGHT;
 		}
 	}
 
@@ -327,7 +331,7 @@ void UpdateResultObject(void)
 	UpdateResultCamera();	//カメラの更新処理
 	UpdateVictoryStand();	//表彰台の更新処理
 	UpdateResultCylinder();	//背景の更新処理
-	UpdateMeshfield();
+	UpdateMeshfield();		//フィールドの更新処理
 }
 
 //************************************************

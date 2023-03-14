@@ -297,7 +297,7 @@ void UninitGaugeFrame(void)
 
 	//バフアイコン
 	//テクスチャの破棄
-	for (int nCntIcon = 0; nCntIcon < ANIMAL_MAX; nCntIcon++)
+	for (int nCntIcon = 0; nCntIcon < ITEMTYPE_MAX; nCntIcon++)
 	{
 		if (g_pTextureBuffIcon[nCntIcon] != NULL)
 		{

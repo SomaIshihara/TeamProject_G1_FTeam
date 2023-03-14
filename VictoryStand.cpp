@@ -281,12 +281,6 @@ void UpdateVictoryStand(void)
 			}
 		}
 	}
-
-	if (GetKeyboardTrigger(DIK_BACKSPACE))
-	{
-		UninitVictoryStand();
-		InitVictoryStand();
-	}
 }
 
 //----------------------------------------------------

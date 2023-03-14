@@ -128,12 +128,6 @@ void UpdatePlayer_RESULT(void)
 		//•\²‘ä‚Ö‚Ì“–‚½‚è”»’è
 		CollisionVictoryStand(&pPlayer->pos, &pPlayer->posOld);
 	}
-
-	if (GetKeyboardTrigger(DIK_BACKSPACE))
-	{
-		UninitPlayer_RESULT();
-		InitPlayer_RESULT();
-	}
 }
 
 //d—Íˆ—

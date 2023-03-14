@@ -778,14 +778,14 @@ void LoadModelViewerFile(const char *path)
 				}
 			}
 		}
-		
-		//ファイル閉じる
-		fclose(pFile);
 	}
 	else
 	{
 		assert(pFile != NULL);
 	}
+
+	//ファイル閉じる
+	fclose(pFile);
 }
 
 //========================
@@ -1076,14 +1076,14 @@ void LoadMotionViewerFile(const char *path, Model *pModel)
 				}
 			}
 		}
-
-		//ファイル閉じる
-		fclose(pFile);
 	}
 	else
 	{
 		assert(pFile != NULL);
 	}
+
+	//ファイル閉じる
+	fclose(pFile);
 }
 
 //========================
@@ -1204,14 +1204,14 @@ void LoadModelOriginalFile(const char *path)
 				}
 			}
 		}
-
-		//ファイル閉じる
-		fclose(pFile);
 	}
 	else
 	{
 		assert(pFile != NULL);
 	}
+
+	//ファイル閉じる
+	fclose(pFile);
 }
 
 //========================

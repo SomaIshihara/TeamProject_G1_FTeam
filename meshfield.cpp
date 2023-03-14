@@ -128,6 +128,7 @@ void UninitMeshfield(void)
 		g_pVtxBuffMeshfield = NULL;
 	}
 
+	//インデックスバッファの破棄
 	if (g_pIdxBuffMeshField != NULL)
 	{
 		g_pIdxBuffMeshField->Release();
@@ -140,21 +141,25 @@ void UninitMeshfield(void)
 //====================================================================
 void UpdateMeshfield(void)
 {
-	//一定時間後半径を縮める
-	if (GetTime() <= MESHFIELD_SHRINK_TIME)
-	{//半径を縮める
-		g_MeshField.fRadius -= MESHFIELD_SHRINK_SPEED;
-	}
-
-	//最小半径よりも小さくなった
-	if (g_MeshField.fRadius < MESHFIELD_MIN_RADIUS)
+	//PvPのゲームモード時だけ、縮小させる
+	if (GetMode() == MODE_PvPGAME)
 	{
-		//最小半径に直す
-		g_MeshField.fRadius = MESHFIELD_MIN_RADIUS;
-	}
+		//一定時間後半径を縮める
+		if (GetTime() <= MESHFIELD_SHRINK_TIME)
+		{//半径を縮める
+			g_MeshField.fRadius -= MESHFIELD_SHRINK_SPEED;
+		}
 
-	//頂点座標設定
-	SetFieldVertex();
+		//最小半径よりも小さくなった
+		if (g_MeshField.fRadius < MESHFIELD_MIN_RADIUS)
+		{
+			//最小半径に直す
+			g_MeshField.fRadius = MESHFIELD_MIN_RADIUS;
+		}
+
+		//頂点座標設定
+		SetFieldVertex();
+	}
 }
 
 //====================================================================
@@ -214,9 +219,11 @@ void SetMeshField(int nTexNum, MESHFIELD mf)
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();		//デバイスの取得
 
 	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		GetTextureFilePath(nTexNum),
-		&g_pTextureMeshfield);
+	if (FAILED(D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\grassland001.png", &g_pTextureMeshfield)))
+	{
+		int hoge = 0;
+		hoge = hoge;
+	}
 
 	//情報代入
 	g_MeshField = mf;
