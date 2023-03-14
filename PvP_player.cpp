@@ -706,7 +706,20 @@ void ControllPlayer(int nPlayerNum)
 				g_aPlayerPvP[nPlayerNum].nActionRigor = PLAYER_DASH_ACTIONRIGOR * PLAYER_D_ACTRIGOR_CALC(g_aPlayerPvP[nPlayerNum].fOldMoveGauge);
 				g_aPlayerPvP[nPlayerNum].stat = PLAYERSTAT_WAIT;
 			}
-			else if (g_aPlayerPvP[nPlayerNum].stat != PLAYERSTAT_JUMP && g_aPlayerPvP[nPlayerNum].stat !=  PLAYERSTAT_LAND)
+			else if (g_aPlayerPvP[nPlayerNum].stat == PLAYERSTAT_JUMP)
+			{
+				if (GetButton(nPlayerNum, INPUTTYPE_PRESS, BUTTON_X) == true)
+				{//Xボタンが押された					 
+				 //プレイヤーのチャージ処理
+					ChargePlayer(nPlayerNum);
+				}
+				else if (GetButton(nPlayerNum, INPUTTYPE_RELEASE, BUTTON_X) == true)
+				{//Xボタンが離された
+				 //プレイヤーのダッシュ処理
+					DashPlayer(nPlayerNum);
+				}
+			}
+			else if (g_aPlayerPvP[nPlayerNum].stat != PLAYERSTAT_LAND)
 			{
 				g_aPlayerPvP[nPlayerNum].nActionRigor--;
 				if (g_aPlayerPvP[nPlayerNum].nActionRigor <= 0)
