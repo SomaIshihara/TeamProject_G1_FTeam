@@ -6,7 +6,9 @@ Author:平澤詩苑
 ============================================================================================================================================================*/
 #include "main.h"
 #include "hdr_player.h"
+#include "debugproc.h"
 #include "preview.h"
+#include "block.h"
 #include "color.h"
 #include "input.h"
 
@@ -29,10 +31,15 @@ typedef enum
 #define PREVIEW_COURSE_WIDTH		(60.0f)		//コースUIの幅
 #define PREVIEW_COURSE_HEIGHT		(400.0f)	//コースUIの高さ
 
-#define PREVIEW_PLAYER_UI_FIX_Y		(400.0f)	//プレイヤーUIの初期高さ
-#define PREVIEW_PLAYER_MARGIN_WIDTH	(35.0f)		//プレイヤーUの左にずらす余白
+#define PREVIEW_PLAYER_UI_FIX_Y			(389.0f)//プレイヤーUIの初期高さ
+#define PREVIEW_PLAYER_MARGIN_WIDTH		(34.5f)	//プレイヤーUIの左にずらす余白
+#define PREVIEW_PLAYER_MARGIN_HEIGHT	(4.0f)	//プレイヤーUIの上にずらす余白（コースのUIの下が少し浮いているので、その調整用
+
 #define PREVIEW_PLAYER_SIZE			(20.0f)		//プレイヤーUIのサイズ（正方形
 #define PREVIEW_PLAYER_TEX_WIDTH	(0.25f)		//プレイヤーUIのテクスチャ幅（４分割
+
+#define PLAYER_START_HEIGHT	(MAX_BLOCK * COLLISION_SIZE_Y)	//プレイヤーのスタート地点
+
 
 //グローバル変数宣言
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffPreview = NULL;				//頂点バッファへのポインタ
@@ -70,8 +77,8 @@ void InitPreview(void)
 		pPreview->pos = D3DXVECTOR3(
 			(float)(PREVIEW_HOR_SEP + PREVIEW_HOR_SEP * nCntVtx), //画面を縦に４等分して、その分割点から左に少しずらす
 			PREVIEW_POS_Y, 0.0f);
-		pPreview->fPlayerUIHeight = PREVIEW_PLAYER_UI_FIX_Y;//プレイヤーUIの表示する高さ
-		pPreview->fHeightPer = 1.0f;						//プレイヤーUIの表示する高さのパーセンテージ
+		pPreview->fPlayerUIHeight = PREVIEW_PLAYER_UI_FIX_Y;	//プレイヤーUIの表示する高さ
+		pPreview->fHeightPer = 1.0f;							//プレイヤーUIの表示する高さのパーセンテージ
 
 		/*******************************************************************
 							コースとプレイヤーUIを同時に設定
@@ -96,10 +103,10 @@ void InitPreview(void)
 		//			プレイヤーUIの頂点座標・テクスチャ座標の設定
 		//=================================================================
 		//頂点座標の設定
-		pVtx[4].pos = D3DXVECTOR3(pPreview->pos.x - PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_MARGIN_WIDTH, 0.0f);
-		pVtx[5].pos = D3DXVECTOR3(pPreview->pos.x + PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_MARGIN_WIDTH, 0.0f);
-		pVtx[6].pos = D3DXVECTOR3(pPreview->pos.x - PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) + PREVIEW_PLAYER_MARGIN_WIDTH, 0.0f);
-		pVtx[7].pos = D3DXVECTOR3(pPreview->pos.x + PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) + PREVIEW_PLAYER_MARGIN_WIDTH, 0.0f);
+		pVtx[4].pos = D3DXVECTOR3(pPreview->pos.x - PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_SIZE * 2.0f - PREVIEW_PLAYER_MARGIN_HEIGHT, 0.0f);
+		pVtx[5].pos = D3DXVECTOR3(pPreview->pos.x + PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_SIZE * 2.0f - PREVIEW_PLAYER_MARGIN_HEIGHT, 0.0f);
+		pVtx[6].pos = D3DXVECTOR3(pPreview->pos.x - PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_MARGIN_HEIGHT, 0.0f);
+		pVtx[7].pos = D3DXVECTOR3(pPreview->pos.x + PREVIEW_PLAYER_SIZE - PREVIEW_PLAYER_MARGIN_WIDTH, (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_MARGIN_HEIGHT, 0.0f);
 
 		//テクスチャの幅
 		float aTexU = PREVIEW_PLAYER_TEX_WIDTH * nCntVtx;
@@ -149,25 +156,42 @@ void UninitPreview(void)
 //--------------------------------------
 void UpdatePreview(void)
 {
-	for (int nCntPreview = 0; nCntPreview < NUM_PREVIEW; nCntPreview++)
+	//プレビュー情報のポインタを取得
+	Preview *pPreview = &g_Preview[0];
+
+	//ポインタを設定
+	VERTEX_2D *pVtx;
+	//頂点バッファをロックし、頂点情報へのポインタを取得
+	g_pVtxBuffPreview->Lock(0, 0, (void* *)&pVtx, 0);
+
+	//一つ目のコースの頂点バッファを飛ばす
+	pVtx += VTX_MAX;
+
+	for (int nCntPreview = 0; nCntPreview < NUM_PREVIEW; nCntPreview++, pVtx += VTX_MAX * PREVIEW_UI_MAX, pPreview++)
 	{
 		//プレイヤーUIの表示する高さを算出
 		FixPlayerUIHeight(nCntPreview);
+
+		//頂点座標の設定
+		float fUp = pVtx[0].pos.y = pVtx[1].pos.y = (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_SIZE * 2.0f - PREVIEW_PLAYER_MARGIN_HEIGHT;	//プレイヤーUIの上辺
+		float fDo = pVtx[2].pos.y = pVtx[3].pos.y = (pPreview->pos.y - pPreview->fPlayerUIHeight) - PREVIEW_PLAYER_MARGIN_HEIGHT;								//プレイヤーUIの底辺
+
+		PrintDebugProc("上辺の位置：%f    底辺の位置：%f\n", fUp, fDo);
 	}
+
+	//頂点バッファをロックする
+	g_pVtxBuffPreview->Unlock();
 }
 
 //プレイヤーUIの表示する高さを修正
 void FixPlayerUIHeight(int nNumPreview)
 {
+	//プレイヤーの現在の高さの割合を求める
+	float fPercent = GetPlayer_HDR()[nNumPreview].pos.y / PLAYER_START_HEIGHT;
+	g_Preview[nNumPreview].fPlayerUIHeight = fPercent * PREVIEW_PLAYER_UI_FIX_Y;
 
+	PrintDebugProc("%dPの割合：%f  最大の高さ：%f  現在の高さ：%f    ", nNumPreview + 1, fPercent, PREVIEW_PLAYER_UI_FIX_Y, g_Preview[nNumPreview].fPlayerUIHeight);
 }
-
-//プレイヤーUIの頂点座標の修正
-void FixPlayerUIVtxPos(VERTEX_2D *pVtx)
-{
-
-}
-
 
 //--------------------------------------
 //			プレビュー描画処理
