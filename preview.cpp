@@ -32,8 +32,8 @@ typedef enum
 #define PREVIEW_COURSE_HEIGHT		(400.0f)	//コースUIの高さ
 
 #define PREVIEW_PLAYER_UI_FIX_Y			(389.0f)//プレイヤーUIの初期高さ
-#define PREVIEW_PLAYER_MARGIN_WIDTH		(34.5f)	//プレイヤーUIの左にずらす余白
-#define PREVIEW_PLAYER_MARGIN_HEIGHT	(4.0f)	//プレイヤーUIの上にずらす余白（コースのUIの下が少し浮いているので、その調整用
+#define PREVIEW_PLAYER_MARGIN_WIDTH		(34.0f)	//プレイヤーUIの左にずらす余白
+#define PREVIEW_PLAYER_MARGIN_HEIGHT	(5.0f)	//プレイヤーUIの上にずらす余白（コースのUIの下が少し浮いているので、その調整用
 
 #define PREVIEW_PLAYER_SIZE			(20.0f)		//プレイヤーUIのサイズ（正方形
 #define PREVIEW_PLAYER_TEX_WIDTH	(0.25f)		//プレイヤーUIのテクスチャ幅（４分割
