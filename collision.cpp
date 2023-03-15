@@ -7,11 +7,13 @@
 #include "main.h"
 #include "collision.h"
 #include "fence.h"
+#include "input.h"
 
 //マクロ
 #define REFRECT_WEAK	(2.3f)	//反射を弱める・強めるのに使う
 #define REFRECT_MAX		(50.0f)	//反射量最大値
 #define CHARGE_DOWN		(0.8f)	//チャージゲージ減少量
+#define VIBE_TIME		(20)	//バイブレーション時間
 
 //当たり判定範囲構造体
 typedef struct
@@ -253,6 +255,9 @@ bool CollisionHipDropPP(Player *pATKPlayer, float fWidth, float fHeight, float f
 
 					//硬直
 					pPlayer->nActionRigor = 30;
+
+					//振動
+					SetPadVibration(pPlayer->nPlayerNum, VIBE_POWER_LEVEL_02, VIBE_TIME, VIBE_STATE_01_LOOP);
 
 					//攻撃された扱いにする
 					pPlayer->nLastHitPlayer = pATKPlayer->nPlayerNum;
@@ -561,6 +566,9 @@ void RefrectPlayer(Player *pPlayer, Fence *pFence, float fRate, D3DXVECTOR3 vecL
 	pPlayer->pos.x += pPlayer->move.x;
 	pPlayer->pos.z += pPlayer->move.z;
 
+	//振動
+	SetPadVibration(pPlayer->nPlayerNum, VIBE_POWER_LEVEL_02, VIBE_TIME, VIBE_STATE_01_LOOP);
+
 	//フェンスの当たり判定を消す
 	pFence->bCollision = false;
 }
@@ -579,6 +587,10 @@ bool HitPlayerToPlayer(Player *pATKPlayer, Player *pHitPlayer, D3DXVECTOR3 collP
 		//チャージゲージ減少と最後に当たったプレイヤーにする
 		pHitPlayer->moveGauge *= CHARGE_DOWN;
 		pHitPlayer->nLastHitPlayer = pATKPlayer->nPlayerNum;
+
+		//振動
+		SetPadVibration(pATKPlayer->nPlayerNum, VIBE_POWER_LEVEL_03, VIBE_TIME, VIBE_STATE_01_LOOP);
+		SetPadVibration(pHitPlayer->nPlayerNum, VIBE_POWER_LEVEL_03, VIBE_TIME, VIBE_STATE_01_LOOP);
 
 		bMove = true;
 	}

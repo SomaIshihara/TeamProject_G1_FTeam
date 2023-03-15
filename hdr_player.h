@@ -30,6 +30,7 @@ struct Player_HDR
 	//位置類
 	D3DXVECTOR3 pos;		//位置
 	D3DXVECTOR3 posOld;		//前回の位置
+	float		fHeightLastJump;//最後にジャンプした時の高さ
 	D3DXVECTOR3 posOld_Coll;//前回の位置
 	D3DXVECTOR3 move;		//移動量
 	D3DXVECTOR3 moveV0;		//初期移動量
@@ -49,7 +50,7 @@ struct Player_HDR
 	//AI
 	AIDIFF aiDiff;			//AI難易度
 	bool bUseAI;			//AI使用するかどうか
-	int nAIPower;			//ジャンプ量
+	float fAIHeight;			//ジャンプ量
 	int nAICT;				//AIのクールタイム
 
 	//描画類
@@ -72,9 +73,9 @@ void SetPlayerType_HDR(int nPlayerNum, bool bUse, bool bAIUse);	//プレイヤー使用
 //ヒップドロップ割合
 const AIParam_HDR c_aAIParamHDR[AIDIFF_MAX] =
 {
-	{ 1,2,0,0,40 },	//EASY
-	{ 2,3,1,0,30 },	//NORMAL
-	{ 0,1,2,1,20 },	//HARD
+	{ 10,25,45,30,40 },	//EASY
+	{ 5,15,40,40,30 },	//NORMAL
+	{ 1,4,20,75,20 },	//HARD
 	{ 1,1,1,1,20 }	//VIEW
 };
 

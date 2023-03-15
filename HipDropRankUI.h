@@ -8,15 +8,15 @@ Author:平澤詩苑
 #define _HIP_DROP_RANK_UI_H_
 
 //ヒップドロップレベルに必要な高さ（その値以上次のレベルの値以下）
-#define HIPDROP_HEIGHT_NICE		(5.0f)			//レベル1
-#define HIPDROP_HEIGHT_GOOD		(3.7f)			//レベル2
-#define HIPDROP_HEIGHT_GREAT	(2.0f)			//レベル3
-#define HIPDROP_HEIGHT_PERFECT	(0.5f)			//レベルMAX
+#define HIPDROP_HEIGHT_NICE		(10.0f)			//レベル1
+#define HIPDROP_HEIGHT_GOOD		(60.0f)			//レベル2
+#define HIPDROP_HEIGHT_GREAT	(120.0f)		//レベル3
+#define HIPDROP_HEIGHT_PERFECT	(145.0f)		//レベルMAX
 
 //ヒップドロップレベルに応じた強さ
 #define HIPDROP_POWER_NICE		( 100)			//レベル1  （ 100ダメージ）
-#define HIPDROP_POWER_GOOD		( 300)			//レベル2  （ 300ダメージ）
-#define HIPDROP_POWER_GREAT		( 600)			//レベル3  （ 600ダメージ）
+#define HIPDROP_POWER_GOOD		( 200)			//レベル2  （ 300ダメージ）
+#define HIPDROP_POWER_GREAT		( 300)			//レベル3  （ 600ダメージ）
 #define HIPDROP_POWER_PERFECT	(1000)			//レベルMAX（1000ダメージ）
 
 //ヒップドロップレベル列挙型
