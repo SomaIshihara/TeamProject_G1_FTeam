@@ -14,6 +14,7 @@
 #define FENCE_SCALE			(4.5f)		//フェンスの拡大倍率
 #define FENCE_WIDTH			(12.0f)		//フェンスの幅
 #define FENCE_DEPTH			(1.0f)		//フェンスの高さ
+#define FENCE_RADIUS		(650.0f)	//フェンスの位置
 
 //フェンス用構造体
 typedef struct

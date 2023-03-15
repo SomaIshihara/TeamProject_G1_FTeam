@@ -17,8 +17,6 @@
 #define INIT_POS_XZ			(200.0f)	//初期の外位置
 #define COLLISION_SIZE_XZ	(30.0f)		//縦横の当たり判定サイズ
 
-#define PLAYER_BODY_SIZE	(35.0f)		//プレイヤーの胴体サイズ
-
 //プロト
 BLOCKTYPE SelectBlock(void);
 
@@ -247,10 +245,10 @@ void CollisionBlock(Player_HDR *pPlayer)
 		//ブロックが使われている
 		if (pBlock->buse == true)
 		{
-			if (pPlayer->pos.x + PLAYER_BODY_SIZE >= Block_L	&&	//左端より 右 にいる
-				pPlayer->pos.x - PLAYER_BODY_SIZE <= Block_R	&&	//右端より 左 にいる
-				pPlayer->pos.z + PLAYER_BODY_SIZE >= Block_F	&&	//手前より 奥 にいる
-				pPlayer->pos.z - PLAYER_BODY_SIZE <= Block_D	&&	// 奥 より手前にいる
+			if (pPlayer->pos.x + pPlayer->fBodySize >= Block_L	&&	//左端より 右 にいる
+				pPlayer->pos.x - pPlayer->fBodySize <= Block_R	&&	//右端より 左 にいる
+				pPlayer->pos.z + pPlayer->fBodySize >= Block_F	&&	//手前より 奥 にいる
+				pPlayer->pos.z - pPlayer->fBodySize <= Block_D	&&	// 奥 より手前にいる
 				pPlayer->pos.y >= Block_U	&&	// 底 より 上 にいる
 				pPlayer->pos.y <= Block_B)		//天面より 下 にいる
 			{
@@ -261,7 +259,10 @@ void CollisionBlock(Player_HDR *pPlayer)
 					if (pPlayer->HipDropPower >= pBlock->nLife)
 					{
 						pBlock->buse = false;					//対象のブロックを使用しない
-						pPlayer->HipDropPower -= pBlock->nLife;	//使用した分のダメージを減らす
+						if (pPlayer->bUseAI)
+						{
+							pPlayer->HipDropPower -= pBlock->nLife;	//使用した分のダメージを減らす
+						}
 						PlaySoundSE(SOUND_LABEL_SE_HIPDROP, nCntBlock);	//ヒップドロップ音再生
 					}
 					else
@@ -291,19 +292,19 @@ void CollisionBlock(Player_HDR *pPlayer)
 				//			Xの当たり判定
 				//====================================
 				//左から当たった場合
-				if (pPlayer->posOld.x + PLAYER_BODY_SIZE <= Block_L &&	//前回ではプレイヤーが左に居て、
-					pPlayer->pos.x + PLAYER_BODY_SIZE >= Block_L)		//現在ではブロックが左にいる
+				if (pPlayer->posOld.x + pPlayer->fBodySize <= Block_L &&	//前回ではプレイヤーが左に居て、
+					pPlayer->pos.x + pPlayer->fBodySize >= Block_L)			//現在ではブロックが左にいる
 				{
-					pPlayer->pos.x = Block_L - PLAYER_BODY_SIZE;	//ブロックの左端に戻す
+					pPlayer->pos.x = Block_L - pPlayer->fBodySize;	//ブロックの左端に戻す
 					pPlayer->move.x = 0.0f;		//Ⅹの移動量を消す
 					pPlayer->moveV0.x = 0.0f;	//Ⅹの移動量を消す
 				}
 
 				//右から当たった場合
-				if (Block_R <= pPlayer->posOld.x - PLAYER_BODY_SIZE &&	//前回ではプレイヤーが右に居て、
-					Block_R >= pPlayer->pos.x - PLAYER_BODY_SIZE)		//現在ではブロックが右にいる
+				if (Block_R <= pPlayer->posOld.x - pPlayer->fBodySize &&	//前回ではプレイヤーが右に居て、
+					Block_R >= pPlayer->pos.x - pPlayer->fBodySize)			//現在ではブロックが右にいる
 				{
-					pPlayer->pos.x = Block_R + PLAYER_BODY_SIZE;	//ブロックの右端に戻す
+					pPlayer->pos.x = Block_R + pPlayer->fBodySize;	//ブロックの右端に戻す
 					pPlayer->move.x = 0.0f;		//Ⅹの移動量を消す
 					pPlayer->moveV0.x = 0.0f;	//Ⅹの移動量を消す
 				}
@@ -312,19 +313,19 @@ void CollisionBlock(Player_HDR *pPlayer)
 				//			Zの当たり判定
 				//====================================
 				//手前から当たった場合
-				if (pPlayer->posOld.z + PLAYER_BODY_SIZE <= Block_F &&	//前回ではプレイヤーが手前に居て、
-					pPlayer->pos.z + PLAYER_BODY_SIZE >= Block_F)		//現在ではブロックが手前にいる
+				if (pPlayer->posOld.z + pPlayer->fBodySize <= Block_F &&	//前回ではプレイヤーが手前に居て、
+					pPlayer->pos.z + pPlayer->fBodySize >= Block_F)			//現在ではブロックが手前にいる
 				{
-					pPlayer->pos.z = Block_F - PLAYER_BODY_SIZE;	//ブロックの手前に戻す
+					pPlayer->pos.z = Block_F - pPlayer->fBodySize;	//ブロックの手前に戻す
 					pPlayer->move.z = 0.0f;		//Ｚの移動量を消す
 					pPlayer->moveV0.z = 0.0f;	//Ｚの移動量を消す
 				}
 
 				//奥から当たった場合
-				if (Block_D <= pPlayer->posOld.z - PLAYER_BODY_SIZE &&	//前回ではプレイヤーが奥に居て、
-					Block_D >= pPlayer->pos.z - PLAYER_BODY_SIZE)		//現在ではブロックが奥にいる
+				if (Block_D <= pPlayer->posOld.z - pPlayer->fBodySize &&	//前回ではプレイヤーが奥に居て、
+					Block_D >= pPlayer->pos.z - pPlayer->fBodySize)			//現在ではブロックが奥にいる
 				{
-					pPlayer->pos.z = Block_D + PLAYER_BODY_SIZE;	//ブロックの奥に戻す
+					pPlayer->pos.z = Block_D + pPlayer->fBodySize;	//ブロックの奥に戻す
 					pPlayer->move.z = 0.0f;		//Ｚの移動量を消す
 					pPlayer->moveV0.z = 0.0f;	//Ｚの移動量を消す
 				}

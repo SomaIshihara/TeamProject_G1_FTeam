@@ -16,7 +16,7 @@ Author:平澤詩苑
 //ヒップドロップレベルに応じた強さ
 #define HIPDROP_POWER_NICE		( 100)			//レベル1  （ 100ダメージ）
 #define HIPDROP_POWER_GOOD		( 200)			//レベル2  （ 300ダメージ）
-#define HIPDROP_POWER_GREAT		( 300)			//レベル3  （ 600ダメージ）
+#define HIPDROP_POWER_GREAT		( 500)			//レベル3  （ 600ダメージ）
 #define HIPDROP_POWER_PERFECT	(1000)			//レベルMAX（1000ダメージ）
 
 //ヒップドロップレベル列挙型
