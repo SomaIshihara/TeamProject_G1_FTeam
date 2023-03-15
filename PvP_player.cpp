@@ -31,6 +31,7 @@
 #include "conversioninput.h"
 #include "collision.h"
 #include "fence.h"
+#include "TypeFrame.h"
 
 //マクロ
 #define PLAYER_HIPDROP_WAIT		(15)		//ヒップドロップの「開始・着地」硬直時間
@@ -168,7 +169,7 @@ void InitPlayer(void)
 		//AI設定
 		if (g_aAIMove_PvP[nCntPlayer] == true)
 		{//AIは脳みそポインタもらって使用していることにする
-			g_aPlayerPvP[nCntPlayer].pAI = GetAI(AIDIFF_NORMAL);
+			g_aPlayerPvP[nCntPlayer].pAI = GetAI(GetAIDiff());
 			g_aPlayerPvP[nCntPlayer].bUsePlayer = true;
 		}
 	}

@@ -21,6 +21,7 @@
 #include "block.h"
 #include "rank.h"
 #include "ai.h"
+#include "TypeFrame.h"
 
 //マクロ定義
 #define PLAYER_HIPSPIN_SPEED	(-0.5f)				//ヒップドロップスピンの回転値
@@ -85,7 +86,7 @@ void InitPlayer_HDR(void)
 		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 
 		g_aPlayerHDR[nCntPlayer].fAIHeight = 0;
-		g_aPlayerHDR[nCntPlayer].aiDiff = AIDIFF_HARD;
+		g_aPlayerHDR[nCntPlayer].aiDiff = GetAIDiff();;
 		g_aPlayerHDR[nCntPlayer].nAICT = 20;
 		
 		g_aPlayerHDR[nCntPlayer].model = GetAnimal(g_aPlayerHDR[nCntPlayer].animal);

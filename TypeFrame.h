@@ -8,6 +8,7 @@
 #define _TYPEFRAME_H_
 
 #include "main.h"
+#include "ai.h"
 
 //ƒvƒŒƒCƒ„[í—Ş—ñ‹“
 typedef enum
@@ -24,5 +25,6 @@ void UninitTypeFrame(void);
 void UpdateTypeFrame(void);
 void DrawTypeFrame(void);
 bool GetUsePlayer(int nPlayerNum);
+AIDIFF GetAIDiff(void);
 
 #endif // !_TYPEFRAME_H_
