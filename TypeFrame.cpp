@@ -128,6 +128,15 @@ void InitTypeFrame(void)
 	}
 	g_SelAIDiff = AIDIFF_NORMAL;
 
+	//コントローラーがつながっていなければAIにする
+	for (int nCntAI = 1; nCntAI < MAX_USE_GAMEPAD; nCntAI++)
+	{
+		if (GetUseGamepad(nCntAI) == false)
+		{
+			g_playerType[nCntAI] = PLAYERTYPE_COM;
+		}
+	}
+
 	//===============
 	//テクスチャ・バッファ生成
 	//===============
@@ -233,10 +242,21 @@ void InitTypeFrame(void)
 		//もし偶数（背景）なら色変える
 		if (nCntTypeFrame % 2 == 0)
 		{
-			pVtx[0].col = c_aColTypeFrameBG[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)];
-			pVtx[1].col = c_aColTypeFrameBG[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)];
-			pVtx[2].col = c_aColTypeFrameBG[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)];
-			pVtx[3].col = c_aColTypeFrameBG[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)];
+			//頂点カラー
+			if (g_playerType[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)] == PLAYERTYPE_PLAYER)
+			{//プレイヤーなら色付ける
+				pVtx[0].col = c_aColTypeFrameBG[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)];
+				pVtx[1].col = c_aColTypeFrameBG[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)];
+				pVtx[2].col = c_aColTypeFrameBG[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)];
+				pVtx[3].col = c_aColTypeFrameBG[nCntTypeFrame / (TYPEFRAME_USE_TEXTURE - 1)];
+			}
+			else
+			{//COM・使用しないなら灰色
+				pVtx[0].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+				pVtx[1].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+				pVtx[2].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+				pVtx[3].col = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+			}
 		}
 		else
 		{
@@ -517,8 +537,12 @@ void UpdateTypeFrame(void)
 			//いったん減らす
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
 
-			//最低人数を下回るならもう一回
+			//最低人数を下回るまたはプレイヤー使用していない（1P除く）ならもう一回
 			if (CheckMinPlayer() == false)
+			{
+				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
+			}
+			else if (g_nSelectNum != 0 && g_playerType[g_nSelectNum] == PLAYERTYPE_PLAYER && GetUseGamepad(g_nSelectNum) == false)
 			{
 				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
 			}
@@ -528,8 +552,12 @@ void UpdateTypeFrame(void)
 			//いったん減らす
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
 
-			//最低人数を下回るならもう一回
+			//最低人数を下回るまたはプレイヤー使用していない（1P除く）ならもう一回
 			if (CheckMinPlayer() == false)
+			{
+				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
+			}
+			else if (g_nSelectNum != 0 && g_playerType[g_nSelectNum] == PLAYERTYPE_PLAYER && GetUseGamepad(g_nSelectNum) == false)
 			{
 				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
 			}
@@ -575,11 +603,11 @@ void UpdateTypeFrame(void)
 	}
 	else
 	{
-		if (GetKeyboardTrigger(DIK_A) == true)
+		if (GetKeyboardTrigger(DIK_LEFT) == true)
 		{//左に倒した
 			g_nSelectNum = (g_nSelectNum + (MAX_USE_GAMEPAD - 1)) % MAX_USE_GAMEPAD;
 		}
-		else if (GetKeyboardTrigger(DIK_D) == true)
+		else if (GetKeyboardTrigger(DIK_RIGHT) == true)
 		{//右に倒した
 			g_nSelectNum = (g_nSelectNum + 1) % MAX_USE_GAMEPAD;
 		}
@@ -590,8 +618,12 @@ void UpdateTypeFrame(void)
 			//いったん減らす
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
 
-			//最低人数を下回るならもう一回
+			//最低人数を下回るまたはプレイヤー使用していない（1P除く）ならもう一回
 			if (CheckMinPlayer() == false)
+			{
+				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
+			}
+			else if (g_nSelectNum != 0 && g_playerType[g_nSelectNum] == PLAYERTYPE_PLAYER && GetUseGamepad(g_nSelectNum) == false)
 			{
 				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
 			}
@@ -601,19 +633,23 @@ void UpdateTypeFrame(void)
 			 //いったん減らす
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
 
-			//最低人数を下回るならもう一回
+			//最低人数を下回るまたはプレイヤー使用していない（1P除く）ならもう一回
 			if (CheckMinPlayer() == false)
+			{
+				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
+			}
+			else if (g_nSelectNum != 0 && g_playerType[g_nSelectNum] == PLAYERTYPE_PLAYER && GetUseGamepad(g_nSelectNum) == false)
 			{
 				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
 			}
 		}
 
 		//AI設定
-		if (GetKeyboardTrigger(DIK_LEFT) == true)
+		if (GetKeyboardTrigger(DIK_A) == true)
 		{
 			g_SelAIDiff = (AIDIFF)((g_SelAIDiff + (AIDIFF_VIEW - 1)) % AIDIFF_VIEW);
 		}
-		else if (GetKeyboardTrigger(DIK_RIGHT) == true)
+		else if (GetKeyboardTrigger(DIK_D) == true)
 		{
 			g_SelAIDiff = (AIDIFF)((g_SelAIDiff + 1) % AIDIFF_VIEW);
 		}

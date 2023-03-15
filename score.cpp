@@ -18,7 +18,8 @@
 
 #define SCORE_MINUS_X			(230.0f)	//スコアのマイナスX座標
 #define SCORE_PLUS_X			(270.0f)	//スコアのプラスX座標
-#define SCORE_WIDTH_X			(30.0f)	    //スコアの幅
+#define SCORE_WIDTH				(30.0f)	    //スコアの幅
+#define SCORE_HEIGHT			(50.0f)		//スコアの高さ
 #define SCORE_INTERVAL_X		(300.0f)	//スコア同士の間隔
 
 #define SCORE_MINUS_Y			(600.0f)	//スコアのマイナスY座標
@@ -30,6 +31,14 @@
 LPDIRECT3DTEXTURE9 g_pTextureScore = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffScore = NULL;
 int g_aScore[NUM_SCORE];
+
+const D3DXVECTOR3		g_PosScore[MAX_USE_GAMEPAD] =				//ゲージの位置
+{
+	D3DXVECTOR3(166.0f,36.0f,0.0f),
+	D3DXVECTOR3(1194.0f,36.0f,0.0f),
+	D3DXVECTOR3(166.0f,596.0f,0.0f),
+	D3DXVECTOR3(1194.0f,596.0f,0.0f),
+};
 
 //===================================================
 //スコアの初期化処理
@@ -156,10 +165,10 @@ void SetScore(int nScore, int nPlayer)
 
 		for (nCntScore = 0; nCntScore < NUM_PLASE; nCntScore++, pVtx += VTX_MAX)
 		{
-			pVtx[0].pos = D3DXVECTOR3(SCORE_MINUS_X + (nCntScore * SCORE_WIDTH_X) + (nCntPlayer * SCORE_INTERVAL_X), SCORE_MINUS_Y, NIL_F);
-			pVtx[1].pos = D3DXVECTOR3(SCORE_PLUS_X  + (nCntScore * SCORE_WIDTH_X) + (nCntPlayer * SCORE_INTERVAL_X), SCORE_MINUS_Y, NIL_F);
-			pVtx[2].pos = D3DXVECTOR3(SCORE_MINUS_X + (nCntScore * SCORE_WIDTH_X) + (nCntPlayer * SCORE_INTERVAL_X), SCORE_PLUS_Y, NIL_F);
-			pVtx[3].pos = D3DXVECTOR3(SCORE_PLUS_X  + (nCntScore * SCORE_WIDTH_X) + (nCntPlayer * SCORE_INTERVAL_X), SCORE_PLUS_Y, NIL_F);
+			pVtx[0].pos = D3DXVECTOR3(g_PosScore[nCntPlayer].x + (nCntScore * SCORE_WIDTH), g_PosScore[nCntPlayer].y, NIL_F);
+			pVtx[1].pos = D3DXVECTOR3(g_PosScore[nCntPlayer].x + ((nCntScore + 1) * SCORE_WIDTH), g_PosScore[nCntPlayer].y, NIL_F);
+			pVtx[2].pos = D3DXVECTOR3(g_PosScore[nCntPlayer].x + (nCntScore * SCORE_WIDTH), g_PosScore[nCntPlayer].y + SCORE_HEIGHT, NIL_F);
+			pVtx[3].pos = D3DXVECTOR3(g_PosScore[nCntPlayer].x + ((nCntScore + 1) * SCORE_WIDTH), g_PosScore[nCntPlayer].y + SCORE_HEIGHT, NIL_F);
 
 			pVtx[0].tex = D3DXVECTOR2(NIL_F + (aTexU[nCntPlayer][nCntScore] * 0.1f), NIL_F);
 			pVtx[1].tex = D3DXVECTOR2(0.1f  + (aTexU[nCntPlayer][nCntScore] * 0.1f), NIL_F);
