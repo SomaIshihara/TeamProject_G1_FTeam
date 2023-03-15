@@ -27,11 +27,11 @@ Author:平澤詩苑
 #include "fence.h"
 #include "rank.h"
 
-#define HIPDROP_BUFF_COUNTER_50SEC	(CONVERT_FPS(50))	//５０秒経過
-#define HIPDROP_BUFF_COUNTER_LAST	(CONVERT_FPS(100))	//１００秒経過
+#define HIPDROP_BUFF_COUNTER_40SEC	(CONVERT_FPS(40))	//４０秒経過
+#define HIPDROP_BUFF_COUNTER_LAST	(CONVERT_FPS(70))	//７０秒経過
 #define HIPDROP_BUFF_START		(1.0f)	//最初のヒップドロップのバフ
-#define HIPDROP_BUFF_50Second	(1.5f)	//５０秒経過後のヒップドロップバフ（1.5倍
-#define HIPDROP_BUFF_LAST		(2.0f)	//１００秒経過後のヒップドロップバフ（2倍
+#define HIPDROP_BUFF_40Second	(1.5f)	//４０秒経過後のヒップドロップバフ（1.5倍
+#define HIPDROP_BUFF_LAST		(2.0f)	//７０秒経過後のヒップドロップバフ（2倍
 
 typedef struct
 {
@@ -133,16 +133,16 @@ void UpdateHDRGame(void)
 			//経過時間加算
 			g_HDRInfo.nCounterHDR++;
 
-			//１００秒経過
+			//４０秒経過
+			if (g_HDRInfo.nCounterHDR >= HIPDROP_BUFF_COUNTER_40SEC)
+			{
+				g_HDRInfo.fHipDropBuff = HIPDROP_BUFF_40Second;
+			}
+
+			//７０秒経過
 			if (g_HDRInfo.nCounterHDR >= HIPDROP_BUFF_COUNTER_LAST)
 			{
 				g_HDRInfo.fHipDropBuff = HIPDROP_BUFF_LAST;
-			}
-
-			//５０秒経過
-			if (g_HDRInfo.nCounterHDR >= HIPDROP_BUFF_COUNTER_LAST)
-			{
-				g_HDRInfo.fHipDropBuff = HIPDROP_BUFF_50Second;
 			}
 
 			UpdateLight();			// ライトの更新処理
