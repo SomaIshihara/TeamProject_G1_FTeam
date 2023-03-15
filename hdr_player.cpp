@@ -30,6 +30,7 @@
 #define PLAYER_MOVE_SPEED		(5.0f)				//普通に移動するときの移動量
 #define PLAYER_NORMAL_JUMP		(7.0f)				//プレイヤーの通常ジャンプ量
 #define PLAYER_GOAL_JUMP		(4.3f)				//ゴール後のジャンプ量
+#define PLAYER_BODY_SIZE		(30.0f)				//プレイヤーの胴体サイズ
 
 //向き
 #define ROT_WA	(+0.75f * D3DX_PI)	//左上
@@ -82,6 +83,7 @@ void InitPlayer_HDR(void)
 		g_aPlayerHDR[nCntPlayer].bHipDropSpin = false;
 		g_aPlayerHDR[nCntPlayer].nRank = RANKING_4TH;
 		g_aPlayerHDR[nCntPlayer].bGoal = false;
+		g_aPlayerHDR[nCntPlayer].fBodySize = PLAYER_BODY_SIZE;
 
 		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 
@@ -175,7 +177,7 @@ void UpdatePlayer_HDR(void)
 			CollisionBlock(&g_aPlayerHDR[nCntPlayer]);
 
 			//フェンスとの当たり判定
-			//CollisionFenceForHDR(&g_aPlayerHDR[nCntPlayer]);
+			CollisionFence(&g_aPlayerHDR[nCntPlayer]);
 		}
 	}
 }

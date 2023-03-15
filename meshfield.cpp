@@ -221,8 +221,6 @@ void SetMeshField(int nTexNum, MESHFIELD mf)
 	//テクスチャの読み込み
 	if (FAILED(D3DXCreateTextureFromFile(pDevice, "data\\TEXTURE\\grassland001.png", &g_pTextureMeshfield)))
 	{
-		int hoge = 0;
-		hoge = hoge;
 	}
 
 	//情報代入

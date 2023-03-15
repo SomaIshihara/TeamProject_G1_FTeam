@@ -126,6 +126,13 @@ int JoinPlayer(void)
 	//参加しているプレイヤー人数を格納
 	int nJoinNumPlayer = GetUseControllerNum_HDR();
 
+	//参加者がいない
+	if (nJoinNumPlayer == 0)
+	{
+		//キーボードを使用していることを想定し、参加者が一人はいることにする
+		nJoinNumPlayer++;
+	}
+
 	for (int nCntJoin = nJoinNumPlayer; nCntJoin < MAX_USE_GAMEPAD; nCntJoin++)
 	{
 		//AIが使用されている
@@ -134,13 +141,6 @@ int JoinPlayer(void)
 			//参加人数を増やす
 			nJoinNumPlayer++;
 		}
-	}
-
-	//参加者がいない
-	if (nJoinNumPlayer == 0)
-	{
-		//キーボードを使用していることを想定し、参加者が一人はいることにする
-		nJoinNumPlayer++;
 	}
 
 	PrintDebugProc("参加人数：%d\n", nJoinNumPlayer);

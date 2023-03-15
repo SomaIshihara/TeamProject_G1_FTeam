@@ -43,6 +43,7 @@ struct Player_HDR
 	bool bHipDropSpin;		//ヒップドロップのスピンしたかどうか
 	bool bGoal;				//ゴールしたか
 	int nRank;				//順位
+	float fBodySize;		//体の大きさ（当たり判定に使う
 
 	//パラメータ類
 	ANIMAL animal;			//使用している動物

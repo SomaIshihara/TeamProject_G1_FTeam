@@ -8,12 +8,13 @@
 #include "collision.h"
 #include "fence.h"
 #include "input.h"
+#include "debugproc.h"
 
 //マクロ
-#define REFRECT_WEAK	(2.3f)	//反射を弱める・強めるのに使う
-#define REFRECT_MAX		(50.0f)	//反射量最大値
-#define CHARGE_DOWN		(0.8f)	//チャージゲージ減少量
-#define VIBE_TIME		(20)	//バイブレーション時間
+#define REFRECT_WEAK			(2.3f)	//反射を弱める・強めるのに使う
+#define REFRECT_MAX				(50.0f)	//反射量最大値
+#define CHARGE_DOWN				(0.8f)	//チャージゲージ減少量
+#define VIBE_TIME				(20)	//バイブレーション時間
 
 //当たり判定範囲構造体
 typedef struct
@@ -409,6 +410,26 @@ bool CollisionFence(Player *pPlayer, float fFenceWidth, float fPlayerHeight, flo
 		}
 	}
 	return false;
+}
+
+//========================
+//フェンスの衝突処理（HDRのプレイヤー限定	フェンスは倒しません）
+//========================
+void CollisionFence(Player_HDR *pPlayer)
+{
+	float fPosDiffX = powf(fabsf(pPlayer->pos.x), 2.0f);	//Ⅹ座標の絶対値の２乗を格納
+	float fPosDiffZ = powf(fabsf(pPlayer->pos.z), 2.0f);	//Ｚ座標の絶対値の２乗を格納
+	float fAngle = atan2f(pPlayer->pos.x, pPlayer->pos.z);	//角度も計算
+	float fLength = sqrtf(fPosDiffX + fPosDiffZ);			//原点とプレイヤーの位置の直線距離の長さを格納
+	float Fenceforward = FENCE_RADIUS - pPlayer->fBodySize;	//フェンスの手前の距離（フェンスを越えていたら、その地点に戻す
+
+	//原点位置からの距離が、フェンスの設置半径を超えていたら
+	if (Fenceforward <= fLength)
+	{
+		pPlayer->pos.x = sinf(fAngle) * Fenceforward;//超えた先の角度を基に、フェンスの半径位置より手前に戻す
+		pPlayer->pos.z = cosf(fAngle) * Fenceforward;//超えた先の角度を基に、フェンスの半径位置より手前に戻す
+		PrintDebugProc("フェンスの設置半径：%f  フェンスの手前：%f\n", FENCE_RADIUS, Fenceforward);
+	}
 }
 
 //========================

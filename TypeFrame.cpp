@@ -603,17 +603,17 @@ void UpdateTypeFrame(void)
 	}
 	else
 	{
-		if (GetKeyboardTrigger(DIK_LEFT) == true)
+		if (GetKeyboardTrigger(DIK_A) == true)
 		{//ç∂Ç…ì|ÇµÇΩ
 			g_nSelectNum = (g_nSelectNum + (MAX_USE_GAMEPAD - 1)) % MAX_USE_GAMEPAD;
 		}
-		else if (GetKeyboardTrigger(DIK_RIGHT) == true)
+		else if (GetKeyboardTrigger(DIK_D) == true)
 		{//âEÇ…ì|ÇµÇΩ
 			g_nSelectNum = (g_nSelectNum + 1) % MAX_USE_GAMEPAD;
 		}
 
 		//É^ÉCÉvëIë
-		if (GetKeyboardTrigger(DIK_DOWN) == true)
+		if (GetKeyboardTrigger(DIK_UP) == true)
 		{//â∫Ç…ì|ÇµÇΩ
 			//Ç¢Ç¡ÇΩÇÒå∏ÇÁÇ∑
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
@@ -628,7 +628,7 @@ void UpdateTypeFrame(void)
 				g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + (PLAYERTYPE_MAX - 1)) % PLAYERTYPE_MAX);
 			}
 		}
-		else if (GetKeyboardTrigger(DIK_UP) == true)
+		else if (GetKeyboardTrigger(DIK_DOWN) == true)
 		{//è„Ç…ì|ÇµÇΩ
 			 //Ç¢Ç¡ÇΩÇÒå∏ÇÁÇ∑
 			g_playerType[g_nSelectNum] = (PLAYERTYPE)((g_playerType[g_nSelectNum] + 1) % PLAYERTYPE_MAX);
@@ -645,11 +645,11 @@ void UpdateTypeFrame(void)
 		}
 
 		//AIê›íË
-		if (GetKeyboardTrigger(DIK_A) == true)
+		if (GetKeyboardTrigger(DIK_LEFT) == true)
 		{
 			g_SelAIDiff = (AIDIFF)((g_SelAIDiff + (AIDIFF_VIEW - 1)) % AIDIFF_VIEW);
 		}
-		else if (GetKeyboardTrigger(DIK_D) == true)
+		else if (GetKeyboardTrigger(DIK_RIGHT) == true)
 		{
 			g_SelAIDiff = (AIDIFF)((g_SelAIDiff + 1) % AIDIFF_VIEW);
 		}

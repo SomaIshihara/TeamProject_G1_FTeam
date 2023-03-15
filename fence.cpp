@@ -11,7 +11,6 @@
 #include "meshfield.h"
 
 //マクロ
-#define FENCE_RADIUS		(650.0f)	//フェンスの位置
 #define FENCE_MARGIN_SPACE	(10.0f)		//フェンスが倒れる際の後ろの余裕スペース
 #define FENCE_DESTROY_POS	(-800.0f)	//フェンスを消す位置
 #define FENCE_DROP_SPEED	(1.3f)		//フェンスの落下加速度
@@ -55,14 +54,14 @@ void UninitFence(void)
 //========================
 void UpdateFence(void)
 {
+	//フェンスのポインタを取得
+	Fence *pFence = &g_aFence[0];
+
 	//フィールドの半径取得
 	float FieldRadius = GetMeshField()->fRadius;
 
-	for (int nCntFence = 0; nCntFence < MAX_USE_FENCE; nCntFence++)
+	for (int nCntFence = 0; nCntFence < MAX_USE_FENCE; nCntFence++, pFence++)
 	{
-		//対象のフェンスのポインタを取得
-		Fence *pFence = &g_aFence[nCntFence];
-
 		//対象のフェンスが使われていなかったら、次のフェンスまで処理を飛ばす
 		if (pFence->bUse == false)
 		{
@@ -206,11 +205,11 @@ void DrawFence(void)
 //========================
 void SetFence(float fRadius, float rotY)
 {
-	for (int nCntObj = 0; nCntObj < MAX_USE_FENCE; nCntObj++)
-	{
-		//対象のフェンスのポインタを取得
-		Fence *pFence = &g_aFence[nCntObj];
+	//対象のフェンスのポインタを取得
+	Fence *pFence = &g_aFence[0];
 
+	for (int nCntObj = 0; nCntObj < MAX_USE_FENCE; nCntObj++, pFence++)
+	{
 		//対象のフェンスが使われていない
 		if (pFence->bUse == false)
 		{
