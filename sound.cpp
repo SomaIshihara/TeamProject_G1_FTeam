@@ -2,6 +2,7 @@
 //
 // サウンド処理 [sound.cpp]
 // Author : 石原颯馬  平澤詩苑
+// ほとんどのプログラム俺らが作ったね　どうしてだろうね？ << 石原クン
 //
 //=============================================================================
 #include "sound.h"
@@ -36,9 +37,9 @@ HRESULT InitSoundSE(HWND hWnd);
 // グローバル変数
 //*****************************************************************************
 //BGM
-IXAudio2 *g_pXAudio2BGM = NULL;								// XAudio2オブジェクトへのインターフェイス
-IXAudio2MasteringVoice *g_pMasteringVoiceBGM = NULL;			// マスターボイス
-IXAudio2SourceVoice *g_apSourceVoiceBGM[SOUND_LABEL_BGM_MAX] = { {} };	// ソースボイス
+IXAudio2 *g_pXAudio2BGM = NULL;										// XAudio2オブジェクトへのインターフェイス
+IXAudio2MasteringVoice *g_pMasteringVoiceBGM = NULL;				// マスターボイス
+IXAudio2SourceVoice *g_apSourceVoiceBGM[SOUND_LABEL_BGM_MAX] = {};	// ソースボイス
 BYTE *g_apDataAudioBGM[SOUND_LABEL_BGM_MAX] = {};	// オーディオデータ
 DWORD g_aSizeAudioBGM[SOUND_LABEL_BGM_MAX] = {};	// オーディオデータサイズ
 
@@ -50,16 +51,16 @@ BYTE *g_apDataAudioSE[SOUND_LABEL_SE_MAX][NUM_DUPLICATION] = { {} };	// オーディ
 DWORD g_aSizeAudioSE[SOUND_LABEL_SE_MAX][NUM_DUPLICATION] = { {} };	// オーディオデータサイズ
 
 //その他
-bool g_bPlay = true;											// 再生するかどうか
+bool g_bAllPlaySound = false;	// 再生するかどうか
 
 // BGMサウンドの情報
 SOUNDINFO g_aSoundInfoBGM[SOUND_LABEL_BGM_MAX] =
 {
-	{ "data/SOUND/BGM/Title.wav",				SOUND_LOOP, 0.5f,true },		// タイトル音
-	{ "data/SOUND/BGM/Tutorial.wav",			SOUND_LOOP, 0.5f,true },		// チュートリアル音
-	{ "data/SOUND/BGM/PvP_Game_Mixed.wav",		SOUND_LOOP, 0.5f,true },		// ゲーム音
-	{ "data/SOUND/BGM/Game000.wav",				SOUND_LOOP, 0.5f,true },		// ゲーム音
-	{ "data/SOUND/BGM/Result.wav",				SOUND_LOOP, 0.5f,true },		// リザルト音
+	{ "data/SOUND/BGM/Title.wav",			SOUND_LOOP, 0.5f,true },		// タイトル音
+	{ "data/SOUND/BGM/Tutorial.wav",		SOUND_LOOP, 0.5f,true },		// チュートリアル音
+	{ "data/SOUND/BGM/PvP_Game_Mixed.wav",	SOUND_LOOP, 0.5f,true },		// ゲーム音
+	{ "data/SOUND/BGM/Game000.wav",			SOUND_LOOP, 0.5f,true },		// ゲーム音
+	{ "data/SOUND/BGM/Result.wav",			SOUND_LOOP, 0.5f,true },		// リザルト音
 };
 
 // SEサウンドの情報
@@ -70,25 +71,25 @@ SOUNDINFO g_aSoundInfoSE[SOUND_LABEL_SE_MAX] =
 	{ "data/SOUND/SE/Uribou.wav",				 SOUND_ONCE, 0.5f, true },	// コントローラー接続SE
 	{ "data/SOUND/SE/Title_Decide.wav",			 SOUND_ONCE, 0.6f, true },	// タイトルの決定SE
 	{ "data/SOUND/SE/Collision.wav",			 SOUND_ONCE, 0.6f, true },	// プレイヤー同士の衝突音SE
-	{ "data/SOUND/SE/Energy.wav",				 SOUND_ONCE, 0.6f, true },	// プレイヤー1のゲージ充填音
+	{ "data/SOUND/SE/Energy.wav",				 SOUND_ONCE, 0.6f, true },	// プレイヤーのゲージ充填音
 	{ "data/SOUND/SE/Drop000.wav",				 SOUND_ONCE, 0.6f, true },	// プレイヤーの落下音
 	{ "data/SOUND/SE/GrassDash000.wav",			 SOUND_ONCE, 0.6f, true },	// プレイヤーのダッシュ音
 	{ "data/SOUND/SE/HipdropSpin_001.wav",		 SOUND_ONCE, 0.6f, true },	// プレイヤーのヒップドロップスピン音
 	{ "data/SOUND/SE/HipDrop_Attack_002.wav",	 SOUND_ONCE, 0.6f, true },	// プレイヤーのヒップドロップ音
 	{ "data/SOUND/SE/Jamp001.wav",				 SOUND_ONCE, 0.4f, true },	// プレイヤーのジャンプ音
-	{ "data/SOUND/SE/HipDropRank00_Bad.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「Bad...」の効果音
-	{ "data/SOUND/SE/HipDropRank01_Nice.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「NICE」の効果音
-	{ "data/SOUND/SE/HipDropRank02_Good.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「GOOD!」の効果音
-	{ "data/SOUND/SE/HipDropRank03_Great.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「☆GREAT☆」の効果音
-	{ "data/SOUND/SE/HipDropRank04_PERFECT.wav", SOUND_ONCE, 0.4f, true },	// ヒップドロップランク「★PERFECT★」の効果音
-	{ "data/SOUND/SE/piano_00_ド.wav",			 SOUND_ONCE, 0.4f, true },	// 破壊したブロックの数１個目の効果音
-	{ "data/SOUND/SE/piano_01_レ.wav",			 SOUND_ONCE, 0.4f, true },	// 破壊したブロックの数２個目の効果音
-	{ "data/SOUND/SE/piano_02_ミ.wav",			 SOUND_ONCE, 0.4f, true },	// 破壊したブロックの数３個目の効果音
-	{ "data/SOUND/SE/piano_03_ファ.wav",		 SOUND_ONCE, 0.5f, true },	// 破壊したブロックの数４個目の効果音
-	{ "data/SOUND/SE/piano_04_ソ.wav",			 SOUND_ONCE, 0.5f, true },	// 破壊したブロックの数５個目の効果音
-	{ "data/SOUND/SE/piano_05_ラ.wav",			 SOUND_ONCE, 0.5f, true },	// 破壊したブロックの数６個目の効果音
-	{ "data/SOUND/SE/piano_06_シ.wav",			 SOUND_ONCE, 0.6f, true },	// 破壊したブロックの数７個目の効果音
-	{ "data/SOUND/SE/piano_07_ド.wav",			 SOUND_ONCE, 0.7f, true },	// 破壊したブロックの数８個目の効果音
+	{ "data/SOUND/SE/HipDropRank00_Bad.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク 「Bad...」の効果音
+	{ "data/SOUND/SE/HipDropRank01_Nice.wav",	 SOUND_ONCE, 0.5f, true },	//			〃			「NICE」
+	{ "data/SOUND/SE/HipDropRank02_Good.wav",	 SOUND_ONCE, 0.5f, true },	//			〃			「GOOD!」
+	{ "data/SOUND/SE/HipDropRank03_Great.wav",	 SOUND_ONCE, 0.5f, true },	//			〃			「☆GREAT☆」
+	{ "data/SOUND/SE/HipDropRank04_PERFECT.wav", SOUND_ONCE, 0.4f, true },	//			〃			「★PERFECT★」
+	{ "data/SOUND/SE/piano_00_Do.wav",			 SOUND_ONCE, 0.4f, true },	// ブロック破壊	１個目の効果音
+	{ "data/SOUND/SE/piano_01_Re.wav",			 SOUND_ONCE, 0.4f, true },	//		〃		２個目
+	{ "data/SOUND/SE/piano_02_Mi.wav",			 SOUND_ONCE, 0.4f, true },	//		〃		３個目
+	{ "data/SOUND/SE/piano_03_Fa.wav",			 SOUND_ONCE, 0.5f, true },	//		〃		４個目
+	{ "data/SOUND/SE/piano_04_So.wav",			 SOUND_ONCE, 0.5f, true },	//		〃		５個目
+	{ "data/SOUND/SE/piano_05_Ra.wav",			 SOUND_ONCE, 0.5f, true },	//		〃		６個目
+	{ "data/SOUND/SE/piano_06_Ti.wav",			 SOUND_ONCE, 0.6f, true },	//		〃		７個目	英語で「シ」は「Ti」と書くらしいです
+	{ "data/SOUND/SE/piano_07_Do.wav",			 SOUND_ONCE, 0.7f, true },	//		〃		８個目
 	{ "data/SOUND/SE/PauseDecision000.wav",		 SOUND_ONCE, 0.6f, true },	// ポーズの決定音
 	{ "data/SOUND/SE/PauseSelection000.wav",	 SOUND_ONCE, 0.6f, true },	// ポーズの選択音
 	{ "data/SOUND/SE/PauseTransition000.wav",	 SOUND_ONCE, 0.6f, true },	// ポーズの遷移音
@@ -479,7 +480,7 @@ void UninitSound(void)
 HRESULT PlaySoundBGM(SOUND_LABEL_BGM label)
 {
 	//ラベルの再生がON		かつ		再生がON
-	if (g_aSoundInfoBGM[label].bPlay == true && g_bPlay == true)
+	if (g_aSoundInfoBGM[label].bPlay == true && g_bAllPlaySound == true)
 	{
 		XAUDIO2_VOICE_STATE xa2state;
 		XAUDIO2_BUFFER buffer;
@@ -602,7 +603,7 @@ HRESULT PlaySoundSE(SOUND_LABEL_SE label, int nNumSound)
 	nNumSound %= NUM_DUPLICATION;
 
 	//ラベルの再生がON		かつ		再生がON
-	if (g_aSoundInfoSE[label].bPlay == true && g_bPlay == true)
+	if (g_aSoundInfoSE[label].bPlay == true && g_bAllPlaySound == true)
 	{
 		XAUDIO2_VOICE_STATE xa2state;
 		XAUDIO2_BUFFER buffer;

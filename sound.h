@@ -1,7 +1,7 @@
 //=============================================================================
 //
 // サウンド処理 [sound.h]
-// Author : 石原颯馬
+// Author : 石原颯馬  平澤詩苑
 //
 //=============================================================================
 #ifndef _SOUND_H_
@@ -38,19 +38,19 @@ typedef enum
 	SOUND_LABEL_SE_HIPSPIN,				// プレイヤーのヒップドロップスピン音
 	SOUND_LABEL_SE_HIPDROP,				// プレイヤーのヒップドロップ音
 	SOUND_LABEL_SE_JUMP,				// プレイヤーのジャンプ音
-	SOUND_LABEL_SE_HIPRANK_00_BAD,		// ヒップドロップランク「Bad...」の効果音
-	SOUND_LABEL_SE_HIPRANK_01_NICE,		// ヒップドロップランク「NICE」の効果音
-	SOUND_LABEL_SE_HIPRANK_02_GOOD,		// ヒップドロップランク「GOOD!」の効果音
-	SOUND_LABEL_SE_HIPRANK_03_GREAT,	// ヒップドロップランク「☆GREAT☆」の効果音
-	SOUND_LABEL_SE_HIPRANK_04_PERFECT,	// ヒップドロップランク「★PERFECT★」の効果音
-	SOUND_LABEL_SE_DESTROY_BLOCK_00,	// ブロック破壊個数１個目
-	SOUND_LABEL_SE_DESTROY_BLOCK_01,	// ブロック破壊個数２個目
-	SOUND_LABEL_SE_DESTROY_BLOCK_02,	// ブロック破壊個数３個目
-	SOUND_LABEL_SE_DESTROY_BLOCK_03,	// ブロック破壊個数４個目
-	SOUND_LABEL_SE_DESTROY_BLOCK_04,	// ブロック破壊個数５個目
-	SOUND_LABEL_SE_DESTROY_BLOCK_05,	// ブロック破壊個数６個目
-	SOUND_LABEL_SE_DESTROY_BLOCK_06,	// ブロック破壊個数７個目
-	SOUND_LABEL_SE_DESTROY_BLOCK_07,	// ブロック破壊個数８個目
+	SOUND_LABEL_SE_HIPRANK_00_BAD,		// ヒップドロップランク 「Bad...」の効果音
+	SOUND_LABEL_SE_HIPRANK_01_NICE,		//			〃			「NICE」
+	SOUND_LABEL_SE_HIPRANK_02_GOOD,		//			〃			「GOOD!」
+	SOUND_LABEL_SE_HIPRANK_03_GREAT,	//			〃			「☆GREAT☆」
+	SOUND_LABEL_SE_HIPRANK_04_PERFECT,	//			〃			「★PERFECT★」
+	SOUND_LABEL_SE_DESTROY_BLOCK_00,	// ブロック破壊	１個目の効果音
+	SOUND_LABEL_SE_DESTROY_BLOCK_01,	//		〃		２個目
+	SOUND_LABEL_SE_DESTROY_BLOCK_02,	//		〃		３個目
+	SOUND_LABEL_SE_DESTROY_BLOCK_03,	//		〃		４個目
+	SOUND_LABEL_SE_DESTROY_BLOCK_04,	//		〃		５個目
+	SOUND_LABEL_SE_DESTROY_BLOCK_05,	//		〃		６個目
+	SOUND_LABEL_SE_DESTROY_BLOCK_06,	//		〃		７個目
+	SOUND_LABEL_SE_DESTROY_BLOCK_07,	//		〃		８個目
 	SOUND_LABEL_SE_PAUSE_DECISION,		// ポーズの決定音
 	SOUND_LABEL_SE_PAUSE_SELECTION,		// ポーズの選択音
 	SOUND_LABEL_SE_PAUSE_TRANSITION,	// ポーズの遷移音

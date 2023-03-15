@@ -70,9 +70,6 @@
     <Filter Include="ソース ファイル\Game\Game_HDR">
       <UniqueIdentifier>{d3a6b7b7-db43-4bca-8de0-30c341ff3a78}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\Game\Game_PvP\Player">
-      <UniqueIdentifier>{a83b5e00-39ce-4811-b994-a550c578b67a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\Game\Game_PvP\Stage">
       <UniqueIdentifier>{bb7ecd1c-3945-4f33-979f-fce88bed5d03}</UniqueIdentifier>
     </Filter>
@@ -210,9 +207,6 @@
     <ClCompile Include="bg.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="PvP_player.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Player</Filter>
-    </ClCompile>
     <ClCompile Include="hdr_player.cpp">
       <Filter>ソース ファイル\Game\Game_HDR\Player</Filter>
     </ClCompile>
@@ -296,6 +290,9 @@
     </ClCompile>
     <ClCompile Include="object.cpp">
       <Filter>ソース ファイル\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="PvP_player.cpp">
+      <Filter>ソース ファイル\Game\Game_PvP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

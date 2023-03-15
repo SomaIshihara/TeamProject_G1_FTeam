@@ -9,12 +9,15 @@
 #include "fence.h"
 #include "input.h"
 #include "debugproc.h"
+#include "object.h"
 
 //マクロ
 #define REFRECT_WEAK			(2.3f)	//反射を弱める・強めるのに使う
 #define REFRECT_MAX				(50.0f)	//反射量最大値
 #define CHARGE_DOWN				(0.8f)	//チャージゲージ減少量
 #define VIBE_TIME				(20)	//バイブレーション時間
+#define TREE_RADIUS				(50.0f)	//木の当たり判定（プレイヤーのサイズも考慮
+#define TREE_REFRECT			(-0.5f)	//木の反射係数
 
 //当たり判定範囲構造体
 typedef struct
@@ -429,6 +432,36 @@ void CollisionFence(Player_HDR *pPlayer)
 		pPlayer->pos.x = sinf(fAngle) * Fenceforward;//超えた先の角度を基に、フェンスの半径位置より手前に戻す
 		pPlayer->pos.z = cosf(fAngle) * Fenceforward;//超えた先の角度を基に、フェンスの半径位置より手前に戻す
 		PrintDebugProc("フェンスの設置半径：%f  フェンスの手前：%f\n", FENCE_RADIUS, Fenceforward);
+	}
+}
+
+//========================
+//木の当たり判定処理
+//========================
+void CollisionObject_Tree(Player *pPlayer)
+{
+	//オブジェクトのポインタを取得
+	Object *pTree = GetObjectInfo();
+
+	for (int nCtObj = 0; nCtObj < MAX_OBJECT; nCtObj++, pTree++)
+	{
+		//対象のオブジェクトが「木」である
+		if (pTree->type == OBJECTTYPE_TREE)
+		{
+			float PosDiffX = powf(pPlayer->pos.x - pTree->pos.x, 2.0f);	//Ⅹ座標の差分を計算
+			float PosDiffZ = powf(pPlayer->pos.z - pTree->pos.z, 2.0f);	//Ｚ座標の差分を計算
+			float fLength = sqrtf(PosDiffX + PosDiffZ);		//木とプレイヤーの直線距離を計算
+
+			//直線距離が、当たり判定の距離をの内側にいる
+			if (fLength <= TREE_RADIUS)
+			{
+				float fAngle = atan2f(pPlayer->pos.x - pTree->pos.x, pPlayer->pos.z - pTree->pos.z);//角度計算
+				pPlayer->pos.x = pTree->pos.x + sinf(fAngle) * TREE_RADIUS;	//プレイヤーのＸ位置修正
+				pPlayer->pos.z = pTree->pos.z + cosf(fAngle) * TREE_RADIUS;	//プレイヤーのＺ位置修正
+				pPlayer->move.x = pPlayer->move.z *= TREE_REFRECT;			//移動量を反転させる
+				break;
+			}
+		}
 	}
 }
 

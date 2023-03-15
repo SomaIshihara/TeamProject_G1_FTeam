@@ -10,6 +10,9 @@
 #include "main.h"
 #include "model.h"
 
+//マクロ
+#define MAX_OBJECT		(128)	//オブジェクト配置最大数
+
 //フェンス用構造体
 typedef struct
 {
@@ -35,5 +38,6 @@ void UpdateObject(void);
 void DrawObject(void);
 
 void SetObject(D3DXVECTOR3 pos, D3DXVECTOR3 rot, OBJECTTYPE type);
+Object *GetObjectInfo(void);
 
 #endif // !_FENCE_H_

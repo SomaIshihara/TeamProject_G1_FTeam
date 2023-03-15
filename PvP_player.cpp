@@ -256,7 +256,8 @@ void UpdatePlayer(void)
 						SetAttackEffect(g_aPlayerPvP[g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer].pos, g_aPlayerPvP[nCntPlayer].nFrameAtkPlayer);
 					}
 
-					CollisionIP(nCntPlayer);
+					CollisionIP(nCntPlayer);	//アイテムとプレイヤーの当たり判定
+					CollisionObject_Tree(&g_aPlayerPvP[nCntPlayer]);	//木のオブジェクトと、プレイヤーの当たり判定
 
 					if (g_aPlayerPvP[nCntPlayer].stat == PLAYERSTAT_HIPDROP)
 					{//ヒップドロップ中なら

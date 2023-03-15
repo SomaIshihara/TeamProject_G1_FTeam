@@ -16,5 +16,6 @@ bool CollisionPP(Player *pATKPlayer, float fWidth, float fHeight, float fDepth);
 bool CollisionHipDropPP(Player *pATKPlayer, float fWidth, float fHeight, float fDepth, float fRadius, float fPower);	//ヒップドロップ時の衝突判定
 bool CollisionFence(Player *pPlayer, float fFenceWidth, float fPlayerHeight, float fFenceDepth, float fenceSize);		//フェンスの衝突処理
 void CollisionFence(Player_HDR *pPlayer);
+void CollisionObject_Tree(Player *pPlayer);
 
 #endif // !_COLLISION_H_

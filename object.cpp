@@ -10,9 +10,6 @@
 #include "camera.h"
 #include "meshfield.h"
 
-//マクロ
-#define MAX_OBJECT		(128)	//オブジェクト配置最大数
-
 //グローバル
 Object g_aObject[MAX_OBJECT];
 
@@ -146,4 +143,13 @@ void SetObject(D3DXVECTOR3 pos, D3DXVECTOR3 rot, OBJECTTYPE type)
 			break;
 		}
 	}
+}
+
+//========================
+//オブジェクト情報を返す処理
+//GetObjectというマクロ関数がデフォルトで実在したため、後ろにInfoをつけました。
+//========================
+Object *GetObjectInfo(void)
+{
+	return &g_aObject[0];
 }

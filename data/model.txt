@@ -19,14 +19,15 @@ TEXTURE_FILENAME = data/TEXTURE/grassland001.png		# [0]地面テクスチャ
 #------------------------------------------------------------------------------
 # モデル数
 #------------------------------------------------------------------------------
-NUM_MODEL = 3
+NUM_MODEL = 4
 
 #------------------------------------------------------------------------------
 # モデルファイル名
 #------------------------------------------------------------------------------
 MODEL_FILENAME = data/MODEL/fence/fence.x				# [0]フェンス
 MODEL_FILENAME = data/MODEL/Flower/flower_01.x			# [1]花（普通）
-MODEL_FILENAME = data/MODEL/Flower/flower_02.x			# [1]花（コスモス）
+MODEL_FILENAME = data/MODEL/Flower/flower_02.x			# [2]花（コスモス）
+MODEL_FILENAME = data/MODEL/Tree/Tree.x					# [3]木
 
 #------------------------------------------------------------------------------
 # カメラ情報
@@ -195,6 +196,15 @@ END_MODELSET
 MODELSET
 	TYPE = 2
 	POS = 40 0 300
+	ROT = 0 0 0
+END_MODELSET
+
+#------------------
+# 木
+#------------------
+MODELSET
+	TYPE = 3
+	POS = -300 0 50
 	ROT = 0 0 0
 END_MODELSET
 
