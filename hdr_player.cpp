@@ -554,6 +554,9 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 0;	//威力ナシ
 		SetRankUI(nHipDropPlayer, HIPDROP_RANK_BAD);	//UI設定
 	}
+
+	//時間経過のバフ（力を倍に）
+	g_aPlayerHDR[nHipDropPlayer].HipDropPower *= HipDropBuff();
 	
 	PlaySoundSE(SOUND_LABEL_SE_HIPSPIN, nHipDropPlayer);//ヒップドロップ音再生
 

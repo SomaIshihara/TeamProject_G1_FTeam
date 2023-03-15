@@ -39,8 +39,8 @@ HRESULT InitSoundSE(HWND hWnd);
 IXAudio2 *g_pXAudio2BGM = NULL;								// XAudio2オブジェクトへのインターフェイス
 IXAudio2MasteringVoice *g_pMasteringVoiceBGM = NULL;			// マスターボイス
 IXAudio2SourceVoice *g_apSourceVoiceBGM[SOUND_LABEL_BGM_MAX] = { {} };	// ソースボイス
-BYTE *g_apDataAudioBGM[SOUND_LABEL_BGM_MAX] = { {} };	// オーディオデータ
-DWORD g_aSizeAudioBGM[SOUND_LABEL_BGM_MAX] = { {} };	// オーディオデータサイズ
+BYTE *g_apDataAudioBGM[SOUND_LABEL_BGM_MAX] = {};	// オーディオデータ
+DWORD g_aSizeAudioBGM[SOUND_LABEL_BGM_MAX] = {};	// オーディオデータサイズ
 
 //SE
 IXAudio2 *g_pXAudio2SE = NULL;								// XAudio2オブジェクトへのインターフェイス
@@ -50,9 +50,9 @@ BYTE *g_apDataAudioSE[SOUND_LABEL_SE_MAX][NUM_DUPLICATION] = { {} };	// オーディ
 DWORD g_aSizeAudioSE[SOUND_LABEL_SE_MAX][NUM_DUPLICATION] = { {} };	// オーディオデータサイズ
 
 //その他
-bool g_bPlay = false;											// 再生するかどうか
+bool g_bPlay = true;											// 再生するかどうか
 
-// サウンドの情報
+// BGMサウンドの情報
 SOUNDINFO g_aSoundInfoBGM[SOUND_LABEL_BGM_MAX] =
 {
 	{ "data/SOUND/BGM/Title.wav",				SOUND_LOOP, 0.5f,true },		// タイトル音
@@ -62,6 +62,7 @@ SOUNDINFO g_aSoundInfoBGM[SOUND_LABEL_BGM_MAX] =
 	{ "data/SOUND/BGM/Result.wav",				SOUND_LOOP, 0.5f,true },		// リザルト音
 };
 
+// SEサウンドの情報
 SOUNDINFO g_aSoundInfoSE[SOUND_LABEL_SE_MAX] =
 {
 	{ "data/SOUND/SE/Warning-fence.wav",		SOUND_ONCE, 0.5f,true },		// フェンス落下注意効果音
