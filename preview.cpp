@@ -200,6 +200,7 @@ void DrawPreview(void)
 {
 	//デバイス取得
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+	Player_HDR *pPlayer = GetPlayer_HDR();
 
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffPreview, 0, sizeof(VERTEX_2D));
@@ -214,11 +215,14 @@ void DrawPreview(void)
 
 	for (int nCntPreview = 0; nCntPreview < ALL_PREBIEW; nCntPreview++)
 	{
-		//テクスチャの設定
-		pDevice->SetTexture(0, g_pTexturePreview[nCntPreview % EVENPARITY]);
+		if ((pPlayer + (nCntPreview / PREVIEW_UI_MAX))->bGoal == false)
+		{
+			//テクスチャの設定
+			pDevice->SetTexture(0, g_pTexturePreview[nCntPreview % EVENPARITY]);
 
-		//ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPreview * VTX_MAX, 2);
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntPreview * VTX_MAX, 2);
+		}
 	}
 
 	//アルファテストを無効にする

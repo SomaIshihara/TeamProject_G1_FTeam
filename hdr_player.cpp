@@ -190,7 +190,7 @@ void DrawPlayer_HDR(void)
 	D3DMATERIAL9 matDef;			//現在のマテリアル保存用
 	D3DXMATERIAL *pMat;				//マテリアルデータへのポインタ
 
-									//現在のマテリアル取得
+	//現在のマテリアル取得
 	pDevice->GetMaterial(&matDef);
 
 	//プレイヤーの数だけ繰り返す
