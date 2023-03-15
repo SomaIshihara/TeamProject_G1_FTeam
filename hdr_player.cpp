@@ -85,6 +85,7 @@ void InitPlayer_HDR(void)
 		g_aPlayerHDR[nCntPlayer].bGoal = false;
 		g_aPlayerHDR[nCntPlayer].fBodySize = PLAYER_BODY_SIZE;
 		g_aPlayerHDR[nCntPlayer].HipDropPower = 0;
+		g_aPlayerHDR[nCntPlayer].nDestroyCounter = 0;
 
 		g_aPlayerHDR[nCntPlayer].animal = ANIMAL_WILDBOAR;
 

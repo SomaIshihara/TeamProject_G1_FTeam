@@ -226,7 +226,7 @@ void SetBlock(void)
 }
 
 //========================
-//アイテムとプレイヤーの当たり判定処理
+//ブロックとプレイヤーの当たり判定処理
 //========================
 void CollisionBlock(Player_HDR *pPlayer)
 {
@@ -261,11 +261,13 @@ void CollisionBlock(Player_HDR *pPlayer)
 						pBlock->buse = false;					//対象のブロックを使用しない
 						pPlayer->HipDropPower -= pBlock->nLife;	//使用した分のダメージを減らす
 						PlaySoundSE(SOUND_LABEL_SE_HIPDROP, nCntBlock);	//ヒップドロップ音再生
+						DestroyBlockSound(pPlayer->nDestroyCounter++, nCntBlock);	//破壊した数別サウンド再生（そして同時に加算
 					}
 					else
 					{
 						g_Block[nCntBlock].nLife -= pPlayer->HipDropPower;
 						pPlayer->HipDropPower = 0;
+						pPlayer->nDestroyCounter = 0;
 						pPlayer->move.y = 0;
 						pPlayer->bHipDrop = false;
 						pPlayer->nAICT = c_aAIParamHDR[pPlayer->aiDiff].nAICT;
@@ -328,5 +330,24 @@ void CollisionBlock(Player_HDR *pPlayer)
 				}
 			}
 		}
+	}
+}
+
+//========================
+//ブロックの破壊個数によるサウンド処理
+//========================
+void DestroyBlockSound(int nDestroyCounter, int nCntBlock)
+{
+	//破壊した数によるサウンド再生判定
+	switch (nDestroyCounter)
+	{
+	case 0:	PlaySoundSE(SOUND_LABEL_SE_DESTROY_BLOCK_00, nCntBlock); break;	//破壊した数１個
+	case 1:	PlaySoundSE(SOUND_LABEL_SE_DESTROY_BLOCK_01, nCntBlock); break;	//破壊した数２個
+	case 2:	PlaySoundSE(SOUND_LABEL_SE_DESTROY_BLOCK_02, nCntBlock); break;	//破壊した数３個
+	case 3:	PlaySoundSE(SOUND_LABEL_SE_DESTROY_BLOCK_03, nCntBlock); break;	//破壊した数４個
+	case 4:	PlaySoundSE(SOUND_LABEL_SE_DESTROY_BLOCK_04, nCntBlock); break;	//破壊した数５個
+	case 5:	PlaySoundSE(SOUND_LABEL_SE_DESTROY_BLOCK_05, nCntBlock); break;	//破壊した数６個
+	case 6:	PlaySoundSE(SOUND_LABEL_SE_DESTROY_BLOCK_06, nCntBlock); break;	//破壊した数７個
+	default:PlaySoundSE(SOUND_LABEL_SE_DESTROY_BLOCK_07, nCntBlock); break;	//破壊した数８個以上
 	}
 }

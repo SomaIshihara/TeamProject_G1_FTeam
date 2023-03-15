@@ -81,6 +81,14 @@ SOUNDINFO g_aSoundInfoSE[SOUND_LABEL_SE_MAX] =
 	{ "data/SOUND/SE/HipDropRank02_Good.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「GOOD!」の効果音
 	{ "data/SOUND/SE/HipDropRank03_Great.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「☆GREAT☆」の効果音
 	{ "data/SOUND/SE/HipDropRank04_PERFECT.wav", SOUND_ONCE, 0.4f, true },	// ヒップドロップランク「★PERFECT★」の効果音
+	{ "data/SOUND/SE/piano_00_ド.wav",			 SOUND_ONCE, 0.4f, true },	// 破壊したブロックの数１個目の効果音
+	{ "data/SOUND/SE/piano_01_レ.wav",			 SOUND_ONCE, 0.4f, true },	// 破壊したブロックの数２個目の効果音
+	{ "data/SOUND/SE/piano_02_ミ.wav",			 SOUND_ONCE, 0.4f, true },	// 破壊したブロックの数３個目の効果音
+	{ "data/SOUND/SE/piano_03_ファ.wav",		 SOUND_ONCE, 0.5f, true },	// 破壊したブロックの数４個目の効果音
+	{ "data/SOUND/SE/piano_04_ソ.wav",			 SOUND_ONCE, 0.5f, true },	// 破壊したブロックの数５個目の効果音
+	{ "data/SOUND/SE/piano_05_ラ.wav",			 SOUND_ONCE, 0.5f, true },	// 破壊したブロックの数６個目の効果音
+	{ "data/SOUND/SE/piano_06_シ.wav",			 SOUND_ONCE, 0.6f, true },	// 破壊したブロックの数７個目の効果音
+	{ "data/SOUND/SE/piano_07_ド.wav",			 SOUND_ONCE, 0.7f, true },	// 破壊したブロックの数８個目の効果音
 	{ "data/SOUND/SE/PauseDecision000.wav",		 SOUND_ONCE, 0.6f, true },	// ポーズの決定音
 	{ "data/SOUND/SE/PauseSelection000.wav",	 SOUND_ONCE, 0.6f, true },	// ポーズの選択音
 	{ "data/SOUND/SE/PauseTransition000.wav",	 SOUND_ONCE, 0.6f, true },	// ポーズの遷移音

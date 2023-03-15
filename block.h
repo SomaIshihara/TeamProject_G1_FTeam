@@ -38,5 +38,6 @@ void UpdateBlock(void);
 void DrawBlock(void);
 void SetBlock(void);
 void CollisionBlock(Player_HDR *pPlayer);//ƒuƒƒbƒN‚Ì“–‚½‚è”»’è
+void DestroyBlockSound(int nDestroyCounter, int nCntBlock);
 
 #endif

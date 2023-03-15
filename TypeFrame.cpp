@@ -46,16 +46,16 @@ bool CheckMinPlayer(void);
 PLAYERTYPE g_playerType[MAX_USE_GAMEPAD];
 
 LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffTypeFrame;					//タイプ枠の頂点バッファポインタ
-LPDIRECT3DTEXTURE9 g_pTextureTypeFrame[TYPEFRAME_USE_TEXTURE];		//タイプ枠のテクスチャポインタ
+LPDIRECT3DTEXTURE9 g_pTextureTypeFrame[TYPEFRAME_USE_TEXTURE];	//タイプ枠のテクスチャポインタ
 
 LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffTypeStr;						//タイプ文字の頂点バッファポインタ
-LPDIRECT3DTEXTURE9 g_pTextureTypeStr[TYPESTR_USE_TEXTURE];			//タイプ文字のテクスチャポインタ
+LPDIRECT3DTEXTURE9 g_pTextureTypeStr[TYPESTR_USE_TEXTURE];		//タイプ文字のテクスチャポインタ
 
-LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffAIFrame;					//タイプ枠の頂点バッファポインタ
-LPDIRECT3DTEXTURE9 g_pTextureAIFrame[AIFRAME_USE_TEXTURE];		//タイプ枠のテクスチャポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffAIFrame;						//AI枠の頂点バッファポインタ
+LPDIRECT3DTEXTURE9 g_pTextureAIFrame[AIFRAME_USE_TEXTURE];		//AI枠のテクスチャポインタ
 
-LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffAIStr;						//タイプ文字の頂点バッファポインタ
-LPDIRECT3DTEXTURE9 g_pTextureAIStr[AISTR_USE_TEXTURE];			//タイプ文字のテクスチャポインタ
+LPDIRECT3DVERTEXBUFFER9 g_pVtxbuffAIStr;						//AI文字の頂点バッファポインタ
+LPDIRECT3DTEXTURE9 g_pTextureAIStr[AISTR_USE_TEXTURE];			//AI文字のテクスチャポインタ
 int g_nSelectNum = 0;
 
 AIDIFF g_SelAIDiff = AIDIFF_NORMAL;
@@ -176,7 +176,7 @@ void InitTypeFrame(void)
 
 	//AI枠
 	//テクスチャ読み込み
-	for (int nCntAIFrame = 0; nCntAIFrame < TYPEFRAME_USE_TEXTURE; nCntAIFrame++)
+	for (int nCntAIFrame = 0; nCntAIFrame < AIFRAME_USE_TEXTURE; nCntAIFrame++)
 	{
 		D3DXCreateTextureFromFile(pDevice,
 			c_apFilePathAIFrame[nCntAIFrame],
@@ -193,7 +193,7 @@ void InitTypeFrame(void)
 
 	//AI文字
 	//テクスチャ読み込み
-	for (int nCntAIStr = 0; nCntAIStr < TYPESTR_USE_TEXTURE; nCntAIStr++)
+	for (int nCntAIStr = 0; nCntAIStr < AISTR_USE_TEXTURE; nCntAIStr++)
 	{
 		D3DXCreateTextureFromFile(pDevice,
 			c_apFilePathAIStr[nCntAIStr],
@@ -476,7 +476,7 @@ void UninitTypeFrame(void)
 
 	//AI枠
 	//テクスチャの破棄
-	for (int nCntAIFrame = 0; nCntAIFrame < TYPEFRAME_USE_TEXTURE; nCntAIFrame++)
+	for (int nCntAIFrame = 0; nCntAIFrame < AIFRAME_USE_TEXTURE; nCntAIFrame++)
 	{
 		if (g_pTextureAIFrame[nCntAIFrame] != NULL)
 		{
@@ -495,7 +495,7 @@ void UninitTypeFrame(void)
 
 	//AI文字
 	//テクスチャの破棄
-	for (int nCntAIStr = 0; nCntAIStr < TYPEFRAME_USE_TEXTURE; nCntAIStr++)
+	for (int nCntAIStr = 0; nCntAIStr < AISTR_USE_TEXTURE; nCntAIStr++)
 	{
 		if (g_pTextureAIStr[nCntAIStr] != NULL)
 		{

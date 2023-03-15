@@ -44,6 +44,7 @@ struct Player_HDR
 	bool bGoal;				//ゴールしたか
 	int nRank;				//順位
 	float fBodySize;		//体の大きさ（当たり判定に使う
+	int nDestroyCounter;	//ブロック破壊個数
 
 	//パラメータ類
 	ANIMAL animal;			//使用している動物
