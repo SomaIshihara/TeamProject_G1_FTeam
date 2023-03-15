@@ -525,6 +525,7 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 	{
 		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_PERFECT;	//最大パワー代入
 		SetRankUI(nHipDropPlayer, HIPDROP_RANK_PERFECT);					//UI設定
+		PlaySoundSE(SOUND_LABEL_SE_HIPRANK_04_PERFECT, nHipDropPlayer);		//ヒップドロップランクのサウンド再生
 	}
 
 	//ヒップドロップ量準最大
@@ -532,6 +533,7 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 	{
 		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_GREAT;	//準最大パワー代入
 		SetRankUI(nHipDropPlayer, HIPDROP_RANK_GREAT);						//UI設定
+		PlaySoundSE(SOUND_LABEL_SE_HIPRANK_03_GREAT, nHipDropPlayer);		//ヒップドロップランクのサウンド再生
 	}
 
 	//ヒップドロップ量弱め
@@ -539,6 +541,7 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 	{
 		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_GOOD;	//弱めのパワー代入
 		SetRankUI(nHipDropPlayer, HIPDROP_RANK_GOOD);					//UI設定
+		PlaySoundSE(SOUND_LABEL_SE_HIPRANK_02_GOOD, nHipDropPlayer);	//ヒップドロップランクのサウンド再生
 	}
 
 	//ヒップドロップ量かなり弱め
@@ -546,6 +549,7 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 	{
 		g_aPlayerHDR[nHipDropPlayer].HipDropPower = HIPDROP_POWER_NICE;	//最弱パワー代入
 		SetRankUI(nHipDropPlayer, HIPDROP_RANK_NICE);					//UI設定
+		PlaySoundSE(SOUND_LABEL_SE_HIPRANK_01_NICE, nHipDropPlayer);		//ヒップドロップランクのサウンド再生
 	}
 
 	//ヒップドロップ量ナシ
@@ -553,6 +557,7 @@ void HipDropPlayer_HDR(int nHipDropPlayer)
 	{
 		g_aPlayerHDR[nHipDropPlayer].HipDropPower = 0;	//威力ナシ
 		SetRankUI(nHipDropPlayer, HIPDROP_RANK_BAD);	//UI設定
+		PlaySoundSE(SOUND_LABEL_SE_HIPRANK_00_BAD, nHipDropPlayer);		//ヒップドロップランクのサウンド再生
 	}
 
 	//時間経過のバフ（力を倍に）

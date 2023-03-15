@@ -65,26 +65,26 @@ SOUNDINFO g_aSoundInfoBGM[SOUND_LABEL_BGM_MAX] =
 // SEサウンドの情報
 SOUNDINFO g_aSoundInfoSE[SOUND_LABEL_SE_MAX] =
 {
-	{ "data/SOUND/SE/Warning-fence.wav",		 SOUND_ONCE, 0.5f, true },		// フェンス落下注意効果音
-	{ "data/SOUND/SE/PvP_Game_CountDown.wav",	 SOUND_ONCE, 0.5f, true },		// カウントダウン効果音
-	{ "data/SOUND/SE/Uribou.wav",				 SOUND_ONCE, 0.5f, true },		// コントローラー接続SE
-	{ "data/SOUND/SE/Title_Decide.wav",			 SOUND_ONCE, 0.6f, true },		// タイトルの決定SE
-	{ "data/SOUND/SE/Collision.wav",			 SOUND_ONCE, 0.6f, true },		// プレイヤー同士の衝突音SE
-	{ "data/SOUND/SE/Energy.wav",				 SOUND_ONCE, 0.6f, true },		// プレイヤー1のゲージ充填音
-	{ "data/SOUND/SE/Drop000.wav",				 SOUND_ONCE, 0.6f, true },		// プレイヤーの落下音
-	{ "data/SOUND/SE/GrassDash000.wav",			 SOUND_ONCE, 0.6f, true },		// プレイヤーのダッシュ音
-	{ "data/SOUND/SE/HipdropSpin_001.wav",		 SOUND_ONCE, 0.6f, true },		// プレイヤーのヒップドロップスピン音
-	{ "data/SOUND/SE/HipDrop_Attack_002.wav",	 SOUND_ONCE, 0.6f, true },		// プレイヤーのヒップドロップ音
-	{ "data/SOUND/SE/Jamp001.wav",				 SOUND_ONCE, 0.4f, true },		// プレイヤーのジャンプ音
-	{ "data/SOUND/SE/HipDropRank00_Bad.wav",	 SOUND_ONCE, 0.5f, true },		// ヒップドロップランク「Bad...」の効果音
-	{ "data/SOUND/SE/HipDropRank00_Nice.wav",	 SOUND_ONCE, 0.5f, true },		// ヒップドロップランク「NICE」の効果音
-	{ "data/SOUND/SE/HipDropRank00_Good.wav",	 SOUND_ONCE, 0.5f, true },		// ヒップドロップランク「GOOD!」の効果音
-	{ "data/SOUND/SE/HipDropRank00_Great.wav",	 SOUND_ONCE, 0.5f, true },		// ヒップドロップランク「☆GREAT☆」の効果音
-	{ "data/SOUND/SE/HipDropRank00_PERFECT.wav", SOUND_ONCE, 0.5f, true },		// ヒップドロップランク「★PERFECT★」の効果音
-	{ "data/SOUND/SE/PauseDecision000.wav",		 SOUND_ONCE, 0.6f, true },		// ポーズの決定音
-	{ "data/SOUND/SE/PauseSelection000.wav",	 SOUND_ONCE, 0.6f, true },		// ポーズの選択音
-	{ "data/SOUND/SE/PauseTransition000.wav",	 SOUND_ONCE, 0.6f, true },		// ポーズの遷移音
-	{ "data/SOUND/SE/Roar000.wav",				 SOUND_ONCE, 0.6f, true },		// ポーズの咆哮音
+	{ "data/SOUND/SE/Warning-fence.wav",		 SOUND_ONCE, 0.5f, true },	// フェンス落下注意効果音
+	{ "data/SOUND/SE/PvP_Game_CountDown.wav",	 SOUND_ONCE, 0.5f, true },	// カウントダウン効果音
+	{ "data/SOUND/SE/Uribou.wav",				 SOUND_ONCE, 0.5f, true },	// コントローラー接続SE
+	{ "data/SOUND/SE/Title_Decide.wav",			 SOUND_ONCE, 0.6f, true },	// タイトルの決定SE
+	{ "data/SOUND/SE/Collision.wav",			 SOUND_ONCE, 0.6f, true },	// プレイヤー同士の衝突音SE
+	{ "data/SOUND/SE/Energy.wav",				 SOUND_ONCE, 0.6f, true },	// プレイヤー1のゲージ充填音
+	{ "data/SOUND/SE/Drop000.wav",				 SOUND_ONCE, 0.6f, true },	// プレイヤーの落下音
+	{ "data/SOUND/SE/GrassDash000.wav",			 SOUND_ONCE, 0.6f, true },	// プレイヤーのダッシュ音
+	{ "data/SOUND/SE/HipdropSpin_001.wav",		 SOUND_ONCE, 0.6f, true },	// プレイヤーのヒップドロップスピン音
+	{ "data/SOUND/SE/HipDrop_Attack_002.wav",	 SOUND_ONCE, 0.6f, true },	// プレイヤーのヒップドロップ音
+	{ "data/SOUND/SE/Jamp001.wav",				 SOUND_ONCE, 0.4f, true },	// プレイヤーのジャンプ音
+	{ "data/SOUND/SE/HipDropRank00_Bad.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「Bad...」の効果音
+	{ "data/SOUND/SE/HipDropRank01_Nice.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「NICE」の効果音
+	{ "data/SOUND/SE/HipDropRank02_Good.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「GOOD!」の効果音
+	{ "data/SOUND/SE/HipDropRank03_Great.wav",	 SOUND_ONCE, 0.5f, true },	// ヒップドロップランク「☆GREAT☆」の効果音
+	{ "data/SOUND/SE/HipDropRank04_PERFECT.wav", SOUND_ONCE, 0.4f, true },	// ヒップドロップランク「★PERFECT★」の効果音
+	{ "data/SOUND/SE/PauseDecision000.wav",		 SOUND_ONCE, 0.6f, true },	// ポーズの決定音
+	{ "data/SOUND/SE/PauseSelection000.wav",	 SOUND_ONCE, 0.6f, true },	// ポーズの選択音
+	{ "data/SOUND/SE/PauseTransition000.wav",	 SOUND_ONCE, 0.6f, true },	// ポーズの遷移音
+	{ "data/SOUND/SE/Roar000.wav",				 SOUND_ONCE, 0.6f, true },	// ポーズの咆哮音
 };
 
 //=============================================================================
