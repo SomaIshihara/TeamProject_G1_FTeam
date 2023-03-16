@@ -69,17 +69,16 @@ void InitBlock(void)
 	}
 
 	//初期設定
-	//初期化
-	for (int nCntBlockType = 0; nCntBlockType < BLOCKTYPE_MAX; nCntBlockType++)
-	{
-		g_aUseBlockNum[nCntBlockType] = c_aBlockNum[nCntBlockType];
-	}
-
 	//ブロック情報設定
 	for (int nCntPlayer = 0; nCntPlayer < MAX_PLAYER; nCntPlayer++)
 	{
 		int nSetCount = 0;			//配置した数
 		float PlayerPos_X = GetPlayer_HDR()[nCntPlayer].pos.x;	//プレイヤーのⅩ座標を格納
+		//初期化
+		for (int nCntBlockType = 0; nCntBlockType < BLOCKTYPE_MAX; nCntBlockType++)
+		{
+			g_aUseBlockNum[nCntBlockType] = c_aBlockNum[nCntBlockType];
+		}
 
 		for (int nCntBlock = MAX_BLOCK * nCntPlayer; nCntBlock < MAX_BLOCK * MAX_PLAYER; nCntBlock++)
 		{
