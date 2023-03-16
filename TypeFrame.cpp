@@ -127,6 +127,7 @@ void InitTypeFrame(void)
 		g_playerType[nCntType] = PLAYERTYPE_PLAYER;
 	}
 	g_SelAIDiff = AIDIFF_NORMAL;
+	g_nSelectNum = 0;
 
 	//コントローラーがつながっていなければAIにする
 	for (int nCntAI = 1; nCntAI < MAX_USE_GAMEPAD; nCntAI++)

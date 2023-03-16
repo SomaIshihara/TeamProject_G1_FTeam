@@ -5,6 +5,7 @@ Author:平澤詩苑
 
 ============================================================================================================================================================*/
 #include "main.h"
+#include "curtain.h"
 #include "pvp_game.h"
 #include "input.h"
 #include "file.h"
@@ -91,18 +92,16 @@ void InitPvPGame(void)
 	InitTime();					// タイマーの初期化処理
 	InitGauge();				// ゲージの初期化処理
 	InitGaugeFrame();			// ゲージ枠の初期化処理
-
-
 	SetTime(LIMIT_TIMER);		// タイマーの設定処理
-
 	SetScore(0,4);				// スコアの設定処理
+	InitSelModePvPCurtain();	// カーテンの初期化処理
 
 	g_bPause_PvP = false;				// ポーズの初期化
 	g_bDisconnectPlayer_PvP = false;	// 正常にコントローラーが接続されている状態とする
 	g_bPhotoMode_PvP = false;			// フォトモード初期化
 	g_bDroppedFence = false;			// 効果音系初期化
 	g_bCountDowned = false;
-	
+
 	//ゲームBGM開始
 	PlaySoundBGM(SOUND_LABEL_BGM_GAME_PVP);
 }
@@ -144,6 +143,7 @@ void UninitPvPGame(void)
 	UninitScore();			// スコアの終了処理
 	UninitCameraFrame();	// 画面分割の枠終了処理
 	UninitTime();			// タイマーの終了処理（ここは順番は問わない）
+	UninitCurtain();		// カーテンの終了処理
 
 	//ゲームBGM停止
 	StopSoundBGM(SOUND_LABEL_BGM_GAME_PVP);
@@ -282,29 +282,40 @@ void DrawPvPGame(void)
 		//ゲーム内オブジェクトの描画処理
 		SetCamera(nCntCamera);		// カメラの設定処理
 
-		DrawMeshfield();			// ステージの描画処理
-		DrawMeshDome();				// メッシュドームの描画処理	
-		DrawMeshFault();			// メッシュの断面描画処理
-		DrawFence();				// フェンスの描画処理
-		DrawObject();				// オブジェクト描画処理
-		{// エフェクトの描画処理
-			DrawChargeEffect();		//チャージエフェクト
-			DrawChargeCylinder();	//チャージエフェクト(しりんだー)
-			DrawAttackEffect();		//攻撃エフェクト
-			DrawTremorEffect();		//ヒップドロップエフェクト
-			DrawEff_shockWave_00();	//ダッシュ衝撃波エフェクト
-		}	
-		DrawParticle();				// パーティクルの描画処理
-		DrawPlayer();				// プレイヤーの描画処理
-		DrawBonus();				// ボーナスの描画処理
-		DrawItem();					// アイテムの描画処理
-		DrawGaugeFrame();			// ゲージ枠の描画処理（ゲージより前に行うこと）
-		DrawGauge();				// ゲージの描画処理
-		DrawScore();				// スコアの描画処理
-		DrawCameraFrame();			// 画面分割の枠描画処理
-		DrawTime();					//タイマーの描画処理
+		//対象のプレイヤーが使われていたら表示
+		if (GetPlayer()[nCntCamera].bUsePlayer)
+		{
+			DrawMeshfield();			// ステージの描画処理
+			DrawMeshDome();				// メッシュドームの描画処理	
+			DrawMeshFault();			// メッシュの断面描画処理
+			DrawFence();				// フェンスの描画処理
+			DrawObject();				// オブジェクト描画処理
+			{// エフェクトの描画処理
+				DrawChargeEffect();		//チャージエフェクト
+				DrawChargeCylinder();	//チャージエフェクト(しりんだー)
+				DrawAttackEffect();		//攻撃エフェクト
+				DrawTremorEffect();		//ヒップドロップエフェクト
+				DrawEff_shockWave_00();	//ダッシュ衝撃波エフェクト
+			}
+			DrawParticle();				// パーティクルの描画処理
+			DrawPlayer();				// プレイヤーの描画処理
+			DrawBonus();				// ボーナスの描画処理
+			DrawItem();					// アイテムの描画処理
+			DrawGaugeFrame();			// ゲージ枠の描画処理（ゲージより前に行うこと）
+			DrawGauge();				// ゲージの描画処理
+			DrawScore();				// スコアの描画処理
+			DrawCameraFrame();			// 画面分割の枠描画処理
+		}
+		else
+		{
+			//幕を描画
+			DrawCurtain(nCntCamera);
+		}
 
-									//ポーズがON
+		//タイマーの描画処理
+		DrawTime();
+
+		//ポーズがON
 		if (g_bPause_PvP == true && g_bPhotoMode_PvP == false)
 		{
 			DrawPause();		//ポーズ画面描画処理

@@ -17,6 +17,7 @@
 #define CHARGE_DOWN				(0.8f)	//チャージゲージ減少量
 #define VIBE_TIME				(20)	//バイブレーション時間
 #define TREE_RADIUS				(50.0f)	//木の当たり判定（プレイヤーのサイズも考慮
+#define TREE_HEIGHT				(70.0f)	//木の高さ判定（葉っぱは考慮していない
 #define TREE_REFRECT			(-0.5f)	//木の反射係数
 
 //当たり判定範囲構造体
@@ -445,8 +446,8 @@ void CollisionObject_Tree(Player *pPlayer)
 
 	for (int nCtObj = 0; nCtObj < MAX_OBJECT; nCtObj++, pTree++)
 	{
-		//対象のオブジェクトが「木」である
-		if (pTree->type == OBJECTTYPE_TREE)
+		//対象のオブジェクトが「木」であり、木の高さ内に居る
+		if (pTree->type == OBJECTTYPE_TREE && pPlayer->pos.y <= TREE_HEIGHT)
 		{
 			float PosDiffX = powf(pPlayer->pos.x - pTree->pos.x, 2.0f);	//Ⅹ座標の差分を計算
 			float PosDiffZ = powf(pPlayer->pos.z - pTree->pos.z, 2.0f);	//Ｚ座標の差分を計算
@@ -458,7 +459,7 @@ void CollisionObject_Tree(Player *pPlayer)
 				float fAngle = atan2f(pPlayer->pos.x - pTree->pos.x, pPlayer->pos.z - pTree->pos.z);//角度計算
 				pPlayer->pos.x = pTree->pos.x + sinf(fAngle) * TREE_RADIUS;	//プレイヤーのＸ位置修正
 				pPlayer->pos.z = pTree->pos.z + cosf(fAngle) * TREE_RADIUS;	//プレイヤーのＺ位置修正
-				pPlayer->move.x = pPlayer->move.z *= TREE_REFRECT;			//移動量を反転させる
+				pPlayer->move.x = pPlayer->move.z *= TREE_REFRECT;			//移動量を反転させる			
 				break;
 			}
 		}

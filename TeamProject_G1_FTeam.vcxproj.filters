@@ -291,6 +291,9 @@
     <ClCompile Include="PvP_player.cpp">
       <Filter>ソース ファイル\Game\Game_PvP</Filter>
     </ClCompile>
+    <ClCompile Include="curtain.cpp">
+      <Filter>ソース ファイル\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="color.h">
@@ -466,6 +469,9 @@
     </ClInclude>
     <ClInclude Include="object.h">
       <Filter>ヘッダー ファイル\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="curtain.h">
+      <Filter>ヘッダー ファイル\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

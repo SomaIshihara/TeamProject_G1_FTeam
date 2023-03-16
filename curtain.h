@@ -1,19 +1,17 @@
 /*==========================================================================================================================================================
 
-チュートリアル処理[tutorial.h]
+カメラが使われていなかったときのカーテン処理[curtain.h]
 Author:平澤詩苑
 
 ============================================================================================================================================================*/
-#ifndef _TUTORIAL_H_
-#define _TUTORIAL_H_
+#ifndef _CURTAIN_H_
+#define _CURTAIN_H_
 
 //プロトタイプ宣言
-void InitTutorial(void);
-void UninitTutorial(void);
-void UpdateTutorial(void);
-void DrawTutorial(void);
-
-void TurnPageTutorial(void);
-void SetVertexInfoTut(int nCntTut);
+void InitSelModePvPCurtain(void);	//ゲームモードがPVPの場合のカーテンの設定処理
+void InitSelModeHDRCurtain(void);	//ゲームモードがHDRの場合のカーテンの設定処理
+void UninitCurtain(void);
+void UpdateCurtain(void);
+void DrawCurtain(int nCntCurtain);
 
 #endif

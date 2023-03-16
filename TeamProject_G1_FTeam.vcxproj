@@ -170,6 +170,7 @@
     <ClCompile Include="color.cpp" />
     <ClCompile Include="comai.cpp" />
     <ClCompile Include="conversioninput.cpp" />
+    <ClCompile Include="curtain.cpp" />
     <ClCompile Include="debucproc.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="eff_shock-wave_00.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="comai.h" />
     <ClInclude Include="conversioninput.h" />
+    <ClInclude Include="curtain.h" />
     <ClInclude Include="debugproc.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="eff_shock-wave_00.h" />

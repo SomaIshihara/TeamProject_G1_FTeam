@@ -7,6 +7,7 @@ Author:平澤詩苑
 #include "main.h"
 #include "HDRgame.h"
 #include "input.h"
+#include "curtain.h"
 #include "file.h"
 #include "color.h"
 #include "fade.h"
@@ -76,6 +77,7 @@ void InitHDRGame(void)
 	InitRank();						// ランキングの初期化処理
 	InitPreview();					// プレビューの初期化処理
 	InitHipDropRankUI();			// ヒップドロップランクUI初期化処理
+	InitSelModeHDRCurtain();		// カーテンの初期化処理
 
 	g_HDRInfo.nCounterHDR = 0;
 	g_HDRInfo.fHipDropBuff = HIPDROP_BUFF_START;
@@ -109,8 +111,8 @@ void UninitHDRGame(void)
 	UninitRank();			// ランキングの終了処理
 	UninitPreview();		// プレビューの終了処理
 	UninitHipDropRankUI();	// ヒップドロップランクUI終了処理
-
 	UninitCameraFrame();	// 画面分割の枠終了処理
+	UninitCurtain();		// カーテンの終了処理
 
 	//ゲームBGM停止
 	StopSoundBGM(SOUND_LABEL_BGM_GAME_HDR);
@@ -222,16 +224,26 @@ void DrawHDRGame(void)
 	{
 		//ゲーム内オブジェクトの描画処理
 		SetHDRCamera(nCntCamera);	// カメラの設定処理
-		DrawCameraFrame();			// 画面分割の枠描画処理
-		DrawBlock();				// ブロックの描画処理
-		DrawPlayer_HDR();			// プレイヤーの描画処理
-		DrawMeshfield();			// フィールドの描画処理
-		DrawMeshCylinder();			// 背景の描画処理
-		DrawMeshDome();				// ドームの描画処理
-		DrawFence();				// フェンスの描画処理
-		DrawRank();					// ランキングの描画処理
-		DrawPreview();				// プレビューの描画処理
-		DrawHipDropRankUI();		// ヒップドロップランクUI描画処理
+
+		//プレイヤーまたはAIが使用されていれば、表示する
+		if (GetPlayer_HDR()[nCntCamera].bUsePlayer || GetPlayer_HDR()[nCntCamera].bUseAI)
+		{
+			DrawCameraFrame();			// 画面分割の枠描画処理
+			DrawBlock();				// ブロックの描画処理
+			DrawPlayer_HDR();			// プレイヤーの描画処理
+			DrawMeshfield();			// フィールドの描画処理
+			DrawMeshCylinder();			// 背景の描画処理
+			DrawMeshDome();				// ドームの描画処理
+			DrawFence();				// フェンスの描画処理
+			DrawRank();					// ランキングの描画処理
+			DrawPreview();				// プレビューの描画処理
+			DrawHipDropRankUI();		// ヒップドロップランクUI描画処理
+		}
+		//使われてなかったら、カーテンを描画する
+		else
+		{
+			DrawCurtain(nCntCamera);
+		}
 
 		//ポーズがON
 		if (g_bPause_HDR == true && g_bPhotoMode_HDR == false)

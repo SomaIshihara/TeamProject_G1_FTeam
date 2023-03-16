@@ -22,17 +22,6 @@
 #define CHARGE_HEIGHT_EXTEND				(2.0f)						// 高さが伸び縮みするスピード
 #define CHARGE_TEX_PASS				"data/TEXTURE/ChargeCylinder.png"	// チャージシリンダーのテクスチャパス
 
-//チャージシリンダー情報の構造体
-typedef struct
-{
-	D3DXVECTOR3		pos;		// 位置
-	D3DXVECTOR3		rot;		// 向き
-	float			fRadius;	// 半径の大きさ
-	float			fHeight;	// 高さ
-	bool			bExtend;	// 高さの伸び縮み判定		true:伸びる		false:縮む
-	bool			bUse;		// 使われているかどうか
-}ChargeCylinder;
-
 //グローバル変数
 LPDIRECT3DTEXTURE9		g_pTextureChargeCylinder = NULL;
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffChargeCylinder = NULL;
@@ -63,9 +52,8 @@ void InitChargeCylinder(void)
 		g_ChargeCylinder[nCntCylinder].pos = ZERO_SET;
 		g_ChargeCylinder[nCntCylinder].rot = ZERO_SET;
 		g_ChargeCylinder[nCntCylinder].fRadius = 0.0f;
-		g_ChargeCylinder[nCntCylinder].fHeight = 0.0f;
+		g_ChargeCylinder[nCntCylinder].nPlayerNo = 0;
 		g_ChargeCylinder[nCntCylinder].bUse = false;
-		g_ChargeCylinder[nCntCylinder].bExtend = true;
 
 		//頂点情報の設定処理
 		SetChargeCylinderVertex(nCntCylinder);
@@ -86,24 +74,25 @@ void SetChargeCylinderVertex(int nCntCylinder)
 	//ポインターをずらす
 	pVtx += CHARGECYLINDER_ALL_VTX * nCntCylinder;
 
-	float Rot = D3DX_PI;	//Y軸の角度	
-	float LapSepRot = ONE_LAP / CHARGECYLINDER_SPLIT;	//１周の分割割合を求める
-	float gauge = GetPlayer()[nCntCylinder].moveGauge;		//プレイヤーのゲージ量を格納
+	ChargeCylinder *pCylinder = &g_ChargeCylinder[nCntCylinder];
+	float Rot = D3DX_PI;	//Y軸の角度
+	float LapSepRot = ONE_LAP / CHARGECYLINDER_SPLIT;		//１周の分割割合を求める
+	float fGauge = GetPlayer()[pCylinder->nPlayerNo].moveGauge;		//プレイヤーのゲージ量を格納
 	float TexSep_U = CHARGECYLINDER_TEX_RESOLUTION / CHARGECYLINDER_SPLIT;//テクスチャの横の分割の割合を求める
-	D3DXCOLOR col = D3DXCOLOR(1.0f * gauge, 1.0f - gauge * 0.3f, 1.0f - gauge, 1.0f);//プレイヤーのゲージ量に応じたグラデーション
+	D3DXCOLOR col = D3DXCOLOR(1.0f * fGauge, 1.0f - fGauge * 0.3f, 1.0f - fGauge, 1.0f);//プレイヤーのゲージ量に応じたグラデーション
 
 	//頂点座標の設定
 	for (int nCntVtx = 0; nCntVtx <= CHARGECYLINDER_SPLIT; nCntVtx++)
 	{
-		float	VtxPos_X = sinf(Rot) * g_ChargeCylinder[nCntCylinder].fRadius,	//Ｘ座標
-				VtxPos_Z = cosf(Rot) * g_ChargeCylinder[nCntCylinder].fRadius;	//Ｚ座標
-		int		nNumTopVtx = CHARGECYLINDER_SPLIT + nCntVtx + 1;		//対象の頂点の上部の頂点番号
+		float	VtxPos_X = sinf(Rot) * pCylinder->fRadius,	//Ｘ座標
+				VtxPos_Z = cosf(Rot) * pCylinder->fRadius;	//Ｚ座標
+		int		nNumTopVtx = CHARGECYLINDER_SPLIT + nCntVtx + 1;	//対象の頂点の上部の頂点番号
 
 		//原点位置と同じ高さの頂点座標を設定
 		pVtx[nCntVtx].pos = D3DXVECTOR3(VtxPos_X, 0.0f, VtxPos_Z);
 
 		//上で設定した頂点座標の真上の頂点座標を設定
-		pVtx[nNumTopVtx].pos = D3DXVECTOR3(VtxPos_X * CHARGE_TOPPART_SPREAD, g_ChargeCylinder[nCntCylinder].fHeight, VtxPos_Z * CHARGE_TOPPART_SPREAD);
+		pVtx[nNumTopVtx].pos = D3DXVECTOR3(VtxPos_X * CHARGE_TOPPART_SPREAD, CHARGECYLINDER_HEIGHT, VtxPos_Z * CHARGE_TOPPART_SPREAD);
 
 		//１周したときの頂点座標
 		if (nCntVtx == CHARGECYLINDER_SPLIT)
@@ -185,19 +174,19 @@ void UninitChargeCylinder(void)
 //--------------------------------------------------------------------------------------------------------
 void UpdateChargeCylinder(void)
 {
-	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++)
+	//シリンダーのポインタを取得
+	ChargeCylinder *pCylinder = &g_ChargeCylinder[0];
+
+	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++, pCylinder++)
 	{
 		//チャージシリンダーが使われている
-		if (g_ChargeCylinder[nCntCylinder].bUse == true)
+		if (pCylinder->bUse == true)
 		{
 			//プレイヤーの位置に置く
-			SetChargeCylinderPos(nCntCylinder);
+			SetChargeCylinderPos(pCylinder);
 
 			//シリンダーの広がる処理
-			SpreadChargeCylinder(nCntCylinder);
-
-			//シリンダーを伸び縮みさせる処理
-			ExtendChargeCylinder(nCntCylinder);
+			SpreadChargeCylinder(pCylinder);
 
 			//シリンダーの頂点情報の設定処理
 			SetChargeCylinderVertex(nCntCylinder);
@@ -206,55 +195,24 @@ void UpdateChargeCylinder(void)
 }
 
 // プレイヤーの位置に設定する
-void SetChargeCylinderPos(int nCntPos)
+void SetChargeCylinderPos(ChargeCylinder *pCylinder)
 {
-	//シリンダーの位置をプレイヤーと同じにする
-	g_ChargeCylinder[nCntPos].pos = GetPlayer()[nCntPos].pos;
+	//シリンダーの位置を呼び出したプレイヤーと同じにする
+	pCylinder->pos = GetPlayer()[pCylinder->nPlayerNo].pos;
 }
 
 // シリンダーの広がる処理
-void SpreadChargeCylinder(int nCntSpread)
+void SpreadChargeCylinder(ChargeCylinder *pCylinder)
 {
 	//半径を広げる
-	g_ChargeCylinder[nCntSpread].fRadius += CHARGE_SPREAD_SPEED;
+	pCylinder->fRadius += CHARGE_SPREAD_SPEED;
 
 	//最大半径に到達した
-	if (g_ChargeCylinder[nCntSpread].fRadius >= CHARGE_MAX_RADIUS)
+	if (pCylinder->fRadius >= CHARGE_MAX_RADIUS)
 	{
 		//使わなくする
-		g_ChargeCylinder[nCntSpread].bUse = false;
-	}
-}
-
-// チャージシリンダーの伸び縮みする処理
-void ExtendChargeCylinder(int nCntExtend)
-{
-	//伸びる
-	if (g_ChargeCylinder[nCntExtend].bExtend == true)
-	{
-		//伸びる
-		g_ChargeCylinder[nCntExtend].fHeight += CHARGE_HEIGHT_EXTEND;
-
-		//最大の高さを超えた
-		if (g_ChargeCylinder[nCntExtend].fHeight > CHARGECYLINDER_HEIGHT)
-		{
-			g_ChargeCylinder[nCntExtend].fHeight = CHARGECYLINDER_HEIGHT;	//最大の高さにする
-			g_ChargeCylinder[nCntExtend].bExtend = false;					//次回から縮ませる
-		}
-	}
-
-	//縮む
-	else
-	{
-		//伸びる
-		g_ChargeCylinder[nCntExtend].fHeight = CHARGE_HEIGHT_EXTEND;
-
-		//最低の高さを超えた
-		if (g_ChargeCylinder[nCntExtend].fHeight < 0.0f)
-		{
-			g_ChargeCylinder[nCntExtend].fHeight = 0.0f;	//最低の高さにする
-			g_ChargeCylinder[nCntExtend].bExtend = true;	//次回から伸ばす
-		}
+		pCylinder->bUse = false;
+		pCylinder->fRadius = 0.0f;
 	}
 }
 
@@ -320,16 +278,22 @@ void DrawChargeCylinder(void)
 }
 
 // シリンダーの設定処理
-void SetChargeCylinder(D3DXVECTOR3 pos, int nCntSet)
+void SetChargeCylinder(D3DXVECTOR3 pos, int nPlayerNo)
 {
-	//対象シリンダーが使われていない
-	if (g_ChargeCylinder[nCntSet].bUse == false)
+	//シリンダーのポインタを取得
+	ChargeCylinder *pCylinder = &g_ChargeCylinder[0];
+
+	for (int nCntCylinder = 0; nCntCylinder < NUM_CHARGE_CYLINDER; nCntCylinder++, pCylinder++)
 	{
-		g_ChargeCylinder[nCntSet].pos = pos;			// 位置反映
-		g_ChargeCylinder[nCntSet].rot = ZERO_SET;		// 向き初期化
-		g_ChargeCylinder[nCntSet].fRadius = 0.0f;		// 半径初期化
-		g_ChargeCylinder[nCntSet].fHeight = 0.0f;		// 高さ初期化
-		g_ChargeCylinder[nCntSet].bExtend = true;		// 伸びる
-		g_ChargeCylinder[nCntSet].bUse = true;			// 使用する
+		//対象シリンダーが使われていない
+		if (pCylinder->bUse == false)
+		{
+			pCylinder->pos = pos;				// 位置反映
+			pCylinder->rot = ZERO_SET;			// 向き初期化
+			pCylinder->fRadius = 0.0f;			// 半径初期化
+			pCylinder->nPlayerNo = nPlayerNo;	// プレイヤー番号を記憶
+			pCylinder->bUse = true;				// 使用する
+			break;
+		}
 	}
 }
