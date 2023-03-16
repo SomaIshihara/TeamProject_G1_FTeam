@@ -21,8 +21,8 @@ typedef enum
 	SOUND_LABEL_BGM_TUTORIAL,		// チュートリアル音
 	SOUND_LABEL_BGM_GAME_PVP,		// ゲーム音(PVP)
 	SOUND_LABEL_BGM_GAME_HDR,		// ゲーム音(HDR)
-	SOUND_LABEL_BGM_RESULT_01,		// リザルト音1
-	SOUND_LABEL_BGM_RESULT_02,		// リザルト音2
+	SOUND_LABEL_BGM_RESULT_01,		// リザルト音1（開始
+	SOUND_LABEL_BGM_RESULT_02,		// リザルト音2（余韻
 	SOUND_LABEL_BGM_MAX,
 } SOUND_LABEL_BGM;
 
@@ -65,6 +65,7 @@ typedef enum
 //*****************************************************************************
 HRESULT InitSound(HWND hWnd);
 void UninitSound(void);
+void StopAllSound(void);
 
 HRESULT PlaySoundBGM(SOUND_LABEL_BGM label);
 void StopSoundBGM(SOUND_LABEL_BGM label);

@@ -51,7 +51,7 @@ BYTE *g_apDataAudioSE[SOUND_LABEL_SE_MAX][NUM_DUPLICATION] = { {} };	// オーディ
 DWORD g_aSizeAudioSE[SOUND_LABEL_SE_MAX][NUM_DUPLICATION] = { {} };	// オーディオデータサイズ
 
 //その他
-bool g_bAllPlaySound = false;	// 再生するかどうか
+bool g_bAllPlaySound = true;	// 再生するかどうか
 
 // BGMサウンドの情報
 SOUNDINFO g_aSoundInfoBGM[SOUND_LABEL_BGM_MAX] =
@@ -60,8 +60,8 @@ SOUNDINFO g_aSoundInfoBGM[SOUND_LABEL_BGM_MAX] =
 	{ "data/SOUND/BGM/Tutorial.wav",		SOUND_LOOP, 0.5f,true },		// チュートリアル音
 	{ "data/SOUND/BGM/PvP_Game_Mixed.wav",	SOUND_LOOP, 0.5f,true },		// ゲーム音
 	{ "data/SOUND/BGM/Game000.wav",			SOUND_LOOP, 0.5f,true },		// ゲーム音
-	{ "data/SOUND/BGM/Result_01.wav",		SOUND_LOOP, 0.5f,true },		// リザルト音1
-	{ "data/SOUND/BGM/Result_02.wav",		SOUND_LOOP, 0.5f,true },		// リザルト音2
+	{ "data/SOUND/BGM/Result_01.wav",		SOUND_LOOP, 0.5f,true },		// リザルト音1（開始
+	{ "data/SOUND/BGM/Result_02.wav",		SOUND_LOOP, 0.5f,true },		// リザルト音2（余韻
 };
 
 // SEサウンドの情報
@@ -473,6 +473,38 @@ void UninitSound(void)
 	
 	// COMライブラリの終了処理
 	CoUninitialize();
+}
+
+//=============================================================================
+// 全サウンドの停止処理
+//=============================================================================
+void StopAllSound(void)
+{
+	// BGM 一時停止
+	for (int nCntSound = 0; nCntSound < SOUND_LABEL_BGM_MAX; nCntSound++)
+	{
+		for (int nCntDupl = 0; nCntDupl < NUM_DUPLICATION; nCntDupl++)
+		{
+			if (g_apSourceVoiceBGM[nCntSound] != NULL)
+			{
+				// 一時停止
+				g_apSourceVoiceBGM[nCntSound]->Stop(0);
+			}
+		}
+	}
+
+	// SE 一時停止
+	for (int nCntSound = 0; nCntSound < SOUND_LABEL_SE_MAX; nCntSound++)
+	{
+		for (int nCntDupl = 0; nCntDupl < NUM_DUPLICATION; nCntDupl++)
+		{
+			if (g_apSourceVoiceSE[nCntSound][nCntDupl] != NULL)
+			{
+				// 一時停止
+				g_apSourceVoiceSE[nCntSound][nCntDupl]->Stop(0);
+			}
+		}
+	}
 }
 
 //BGM

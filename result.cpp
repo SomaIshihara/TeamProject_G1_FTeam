@@ -8,6 +8,7 @@ Author:平澤詩苑
 #include "result.h"
 #include "color.h"
 #include "fade.h"
+#include "sound.h"
 #include "file.h"
 #include "model.h"
 #include "resultPlayer.h"
@@ -125,6 +126,7 @@ void InitResult(void)
 	InitResultObject();
 
 	g_SkipUI.bShutter = true;	//シャッターを開ける
+	PlaySoundBGM(SOUND_LABEL_BGM_RESULT_01);	//最初のリザルト音楽を流す
 }
 
 //------------------------------------------------
@@ -207,12 +209,6 @@ void UpdateResult(void)
 	//リザルト用オブジェクトの更新処理関数呼び出し
 	//----------------------------------------------=
 	UpdateResultObject();
-
-	if (GetKeyboardTrigger(DIK_BACKSPACE))
-	{
-		UninitResult();
-		InitResult();
-	}
 }
 
 //リザルトを飛ばす
@@ -288,6 +284,8 @@ void MoveSkipShutter(void)
 			case WAVECamera_LAST_VictoryStand:
 				SkipVicStd_Player();		//表彰台の登場を終わらせて、プレイヤーを表彰台に立たせる
 				*pWave = WAVECamera_FINISH;	//ウェーブ終了
+				StopSoundBGM(SOUND_LABEL_BGM_RESULT_01);	//開始リザルトBGM停止
+				PlaySoundBGM(SOUND_LABEL_BGM_RESULT_02);	//余韻リザルトBGM再生
 				break;
 
 				//------------------
@@ -362,19 +360,26 @@ void DrawResult(void)
 
 	for (int nCntResult = 0; nCntResult < NUM_RESULT_UI; nCntResult++)
 	{
+		//スキップ表示UIはウェーブが初期の時のみ表示する
 		if (nCntResult == 0)
 		{
-			//テクスチャの設定
-			pDevice->SetTexture(0, g_pTextureResult);
+			if (*GetWaveCamera() == WAVECamera_01_SideWays)
+			{
+				//テクスチャの設定
+				pDevice->SetTexture(0, g_pTextureResult);
+
+				//ポリゴンの描画
+				pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntResult * VTX_MAX, 2);
+			}
 		}
 		else
 		{
 			//テクスチャの設定
 			pDevice->SetTexture(0, NULL);
-		}
 
-		//ポリゴンの描画
-		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntResult * VTX_MAX, 2);
+			//ポリゴンの描画
+			pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, nCntResult * VTX_MAX, 2);
+		}
 	}
 
 	//アルファテストを無効にする

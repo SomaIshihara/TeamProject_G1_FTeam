@@ -9,6 +9,7 @@ Author:平澤詩苑
 #include "resultPlayer.h"
 #include "conversioninput.h"
 #include "VictoryStand.h"
+#include "sound.h"
 
 //マクロ定義
 #define POS_POSV			D3DXVECTOR3(0.0f, 30.0f, -200.0f)	//視点の初期位置
@@ -37,6 +38,7 @@ Author:平澤詩苑
 ResultCamera		g_ResultCamera;						//カメラの情報
 WAVECamera			g_WaveCamera;						//カメラのウェーブ情報
 AnimResCamera		g_AnimResCamera[WAVECamera_MAX];	//アニメーションカメラの情報
+bool				g_bFinishSound = false;				//最後のBGMを流していない
 int					g_nAnimTime = 0;					//上映時間を計算
 
 //------------------------------------------------
@@ -51,6 +53,7 @@ void InitResultCamera(void)
 	g_WaveCamera = WAVECamera_01_SideWays;	//ウェーブ情報初期化
 	SetNextWave(WAVECamera_01_SideWays);	//初期位置設定
 	g_nAnimTime = 0;						//上映時間を初期化
+	g_bFinishSound = false;					//最後のBGMを流していない
 
 	//---------------------------------
 	//カメラの角度や距離を算出
@@ -317,6 +320,21 @@ void SpecialWave(void)
 		}
 	}
 	break;
+
+	//*******************************
+	//	フィニッシュウェーブの特殊処理
+	//*******************************
+	case WAVECamera_FINISH:
+	{
+		//最後の音楽を流していない
+		if (!g_bFinishSound)
+		{
+			StopSoundBGM(SOUND_LABEL_BGM_RESULT_01);	//開始リザルトBGM停止
+			PlaySoundBGM(SOUND_LABEL_BGM_RESULT_02);	//余韻リザルトBGM再生
+			g_bFinishSound = true;						//サウンドを再生した
+		}
+	}
+		break;
 	}
 }
 
