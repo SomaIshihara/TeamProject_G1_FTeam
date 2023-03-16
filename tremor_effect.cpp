@@ -102,15 +102,6 @@ void UninitTremorEffect(void)
 //=================================
 void UpdateTremorEffect(void)
 {
-	//エフェクト発生
-	if (GetKeyboardPress(DIK_J) == true)
-	{
-		for (int nCntEffect = 0; nCntEffect < MAX_TREMOR_EFFECT; nCntEffect++)
-		{
-			SetTremorEffect(g_TremorEffect[nCntEffect].pos);
-		}
-	}
-
 	//エフェクト処理
 	for (int nCntEffect = 0; nCntEffect < MAX_TREMOR_EFFECT; nCntEffect++)
 	{
