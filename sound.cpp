@@ -56,12 +56,12 @@ bool g_bAllPlaySound = true;	// 再生するかどうか
 // BGMサウンドの情報
 SOUNDINFO g_aSoundInfoBGM[SOUND_LABEL_BGM_MAX] =
 {
-	{ "data/SOUND/BGM/Title.wav",			SOUND_LOOP, 0.5f,true },		// タイトル音
-	{ "data/SOUND/BGM/Tutorial.wav",		SOUND_LOOP, 0.5f,true },		// チュートリアル音
-	{ "data/SOUND/BGM/PvP_Game_Mixed.wav",	SOUND_LOOP, 0.5f,true },		// ゲーム音
-	{ "data/SOUND/BGM/Game000.wav",			SOUND_LOOP, 0.5f,true },		// ゲーム音
-	{ "data/SOUND/BGM/Result_01.wav",		SOUND_LOOP, 0.5f,true },		// リザルト音1（開始
-	{ "data/SOUND/BGM/Result_02.wav",		SOUND_LOOP, 0.5f,true },		// リザルト音2（余韻
+	{ "data/SOUND/BGM/Title.wav",			SOUND_LOOP, 0.7f,true },		// タイトル音
+	{ "data/SOUND/BGM/Tutorial.wav",		SOUND_LOOP, 0.7f,true },		// チュートリアル音
+	{ "data/SOUND/BGM/PvP_Game_Mixed.wav",	SOUND_LOOP, 0.7f,true },		// ゲーム音
+	{ "data/SOUND/BGM/Game000.wav",			SOUND_LOOP, 0.7f,true },		// ゲーム音
+	{ "data/SOUND/BGM/Result_01.wav",		SOUND_LOOP, 0.7f,true },		// リザルト音1（開始
+	{ "data/SOUND/BGM/Result_02.wav",		SOUND_LOOP, 0.7f,true },		// リザルト音2（余韻
 };
 
 // SEサウンドの情報
