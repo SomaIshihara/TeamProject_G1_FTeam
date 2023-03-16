@@ -208,6 +208,48 @@ MODELSET
 	ROT = 0 0 0
 END_MODELSET
 
+MODELSET
+	TYPE = 3
+	POS = 470 0 200
+	ROT = 0 0 0
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = 440 0 -390
+	ROT = 0 0 0
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = -200 0 550
+	ROT = 0 0 0
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = 90 0 -10
+	ROT = 0 0 0
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = -550 0 -200
+	ROT = 0 0 0
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = 50 0 480
+	ROT = 0 0 0
+END_MODELSET
+
+MODELSET
+	TYPE = 3
+	POS = 50 0 -430
+	ROT = 0 0 0
+END_MODELSET
+
 #------------------------------------------------------------------------------
 # ビルボード配置情報
 #------------------------------------------------------------------------------
