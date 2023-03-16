@@ -122,66 +122,69 @@ void UpdatePlayer_HDR(void)
 		//プレイヤー人数分繰り返す
 		for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 		{
-			//前回の位置を保存
-			g_aPlayerHDR[nCntPlayer].posOld.x = g_aPlayerHDR[nCntPlayer].pos.x;
-			g_aPlayerHDR[nCntPlayer].posOld.z = g_aPlayerHDR[nCntPlayer].pos.z;
-
-			//ジャンプ時間を増やす
-			g_aPlayerHDR[nCntPlayer].jumpTime++;
-
-			//AIのクールタイムを減らす
-			g_aPlayerHDR[nCntPlayer].nAICT--;
-
 			if (g_aPlayerHDR[nCntPlayer].bUsePlayer == true)
-			{//使用時のみ行う
-			 //プレイヤーであるか確認
-			 //接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
-				if (g_aPlayerHDR[nCntPlayer].bUseAI == false && GetUseControllerNum_HDR() != 0)
-				{
-					g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
+			{
+				//前回の位置を保存
+				g_aPlayerHDR[nCntPlayer].posOld.x = g_aPlayerHDR[nCntPlayer].pos.x;
+				g_aPlayerHDR[nCntPlayer].posOld.z = g_aPlayerHDR[nCntPlayer].pos.z;
+
+				//ジャンプ時間を増やす
+				g_aPlayerHDR[nCntPlayer].jumpTime++;
+
+				//AIのクールタイムを減らす
+				g_aPlayerHDR[nCntPlayer].nAICT--;
+
+				if (g_aPlayerHDR[nCntPlayer].bUsePlayer == true)
+				{//使用時のみ行う
+				 //プレイヤーであるか確認
+				 //接続されているか確認して切断されていたらプレイヤーを消す（例外としてコントローラーがつながっていないときは無視）
+					if (g_aPlayerHDR[nCntPlayer].bUseAI == false && GetUseControllerNum_HDR() != 0)
+					{
+						g_aPlayerHDR[nCntPlayer].bUsePlayer = GetUseController_HDR(nCntPlayer);
+					}
+
+					//各プレイヤーの操作
+					ControllPlayer_HDR(nCntPlayer);
 				}
 
-				//各プレイヤーの操作
-				ControllPlayer_HDR(nCntPlayer);
-			}
-
-			//ヒップドロップスピンの硬直中
-			if (0 < g_aPlayerHDR[nCntPlayer].nHipDropWait)
-			{
-				HipSpinPlayer_HDR(nCntPlayer);
-			}
-			//硬直中で無ければ落下速度を代入
-			else
-			{
-				g_aPlayerHDR[nCntPlayer].move.y = g_aPlayerHDR[nCntPlayer].moveV0.y - (9.8f * g_aPlayerHDR[nCntPlayer].jumpTime / MAX_FPS);
-			}
-
-			//移動
-			g_aPlayerHDR[nCntPlayer].pos += g_aPlayerHDR[nCntPlayer].move;
-
-			//プレイヤーが地面を突き抜けてしまった
-			if (g_aPlayerHDR[nCntPlayer].pos.y < 0.0f)
-			{
-				g_aPlayerHDR[nCntPlayer].pos.y = 0.0f;
-				g_aPlayerHDR[nCntPlayer].move.y = 0.0f;
-				g_aPlayerHDR[nCntPlayer].bJump = false;
-				g_aPlayerHDR[nCntPlayer].bHipDrop = false;
-
-				//まだゴールしていない
-				if (!g_aPlayerHDR[nCntPlayer].bGoal)
+				//ヒップドロップスピンの硬直中
+				if (0 < g_aPlayerHDR[nCntPlayer].nHipDropWait)
 				{
-					g_aPlayerHDR[nCntPlayer].bGoal = true;	//ゴールした
-					g_aPlayerHDR[nCntPlayer].nRank = SetRank(nCntPlayer);//順位設定
+					HipSpinPlayer_HDR(nCntPlayer);
 				}
+				//硬直中で無ければ落下速度を代入
+				else
+				{
+					g_aPlayerHDR[nCntPlayer].move.y = g_aPlayerHDR[nCntPlayer].moveV0.y - (9.8f * g_aPlayerHDR[nCntPlayer].jumpTime / MAX_FPS);
+				}
+
+				//移動
+				g_aPlayerHDR[nCntPlayer].pos += g_aPlayerHDR[nCntPlayer].move;
+
+				//プレイヤーが地面を突き抜けてしまった
+				if (g_aPlayerHDR[nCntPlayer].pos.y < 0.0f)
+				{
+					g_aPlayerHDR[nCntPlayer].pos.y = 0.0f;
+					g_aPlayerHDR[nCntPlayer].move.y = 0.0f;
+					g_aPlayerHDR[nCntPlayer].bJump = false;
+					g_aPlayerHDR[nCntPlayer].bHipDrop = false;
+
+					//まだゴールしていない
+					if (!g_aPlayerHDR[nCntPlayer].bGoal)
+					{
+						g_aPlayerHDR[nCntPlayer].bGoal = true;	//ゴールした
+						g_aPlayerHDR[nCntPlayer].nRank = SetRank(nCntPlayer);//順位設定
+					}
+				}
+
+				//ブロックの当たり判定
+				CollisionBlock(&g_aPlayerHDR[nCntPlayer]);
+
+				//フェンスとの当たり判定
+				CollisionFence(&g_aPlayerHDR[nCntPlayer]);
+
+				PrintDebugProc("%dPのヒップドロップパワー：%d\n", nCntPlayer + 1, g_aPlayerHDR[nCntPlayer].HipDropPower);
 			}
-
-			//ブロックの当たり判定
-			CollisionBlock(&g_aPlayerHDR[nCntPlayer]);
-
-			//フェンスとの当たり判定
-			CollisionFence(&g_aPlayerHDR[nCntPlayer]);
-
-			PrintDebugProc("%dPのヒップドロップパワー：%d\n", nCntPlayer + 1, g_aPlayerHDR[nCntPlayer].HipDropPower);
 		}
 	}
 
@@ -204,81 +207,84 @@ void DrawPlayer_HDR(void)
 	//プレイヤーの数だけ繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
-		//"プレイヤーの"ワールドマトリックス初期化
-		D3DXMatrixIdentity(&g_aPlayerHDR[nCntPlayer].mtxWorld);
-
-		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_aPlayerHDR[nCntPlayer].rot.y, g_aPlayerHDR[nCntPlayer].rot.x, g_aPlayerHDR[nCntPlayer].rot.z);
-		D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].mtxWorld, &g_aPlayerHDR[nCntPlayer].mtxWorld, &mtxRot);
-
-		//位置反映
-		D3DXMatrixTranslation(&mtxTrans, g_aPlayerHDR[nCntPlayer].pos.x, g_aPlayerHDR[nCntPlayer].pos.y, g_aPlayerHDR[nCntPlayer].pos.z);
-		D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].mtxWorld, &g_aPlayerHDR[nCntPlayer].mtxWorld, &mtxTrans);
-
-		//"プレイヤーの"ワールドマトリックス設定
-		pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerHDR[nCntPlayer].mtxWorld);
-
-		for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
+		if (g_aPlayerHDR[nCntPlayer].bUsePlayer == true)
 		{
-			if (g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].bUse == true)
+			//"プレイヤーの"ワールドマトリックス初期化
+			D3DXMatrixIdentity(&g_aPlayerHDR[nCntPlayer].mtxWorld);
+
+			//向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_aPlayerHDR[nCntPlayer].rot.y, g_aPlayerHDR[nCntPlayer].rot.x, g_aPlayerHDR[nCntPlayer].rot.z);
+			D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].mtxWorld, &g_aPlayerHDR[nCntPlayer].mtxWorld, &mtxRot);
+
+			//位置反映
+			D3DXMatrixTranslation(&mtxTrans, g_aPlayerHDR[nCntPlayer].pos.x, g_aPlayerHDR[nCntPlayer].pos.y, g_aPlayerHDR[nCntPlayer].pos.z);
+			D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].mtxWorld, &g_aPlayerHDR[nCntPlayer].mtxWorld, &mtxTrans);
+
+			//"プレイヤーの"ワールドマトリックス設定
+			pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerHDR[nCntPlayer].mtxWorld);
+
+			for (int nCntParts = 0; nCntParts < MAX_PARTS; nCntParts++)
 			{
-				g_aPlayerHDR[nCntPlayer].posOld_Coll.y = g_aPlayerHDR[nCntPlayer].pos.y;
-
-				D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
-				D3DXMATRIX mtxParent;					//親のマトリ
-
-				//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
-				g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos = g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].posOffset;
-				g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot = g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rotOffset;
-
-				//"モデルの"ワールドマトリックス初期化
-				D3DXMatrixIdentity(&g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld);
-
-				//向きを反映
-				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot.y, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot.x, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot.z);
-				D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxRotModel);
-
-				//位置反映
-				D3DXMatrixTranslation(&mtxTransModel, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos.x, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos.y, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos.z);
-				D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxTransModel);
-
-				//パーツの親マトリ設定
-				if (g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mIdxModelParent != -1)
+				if (g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].bUse == true)
 				{
-					mtxParent = g_aPlayerHDR[nCntPlayer].model.aParts[g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mIdxModelParent].mtxWorld;
-				}
-				else
-				{
-					mtxParent = g_aPlayerHDR[nCntPlayer].mtxWorld;
-				}
+					g_aPlayerHDR[nCntPlayer].posOld_Coll.y = g_aPlayerHDR[nCntPlayer].pos.y;
 
-				//パーツのマトリと親マトリをかけ合わせる
-				D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxParent);
+					D3DXMATRIX mtxRotModel, mtxTransModel;	//計算用
+					D3DXMATRIX mtxParent;					//親のマトリ
 
-				//"プレイヤーの"ワールドマトリックス設定
-				pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld);
+															//仮でオフセットをそのまま使う（アニメーション使うようになったら消して）
+					g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos = g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].posOffset;
+					g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot = g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rotOffset;
 
-				//マテリアルデータへのポインタ取得
-				pMat = (D3DXMATERIAL*)g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
+					//"モデルの"ワールドマトリックス初期化
+					D3DXMatrixIdentity(&g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld);
 
-				for (int nCntMat = 0; nCntMat < (int)g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
-				{
-					//ゴースト用
-					D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
+					//向きを反映
+					D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot.y, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot.x, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].rot.z);
+					D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxRotModel);
 
-					if (nCntParts == MAX_PARTS - 1)
-					{//ゼッケンの時は色変更
-						matChange.Diffuse = c_aColPlayer[nCntPlayer];
+					//位置反映
+					D3DXMatrixTranslation(&mtxTransModel, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos.x, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos.y, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pos.z);
+					D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxTransModel);
+
+					//パーツの親マトリ設定
+					if (g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mIdxModelParent != -1)
+					{
+						mtxParent = g_aPlayerHDR[nCntPlayer].model.aParts[g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mIdxModelParent].mtxWorld;
+					}
+					else
+					{
+						mtxParent = g_aPlayerHDR[nCntPlayer].mtxWorld;
 					}
 
-					//マテリアルの設定
-					pDevice->SetMaterial(&matChange);
+					//パーツのマトリと親マトリをかけ合わせる
+					D3DXMatrixMultiply(&g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld, &mtxParent);
 
-					//テクスチャ設定
-					pDevice->SetTexture(0, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
+					//"プレイヤーの"ワールドマトリックス設定
+					pDevice->SetTransform(D3DTS_WORLD, &g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].mtxWorld);
 
-					//モデル描画
-					g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+					//マテリアルデータへのポインタ取得
+					pMat = (D3DXMATERIAL*)g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pBuffMat->GetBufferPointer();
+
+					for (int nCntMat = 0; nCntMat < (int)g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].dwNumMatModel; nCntMat++)
+					{
+						//ゴースト用
+						D3DMATERIAL9 matChange = pMat[nCntMat].MatD3D;
+
+						if (nCntParts == MAX_PARTS - 1)
+						{//ゼッケンの時は色変更
+							matChange.Diffuse = c_aColPlayer[nCntPlayer];
+						}
+
+						//マテリアルの設定
+						pDevice->SetMaterial(&matChange);
+
+						//テクスチャ設定
+						pDevice->SetTexture(0, g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].apTexture[nCntMat]);
+
+						//モデル描画
+						g_aPlayerHDR[nCntPlayer].model.aParts[nCntParts].pMesh->DrawSubset(nCntMat);
+					}
 				}
 			}
 		}
