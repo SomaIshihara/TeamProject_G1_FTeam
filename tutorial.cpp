@@ -39,8 +39,8 @@ Tutorial				g_Tutorial[TutTexType_MAX];				//チュートリアルの情報
 //ファイルパス
 const char* c_aFilePathTutorial[SelGameMode_MAX][TutTexType_MAX] =
 {
-	{ "data/TEXTURE/Tutorial001.png", "data/TEXTURE/Tutorial002.png" },
-	{ "data/TEXTURE/Tutorial001.png", "data/TEXTURE/Tutorial002.png" },
+	{ "data/TEXTURE/PVP_Tutorial000.png", "data/TEXTURE/PVP_Tutorial001.png" },
+	{ "data/TEXTURE/HDR_Tutorial000.png", "data/TEXTURE/HDR_Tutorial001.png" },
 };
 
 //--------------------------------------------
