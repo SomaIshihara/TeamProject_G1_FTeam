@@ -107,10 +107,10 @@ Player *g_pNotMove[MAX_USE_GAMEPAD];	//移動していないプレイヤー検知用ポインタ
 //初期位置向き
 const D3DXVECTOR3 c_aPosRot[MAX_USE_GAMEPAD][2] =
 {
-	{ D3DXVECTOR3(-50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,ROT_P1,0.0f) },
-	{ D3DXVECTOR3(50.0f,0.0f,50.0f) ,D3DXVECTOR3(0.0f,ROT_P2,0.0f) },
-	{ D3DXVECTOR3(-50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_P3,0.0f) },
-	{ D3DXVECTOR3(50.0f,0.0f,-50.0f) ,D3DXVECTOR3(0.0f,ROT_P4,0.0f) },
+	{ D3DXVECTOR3(-200.0f,0.0f,200.0f) ,D3DXVECTOR3(0.0f,ROT_P1,0.0f) },
+	{ D3DXVECTOR3(200.0f,0.0f,200.0f) ,D3DXVECTOR3(0.0f,ROT_P2,0.0f) },
+	{ D3DXVECTOR3(-200.0f,0.0f,-200.0f) ,D3DXVECTOR3(0.0f,ROT_P3,0.0f) },
+	{ D3DXVECTOR3(200.0f,0.0f,-200.0f) ,D3DXVECTOR3(0.0f,ROT_P4,0.0f) },
 };
 
 //[デバッグ用]AI挙動させるプレイヤー指定（コントローラーが刺さっていればそれを優先）
