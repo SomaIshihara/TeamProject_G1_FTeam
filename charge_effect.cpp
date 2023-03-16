@@ -104,17 +104,6 @@ void UninitChargeEffect(void)
 //=================================
 void UpdateChargeEffect(void)
 {
-#ifdef _DEBUG
-	//このボタンが押されたらエフェクトを生成する	[デバッグ専用]
-	if (GetKeyboardPress(DIK_M) == true)
-	{
-		for (int nCntEffect = 0; nCntEffect < NUM_CHARGE_EFFECT; nCntEffect++)
-		{
-			SetChargeEffect(g_ChargeEffect[nCntEffect].pos, nCntEffect);
-		}
-	}
-#endif
-	
 	//エフェクトの位置を設定
 	SetChargeEffectPos();
 

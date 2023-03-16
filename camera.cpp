@@ -50,8 +50,6 @@ Author:大宮愛羅  平澤詩苑  石原颯馬
 //グローバル変数
 Camera		g_Camera[NUM_CAMERA];	//カメラの情報
 NumCamera	g_NumCameraType;		//カメラ分割の情報
-bool		g_bChase = true;		//プレイヤーに注視点を置くかどうか				TRUE：追いかける　　false：原点を見る
-bool		g_bTPS = false;			//３人称か、定点カメラか ただし、４分割時のみ	TRUE：３人称		false：定点カメラ
 
 //=========================================
 //カメラの位置設定処理
@@ -90,8 +88,6 @@ void InitCamera(NumCamera type)
 		g_Camera[nCntCamera].rot = ZERO_SET;
 	}
 
-	g_bChase = true;		//プレイヤーを追いかける
-	g_bTPS = true;			//３人称カメラに設定
 	Set_NumCamera(type);	//カメラの数によるカメラ情報の初期化
 }
 
@@ -108,28 +104,6 @@ void UninitCamera(void)
 //=========================================
 void UpdateCamera(void)
 {
-	//追従  ON / OFF 切り替え
-	if (GetKeyboardTrigger(DIK_F4))
-	{
-		g_bChase = g_bChase ? false : true;
-
-		//追従がOFF
-		if (g_bChase == false)
-		{
-			//注視点を０にする
-			for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
-			{
-				g_Camera[nCntCamera].posR = ZERO_SET;
-			}
-		}
-	}
-
-	//３人称　ON / OFF 切り替え
-	if (GetKeyboardTrigger(DIK_F6))
-	{
-		g_bTPS = g_bTPS ? false : true;
-	}
-	
 	for (int nCntCamera = 0; nCntCamera < NUM_CAMERA; nCntCamera++)
 	{
 		//カメラが使われている
@@ -410,45 +384,14 @@ void UpdatePosVCamera(int nCntCamera)
 //注視点の位置設定
 void SetPosRCamera(int nCntCamera)
 {
-	MODE GameMode = GetMode();
-
 	//プレイヤー情報取得
 	Player *pPlayer = GetPlayer();
-	Player_HDR *pPlayer_HDR = GetPlayer_HDR();
 
-	//追従 または ３人称が  ON
-	if (g_bChase == true || g_bTPS == true)
-	{
-		switch (GameMode)
-		{
-		case MODE_PvPGAME:
-			
-			//対象のプレイヤーに注視点を合わせる
-			g_Camera[nCntCamera].posR = pPlayer[nCntCamera].pos;
+	//対象のプレイヤーに注視点を合わせる
+	g_Camera[nCntCamera].posR = pPlayer[nCntCamera].pos;
 
-			//３人称視点
-			if (g_bTPS)
-			{
-				//3人称視点設定
-				TPS_ChaseCamera(nCntCamera, pPlayer[nCntCamera].rot);
-			}
-			break;
-
-		case MODE_RaceGAME:
-			
-			//対象のプレイヤーに注視点を合わせる
-			g_Camera[nCntCamera].posR = pPlayer_HDR[nCntCamera].pos;
-
-			//３人称視点
-			if (g_bTPS)
-			{
-				//3人称視点設定
-				TPS_ChaseCamera(nCntCamera, pPlayer_HDR[nCntCamera].rot);
-			}
-			break;
-		}
-			
-	}
+	//3人称視点設定
+	TPS_ChaseCamera(nCntCamera, pPlayer[nCntCamera].rot);
 }
 
 //カメラの取得

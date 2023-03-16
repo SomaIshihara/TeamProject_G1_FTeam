@@ -147,9 +147,6 @@
     <ClCompile Include="meshfield.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
-    <ClCompile Include="wall.cpp">
-      <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
-    </ClCompile>
     <ClCompile Include="light.cpp">
       <Filter>ソース ファイル\Game\Game_PvP\Stage</Filter>
     </ClCompile>
@@ -318,9 +315,6 @@
       <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
     </ClInclude>
     <ClInclude Include="meshfield.h">
-      <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
-    </ClInclude>
-    <ClInclude Include="wall.h">
       <Filter>ヘッダー ファイル\Game\Game_PvP\Stage</Filter>
     </ClInclude>
     <ClInclude Include="light.h">

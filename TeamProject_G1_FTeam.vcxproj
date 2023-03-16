@@ -215,7 +215,6 @@
     <ClCompile Include="tutorial.cpp" />
     <ClCompile Include="TypeFrame.cpp" />
     <ClCompile Include="VictoryStand.cpp" />
-    <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ai.h" />
@@ -276,7 +275,6 @@
     <ClInclude Include="tutorial.h" />
     <ClInclude Include="TypeFrame.h" />
     <ClInclude Include="VictoryStand.h" />
-    <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

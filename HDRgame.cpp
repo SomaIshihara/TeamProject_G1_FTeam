@@ -333,11 +333,12 @@ void SetEnablePause_HDR(bool pause)
 }
 
 //------------------------------------------------
-//		カメラの数変更処理
+//		カメラの数変更処理（デバック限定
 //		Author:平澤詩苑
 //------------------------------------------------
 void ChangeNumCamera_HDR(void)
 {
+#ifdef _DEBUG
 	if (GetKeyboardTrigger(DIK_F7))
 	{
 		//現在のカメラの種類を保存
@@ -355,6 +356,7 @@ void ChangeNumCamera_HDR(void)
 		//カメラの種類を設定
 		Set_NumHDRCamera(g_NumCamera_HDR);
 	}
+#endif // DEBUG
 }
 
 //------------------------------------------------

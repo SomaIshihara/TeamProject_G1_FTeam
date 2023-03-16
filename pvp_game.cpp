@@ -16,7 +16,6 @@ Author:平澤詩苑
 #include "PvP_player.h"
 #include "model.h"
 #include "light.h"
-#include "wall.h"
 #include "meshdome.h"
 #include "meshfield.h"
 #include "meshfault.h"
@@ -284,7 +283,6 @@ void DrawPvPGame(void)
 		SetCamera(nCntCamera);		// カメラの設定処理
 
 		DrawMeshfield();			// ステージの描画処理
-		//DrawMeshCylinder();	// メッシュシリンダーの描画処理
 		DrawMeshDome();				// メッシュドームの描画処理	
 		DrawMeshFault();			// メッシュの断面描画処理
 		DrawFence();				// フェンスの描画処理
@@ -406,11 +404,12 @@ void SetEnablePause_PvP(bool pause)
 }
 
 //------------------------------------------------
-//		カメラの数変更処理
+//		カメラの数変更処理（デバック限定
 //		Author:平澤詩苑
 //------------------------------------------------
 void ChangeNumCamera_PvP(void)
 {
+#ifdef _DEBUG
 	if (GetKeyboardTrigger(DIK_F7))
 	{
 		//現在のカメラの種類を保存
@@ -428,4 +427,5 @@ void ChangeNumCamera_PvP(void)
 		//カメラの種類を設定
 		Set_NumCamera(g_NumCamera_PvP);
 	}
+#endif // _DEBUG
 }

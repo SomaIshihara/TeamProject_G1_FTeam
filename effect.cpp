@@ -105,15 +105,6 @@ void UninitEffect(void)
 //=================================
 void UpdateEffect(void)
 {
-	//対象のキーが押された（デバック用）
-	if (GetKeyboardPress(DIK_M) == true)
-	{
-		for (int nCntEffect = 0; nCntEffect < NUM_EFFECT; nCntEffect++)
-		{
-			SetEffect(g_Effect[nCntEffect].pos, nCntEffect, EFFECTTYPE_CHARGE);
-		}
-	}
-	
 	//エフェクトの位置を設定
 	SetEffectPos();
 

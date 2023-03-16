@@ -106,14 +106,6 @@ void UninitAttackEffect(void)
 //=================================
 void UpdateAttackEffect(void)
 {
-	if (GetKeyboardPress(DIK_X) == true)
-	{
-		for (int nCntEffect = 0; nCntEffect < NUM_ATTACK_EFFECT; nCntEffect++)
-		{
-			SetAttackEffect(g_AttackEffect[nCntEffect].pos, nCntEffect);
-		}
-	}
-	
 	//エフェクトの位置を設定
 	SetAttackEffectPos();
 

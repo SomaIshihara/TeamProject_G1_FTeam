@@ -49,7 +49,7 @@ LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	//Direct3Dデバイスへのポインタ
 int g_nCountFPS;			//FPSカウンタ
 
 #ifdef _DEBUG
-MODE			g_mode = MODE_PvPGAME;		// 現在のモード
+MODE			g_mode = MODE_SELECTGAME;		// 現在のモード
 #else
 MODE			g_mode = MODE_TITLE;		// 現在のモード
 #endif
@@ -576,10 +576,8 @@ void Draw(void)
 		//現在のビューポート取得
 		g_pD3DDevice->GetViewport(&viewportDef);
 
-#ifdef _DEBUG
-	 //FPSを文字にして送る
+		//FPSを文字にして送る
 		PrintDebugProc("FPS:%d\n\n", g_nCountFPS);
-#endif // _DEBUG
 
 		/*======================================================================
 		各種オブジェクトの描画処理

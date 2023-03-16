@@ -73,12 +73,13 @@ void DrawDebugProc(void)
 //========================
 void PrintDebugProc(const char *fmt, ...)
 {
+#ifdef _DEBUG
 	int nCount;		//カウンタ
 	va_list args;	//可変引数の中身
 
-	//出力開始
+					//出力開始
 	va_start(args, fmt);
-	
+
 	for (nCount = 0; *fmt != '\0'; fmt++)
 	{
 		if (*fmt == '%')
@@ -117,4 +118,5 @@ void PrintDebugProc(const char *fmt, ...)
 	}
 
 	va_end(args);
+#endif // _DEBUG
 }

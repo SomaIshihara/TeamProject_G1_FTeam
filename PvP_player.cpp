@@ -10,7 +10,6 @@
 #include "model.h"
 #include "input.h"
 #include "file.h"
-#include "wall.h"
 #include "score.h"
 #include "debugproc.h"
 #include "camera.h"
@@ -181,9 +180,6 @@ void InitPlayer(void)
 		g_aPlayerPvP[0].bUsePlayer = true;
 	}
 #endif // _DEBUG
-
-	//その他変数
-	g_bDebugMove = false;
 }
 
 //========================
@@ -199,12 +195,6 @@ void UninitPlayer(void)
 //========================
 void UpdatePlayer(void)
 {
-	//[デバッグ用]自由移動設定
-	if (GetKeyboardTrigger(DIK_F8))
-	{
-		g_bDebugMove = g_bDebugMove ? false : true;
-	}
-
 	//プレイヤー人数分繰り返す
 	for (int nCntPlayer = 0; nCntPlayer < MAX_USE_GAMEPAD; nCntPlayer++)
 	{
