@@ -60,7 +60,8 @@ SOUNDINFO g_aSoundInfoBGM[SOUND_LABEL_BGM_MAX] =
 	{ "data/SOUND/BGM/Tutorial.wav",		SOUND_LOOP, 0.5f,true },		// チュートリアル音
 	{ "data/SOUND/BGM/PvP_Game_Mixed.wav",	SOUND_LOOP, 0.5f,true },		// ゲーム音
 	{ "data/SOUND/BGM/Game000.wav",			SOUND_LOOP, 0.5f,true },		// ゲーム音
-	{ "data/SOUND/BGM/Result.wav",			SOUND_LOOP, 0.5f,true },		// リザルト音
+	{ "data/SOUND/BGM/Result_01.wav",		SOUND_LOOP, 0.5f,true },		// リザルト音1
+	{ "data/SOUND/BGM/Result_02.wav",		SOUND_LOOP, 0.5f,true },		// リザルト音2
 };
 
 // SEサウンドの情報
@@ -94,6 +95,7 @@ SOUNDINFO g_aSoundInfoSE[SOUND_LABEL_SE_MAX] =
 	{ "data/SOUND/SE/PauseSelection000.wav",	 SOUND_ONCE, 0.6f, true },	// ポーズの選択音
 	{ "data/SOUND/SE/PauseTransition000.wav",	 SOUND_ONCE, 0.6f, true },	// ポーズの遷移音
 	{ "data/SOUND/SE/Roar000.wav",				 SOUND_ONCE, 0.6f, true },	// ポーズの咆哮音
+	{ "data/SOUND/SE/Cheers.wav",				 SOUND_ONCE, 0.6f, true },	// リザルトの歓声
 };
 
 //=============================================================================
