@@ -105,16 +105,19 @@ void UninitTutorial(void)
 //------------------------------------------------
 void UpdateTutorial(void)
 {
-	//ページを左にめくる
-	if (GetKeyboardTrigger(DIK_LEFT))
+	for (int nCntPad = 0; nCntPad < MAX_USE_GAMEPAD; nCntPad++)
 	{
-		g_Tutorial[0].bTurn = false;
-	}
+		if (GetGamepadTrigger(nCntPad, XINPUT_GAMEPAD_DPAD_LEFT) || GetKeyboardTrigger(DIK_LEFT))
+		{
+			g_Tutorial[0].bTurn = false;
+			break;
+		}
 
-	//ページを右にめくる
-	else if (GetKeyboardTrigger(DIK_RIGHT))
-	{
-		g_Tutorial[0].bTurn = true;
+		else if(GetGamepadTrigger(nCntPad, XINPUT_GAMEPAD_DPAD_RIGHT) || GetKeyboardTrigger(DIK_RIGHT))
+		{
+			g_Tutorial[0].bTurn = true;
+			break;
+		}
 	}
 
 	//１ページ目のみをめくる処理
