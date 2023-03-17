@@ -41,7 +41,9 @@ void UpdateObject(void)
 	{
 		if (g_aObject[nCntObject].bUse == true)
 		{
+			g_aObject[nCntObject].nFallTime++;
 			//落とす
+			g_aObject[nCntObject].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 			g_aObject[nCntObject].move.y = -(ACCELERATION_GRAVITY * g_aObject[nCntObject].nFallTime / MAX_FPS);
 
 			//移動後がy<0であり、現在の位置が、フィールド以上の高さにいるなら移動量消す
