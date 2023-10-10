@@ -25,13 +25,13 @@ typedef enum
 #define PREVIEW_TEX_COURSE	"data/TEXTURE/HDR_Course.png"	//コースUI
 #define PREVIEW_TEX_PLAYER	"data/TEXTURE/PlayerUI000.png"	//プレイヤーUI
 #define PREVIEW_HOR_SEP		(SCREEN_WIDTH / 4)	//縦４分割
-#define PREVIEW_POS_Y		(600.0f)			//配置する高さ
+#define PREVIEW_POS_Y		(570.0f)			//配置する高さ
 
 #define PREVIEW_COURSE_MARGIN_WIDTH	(70.0f)		//コースUIの左にずらす余白
 #define PREVIEW_COURSE_WIDTH		(60.0f)		//コースUIの幅
-#define PREVIEW_COURSE_HEIGHT		(400.0f)	//コースUIの高さ
+#define PREVIEW_COURSE_HEIGHT		(370.0f)	//コースUIの高さ
 
-#define PREVIEW_PLAYER_UI_FIX_Y			(389.0f)//プレイヤーUIの初期高さ
+#define PREVIEW_PLAYER_UI_FIX_Y			(359.0f)//プレイヤーUIの初期高さ
 #define PREVIEW_PLAYER_MARGIN_WIDTH		(34.0f)	//プレイヤーUIの左にずらす余白
 #define PREVIEW_PLAYER_MARGIN_HEIGHT	(5.0f)	//プレイヤーUIの上にずらす余白（コースのUIの下が少し浮いているので、その調整用
 

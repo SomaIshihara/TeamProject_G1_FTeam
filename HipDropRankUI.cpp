@@ -25,10 +25,10 @@ HDRankUI				g_HDRankUI[RANK_UI_NUM];		//UIèÓïÒ
 
 //ÉâÉìÉNUIÇÃà íuèÓïÒ
 const D3DXVECTOR3 c_RankUIPos[RANK_UI_NUM] = {
-	D3DXVECTOR3(160.0f, 600.0f, 0.0f),
-	D3DXVECTOR3(480.0f, 600.0f, 0.0f),
-	D3DXVECTOR3(800.0f, 600.0f, 0.0f),
-	D3DXVECTOR3(1120.0f, 600.0f, 0.0f)
+	D3DXVECTOR3(160.0f, 80.0f, 0.0f),
+	D3DXVECTOR3(480.0f, 80.0f, 0.0f),
+	D3DXVECTOR3(800.0f, 80.0f, 0.0f),
+	D3DXVECTOR3(1120.0f,80.0f, 0.0f)
 };
 
 //------------------------------------------
